@@ -10,6 +10,7 @@
  * Import the modules used in this configuration.
  */
 const DAC12  = scripting.addModule("/ti/driverlib/DAC12");
+const GPIO   = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL");
 const VREF   = scripting.addModule("/ti/driverlib/VREF");
 
@@ -23,6 +24,12 @@ DAC12.dacOutputPinEn = true;
 DAC12.dacAmplifier   = "ON";
 DAC12.dacPosVREF     = "VEREFP";
 DAC12.dacNegVREF     = "VEREFN";
+
+const GPIO_BLINK                              = GPIO.addInstance();
+GPIO_BLINK.$name                              = "GPIO_BLINK";
+GPIO_BLINK.associatedPins[0].$name            = "USER";
+GPIO_BLINK.associatedPins[0].direction        = "OUTPUT";
+GPIO_BLINK.associatedPins[0].pin.$assign      = "PA0";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
