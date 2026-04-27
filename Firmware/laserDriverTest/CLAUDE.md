@@ -87,3 +87,4 @@ Before every commit:
    - CLAUDE.md
    - targetConfigs/MSPM0G3507.ccxml
 4. Never stage syscfg_gen/ or build/
+
