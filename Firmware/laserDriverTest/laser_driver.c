@@ -14,15 +14,6 @@
  */
 #define DAC12_OUTPUT_VOLTAGE_mV (90)
 
-/* ~500 ms busy-wait at 32 MHz default MCLK (≈4 cycles/iteration) */
-#define DELAY_HALF_SEC_CYCLES (4000000UL)
-
-static void delay_half_second(void)
-{
-    volatile uint32_t i = DELAY_HALF_SEC_CYCLES;
-    while (i--) {}
-}
-
 int main(void)
 {
     uint32_t DAC_value;
@@ -39,10 +30,10 @@ int main(void)
     DL_DAC12_output12(DAC0, DAC_value);
     DL_DAC12_enable(DAC0);
 
-    /* Toggle PA0 at ~1 Hz after laser diode is on */
+    DL_TimerA_startCounter(PWM_0_INST);
+
     while (1) {
-        DL_GPIO_togglePins(GPIO_BLINK_PORT, GPIO_BLINK_USER_PIN);
-        delay_half_second();
+        __WFI();
     }
 }
 
