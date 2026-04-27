@@ -30,6 +30,8 @@ int main(void)
     DL_DAC12_output12(DAC0, DAC_value);
     DL_DAC12_enable(DAC0);
 
+    DL_TimerA_startCounter(PWM_0_INST);
+
     while (1) {
         __WFI();
     }
