@@ -88,3 +88,12 @@ Before every commit:
    - targetConfigs/MSPM0G3507.ccxml
 4. Never stage syscfg_gen/ or build/
 
+## Git Workflow
+- Never push directly to main
+- Create a feature branch for each task using the format: 
+  git checkout -b <short-description>
+- After a successful build, commit only the files listed in 
+  Commit Rules above
+- Push the branch to origin when done
+- Commit messages should be imperative mood: "Add PWM config" 
+  not "Added" or "Adding"
