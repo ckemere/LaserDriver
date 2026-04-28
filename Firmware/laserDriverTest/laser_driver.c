@@ -1,39 +1,144 @@
 
-
 #include "ti_msp_dl_config.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 /*
- * DAC12 Reference Voltage in mV
- *  Adjust this value according to DAC12 reference settings in SysConfig
- *    Or, in registers CTL1.REFSN and CTL1.REFSP
+ * DAC setpoint applied once at boot before pulses begin.
+ * 100 out of 4095 on a 2.5 V reference ≈ 61 mV.
  */
-#define DAC12_REF_VOLTAGE_mV (2500)
+#define DAC_SETPOINT            100
+
 /*
- * DAC12 static output voltage in mV
- *  Adjust output as needed and check in DAC_OUT pin
+ * PWM runs at 100 kHz (32 MHz BUSCLK / 320 counts).
+ * Period register = 319 (counts 0..319), so one full cycle = 320 counts.
+ *
+ * Laser duty = (PWM_PERIOD_COUNTS - ccValue) / PWM_PERIOD_COUNTS
+ *   ccValue = PWM_PERIOD_COUNTS (320): compare never fires -> CCP0 100% -> laser 0%
+ *   ccValue = 0:                       compare at zero -> laser ~100%
  */
-#define DAC12_OUTPUT_VOLTAGE_mV (90)
+#define PWM_PERIOD_COUNTS       320u    /* period register + 1 */
+
+/*
+ * Trapezoidal pulse profile (all times in PWM ticks at 100 kHz):
+ *   Rise  : 2 s = 200 000 ticks, spread across RAMP_STEPS steps
+ *   High  : 1 s = 100 000 ticks
+ *   Fall  : 2 s = 200 000 ticks
+ *   Low   : 1 s = 100 000 ticks
+ */
+#define RAMP_STEPS              320u
+#define TICKS_PER_RAMP_STEP     625u    /* 200 000 / 320 */
+#define HOLD_TICKS              100000u
+
+typedef enum {
+    STATE_IDLE,
+    STATE_RAMP_UP,
+    STATE_HOLD_HIGH,
+    STATE_RAMP_DOWN,
+    STATE_HOLD_LOW,
+} PulseState;
+
+static volatile PulseState state     = STATE_IDLE;
+static volatile uint32_t   tick_cnt  = 0;
+static volatile uint32_t   ramp_step = 0;
+
+/*
+ * Set to true to start the repeating trapezoidal pulse sequence.
+ * A future button ISR should set this flag instead of the auto-start below.
+ */
+volatile bool pulse_active = false;
+
+static inline void set_laser_step(uint32_t step)
+{
+    DL_TimerA_setCaptureCompareValue(
+        PWM_0_INST, PWM_PERIOD_COUNTS - step, DL_TIMER_CC_0_INDEX);
+}
 
 int main(void)
 {
-    uint32_t DAC_value;
-
     SYSCFG_DL_init();
 
-    /* Set output voltage:
-     *  DAC value (12-bits) = DesiredOutputVoltage x 4095
-     *                          -----------------------
-     *                              ReferenceVoltage
-     */
-    DAC_value = (DAC12_OUTPUT_VOLTAGE_mV * 4095) / DAC12_REF_VOLTAGE_mV;
-
-    DL_DAC12_output12(DAC0, DAC_value);
+    /* Establish current setpoint before enabling laser output. */
+    DL_DAC12_output12(DAC0, DAC_SETPOINT);
     DL_DAC12_enable(DAC0);
+
+    /* Guarantee laser starts off (ccValue > period -> compare never fires). */
+    set_laser_step(0);
+
+    DL_TimerA_enableInterrupt(PWM_0_INST, DL_TIMERA_INTERRUPT_ZERO_EVENT);
+    NVIC_SetPriority(PWM_0_INST_INT_IRQN, 0);
+    NVIC_EnableIRQ(PWM_0_INST_INT_IRQN);
 
     DL_TimerA_startCounter(PWM_0_INST);
 
+    /* Auto-start on boot; replace with a button-press handler to set this flag. */
+    pulse_active = true;
+
     while (1) {
         __WFI();
+    }
+}
+
+void PWM_0_INST_IRQHandler(void)
+{
+    switch (DL_TimerA_getPendingInterrupt(PWM_0_INST)) {
+        case DL_TIMERA_IIDX_ZERO:
+            tick_cnt++;
+
+            switch (state) {
+                case STATE_IDLE:
+                    if (pulse_active) {
+                        ramp_step = 0;
+                        tick_cnt  = 0;
+                        state     = STATE_RAMP_UP;
+                    }
+                    break;
+
+                case STATE_RAMP_UP:
+                    if (tick_cnt >= TICKS_PER_RAMP_STEP) {
+                        tick_cnt = 0;
+                        ramp_step++;
+                        set_laser_step(ramp_step);
+                        if (ramp_step >= RAMP_STEPS) {
+                            state = STATE_HOLD_HIGH;
+                        }
+                    }
+                    break;
+
+                case STATE_HOLD_HIGH:
+                    if (tick_cnt >= HOLD_TICKS) {
+                        tick_cnt  = 0;
+                        ramp_step = RAMP_STEPS;
+                        state     = STATE_RAMP_DOWN;
+                    }
+                    break;
+
+                case STATE_RAMP_DOWN:
+                    if (tick_cnt >= TICKS_PER_RAMP_STEP) {
+                        tick_cnt = 0;
+                        ramp_step--;
+                        set_laser_step(ramp_step);
+                        if (ramp_step == 0) {
+                            state = STATE_HOLD_LOW;
+                        }
+                    }
+                    break;
+
+                case STATE_HOLD_LOW:
+                    if (tick_cnt >= HOLD_TICKS) {
+                        tick_cnt  = 0;
+                        ramp_step = 0;
+                        state     = STATE_RAMP_UP;
+                    }
+                    break;
+
+                default:
+                    break;
+            }
+            break;
+
+        default:
+            break;
     }
 }
 
