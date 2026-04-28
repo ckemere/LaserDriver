@@ -12,6 +12,7 @@
 const DAC12  = scripting.addModule("/ti/driverlib/DAC12");
 const PWM    = scripting.addModule("/ti/driverlib/PWM", {}, false);
 const PWM1   = PWM.addInstance();
+const GPIO   = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL");
 const VREF   = scripting.addModule("/ti/driverlib/VREF");
 
@@ -53,6 +54,11 @@ PWM1.peripheral.ccp0Pin_cmpl.$assign = "PA13";
 PWM1.PWM_CHANNEL_0.$name            = "ti_driverlib_pwm_PWMTimerCC0";
 PWM1.PWM_CHANNEL_0.ccValue          = 1600;
 PWM1.PWM_CHANNEL_0.shadowUpdateMode = "ZERO_EVT";
+const GPIO_BLINK                              = GPIO.addInstance();
+GPIO_BLINK.$name                              = "GPIO_BLINK";
+GPIO_BLINK.associatedPins[0].$name            = "USER";
+GPIO_BLINK.associatedPins[0].direction        = "OUTPUT";
+GPIO_BLINK.associatedPins[0].pin.$assign      = "PA0";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 
