@@ -10,8 +10,6 @@
  * Import the modules used in this configuration.
  */
 const DAC12  = scripting.addModule("/ti/driverlib/DAC12");
-const PWM    = scripting.addModule("/ti/driverlib/PWM", {}, false);
-const PWM1   = PWM.addInstance();
 const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL");
 const VREF   = scripting.addModule("/ti/driverlib/VREF");
 
@@ -51,25 +49,10 @@ GPIO2.associatedPins[0].assignedPin  = "22";
 GPIO2.associatedPins[0].initialValue = "CLEARED";
 
 /*
- * PWM_0 — TIMA0 configured for 100 kHz edge-aligned PWM with shadow load.
- *   Clock: BUSCLK = 32 MHz, prescale = 1 -> 32 MHz timer clock
- *   Period: 320 counts -> 100 kHz
- *   Laser duty = (320 - ccValue) / 320
- *
- * No pin assignments here — PA8/PA22 are routed to TIMA0 at runtime by
- * laser_pwm_control.c, not by the generated GPIO init.
+ * TIMA0 is configured entirely in software by laser_pwm_init()
+ * in laser_pwm_control.c — no SysConfig PWM module is used so
+ * SysConfig cannot assign a default pin to the timer output.
  */
-PWM1.$name                           = "PWM_0";
-PWM1.ccIndex                         = [0];
-PWM1.clockSource                     = "BUSCLK";
-PWM1.clockPrescale                   = 1;
-PWM1.timerCount                      = 319;
-PWM1.pwmMode                         = "EDGE_ALIGN";
-PWM1.enableShadowLoad                = true;
-PWM1.peripheral.$assign              = "TIMA0";
-PWM1.PWM_CHANNEL_0.$name             = "ti_driverlib_pwm_PWMTimerCC0";
-PWM1.PWM_CHANNEL_0.ccValue           = 319;
-PWM1.PWM_CHANNEL_0.shadowUpdateMode  = "ZERO_EVT";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
 

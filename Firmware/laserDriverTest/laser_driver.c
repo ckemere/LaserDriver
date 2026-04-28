@@ -58,7 +58,7 @@ static inline void set_laser_step(uint32_t step)
 {
     /* Only call this while pins are in PWM mode (laser_pins_to_pwm called first). */
     DL_TimerA_setCaptureCompareValue(
-        PWM_0_INST, PWM_PERIOD_COUNTS - step, DL_TIMER_CC_0_INDEX);
+        TIMA0, PWM_PERIOD_COUNTS - step, DL_TIMER_CC_0_INDEX);
 }
 
 int main(void)
@@ -69,11 +69,13 @@ int main(void)
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
     DL_DAC12_enable(DAC0);
 
-    DL_TimerA_enableInterrupt(PWM_0_INST, DL_TIMERA_INTERRUPT_ZERO_EVENT);
-    NVIC_SetPriority(PWM_0_INST_INT_IRQN, 0);
-    NVIC_EnableIRQ(PWM_0_INST_INT_IRQN);
+    laser_pwm_init();
 
-    DL_TimerA_startCounter(PWM_0_INST);
+    DL_TimerA_enableInterrupt(TIMA0, DL_TIMERA_INTERRUPT_ZERO_EVENT);
+    NVIC_SetPriority(TIMA0_INT_IRQn, 0);
+    NVIC_EnableIRQ(TIMA0_INT_IRQn);
+
+    DL_TimerA_startCounter(TIMA0);
 
     /* Auto-start on boot; replace with a button-press handler to set this flag. */
     pulse_active = true;
@@ -158,9 +160,9 @@ int main(void)
     }
 }
 
-void PWM_0_INST_IRQHandler(void)
+void TIMA0_IRQHandler(void)
 {
-    switch (DL_TimerA_getPendingInterrupt(PWM_0_INST)) {
+    switch (DL_TimerA_getPendingInterrupt(TIMA0)) {
         case DL_TIMERA_IIDX_ZERO:
             isr_ticks++;
             break;
