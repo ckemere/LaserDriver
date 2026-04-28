@@ -38,9 +38,8 @@ typedef enum {
     STATE_HOLD_LOW,
 } PulseState;
 
-static volatile PulseState state     = STATE_IDLE;
-static volatile uint32_t   tick_cnt  = 0;
-static volatile uint32_t   ramp_step = 0;
+/* Written only in ISR; read in main loop. */
+static volatile uint32_t isr_ticks = 0;
 
 /*
  * Set to true to start the repeating trapezoidal pulse sequence.
@@ -74,8 +73,69 @@ int main(void)
     /* Auto-start on boot; replace with a button-press handler to set this flag. */
     pulse_active = true;
 
+    PulseState state     = STATE_IDLE;
+    uint32_t   tick_cnt  = 0;
+    uint32_t   ramp_step = 0;
+    uint32_t   last_tick = 0;
+
     while (1) {
-        __WFI();
+        if (isr_ticks == last_tick) {
+            __WFI();
+            continue;
+        }
+        last_tick++;
+        tick_cnt++;
+
+        switch (state) {
+            case STATE_IDLE:
+                if (pulse_active) {
+                    ramp_step = 0;
+                    tick_cnt  = 0;
+                    state     = STATE_RAMP_UP;
+                }
+                break;
+
+            case STATE_RAMP_UP:
+                if (tick_cnt >= TICKS_PER_RAMP_STEP) {
+                    tick_cnt = 0;
+                    ramp_step++;
+                    set_laser_step(ramp_step);
+                    if (ramp_step >= RAMP_STEPS) {
+                        state = STATE_HOLD_HIGH;
+                    }
+                }
+                break;
+
+            case STATE_HOLD_HIGH:
+                if (tick_cnt >= HOLD_TICKS) {
+                    tick_cnt  = 0;
+                    ramp_step = RAMP_STEPS;
+                    state     = STATE_RAMP_DOWN;
+                }
+                break;
+
+            case STATE_RAMP_DOWN:
+                if (tick_cnt >= TICKS_PER_RAMP_STEP) {
+                    tick_cnt = 0;
+                    ramp_step--;
+                    set_laser_step(ramp_step);
+                    if (ramp_step == 0) {
+                        state = STATE_HOLD_LOW;
+                    }
+                }
+                break;
+
+            case STATE_HOLD_LOW:
+                if (tick_cnt >= HOLD_TICKS) {
+                    tick_cnt  = 0;
+                    ramp_step = 0;
+                    state     = STATE_RAMP_UP;
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 }
 
@@ -83,60 +143,8 @@ void PWM_0_INST_IRQHandler(void)
 {
     switch (DL_TimerA_getPendingInterrupt(PWM_0_INST)) {
         case DL_TIMERA_IIDX_ZERO:
-            tick_cnt++;
-
-            switch (state) {
-                case STATE_IDLE:
-                    if (pulse_active) {
-                        ramp_step = 0;
-                        tick_cnt  = 0;
-                        state     = STATE_RAMP_UP;
-                    }
-                    break;
-
-                case STATE_RAMP_UP:
-                    if (tick_cnt >= TICKS_PER_RAMP_STEP) {
-                        tick_cnt = 0;
-                        ramp_step++;
-                        set_laser_step(ramp_step);
-                        if (ramp_step >= RAMP_STEPS) {
-                            state = STATE_HOLD_HIGH;
-                        }
-                    }
-                    break;
-
-                case STATE_HOLD_HIGH:
-                    if (tick_cnt >= HOLD_TICKS) {
-                        tick_cnt  = 0;
-                        ramp_step = RAMP_STEPS;
-                        state     = STATE_RAMP_DOWN;
-                    }
-                    break;
-
-                case STATE_RAMP_DOWN:
-                    if (tick_cnt >= TICKS_PER_RAMP_STEP) {
-                        tick_cnt = 0;
-                        ramp_step--;
-                        set_laser_step(ramp_step);
-                        if (ramp_step == 0) {
-                            state = STATE_HOLD_LOW;
-                        }
-                    }
-                    break;
-
-                case STATE_HOLD_LOW:
-                    if (tick_cnt >= HOLD_TICKS) {
-                        tick_cnt  = 0;
-                        ramp_step = 0;
-                        state     = STATE_RAMP_UP;
-                    }
-                    break;
-
-                default:
-                    break;
-            }
+            isr_ticks++;
             break;
-
         default:
             break;
     }

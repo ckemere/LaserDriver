@@ -88,6 +88,32 @@ Before every commit:
    - targetConfigs/MSPM0G3507.ccxml
 4. Never stage syscfg_gen/ or build/
 
+## ISR and State Machine Style
+
+Keep ISRs as short as possible — ideally a single volatile flag or counter write:
+
+```c
+/* Good: ISR only records that a tick happened */
+static volatile uint32_t isr_ticks = 0;
+void TIMA0_IRQHandler(void) {
+    switch (DL_TimerA_getPendingInterrupt(TIMA0)) {
+        case DL_TIMERA_IIDX_ZERO: isr_ticks++; break;
+        default: break;
+    }
+}
+
+/* Good: state machine lives in the main while loop */
+uint32_t last_tick = 0;
+while (1) {
+    if (isr_ticks == last_tick) { __WFI(); continue; }
+    last_tick++;
+    /* ... state machine switch ... */
+}
+```
+
+Never put state machines, peripheral writes, or multi-step logic inside an ISR.
+Flags written by ISRs and read in main must be `volatile`.
+
 ## Git Workflow
 - Never push directly to main
 - Create a feature branch for each task using the format: 
