@@ -27,31 +27,46 @@ DAC12.dacPosVREF     = "VEREFP";
 DAC12.dacNegVREF     = "VEREFN";
 
 /*
- * PWM_0 — CC0 channel driving native CCP0 + CCP0N outputs.
- *   CCP0  (PA8)  -> Q2b gate (dummy path): HIGH = dummy ON
- *   CCP0N (PA22) -> Q2a gate (laser path): HIGH = laser ON
+ * BRIDGE_PINS — PA8 and PA22 are configured as GPIO outputs at boot.
+ *   PA8  (PINCM19) -> Q2b gate (dummy path): boot HIGH = dummy ON (safe)
+ *   PA22 (PINCM47) -> Q2a gate (laser path): boot LOW  = laser OFF (safe)
  *
- * CCP0N is the intrinsic complement of CCP0 from the CC0 subblock —
- * not the deadband generator — so both pins flip on the same compare
- * event with zero guard band. Current always has a path through either
- * Q2a or Q2b; no current transient at the laser diode.
+ * laser_pwm_control.c switches these pins between GPIO and TIMA0 peripheral
+ * function at runtime.  SysConfig only sees the GPIO role; the peripheral
+ * function codes are written directly to the IOMUX registers in application code.
+ */
+const GPIO  = scripting.addModule("/ti/driverlib/GPIO", {}, false);
+const GPIO1 = GPIO.addInstance();
+GPIO1.$name                          = "BRIDGE_DUMMY";
+GPIO1.associatedPins[0].$name        = "DUMMY";
+GPIO1.associatedPins[0].assignedPort = "PORTA";
+GPIO1.associatedPins[0].assignedPin  = "8";
+GPIO1.associatedPins[0].initialValue = "SET";
+
+const GPIO2 = GPIO.addInstance();
+GPIO2.$name                          = "BRIDGE_LASER";
+GPIO2.associatedPins[0].$name        = "LASER";
+GPIO2.associatedPins[0].assignedPort = "PORTA";
+GPIO2.associatedPins[0].assignedPin  = "22";
+GPIO2.associatedPins[0].initialValue = "CLEARED";
+
+/*
+ * PWM_0 — TIMA0 configured for 100 kHz edge-aligned PWM with shadow load.
+ *   Clock: BUSCLK = 32 MHz, prescale = 1 -> 32 MHz timer clock
+ *   Period: 320 counts -> 100 kHz
+ *   Laser duty = (320 - ccValue) / 320
  *
- * Clock: BUSCLK = 32 MHz, prescale = 1 -> 32 MHz timer clock
- * Period: 320 counts -> 100 kHz
- * Initial ccValue = 319 (laser ~0%); main.c sets ccValue=320 before start for true 0%.
- * Laser duty = (320 - ccValue) / 320; trapezoidal ramp driven by zero-event ISR.
+ * No pin assignments here — PA8/PA22 are routed to TIMA0 at runtime by
+ * laser_pwm_control.c, not by the generated GPIO init.
  */
 PWM1.$name                           = "PWM_0";
 PWM1.ccIndex                         = [0];
-PWM1.ccIndexCmpl                     = [0];
 PWM1.clockSource                     = "BUSCLK";
 PWM1.clockPrescale                   = 1;
 PWM1.timerCount                      = 319;
 PWM1.pwmMode                         = "EDGE_ALIGN";
 PWM1.enableShadowLoad                = true;
 PWM1.peripheral.$assign              = "TIMA0";
-PWM1.peripheral.ccp0Pin.$assign      = "PA8";
-PWM1.peripheral.ccp0Pin_cmpl.$assign = "PA22";
 PWM1.PWM_CHANNEL_0.$name             = "ti_driverlib_pwm_PWMTimerCC0";
 PWM1.PWM_CHANNEL_0.ccValue           = 319;
 PWM1.PWM_CHANNEL_0.shadowUpdateMode  = "ZERO_EVT";

@@ -1,5 +1,6 @@
 
 #include "ti_msp_dl_config.h"
+#include "laser_pwm_control.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -14,17 +15,23 @@
  * Period register = 319 (counts 0..319), so one full cycle = 320 counts.
  *
  * Laser duty = (PWM_PERIOD_COUNTS - ccValue) / PWM_PERIOD_COUNTS
- *   ccValue = PWM_PERIOD_COUNTS (320): compare never fires -> CCP0 100% -> laser 0%
- *   ccValue = 0:                       compare at zero -> laser ~100%
+ *   ccValue = 0:   compare fires at count 0 (same as zero event) -> laser 100%
+ *   ccValue = 319: compare fires after 319 counts               -> laser 1/320
+ *
+ * "Laser off" is now handled by GPIO mode (laser_pins_to_gpio_safe), not by
+ * a PWM ccValue — the hardware safely grounds PA22 regardless of timer state.
  */
-#define PWM_PERIOD_COUNTS       320u    /* period register + 1 */
+#define PWM_PERIOD_COUNTS       320u
 
 /*
  * Trapezoidal pulse profile (all times in PWM ticks at 100 kHz):
- *   Rise  : 2 s = 200 000 ticks, spread across RAMP_STEPS steps
+ *   Rise  : 2 s = 200 000 ticks, RAMP_STEPS steps
  *   High  : 1 s = 100 000 ticks
  *   Fall  : 2 s = 200 000 ticks
  *   Low   : 1 s = 100 000 ticks
+ *
+ * ramp_step 0 means laser off (GPIO mode).
+ * ramp_step RAMP_STEPS means full on (ccValue = 0).
  */
 #define RAMP_STEPS              320u
 #define TICKS_PER_RAMP_STEP     625u    /* 200 000 / 320 */
@@ -49,6 +56,7 @@ volatile bool pulse_active = false;
 
 static inline void set_laser_step(uint32_t step)
 {
+    /* Only call this while pins are in PWM mode (laser_pins_to_pwm called first). */
     DL_TimerA_setCaptureCompareValue(
         PWM_0_INST, PWM_PERIOD_COUNTS - step, DL_TIMER_CC_0_INDEX);
 }
@@ -56,13 +64,10 @@ static inline void set_laser_step(uint32_t step)
 int main(void)
 {
     SYSCFG_DL_init();
+    /* PA8=1 (dummy ON), PA22=0 (laser OFF) — already set by generated GPIO init. */
 
-    /* Establish current setpoint before enabling laser output. */
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
     DL_DAC12_enable(DAC0);
-
-    /* Guarantee laser starts off (ccValue > period -> compare never fires). */
-    set_laser_step(0);
 
     DL_TimerA_enableInterrupt(PWM_0_INST, DL_TIMERA_INTERRUPT_ZERO_EVENT);
     NVIC_SetPriority(PWM_0_INST_INT_IRQN, 0);
@@ -93,7 +98,7 @@ int main(void)
                     tick_cnt  = 0;
                     state     = STATE_RAMP_UP;
                 }
-                set_laser_step(0);
+                laser_pins_to_gpio_safe();
                 break;
 
             case STATE_RAMP_UP:
@@ -104,14 +109,21 @@ int main(void)
                         state = STATE_HOLD_HIGH;
                     }
                 }
-                set_laser_step(ramp_step);
+                if (ramp_step == 0) {
+                    laser_pins_to_gpio_safe();
+                } else {
+                    laser_pins_to_pwm();
+                    set_laser_step(ramp_step);
+                }
                 break;
 
             case STATE_HOLD_HIGH:
                 if (tick_cnt >= HOLD_TICKS) {
-                    tick_cnt = 0;
-                    state    = STATE_RAMP_DOWN;
+                    tick_cnt  = 0;
+                    ramp_step = RAMP_STEPS;
+                    state     = STATE_RAMP_DOWN;
                 }
+                laser_pins_to_pwm();
                 set_laser_step(RAMP_STEPS);
                 break;
 
@@ -123,7 +135,12 @@ int main(void)
                         state = STATE_HOLD_LOW;
                     }
                 }
-                set_laser_step(ramp_step);
+                if (ramp_step == 0) {
+                    laser_pins_to_gpio_safe();
+                } else {
+                    laser_pins_to_pwm();
+                    set_laser_step(ramp_step);
+                }
                 break;
 
             case STATE_HOLD_LOW:
@@ -132,7 +149,7 @@ int main(void)
                     ramp_step = 0;
                     state     = STATE_RAMP_UP;
                 }
-                set_laser_step(0);
+                laser_pins_to_gpio_safe();
                 break;
 
             default:

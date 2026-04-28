@@ -83,6 +83,8 @@ Before every commit:
 3. Only stage:
    - laser_driver.c
    - laser_driver.syscfg
+   - laser_pwm_control.c
+   - laser_pwm_control.h
    - Makefile
    - CLAUDE.md
    - targetConfigs/MSPM0G3507.ccxml
