@@ -9,10 +9,12 @@
  */
 #define DAC12_REF_VOLTAGE_mV (2500)
 /*
- * DAC12 static output voltage in mV
- *  Adjust output as needed and check in DAC_OUT pin
+ * DAC12 static output voltage in mV — safe boot: 0 V, no current setpoint.
+ * The DAC output register defaults to 0 after reset; we write 0 explicitly
+ * before calling DL_DAC12_enable() so the pin never drives a non-zero
+ * voltage.  Change this value only after the hardware is ready to lase.
  */
-#define DAC12_OUTPUT_VOLTAGE_mV (90)
+#define DAC12_OUTPUT_VOLTAGE_mV (0)
 
 int main(void)
 {

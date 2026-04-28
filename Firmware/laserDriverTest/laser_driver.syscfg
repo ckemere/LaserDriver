@@ -38,8 +38,12 @@ DAC12.dacNegVREF     = "VEREFN";
  *
  * Clock: BUSCLK = 32 MHz, prescale = 1 -> 32 MHz timer clock
  * Period: 3200 counts -> 10 kHz
- * Duty cycle: laser ON = 10% -> CCP0N HIGH 10% -> CCP0 HIGH 90%
- *   ccValue = 3200 * 0.90 = 2880
+ *
+ * Safe-boot duty cycle: dummy ON ~100%, laser ON ~0%.
+ *   ccValue = timerCount = 3199 -> CCP0 HIGH for 3199/3200 counts,
+ *   CCP0N HIGH for only 1 count (~31 ns) per 100 µs period.
+ *   With DAC output = 0 V the current setpoint is zero even during
+ *   that brief window, so the laser diode is never driven.
  */
 PWM1.$name                           = "PWM_0";
 PWM1.ccIndex                         = [0];
@@ -53,7 +57,7 @@ PWM1.peripheral.$assign              = "TIMA0";
 PWM1.peripheral.ccp0Pin.$assign      = "PA8";
 PWM1.peripheral.ccp0Pin_cmpl.$assign = "PA22";
 PWM1.PWM_CHANNEL_0.$name             = "ti_driverlib_pwm_PWMTimerCC0";
-PWM1.PWM_CHANNEL_0.ccValue           = 2880;
+PWM1.PWM_CHANNEL_0.ccValue           = 3199;
 PWM1.PWM_CHANNEL_0.shadowUpdateMode  = "ZERO_EVT";
 
 const Board = scripting.addModule("/ti/driverlib/Board", {}, false);
