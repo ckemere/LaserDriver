@@ -10,6 +10,8 @@
  * Import the modules used in this configuration.
  */
 const DAC12  = scripting.addModule("/ti/driverlib/DAC12");
+const PWM    = scripting.addModule("/ti/driverlib/PWM", {}, false);
+const PWM1   = PWM.addInstance();
 const GPIO   = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const SYSCTL = scripting.addModule("/ti/driverlib/SYSCTL");
 const VREF   = scripting.addModule("/ti/driverlib/VREF");
@@ -25,6 +27,33 @@ DAC12.dacAmplifier   = "ON";
 DAC12.dacPosVREF     = "VEREFP";
 DAC12.dacNegVREF     = "VEREFN";
 
+/*
+ * PWM_0 — single CC0 channel driving the native CCP0 + CCP0N outputs.
+ *   CCP0  (PA12, J4 header) -> PWM   (Q2b gate, dummy path)
+ *   CCP0N (PA13, J4 header) -> PWM_n (Q2a gate, laser path)
+ *
+ * CCP0N is the inverted output of the same compare event — intrinsic to
+ * the CC0 subblock, not produced by the deadband generator. Both pins
+ * flip on the same compare event, so the regulated current source Q1
+ * always has a path through Q2a or Q2b (no shoot-through gap).
+ *
+ * Clock: BUSCLK = 32 MHz, prescale = 1
+ * Period: 3200 counts -> 100 us (10 kHz), 50% duty cycle initially.
+ */
+PWM1.$name                          = "PWM_0";
+PWM1.ccIndex                        = [0];
+PWM1.ccIndexCmpl                    = [0];
+PWM1.clockSource                    = "BUSCLK";
+PWM1.clockPrescale                  = 1;
+PWM1.timerCount                     = 3199;
+PWM1.pwmMode                        = "EDGE_ALIGN";
+PWM1.enableShadowLoad               = true;
+PWM1.peripheral.$assign             = "TIMA0";
+PWM1.peripheral.ccp0Pin.$assign     = "PA12";
+PWM1.peripheral.ccp0Pin_cmpl.$assign = "PA13";
+PWM1.PWM_CHANNEL_0.$name            = "ti_driverlib_pwm_PWMTimerCC0";
+PWM1.PWM_CHANNEL_0.ccValue          = 1600;
+PWM1.PWM_CHANNEL_0.shadowUpdateMode = "ZERO_EVT";
 const GPIO_BLINK                              = GPIO.addInstance();
 GPIO_BLINK.$name                              = "GPIO_BLINK";
 GPIO_BLINK.associatedPins[0].$name            = "USER";

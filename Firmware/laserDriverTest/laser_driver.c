@@ -39,6 +39,8 @@ int main(void)
     DL_DAC12_output12(DAC0, DAC_value);
     DL_DAC12_enable(DAC0);
 
+    DL_TimerA_startCounter(PWM_0_INST);
+
     /* Toggle PA0 at ~1 Hz after laser diode is on */
     while (1) {
         DL_GPIO_togglePins(GPIO_BLINK_PORT, GPIO_BLINK_USER_PIN);
