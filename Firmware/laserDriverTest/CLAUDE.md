@@ -114,6 +114,38 @@ while (1) {
 Never put state machines, peripheral writes, or multi-step logic inside an ISR.
 Flags written by ISRs and read in main must be `volatile`.
 
+Every state case must drive its outputs unconditionally — update state variables
+first, then set the output at the bottom of the case. Never rely on a previous
+state's output write to persist:
+
+```c
+/* Good: output set on every tick regardless of whether ramp_step changed */
+case STATE_RAMP_DOWN:
+    if (tick_cnt >= TICKS_PER_RAMP_STEP) {
+        tick_cnt = 0;
+        ramp_step--;
+        if (ramp_step == 0) state = STATE_HOLD_LOW;
+    }
+    set_laser_step(ramp_step);   /* always, not just inside the if */
+    break;
+
+/* Bad: output only set inside the threshold check; stale shadow persists
+   during the ticks between updates and across state transitions */
+case STATE_RAMP_DOWN:
+    if (tick_cnt >= TICKS_PER_RAMP_STEP) {
+        tick_cnt = 0;
+        ramp_step--;
+        set_laser_step(ramp_step);   /* missing for all other ticks */
+        if (ramp_step == 0) state = STATE_HOLD_LOW;
+    }
+    break;
+```
+
+Omitting the unconditional output write is the root cause of the flash observed
+at the end of RAMP_DOWN: STATE_HOLD_HIGH never refreshed the shadow register, so
+its stale ccValue=0 (laser 100%) persisted into RAMP_DOWN until the first
+threshold fired.
+
 ## Git Workflow
 - Never push directly to main
 - Create a feature branch for each task using the format: 

@@ -93,36 +93,37 @@ int main(void)
                     tick_cnt  = 0;
                     state     = STATE_RAMP_UP;
                 }
+                set_laser_step(0);
                 break;
 
             case STATE_RAMP_UP:
                 if (tick_cnt >= TICKS_PER_RAMP_STEP) {
                     tick_cnt = 0;
                     ramp_step++;
-                    set_laser_step(ramp_step);
                     if (ramp_step >= RAMP_STEPS) {
                         state = STATE_HOLD_HIGH;
                     }
                 }
+                set_laser_step(ramp_step);
                 break;
 
             case STATE_HOLD_HIGH:
                 if (tick_cnt >= HOLD_TICKS) {
-                    tick_cnt  = 0;
-                    ramp_step = RAMP_STEPS;
-                    state     = STATE_RAMP_DOWN;
+                    tick_cnt = 0;
+                    state    = STATE_RAMP_DOWN;
                 }
+                set_laser_step(RAMP_STEPS);
                 break;
 
             case STATE_RAMP_DOWN:
                 if (tick_cnt >= TICKS_PER_RAMP_STEP) {
                     tick_cnt = 0;
                     ramp_step--;
-                    set_laser_step(ramp_step);
                     if (ramp_step == 0) {
                         state = STATE_HOLD_LOW;
                     }
                 }
+                set_laser_step(ramp_step);
                 break;
 
             case STATE_HOLD_LOW:
@@ -131,6 +132,7 @@ int main(void)
                     ramp_step = 0;
                     state     = STATE_RAMP_UP;
                 }
+                set_laser_step(0);
                 break;
 
             default:
