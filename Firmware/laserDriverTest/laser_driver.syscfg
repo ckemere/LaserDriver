@@ -26,8 +26,8 @@ DAC12.dacNegVREF     = "VEREFN";
 
 /*
  * BRIDGE_PINS — PA8 and PA22 are configured as GPIO outputs at boot.
- *   PA8  (PINCM19) -> Q2b gate (dummy path): boot HIGH = dummy ON (safe)
- *   PA22 (PINCM47) -> Q2a gate (laser path): boot LOW  = laser OFF (safe)
+ *   PA8  (PINCM19) -> laser path (TIMA0_CCP0 in PWM mode):   boot HIGH
+ *   PA22 (PINCM47) -> dummy path (TIMA0_CCP0_CMPL in PWM mode): boot LOW
  *
  * laser_pwm_control.c switches these pins between GPIO and TIMA0 peripheral
  * function at runtime.  SysConfig only sees the GPIO role; the peripheral
@@ -35,15 +35,15 @@ DAC12.dacNegVREF     = "VEREFN";
  */
 const GPIO  = scripting.addModule("/ti/driverlib/GPIO", {}, false);
 const GPIO1 = GPIO.addInstance();
-GPIO1.$name                          = "BRIDGE_DUMMY";
-GPIO1.associatedPins[0].$name        = "DUMMY";
+GPIO1.$name                          = "BRIDGE_LASER";
+GPIO1.associatedPins[0].$name        = "LASER";
 GPIO1.associatedPins[0].assignedPort = "PORTA";
 GPIO1.associatedPins[0].assignedPin  = "8";
 GPIO1.associatedPins[0].initialValue = "SET";
 
 const GPIO2 = GPIO.addInstance();
-GPIO2.$name                          = "BRIDGE_LASER";
-GPIO2.associatedPins[0].$name        = "LASER";
+GPIO2.$name                          = "BRIDGE_DUMMY";
+GPIO2.associatedPins[0].$name        = "DUMMY";
 GPIO2.associatedPins[0].assignedPort = "PORTA";
 GPIO2.associatedPins[0].assignedPin  = "22";
 GPIO2.associatedPins[0].initialValue = "CLEARED";

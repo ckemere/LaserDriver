@@ -11,27 +11,23 @@
 #define DAC_SETPOINT            100
 
 /*
- * PWM runs at 100 kHz (32 MHz BUSCLK / 320 counts).
+ * TIMA0 runs at 100 kHz (32 MHz BUSCLK / 320 counts), UP-counting mode.
  * Period register = 319 (counts 0..319), so one full cycle = 320 counts.
  *
- * Laser duty = (PWM_PERIOD_COUNTS - ccValue) / PWM_PERIOD_COUNTS
- *   ccValue = 0:   compare fires at count 0 (same as zero event) -> laser 100%
- *   ccValue = 319: compare fires after 319 counts               -> laser 1/320
- *
- * "Laser off" is now handled by GPIO mode (laser_pins_to_gpio_safe), not by
- * a PWM ccValue — the hardware safely grounds PA22 regardless of timer state.
+ * Laser duty = CC0 / 320  (UP mode: output HIGH from 0 to CC0, LOW after).
+ *   CC0 = 0:   compare fires at count 0 -> laser ~0%  (GPIO mode used for true off)
+ *   CC0 = 320: compare never fires      -> laser 100%
  */
 #define PWM_PERIOD_COUNTS       320u
 
 /*
- * Trapezoidal pulse profile (all times in PWM ticks at 100 kHz):
+ * Trapezoidal pulse profile.
+ * State machine is clocked by TIMG0 at 100 kHz (one tick = 10 µs).
+ *
  *   Rise  : 2 s = 200 000 ticks, RAMP_STEPS steps
  *   High  : 1 s = 100 000 ticks
  *   Fall  : 2 s = 200 000 ticks
  *   Low   : 1 s = 100 000 ticks
- *
- * ramp_step 0 means laser off (GPIO mode).
- * ramp_step RAMP_STEPS means full on (ccValue = 0).
  */
 #define RAMP_STEPS              320u
 #define TICKS_PER_RAMP_STEP     625u    /* 200 000 / 320 */
@@ -45,7 +41,7 @@ typedef enum {
     STATE_HOLD_LOW,
 } PulseState;
 
-/* Written only in ISR; read in main loop. */
+/* Incremented only in TIMG0 ISR; read in main loop. */
 static volatile uint32_t isr_ticks = 0;
 
 /*
@@ -54,28 +50,62 @@ static volatile uint32_t isr_ticks = 0;
  */
 volatile bool pulse_active = false;
 
+/*
+ * Write the laser PWM duty step.  Call only while pins are in PWM mode.
+ * UP mode: CC0 = step -> duty = step / 320.
+ *   step = 0          -> ~0%   laser
+ *   step = RAMP_STEPS -> 100%  laser
+ */
 static inline void set_laser_step(uint32_t step)
 {
-    /* Only call this while pins are in PWM mode (laser_pins_to_pwm called first). */
-    DL_TimerA_setCaptureCompareValue(
-        TIMA0, PWM_PERIOD_COUNTS - step, DL_TIMER_CC_0_INDEX);
+    DL_TimerA_setCaptureCompareValue(TIMA0, step, DL_TIMER_CC_0_INDEX);
+}
+
+/*
+ * Configure TIMG0 as a 100 kHz periodic tick source for the state machine.
+ * TIMA0 (PWM) runs independently and has no interrupt.
+ */
+static void tick_timer_init(void)
+{
+    DL_TimerG_reset(TIMG0);
+    DL_TimerG_enablePower(TIMG0);
+    delay_cycles(16);
+
+    static const DL_TimerG_ClockConfig clkCfg = {
+        .clockSel    = DL_TIMER_CLOCK_BUSCLK,
+        .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
+        .prescale    = 0U,
+    };
+    DL_TimerG_setClockConfig(TIMG0, (DL_TimerG_ClockConfig *)&clkCfg);
+
+    static const DL_TimerG_TimerConfig tmrCfg = {
+        .timerMode    = DL_TIMER_TIMER_MODE_PERIODIC,   /* down-counting, repeating */
+        .period       = 319,                             /* 320 counts at 32 MHz = 100 kHz */
+        .startTimer   = DL_TIMER_STOP,
+        .genIntermInt = DL_TIMER_INTERM_INT_DISABLED,
+        .counterVal   = 0U,
+    };
+    DL_TimerG_initTimerMode(TIMG0, (DL_TimerG_TimerConfig *)&tmrCfg);
+
+    DL_TimerG_enableClock(TIMG0);
 }
 
 int main(void)
 {
     SYSCFG_DL_init();
-    /* PA8=1 (dummy ON), PA22=0 (laser OFF) — already set by generated GPIO init. */
+    /* PA8 = 1 (laser path HIGH), PA22 = 0 (dummy LOW) — set by GPIO init. */
 
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
     DL_DAC12_enable(DAC0);
 
     laser_pwm_init();
-
-    DL_TimerA_enableInterrupt(TIMA0, DL_TIMERA_INTERRUPT_ZERO_EVENT);
-    NVIC_SetPriority(TIMA0_INT_IRQn, 0);
-    NVIC_EnableIRQ(TIMA0_INT_IRQn);
-
     DL_TimerA_startCounter(TIMA0);
+
+    tick_timer_init();
+    DL_TimerG_enableInterrupt(TIMG0, DL_TIMERG_INTERRUPT_ZERO_EVENT);
+    NVIC_SetPriority(TIMG0_INT_IRQn, 0);
+    NVIC_EnableIRQ(TIMG0_INT_IRQn);
+    DL_TimerG_startCounter(TIMG0);
 
     /* Auto-start on boot; replace with a button-press handler to set this flag. */
     pulse_active = true;
@@ -160,10 +190,10 @@ int main(void)
     }
 }
 
-void TIMA0_IRQHandler(void)
+void TIMG0_IRQHandler(void)
 {
-    switch (DL_TimerA_getPendingInterrupt(TIMA0)) {
-        case DL_TIMERA_IIDX_ZERO:
+    switch (DL_TimerG_getPendingInterrupt(TIMG0)) {
+        case DL_TIMERG_IIDX_ZERO:
             isr_ticks++;
             break;
         default:
