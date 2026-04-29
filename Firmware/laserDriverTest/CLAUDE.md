@@ -74,6 +74,36 @@ Never manually create or edit files in syscfg_gen/.
 Edit laser_driver.syscfg to change pins, clocks, or peripherals.
 Never edit syscfg_gen/ files — they are overwritten on every build.
 
+## Button Trigger (PB21)
+
+A momentary push-button is wired between PB21 and GND, active-low.  SysConfig
+configures PB21 as a digital input with the internal pull-up resistor enabled
+(`BUTTON_PORT` / `BUTTON_TRIGGER_PIN` macros in the generated header).
+
+**Behavior:** press and *release* the button to fire one trapezoidal laser pulse
+(ramp-up → hold-high → ramp-down → hold-low). The system then returns to
+`OVERALL_WAITING` and ignores the laser sub-states until the next button release.
+Presses that arrive while a cycle is already running are silently ignored.
+
+**Debounce:** the button is polled on every TIMG0 tick (100 kHz). The state
+advances only after the pin has been stable for `DEBOUNCE_TICKS` (1000 ticks =
+10 ms) consecutive ticks, so contact bounce does not cause false triggers or
+missed releases.
+
+**State machine integration:** the `MachineState` struct has three orthogonal
+sub-states: `overall` (`OVERALL_WAITING` / `OVERALL_TRIGGERED`), `button`
+(`BUTTON_IDLE` / `BUTTON_PRESSED` / `BUTTON_RELEASED`), and `laser`
+(`LASER_IDLE` / `LASER_RAMP_UP` / `LASER_HOLD_HIGH` / `LASER_RAMP_DOWN` /
+`LASER_HOLD_LOW`).  `BUTTON_RELEASED` is a one-tick transient that generates a
+boolean `trigger` flag consumed by the `OVERALL_WAITING` case to start a cycle.
+
+## CRITICAL: Laser diode safety
+
+To prevent current spikes on the laser diode that might damage it or 
+other unintentional outcomes, the system MUST boot up with the GPIO
+driving the laser branch of the bridge OFF and (less importantly)
+the GPIO driving the dummy branch ON.
+
 ## CRITICAL: Commit Rules
 
 Before every commit:
@@ -83,10 +113,61 @@ Before every commit:
 3. Only stage:
    - laser_driver.c
    - laser_driver.syscfg
+   - laser_pwm_control.c
+   - laser_pwm_control.h
    - Makefile
    - CLAUDE.md
    - targetConfigs/MSPM0G3507.ccxml
 4. Never stage syscfg_gen/ or build/
+
+## ISR and State Machine Style
+
+Keep ISRs as short as possible — ideally a single volatile flag or counter write:
+
+```c
+/* Good: ISR only records that a tick happened */
+static volatile uint32_t isr_ticks = 0;
+void TIMG0_IRQHandler(void) {
+    switch (DL_TimerG_getPendingInterrupt(TIMG0)) {
+        case DL_TIMERG_IIDX_ZERO: isr_ticks++; break;
+        default: break;
+    }
+}
+```
+
+Never put state machines, peripheral writes, or multi-step logic inside an ISR.
+Flags written by ISRs and read in main must be `volatile`.
+
+## State Machine Philosophy
+
+The state machine is fully described by a `LaserState` struct that carries all
+counters needed to determine both the next state and the hardware output:
+
+```c
+typedef struct {
+    Phase    phase;      /* which leg of the waveform we are in */
+    uint32_t ramp_step;  /* current PWM duty step (0..RAMP_STEPS) */
+    uint32_t tick_count; /* ticks elapsed in the current phase */
+} LaserState;
+```
+
+The main loop is exactly three lines — no logic lives outside these two functions:
+
+```c
+while (1) {
+    state = get_next_state(state);
+    set_output(state);
+    __WFI();
+}
+```
+
+`get_next_state(state)` owns all transition logic. It gates on `isr_ticks` so
+it is safe to call on every WFI wakeup (spurious wakes are no-ops). It advances
+counters and phase, then returns the new state by value.
+
+`set_output(state)` owns all hardware writes. Given only the state struct it
+sets the pin-mux (GPIO-safe vs PWM) and the PWM duty register. It is
+idempotent — calling it repeatedly with the same state is harmless.
 
 ## Git Workflow
 - Never push directly to main

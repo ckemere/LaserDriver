@@ -17,6 +17,7 @@ STARTUP_SRC     := $(SDK_ROOT)/source/ti/devices/msp/m0p/startup_system_files/ti
 STARTUP_OBJ     := $(BUILD_DIR)/startup_mspm0g350x_ticlang.o
 
 OBJS            := $(BUILD_DIR)/laser_driver.o \
+                   $(BUILD_DIR)/laser_pwm_control.o \
                    $(BUILD_DIR)/ti_msp_dl_config.o \
                    $(STARTUP_OBJ)
 
@@ -65,6 +66,9 @@ $(TARGET): $(OBJS) | $(BUILD_DIR)
 
 # Compile app source
 $(BUILD_DIR)/laser_driver.o: $(PROJ_DIR)/laser_driver.c $(SYSCFG_STAMP) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/laser_pwm_control.o: $(PROJ_DIR)/laser_pwm_control.c $(SYSCFG_STAMP) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Compile SysConfig generated source
