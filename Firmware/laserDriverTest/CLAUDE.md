@@ -104,24 +104,47 @@ Keep ISRs as short as possible — ideally a single volatile flag or counter wri
 ```c
 /* Good: ISR only records that a tick happened */
 static volatile uint32_t isr_ticks = 0;
-void TIMA0_IRQHandler(void) {
-    switch (DL_TimerA_getPendingInterrupt(TIMA0)) {
-        case DL_TIMERA_IIDX_ZERO: isr_ticks++; break;
+void TIMG0_IRQHandler(void) {
+    switch (DL_TimerG_getPendingInterrupt(TIMG0)) {
+        case DL_TIMERG_IIDX_ZERO: isr_ticks++; break;
         default: break;
     }
-}
-
-/* Good: state machine lives in the main while loop */
-uint32_t last_tick = 0;
-while (1) {
-    if (isr_ticks == last_tick) { __WFI(); continue; }
-    last_tick++;
-    /* ... state machine switch ... */
 }
 ```
 
 Never put state machines, peripheral writes, or multi-step logic inside an ISR.
 Flags written by ISRs and read in main must be `volatile`.
+
+## State Machine Philosophy
+
+The state machine is fully described by a `LaserState` struct that carries all
+counters needed to determine both the next state and the hardware output:
+
+```c
+typedef struct {
+    Phase    phase;      /* which leg of the waveform we are in */
+    uint32_t ramp_step;  /* current PWM duty step (0..RAMP_STEPS) */
+    uint32_t tick_count; /* ticks elapsed in the current phase */
+} LaserState;
+```
+
+The main loop is exactly three lines — no logic lives outside these two functions:
+
+```c
+while (1) {
+    state = get_next_state(state);
+    set_output(state);
+    __WFI();
+}
+```
+
+`get_next_state(state)` owns all transition logic. It gates on `isr_ticks` so
+it is safe to call on every WFI wakeup (spurious wakes are no-ops). It advances
+counters and phase, then returns the new state by value.
+
+`set_output(state)` owns all hardware writes. Given only the state struct it
+sets the pin-mux (GPIO-safe vs PWM) and the PWM duty register. It is
+idempotent — calling it repeatedly with the same state is harmless.
 
 ## Git Workflow
 - Never push directly to main

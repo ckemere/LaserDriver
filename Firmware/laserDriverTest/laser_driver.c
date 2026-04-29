@@ -39,7 +39,13 @@ typedef enum {
     STATE_HOLD_HIGH,
     STATE_RAMP_DOWN,
     STATE_HOLD_LOW,
-} PulseState;
+} Phase;
+
+typedef struct {
+    Phase    phase;
+    uint32_t ramp_step;
+    uint32_t tick_count;
+} LaserState;
 
 /* Incremented only in TIMG0 ISR; read in main loop. */
 static volatile uint32_t isr_ticks = 0;
@@ -90,6 +96,104 @@ static void tick_timer_init(void)
     DL_TimerG_enableClock(TIMG0);
 }
 
+/*
+ * Advance state by one tick.  Returns state unchanged if no new tick has
+ * fired since the last call (guards against spurious WFI wakeups).
+ */
+static LaserState get_next_state(LaserState s)
+{
+    static uint32_t last_tick = 0;
+    if (isr_ticks == last_tick)
+        return s;
+    last_tick++;
+    s.tick_count++;
+
+    switch (s.phase) {
+        case STATE_IDLE:
+            if (pulse_active) {
+                s.ramp_step  = 0;
+                s.tick_count = 0;
+                s.phase      = STATE_RAMP_UP;
+            }
+            break;
+
+        case STATE_RAMP_UP:
+            if (s.tick_count >= TICKS_PER_RAMP_STEP) {
+                s.tick_count = 0;
+                s.ramp_step++;
+                if (s.ramp_step >= RAMP_STEPS) {
+                    s.tick_count = 0;
+                    s.phase      = STATE_HOLD_HIGH;
+                }
+            }
+            break;
+
+        case STATE_HOLD_HIGH:
+            if (s.tick_count >= HOLD_TICKS) {
+                s.tick_count = 0;
+                s.ramp_step  = RAMP_STEPS;
+                s.phase      = STATE_RAMP_DOWN;
+            }
+            break;
+
+        case STATE_RAMP_DOWN:
+            if (s.tick_count >= TICKS_PER_RAMP_STEP) {
+                s.tick_count = 0;
+                s.ramp_step--;
+                if (s.ramp_step == 0) {
+                    s.tick_count = 0;
+                    s.phase      = STATE_HOLD_LOW;
+                }
+            }
+            break;
+
+        case STATE_HOLD_LOW:
+            if (s.tick_count >= HOLD_TICKS) {
+                s.tick_count = 0;
+                s.ramp_step  = 0;
+                s.phase      = STATE_RAMP_UP;
+            }
+            break;
+
+        default:
+            break;
+    }
+
+    return s;
+}
+
+/*
+ * Drive hardware to match the current state: switch pin mux between GPIO-safe
+ * and PWM modes, and set the PWM duty cycle from ramp_step.
+ */
+static void set_output(LaserState s)
+{
+    switch (s.phase) {
+        case STATE_IDLE:
+        case STATE_HOLD_LOW:
+            laser_pins_to_gpio_safe();
+            break;
+
+        case STATE_RAMP_UP:
+        case STATE_RAMP_DOWN:
+            if (s.ramp_step == 0) {
+                laser_pins_to_gpio_safe();
+            } else {
+                laser_pins_to_pwm();
+                set_laser_step(s.ramp_step);
+            }
+            break;
+
+        case STATE_HOLD_HIGH:
+            laser_pins_to_pwm();
+            set_laser_step(RAMP_STEPS);
+            break;
+
+        default:
+            break;
+    }
+}
+
 int main(void)
 {
     SYSCFG_DL_init();
@@ -113,83 +217,12 @@ int main(void)
     /* Auto-start on boot; replace with a button-press handler to set this flag. */
     pulse_active = true;
 
-    PulseState state     = STATE_IDLE;
-    uint32_t   tick_cnt  = 0;
-    uint32_t   ramp_step = 0;
-    uint32_t   last_tick = 0;
+    LaserState state = { STATE_IDLE, 0, 0 };
 
     while (1) {
-        if (isr_ticks == last_tick) {
-            __WFI();
-            continue;
-        }
-        last_tick++;
-        tick_cnt++;
-
-        switch (state) {
-            case STATE_IDLE:
-                if (pulse_active) {
-                    ramp_step = 0;
-                    tick_cnt  = 0;
-                    state     = STATE_RAMP_UP;
-                }
-                laser_pins_to_gpio_safe();
-                break;
-
-            case STATE_RAMP_UP:
-                if (tick_cnt >= TICKS_PER_RAMP_STEP) {
-                    tick_cnt = 0;
-                    ramp_step++;
-                    if (ramp_step >= RAMP_STEPS) {
-                        state = STATE_HOLD_HIGH;
-                    }
-                }
-                if (ramp_step == 0) {
-                    laser_pins_to_gpio_safe();
-                } else {
-                    laser_pins_to_pwm();
-                    set_laser_step(ramp_step);
-                }
-                break;
-
-            case STATE_HOLD_HIGH:
-                if (tick_cnt >= HOLD_TICKS) {
-                    tick_cnt  = 0;
-                    ramp_step = RAMP_STEPS;
-                    state     = STATE_RAMP_DOWN;
-                }
-                laser_pins_to_pwm();
-                set_laser_step(RAMP_STEPS);
-                break;
-
-            case STATE_RAMP_DOWN:
-                if (tick_cnt >= TICKS_PER_RAMP_STEP) {
-                    tick_cnt = 0;
-                    ramp_step--;
-                    if (ramp_step == 0) {
-                        state = STATE_HOLD_LOW;
-                    }
-                }
-                if (ramp_step == 0) {
-                    laser_pins_to_gpio_safe();
-                } else {
-                    laser_pins_to_pwm();
-                    set_laser_step(ramp_step);
-                }
-                break;
-
-            case STATE_HOLD_LOW:
-                if (tick_cnt >= HOLD_TICKS) {
-                    tick_cnt  = 0;
-                    ramp_step = 0;
-                    state     = STATE_RAMP_UP;
-                }
-                laser_pins_to_gpio_safe();
-                break;
-
-            default:
-                break;
-        }
+        state = get_next_state(state);
+        set_output(state);
+        __WFI();
     }
 }
 
