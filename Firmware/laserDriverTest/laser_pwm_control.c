@@ -77,18 +77,19 @@ void laser_pwm_init(void)
 
 /*
  * Switch bridge pins to GPIO and lock them to safe output values.
+ * (CRITICAL, STATING THE OBVIOUS, SAFE OUTPUT IS LASER OFF!!!!)
  *
  * Sequence:
  *   1. Pre-load DOUT registers before touching IOMUX so each pin drives
  *      the correct level the instant it switches to GPIO.
  *   2. Switch PA8 (laser, CCP0) to GPIO first so the laser path is
- *      defined (HIGH) while PA22 is still PWM-complemented.
- *   3. Switch PA22 (dummy, CCP0_CMPL) to GPIO LOW last.
+ *      defined and OFF (LOW) while PA22 is still PWM-complemented.
+ *   3. Switch PA22 (dummy, CCP0_CMPL) to GPIO HIGH last.
  */
 void laser_pins_to_gpio_safe(void)
 {
-    DL_GPIO_setPins(GPIOA, BRIDGE_LASER_LASER_PIN);    /* PA8  = 1 */
-    DL_GPIO_clearPins(GPIOA, BRIDGE_DUMMY_DUMMY_PIN);  /* PA22 = 0 */
+    DL_GPIO_clearPins(GPIOA, BRIDGE_LASER_LASER_PIN);    /* PA8  = 0 */
+    DL_GPIO_setPins(GPIOA, BRIDGE_DUMMY_DUMMY_PIN);      /* PA22 = 1 */
 
     IOMUX->SECCFG.PINCM[PA8_PINCM]  = IOMUX_PINCM_PC_CONNECTED | PA8_GPIO_FUNC;
     IOMUX->SECCFG.PINCM[PA22_PINCM] = IOMUX_PINCM_PC_CONNECTED | PA22_GPIO_FUNC;
@@ -96,6 +97,7 @@ void laser_pins_to_gpio_safe(void)
 
 /*
  * Switch bridge pins to TIMA0 peripheral function.
+ * 
  *
  * Sequence:
  *   1. Switch PA22 (dummy, CCP0_CMPL) first: complement output is active

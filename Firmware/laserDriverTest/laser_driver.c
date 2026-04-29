@@ -93,7 +93,10 @@ static void tick_timer_init(void)
 int main(void)
 {
     SYSCFG_DL_init();
-    /* PA8 = 1 (laser path HIGH), PA22 = 0 (dummy LOW) — set by GPIO init. */
+    /* PA8 = 1 (laser path LOW), PA22 = 0 (dummy HIGH) — set by GPIO init.
+     * This is for safety - we make sure that the Laser diode sees no current
+     * when we're first powered on.
+     */
 
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
     DL_DAC12_enable(DAC0);
