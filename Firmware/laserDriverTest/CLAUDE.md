@@ -74,6 +74,29 @@ Never manually create or edit files in syscfg_gen/.
 Edit laser_driver.syscfg to change pins, clocks, or peripherals.
 Never edit syscfg_gen/ files — they are overwritten on every build.
 
+## Button Trigger (PB21)
+
+A momentary push-button is wired between PB21 and GND, active-low.  SysConfig
+configures PB21 as a digital input with the internal pull-up resistor enabled
+(`BUTTON_PORT` / `BUTTON_TRIGGER_PIN` macros in the generated header).
+
+**Behavior:** press and *release* the button to fire one trapezoidal laser pulse
+(ramp-up → hold-high → ramp-down → hold-low). The system then returns to
+`OVERALL_WAITING` and ignores the laser sub-states until the next button release.
+Presses that arrive while a cycle is already running are silently ignored.
+
+**Debounce:** the button is polled on every TIMG0 tick (100 kHz). The state
+advances only after the pin has been stable for `DEBOUNCE_TICKS` (1000 ticks =
+10 ms) consecutive ticks, so contact bounce does not cause false triggers or
+missed releases.
+
+**State machine integration:** the `MachineState` struct has three orthogonal
+sub-states: `overall` (`OVERALL_WAITING` / `OVERALL_TRIGGERED`), `button`
+(`BUTTON_IDLE` / `BUTTON_PRESSED` / `BUTTON_RELEASED`), and `laser`
+(`LASER_IDLE` / `LASER_RAMP_UP` / `LASER_HOLD_HIGH` / `LASER_RAMP_DOWN` /
+`LASER_HOLD_LOW`).  `BUTTON_RELEASED` is a one-tick transient that generates a
+boolean `trigger` flag consumed by the `OVERALL_WAITING` case to start a cycle.
+
 ## CRITICAL: Laser diode safety
 
 To prevent current spikes on the laser diode that might damage it or 

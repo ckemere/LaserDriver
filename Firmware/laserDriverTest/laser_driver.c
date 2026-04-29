@@ -33,34 +33,62 @@
 #define TICKS_PER_RAMP_STEP     625u    /* 200 000 / 320 */
 #define HOLD_TICKS              100000u
 
+/*
+ * Button debounce: require the pin to be stable for this many ticks before
+ * accepting a state change.  At 100 kHz, 1000 ticks = 10 ms.
+ */
+#define DEBOUNCE_TICKS          1000u
+
+/* -----------------------------------------------------------------------
+ * State machine types
+ * ----------------------------------------------------------------------- */
+
+/* Top-level: are we idle (waiting for a trigger) or running a laser pulse? */
 typedef enum {
-    STATE_IDLE,
-    STATE_RAMP_UP,
-    STATE_HOLD_HIGH,
-    STATE_RAMP_DOWN,
-    STATE_HOLD_LOW,
-} Phase;
+    OVERALL_WAITING,
+    OVERALL_TRIGGERED,
+} OverallPhase;
 
-typedef struct {
-    Phase    phase;
-    uint32_t ramp_step;
-    uint32_t tick_count;
-} LaserState;
+/* Button debounce sub-state. */
+typedef enum {
+    BUTTON_IDLE,        /* pin is HIGH (not pressed) */
+    BUTTON_PRESSED,     /* confirmed press, waiting for release */
+    BUTTON_RELEASED,    /* release confirmed — triggers laser on this tick */
+} ButtonPhase;
 
-/* Incremented only in TIMG0 ISR; read in main loop. */
-static volatile uint32_t isr_ticks = 0;
+/* Laser waveform sub-state. */
+typedef enum {
+    LASER_IDLE,
+    LASER_RAMP_UP,
+    LASER_HOLD_HIGH,
+    LASER_RAMP_DOWN,
+    LASER_HOLD_LOW,
+} LaserPhase;
 
 /*
- * Set to true to start the repeating trapezoidal pulse sequence.
- * A future button ISR should set this flag instead of the auto-start below.
+ * Full machine state.  get_next_state() and set_output() together with this
+ * struct completely describe the system — no other mutable global state is
+ * needed for the control loop.
  */
-volatile bool pulse_active = false;
+typedef struct {
+    OverallPhase overall;
+    LaserPhase   laser;
+    ButtonPhase  button;
+    uint32_t     ramp_step;      /* current PWM duty step (0..RAMP_STEPS) */
+    uint32_t     tick_count;     /* ticks elapsed within current laser phase */
+    uint32_t     debounce_ticks; /* consecutive ticks confirming button state */
+} MachineState;
+
+/* -----------------------------------------------------------------------
+ * Hardware helpers
+ * ----------------------------------------------------------------------- */
+
+/* Incremented only in TIMG0 ISR; read in get_next_state(). */
+static volatile uint32_t isr_ticks = 0;
 
 /*
  * Write the laser PWM duty step.  Call only while pins are in PWM mode.
  * UP mode: CC0 = step -> duty = step / 320.
- *   step = 0          -> ~0%   laser
- *   step = RAMP_STEPS -> 100%  laser
  */
 static inline void set_laser_step(uint32_t step)
 {
@@ -85,8 +113,8 @@ static void tick_timer_init(void)
     DL_TimerG_setClockConfig(TIMG0, (DL_TimerG_ClockConfig *)&clkCfg);
 
     static const DL_TimerG_TimerConfig tmrCfg = {
-        .timerMode    = DL_TIMER_TIMER_MODE_PERIODIC,   /* down-counting, repeating */
-        .period       = 319,                             /* 320 counts at 32 MHz = 100 kHz */
+        .timerMode    = DL_TIMER_TIMER_MODE_PERIODIC,
+        .period       = 319,   /* 320 counts at 32 MHz = 100 kHz */
         .startTimer   = DL_TIMER_STOP,
         .genIntermInt = DL_TIMER_INTERM_INT_DISABLED,
         .counterVal   = 0U,
@@ -96,66 +124,118 @@ static void tick_timer_init(void)
     DL_TimerG_enableClock(TIMG0);
 }
 
+/* -----------------------------------------------------------------------
+ * State machine
+ * ----------------------------------------------------------------------- */
+
 /*
- * Advance state by one tick.  Returns state unchanged if no new tick has
- * fired since the last call (guards against spurious WFI wakeups).
+ * Advance state by one tick.  Returns state unchanged if no new TIMG0 tick
+ * has fired (guards against spurious WFI wakeups from other sources).
+ *
+ * Button is polled by reading PB21 directly; active-low, pulled up by SysConfig.
+ * A BUTTON_RELEASED event (set for exactly one tick after confirmed release)
+ * is consumed by the overall phase logic to start a laser pulse cycle.
  */
-static LaserState get_next_state(LaserState s)
+static MachineState get_next_state(MachineState s)
 {
     static uint32_t last_tick = 0;
     if (isr_ticks == last_tick)
         return s;
     last_tick++;
-    s.tick_count++;
 
-    switch (s.phase) {
-        case STATE_IDLE:
-            if (pulse_active) {
+    /* --- Button debounce --- */
+    bool pin_pressed = (DL_GPIO_readPins(BUTTON_PORT, BUTTON_TRIGGER_PIN) == 0);
+    bool trigger = false;
+
+    switch (s.button) {
+        case BUTTON_IDLE:
+            if (pin_pressed) {
+                s.debounce_ticks++;
+                if (s.debounce_ticks >= DEBOUNCE_TICKS) {
+                    s.button = BUTTON_PRESSED;
+                    s.debounce_ticks = 0;
+                }
+            } else {
+                s.debounce_ticks = 0;
+            }
+            break;
+
+        case BUTTON_PRESSED:
+            if (!pin_pressed) {
+                s.debounce_ticks++;
+                if (s.debounce_ticks >= DEBOUNCE_TICKS) {
+                    s.button = BUTTON_RELEASED;
+                    s.debounce_ticks = 0;
+                }
+            } else {
+                s.debounce_ticks = 0;
+            }
+            break;
+
+        case BUTTON_RELEASED:
+            /* One-tick signal consumed here; pass trigger to overall logic. */
+            trigger = true;
+            s.button = BUTTON_IDLE;
+            break;
+    }
+
+    /* --- Overall and laser phases --- */
+    switch (s.overall) {
+        case OVERALL_WAITING:
+            /* Ignore button presses that arrive while a cycle is in progress. */
+            if (trigger) {
+                s.overall    = OVERALL_TRIGGERED;
+                s.laser      = LASER_RAMP_UP;
                 s.ramp_step  = 0;
                 s.tick_count = 0;
-                s.phase      = STATE_RAMP_UP;
             }
             break;
 
-        case STATE_RAMP_UP:
-            if (s.tick_count >= TICKS_PER_RAMP_STEP) {
-                s.tick_count = 0;
-                s.ramp_step++;
-                if (s.ramp_step >= RAMP_STEPS) {
-                    s.tick_count = 0;
-                    s.phase      = STATE_HOLD_HIGH;
-                }
-            }
-            break;
+        case OVERALL_TRIGGERED:
+            s.tick_count++;
+            switch (s.laser) {
+                case LASER_RAMP_UP:
+                    if (s.tick_count >= TICKS_PER_RAMP_STEP) {
+                        s.tick_count = 0;
+                        s.ramp_step++;
+                        if (s.ramp_step >= RAMP_STEPS) {
+                            s.tick_count = 0;
+                            s.laser      = LASER_HOLD_HIGH;
+                        }
+                    }
+                    break;
 
-        case STATE_HOLD_HIGH:
-            if (s.tick_count >= HOLD_TICKS) {
-                s.tick_count = 0;
-                s.ramp_step  = RAMP_STEPS;
-                s.phase      = STATE_RAMP_DOWN;
-            }
-            break;
+                case LASER_HOLD_HIGH:
+                    if (s.tick_count >= HOLD_TICKS) {
+                        s.tick_count = 0;
+                        s.ramp_step  = RAMP_STEPS;
+                        s.laser      = LASER_RAMP_DOWN;
+                    }
+                    break;
 
-        case STATE_RAMP_DOWN:
-            if (s.tick_count >= TICKS_PER_RAMP_STEP) {
-                s.tick_count = 0;
-                s.ramp_step--;
-                if (s.ramp_step == 0) {
-                    s.tick_count = 0;
-                    s.phase      = STATE_HOLD_LOW;
-                }
-            }
-            break;
+                case LASER_RAMP_DOWN:
+                    if (s.tick_count >= TICKS_PER_RAMP_STEP) {
+                        s.tick_count = 0;
+                        s.ramp_step--;
+                        if (s.ramp_step == 0) {
+                            s.tick_count = 0;
+                            s.laser      = LASER_HOLD_LOW;
+                        }
+                    }
+                    break;
 
-        case STATE_HOLD_LOW:
-            if (s.tick_count >= HOLD_TICKS) {
-                s.tick_count = 0;
-                s.ramp_step  = 0;
-                s.phase      = STATE_RAMP_UP;
-            }
-            break;
+                case LASER_HOLD_LOW:
+                    if (s.tick_count >= HOLD_TICKS) {
+                        s.tick_count = 0;
+                        s.ramp_step  = 0;
+                        s.laser      = LASER_IDLE;
+                        s.overall    = OVERALL_WAITING;
+                    }
+                    break;
 
-        default:
+                default:
+                    break;
+            }
             break;
     }
 
@@ -163,19 +243,26 @@ static LaserState get_next_state(LaserState s)
 }
 
 /*
- * Drive hardware to match the current state: switch pin mux between GPIO-safe
- * and PWM modes, and set the PWM duty cycle from ramp_step.
+ * Drive hardware to match the current state.
+ * When waiting for a trigger, laser is always off (GPIO-safe).
+ * During a triggered cycle, switches pin mux between GPIO-safe and PWM
+ * and sets the PWM duty from ramp_step.
  */
-static void set_output(LaserState s)
+static void set_output(MachineState s)
 {
-    switch (s.phase) {
-        case STATE_IDLE:
-        case STATE_HOLD_LOW:
+    if (s.overall == OVERALL_WAITING) {
+        laser_pins_to_gpio_safe();
+        return;
+    }
+
+    switch (s.laser) {
+        case LASER_IDLE:
+        case LASER_HOLD_LOW:
             laser_pins_to_gpio_safe();
             break;
 
-        case STATE_RAMP_UP:
-        case STATE_RAMP_DOWN:
+        case LASER_RAMP_UP:
+        case LASER_RAMP_DOWN:
             if (s.ramp_step == 0) {
                 laser_pins_to_gpio_safe();
             } else {
@@ -184,7 +271,7 @@ static void set_output(LaserState s)
             }
             break;
 
-        case STATE_HOLD_HIGH:
+        case LASER_HOLD_HIGH:
             laser_pins_to_pwm();
             set_laser_step(RAMP_STEPS);
             break;
@@ -194,12 +281,15 @@ static void set_output(LaserState s)
     }
 }
 
+/* -----------------------------------------------------------------------
+ * Entry point
+ * ----------------------------------------------------------------------- */
+
 int main(void)
 {
     SYSCFG_DL_init();
-    /* PA8 = 1 (laser path LOW), PA22 = 0 (dummy HIGH) — set by GPIO init.
-     * This is for safety - we make sure that the Laser diode sees no current
-     * when we're first powered on.
+    /* PA8 = 0 (laser path LOW), PA22 = 1 (dummy HIGH), PB21 pull-up enabled
+     * — all set by GPIO init in SYSCFG_DL_init().
      */
 
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
@@ -214,10 +304,7 @@ int main(void)
     NVIC_EnableIRQ(TIMG0_INT_IRQn);
     DL_TimerG_startCounter(TIMG0);
 
-    /* Auto-start on boot; replace with a button-press handler to set this flag. */
-    pulse_active = true;
-
-    LaserState state = { STATE_IDLE, 0, 0 };
+    MachineState state = { OVERALL_WAITING, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
 
     while (1) {
         state = get_next_state(state);

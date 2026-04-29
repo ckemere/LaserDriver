@@ -41,6 +41,14 @@ GPIO2.associatedPins[0].assignedPort = "PORTA";
 GPIO2.associatedPins[0].assignedPin  = "22";
 GPIO2.associatedPins[0].initialValue = "SET";
 
+const GPIO3 = GPIO.addInstance();
+GPIO3.$name                              = "BUTTON";
+GPIO3.associatedPins[0].$name            = "TRIGGER";
+GPIO3.associatedPins[0].direction        = "INPUT";
+GPIO3.associatedPins[0].internalResistor = "PULL_UP";
+GPIO3.associatedPins[0].assignedPort     = "PORTB";
+GPIO3.associatedPins[0].assignedPin      = "21";
+
 SYSCTL.MFPCLKEn              = true;
 SYSCTL.forceDefaultClkConfig = true;
 SYSCTL.clockTreeEn           = true;
@@ -68,3 +76,4 @@ Board.peripheral.swclkPin.$suggestSolution   = "PA20";
 Board.peripheral.swdioPin.$suggestSolution   = "PA19";
 GPIO1.associatedPins[0].pin.$suggestSolution = "PA8";
 GPIO2.associatedPins[0].pin.$suggestSolution = "PA22";
+GPIO3.associatedPins[0].pin.$suggestSolution = "PB21";
