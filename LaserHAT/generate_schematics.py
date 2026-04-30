@@ -62,12 +62,24 @@ def new_schematic(file_uuid, title, paper="A3") -> Schematic:
     sch.titleBlock = tb
     return sch
 
+def _fix_lib_sym_angles(ls):
+    """KiCad requires a numeric angle on every pin 'at' clause.
+    Pins copied from hand-written files may have angle=None; default to 0."""
+    for unit in ls.units:
+        for pin in unit.pins:
+            if pin.position.angle is None:
+                pin.position.angle = 0
+    for pin in ls.pins:
+        if pin.position.angle is None:
+            pin.position.angle = 0
+
 def copy_lib_syms(sch: Schematic, src_path: str):
     """Copy embedded lib symbols from an existing schematic."""
     src = Schematic.from_file(src_path)
     have = {ls.entryName for ls in sch.libSymbols}
     for ls in src.libSymbols:
         if ls.entryName not in have:
+            _fix_lib_sym_angles(ls)
             sch.libSymbols.append(ls)
 
 # ── Schematic item builders ───────────────────────────────────────────────────
