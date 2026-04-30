@@ -79,6 +79,12 @@ two-number `(at X Y)` form — it requires `(at X Y angle)`).
 
 ---
 
+## KiCad PCB file rules
+
+- **No comments** — KiCad's S-expression parser rejects any comment syntax (`;`, `#`, `//`). Never add comments to `.kicad_pcb` files.
+- **No `(pintype ...)`** in pad entries — that token is schematic-only; pcbnew will reject it.
+- The PCB template (`LaserDriver.kicad_pcb`) contains only the board outline (Edge.Cuts), four M2.5 mounting holes, and the 40-pin GPIO header. All component footprints are added via "Update PCB from Schematic" in KiCad.
+
 ## KiCad S-expression conventions (kiutils)
 
 - Always use kiutils `to_file()` — never hand-write S-expressions. kiutils handles
