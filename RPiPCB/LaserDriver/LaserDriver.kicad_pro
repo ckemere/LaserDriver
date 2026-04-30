@@ -2,7 +2,18 @@
   "board": {
     "3dviewports": [],
     "design_settings": {
-      "defaults": {},
+      "defaults": {
+        "board_outline_line_width": 0.05,
+        "copper_line_width": 0.2,
+        "copper_text_size_h": 1.5,
+        "copper_text_size_v": 1.5,
+        "copper_text_thickness": 0.3,
+        "other_line_width": 0.15,
+        "silk_line_width": 0.15,
+        "silk_text_size_h": 1.0,
+        "silk_text_size_v": 1.0,
+        "silk_text_thickness": 0.15
+      },
       "diff_pair_dimensions": [],
       "drc_exclusions": [],
       "rules": {},
@@ -20,7 +31,6 @@
     "layer_presets": [],
     "viewports": []
   },
-  "boards": [],
   "cvpcb": {
     "equivalence_files": []
   },
@@ -48,8 +58,26 @@
         "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.2,
-        "via_diameter": 0.6,
-        "via_drill": 0.3,
+        "via_diameter": 0.8,
+        "via_drill": 0.4,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.3,
+        "diff_pair_gap": 0.25,
+        "diff_pair_via_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Laser_Power",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 1,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.5,
+        "via_diameter": 1.0,
+        "via_drill": 0.5,
         "wire_width": 6
       }
     ],
@@ -75,9 +103,64 @@
     "page_layout_descr_file": ""
   },
   "schematic": {
-    "legacy_lib_dir": "",
-    "legacy_lib_list": []
+    "annotate_start_num": 0,
+    "bom_export_filename": "",
+    "bom_fmt_presets": [],
+    "bom_fmt_settings": {
+      "fields_ordered": [
+        {"label": "Reference", "name": "Reference"},
+        {"label": "Value", "name": "Value"},
+        {"label": "Footprint", "name": "Footprint"},
+        {"label": "Datasheet", "name": "Datasheet"},
+        {"label": "Quantity", "name": "${QUANTITY}"},
+        {"label": "DNP", "name": "${DNP}"}
+      ],
+      "group_symbols": true,
+      "output_file_name": "LaserDriver_bom",
+      "ref_range_delimiter": "",
+      "ref_separator": ","
+    },
+    "bom_presets": [],
+    "connection_grid_size": 50.0,
+    "default_bus_thickness": 12.0,
+    "default_junction_size": 0.0,
+    "default_line_thickness": 6.0,
+    "default_text_size": 50.0,
+    "default_wire_thickness": 6.0,
+    "drawing_sheet_file": "",
+    "field_names": [],
+    "intersheets_ref_own_page": false,
+    "intersheets_ref_prefix": "",
+    "intersheets_ref_short": false,
+    "intersheets_ref_show": false,
+    "intersheets_ref_suffix": "",
+    "junction_size_choice": 3,
+    "label_size_ratio": 0.375,
+    "net_format_name": "",
+    "ngspice_settings": {
+      "WorkbookFilename": ""
+    },
+    "operating_point_overlay_i_precision": 3,
+    "operating_point_overlay_i_range": "~A",
+    "operating_point_overlay_v_precision": 3,
+    "operating_point_overlay_v_range": "~V",
+    "page_layout_descr_file": "",
+    "pin_symbol_size": 25.0,
+    "plot_directory": "",
+    "spice_current_sheet_as_root": false,
+    "spice_external_command": "spice \"%I\"",
+    "spice_model_current_sheet_as_root": true,
+    "spice_save_all_currents": false,
+    "spice_save_all_dissipations": false,
+    "spice_save_all_voltages": false,
+    "subpart_first_id": 65,
+    "subpart_id_separator": 0
   },
-  "sheets": [],
+  "sheets": [
+    ["00000001-0000-0000-0000-000000000001", "Root"],
+    ["00000002-0000-0000-0000-000000000001", "Laser Driver Circuit"],
+    ["00000003-0000-0000-0000-000000000001", "MSPM0 Controller"],
+    ["00000004-0000-0000-0000-000000000001", "USB-C UART Interface"]
+  ],
   "text_variables": {}
 }
