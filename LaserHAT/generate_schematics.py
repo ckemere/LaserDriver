@@ -56,6 +56,12 @@ def pos(x, y, angle=0) -> Position:
 def default_effects() -> Effects:
     return Effects(font=Font(height=1.27, width=1.27))
 
+def hidden_effects() -> Effects:
+    """Effects with hide=True — used for Footprint, Datasheet, Description properties."""
+    e = Effects(font=Font(height=1.27, width=1.27))
+    e.hide = True
+    return e
+
 def pin_global(sx, sy, sa, px, py):
     """Global coords of a pin's wire-connection point.
     In KiCad the pin 'at' coordinates ARE the wire endpoint; apply symbol rotation."""
@@ -103,6 +109,7 @@ def _fix_lib_sym_angles(ls):
 
 def _hide_passive_pins(ls):
     """Rule 1: hide pin names and pin numbers on passive components."""
+    ls.pinNames       = True   # must be True for (pin_names hide) to be serialized
     ls.pinNamesHide   = True
     ls.hidePinNumbers = True
     for unit in ls.units:
@@ -136,6 +143,18 @@ def apply_passive_hiding(sch: Schematic):
         if ls.entryName in PASSIVE_ENTRIES:
             _hide_passive_pins(ls)
 
+_SHOW_PROP_KEYS = {"Reference", "Value"}
+
+def hide_extra_properties(sch: Schematic):
+    """Hide all schematic symbol properties except Reference and Value (Rule 1 / user rule)."""
+    for sym in sch.schematicSymbols:
+        for prop in sym.properties:
+            if prop.key not in _SHOW_PROP_KEYS:
+                if prop.effects is None:
+                    prop.effects = hidden_effects()
+                else:
+                    prop.effects.hide = True
+
 # ── Schematic item builders ───────────────────────────────────────────────────
 
 def add_sym(sch: Schematic, lib_id: str, x, y, ref, value,
@@ -157,9 +176,9 @@ def add_sym(sch: Schematic, lib_id: str, x, y, ref, value,
         Property(key="Value",      value=value,     position=pos(x+1.5, y+2),
                  effects=default_effects()),
         Property(key="Footprint",  value=footprint, position=pos(x, y),
-                 effects=Effects(font=Font(height=1.27, width=1.27))),
+                 effects=hidden_effects()),
         Property(key="Datasheet",  value="~",       position=pos(x, y),
-                 effects=Effects(font=Font(height=1.27, width=1.27))),
+                 effects=hidden_effects()),
     ]
     if extra_props:
         sym.properties.extend(extra_props)
@@ -207,10 +226,8 @@ def pwr_symbol(sch: Schematic, lib_entry: str, x, y):
                  position=pos(x, y-2), effects=default_effects()),
         Property(key="Value",     value=lib_entry,
                  position=pos(x, y+2), effects=default_effects()),
-        Property(key="Footprint", value="",
-                 effects=Effects(font=Font(height=1.27, width=1.27))),
-        Property(key="Datasheet", value="~",
-                 effects=Effects(font=Font(height=1.27, width=1.27))),
+        Property(key="Footprint", value="",     effects=hidden_effects()),
+        Property(key="Datasheet", value="~",    effects=hidden_effects()),
     ]
     sym.pins = {"1": uid()}
     sch.schematicSymbols.append(sym)
@@ -314,6 +331,7 @@ def _make_laser_v_sym():
     # Build two units: unit 0 = graphics, unit 1 = pin
     from kiutils.symbol import Symbol as Sym
     u0 = Sym(unitId=0, styleId=1)
+    u0.entryName = "+LASER_V"   # prevents serialization as "None_0_1"
     from kiutils.items.schitems import PolyLine
     # Up-arrow shape (same as +5V)
     pl1 = PolyLine()
@@ -331,6 +349,7 @@ def _make_laser_v_sym():
     ls.units.append(u0)
 
     u1 = Sym(unitId=1, styleId=1)
+    u1.entryName = "+LASER_V"   # prevents serialization as "None_1_1"
     pin = SymbolPin()
     pin.electricalType  = "power_in"
     pin.graphicalStyle  = "line"
@@ -350,8 +369,9 @@ def build_laser_driver() -> Schematic:
     into the laser_driver_circuit sub-sheet for the HAT design."""
     src = Schematic.from_file(ORIG_LASER)
 
-    # ── Fix up lib symbols ────────────────────────────────────────────────────
+    # ── Fix up lib symbols and symbol properties ──────────────────────────────
     apply_passive_hiding(src)
+    hide_extra_properties(src)
 
     # Rename +5V lib symbol to +LASER_V
     have_laser_v = any(ls.entryName == "+LASER_V" for ls in src.libSymbols)
