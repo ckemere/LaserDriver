@@ -568,7 +568,7 @@ def build_mspm0(lib_src: str) -> Schematic:
         mcu.pins[pnum] = uid()
         gx, gy = pin_global(MCU_X, MCU_Y, 0, px, py)
         if net in ("+3V3", "GND"):
-            pwr_symbol(sch, net.lstrip("+"), gx, gy)
+            pwr_symbol(sch, net, gx, gy)
         else:
             net_label(sch, net, gx, gy, pin_ang)
 
@@ -706,6 +706,74 @@ def build_usb_uart(lib_src: str) -> Schematic:
 
 ROOT_PATH = f"/{TEMPLATE_UUID}"
 
+# ── RPi GPIO40 pin assignment ──────────────────────────────────────────────────
+# (pin_num, local_x, local_y, net, is_power, routing_angle)
+# Odd pins (1,3,...) at local_x=-3.81, routing_angle=0  → wire goes left
+# Even pins (2,4,...) at local_x=+6.35, routing_angle=180 → wire goes right
+_PI_GPIO_MAP = [
+    ( 1, -3.81,   0.00, "+3V3",      True,   0),  # 3V3 power
+    ( 2,  6.35,   0.00, "VCC_5V_IN", False, 180),  # 5V → boost
+    ( 3, -3.81,  -2.54, None,        False,   0),  # GPIO2 NC
+    ( 4,  6.35,  -2.54, "VCC_5V_IN", False, 180),  # 5V → boost
+    ( 5, -3.81,  -5.08, None,        False,   0),  # GPIO3 NC
+    ( 6,  6.35,  -5.08, "GND",       True,  180),
+    ( 7, -3.81,  -7.62, None,        False,   0),  # GPIO4 NC
+    ( 8,  6.35,  -7.62, "UART_TX",   False, 180),  # GPIO14
+    ( 9, -3.81, -10.16, "GND",       True,    0),
+    (10,  6.35, -10.16, "UART_RX",   False, 180),  # GPIO15
+    (11, -3.81, -12.70, "Pi_GPIO17", False,   0),  # MCU power enable
+    (12,  6.35, -12.70, None,        False, 180),  # GPIO18 NC
+    (13, -3.81, -15.24, None,        False,   0),  # GPIO27 NC
+    (14,  6.35, -15.24, "GND",       True,  180),
+    (15, -3.81, -17.78, None,        False,   0),  # GPIO22 NC
+    (16,  6.35, -17.78, None,        False, 180),  # GPIO23 NC
+    (17, -3.81, -20.32, "+3V3",      True,    0),  # 3V3 power
+    (18,  6.35, -20.32, None,        False, 180),  # GPIO24 NC
+    (19, -3.81, -22.86, None,        False,   0),  # GPIO10/MOSI NC
+    (20,  6.35, -22.86, "GND",       True,  180),
+    (21, -3.81, -25.40, None,        False,   0),  # GPIO9/MISO NC
+    (22,  6.35, -25.40, None,        False, 180),  # GPIO25 NC
+    (23, -3.81, -27.94, None,        False,   0),  # GPIO11/SCLK NC
+    (24,  6.35, -27.94, None,        False, 180),  # GPIO8/CE0 NC
+    (25, -3.81, -30.48, "GND",       True,    0),
+    (26,  6.35, -30.48, None,        False, 180),  # GPIO7/CE1 NC
+    (27, -3.81, -33.02, "ID_SDA",    False,   0),  # I2C EEPROM SDA (HAT spec)
+    (28,  6.35, -33.02, "ID_SCL",    False, 180),  # I2C EEPROM SCL (HAT spec)
+    (29, -3.81, -35.56, None,        False,   0),  # GPIO5 NC
+    (30,  6.35, -35.56, "GND",       True,  180),
+    (31, -3.81, -38.10, None,        False,   0),  # GPIO6 NC
+    (32,  6.35, -38.10, None,        False, 180),  # GPIO12 NC
+    (33, -3.81, -40.64, None,        False,   0),  # GPIO13 NC
+    (34,  6.35, -40.64, "GND",       True,  180),
+    (35, -3.81, -43.18, None,        False,   0),  # GPIO19 NC
+    (36,  6.35, -43.18, None,        False, 180),  # GPIO16 NC
+    (37, -3.81, -45.72, "TRIGGER",   False,   0),  # GPIO26 → trigger
+    (38,  6.35, -45.72, None,        False, 180),  # GPIO20 NC
+    (39, -3.81, -48.26, "GND",       True,    0),
+    (40,  6.35, -48.26, None,        False, 180),  # GPIO21 NC
+]
+
+def place_pi_header(sch: Schematic, J_X: float, J_Y: float, sheet_path: str):
+    """Place the RPi 40-pin GPIO header and connect all nets.
+
+    Odd pins (1,3,...,39) wire left; even pins (2,4,...,40) wire right.
+    Power nets get power symbols; signals get local labels; NC pins get no-connect marks.
+    """
+    j_pi = add_sym(sch, "Connector_Generic:Conn_02x20_Odd_Even",
+                   J_X, J_Y, "J_PI", "RPi_GPIO_40",
+                   "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical")
+    add_sym_instance(sch, j_pi, sheet_path)
+    j_pi.pins = {str(n): uid() for n in range(1, 41)}
+
+    for pnum, lx, ly, net, is_power, routing_angle in _PI_GPIO_MAP:
+        gx, gy = pin_global(J_X, J_Y, 0, lx, ly)
+        if net is None:
+            no_connect(sch, gx, gy)
+        elif is_power:
+            pwr_symbol(sch, net, gx, gy)
+        else:
+            net_label(sch, net, gx, gy, routing_angle)
+
 def _add_hsheet(sch, uuid, filename, name, x, y, w, h, pin_list):
     sh = HierarchicalSheet()
     sh.uuid     = uuid
@@ -784,12 +852,12 @@ def build_root(lib_src: str) -> Schematic:
                     "Connector_Coaxial:BNC_Amphenol_031-221-RFX_Horizontal")
     add_sym_instance(sch, j_bnc, ROOT_PATH)
     j_bnc.pins = {"1": uid(), "2": uid()}
-    net_label(sch, "TRIGGER_SIG", 90 - 5, 40,    180)   # rough pin position
-    net_label(sch, "GND",         90,     40 + 5,  270)
+    net_label(sch, "TRIGGER", 85, 40, 180)
+    pwr_symbol(sch, "GND", 90, 45)
 
     place_rc(sch, "R", 105, 40, "R_TERM", "50R DNP",
              "Resistor_SMD:R_0402_1005Metric",
-             "TRIGGER_SIG", "GND", ROOT_PATH)
+             "TRIGGER", "GND", ROOT_PATH)
 
     # ── SWD 5-pin header ─────────────────────────────────────────────────────
     # Conn_01x05: pins at (-3.81, (i-1)*-2.54) for i=1..5, angle=0
@@ -805,7 +873,7 @@ def build_root(lib_src: str) -> Schematic:
         py = (i - 1) * -2.54
         gx, gy = pin_global(J_SWD_X, J_SWD_Y, 0, -3.81, py)
         if net in ("+3V3", "GND"):
-            pwr_symbol(sch, net.lstrip("+"), gx, gy)
+            pwr_symbol(sch, net, gx, gy)
         else:
             net_label(sch, net, gx, gy, 0)   # pin angle=0 → wire goes left
 
@@ -823,7 +891,7 @@ def build_root(lib_src: str) -> Schematic:
         gx, gy = pin_global(U_EE_X, U_EE_Y, 0, px, py)
         pin_ang = 0 if px < 0 else 180
         if net in ("+3V3", "GND"):
-            pwr_symbol(sch, net.lstrip("+"), gx, gy)
+            pwr_symbol(sch, net, gx, gy)
         else:
             net_label(sch, net, gx, gy, pin_ang)
 
@@ -832,6 +900,11 @@ def build_root(lib_src: str) -> Schematic:
              "Resistor_SMD:R_0402_1005Metric", "+3V3", "ID_SDA", ROOT_PATH)
     place_rc(sch, "R", 188, 25, "R_I2C_SCL", "4k7",
              "Resistor_SMD:R_0402_1005Metric", "+3V3", "ID_SCL", ROOT_PATH)
+
+    # ── Raspberry Pi 40-pin GPIO header ──────────────────────────────────────
+    # Placed below the sub-sheet boxes; spans ~48 mm vertically from J_Y downward.
+    # Left (odd) labels at x ≈ 25; right (even) labels at x ≈ 55.
+    place_pi_header(sch, 40, 230, ROOT_PATH)
 
     # ── Hierarchical sub-sheet boxes ─────────────────────────────────────────
     # Spread out horizontally with generous spacing
