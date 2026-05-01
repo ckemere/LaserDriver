@@ -753,19 +753,17 @@ _PI_GPIO_MAP = [
     (40,  6.35, -48.26, None,        False, 180),  # GPIO21 NC
 ]
 
-def place_pi_header(sch: Schematic, J_X: float, J_Y: float, sheet_path: str):
-    """Place the RPi 40-pin GPIO header and connect all nets.
+ORIG_ROOT = os.path.join(REPO_ROOT, "PCB", "laserhat_root_orig.kicad_sch")
 
-    Odd pins (1,3,...,39) wire left; even pins (2,4,...,40) wire right.
-    Power nets get power symbols; signals get local labels; NC pins get no-connect marks.
+def _connect_pi_header(sch: Schematic, j1_sym: "SchematicSymbol", sheet_path: str):
+    """Add net labels / power symbols / no-connects to the preserved J1 GPIO header.
+
+    The symbol instance is already in sch.schematicSymbols; we only add wires and labels.
     """
-    j_pi = add_sym(sch, "Connector_Generic:Conn_02x20_Odd_Even",
-                   J_X, J_Y, "J_PI", "RPi_GPIO_40",
-                   "Connector_PinHeader_2.54mm:PinHeader_2x20_P2.54mm_Vertical")
-    add_sym_instance(sch, j_pi, sheet_path)
-    j_pi.pins = {str(n): uid() for n in range(1, 41)}
-
-    for pnum, lx, ly, net, is_power, routing_angle in _PI_GPIO_MAP:
+    add_sym_instance(sch, j1_sym, sheet_path)
+    J_X = j1_sym.position.X
+    J_Y = j1_sym.position.Y
+    for _pnum, lx, ly, net, is_power, routing_angle in _PI_GPIO_MAP:
         gx, gy = pin_global(J_X, J_Y, 0, lx, ly)
         if net is None:
             no_connect(sch, gx, gy)
@@ -814,14 +812,36 @@ def _add_hsheet(sch, uuid, filename, name, x, y, w, h, pin_list):
     return sh
 
 def build_root(lib_src: str) -> Schematic:
+    # Load original schematic to recover the pristine GPIO header lib symbol and
+    # instance (with UUID 212bfd25-0010-… that the PCB footprint path references).
+    orig = Schematic.from_file(ORIG_ROOT)
+    j1_lib = next((ls for ls in orig.libSymbols
+                   if ls.entryName == "Conn_02x20_Odd_Even"), None)
+    j1_sym = next((s for s in orig.schematicSymbols
+                   if s.entryName == "Conn_02x20_Odd_Even"), None)
+
     sch = new_schematic(TEMPLATE_UUID, "LaserDriver Pi HAT")
     sch.titleBlock.comments = {
         1: "Pi HAT: MSPM0G3507 + MT3608 boost + laser driver + USB-C UART",
         2: "GPIO17=MCU power switch, GPIO14/15=UART, GPIO26=TRIGGER",
         3: "SWD 5-pin header for OpenOCD firmware updates (NRST/SWCLK/SWDIO/3V3/GND)",
     }
-    copy_lib_syms(sch, lib_src)
+
+    # Add the pristine GPIO header lib symbol before anything else so it is never
+    # overwritten by copy_lib_syms below.
+    if j1_lib:
+        _fix_lib_sym_angles(j1_lib)
+        sch.libSymbols.append(j1_lib)
+
+    copy_lib_syms(sch, lib_src)  # won't duplicate Conn_02x20_Odd_Even
     set_sheet_instance(sch, "/", "1")
+
+    # ── Raspberry Pi 40-pin GPIO header ─────────────────────────────────────
+    # Re-use the instance from the original schematic verbatim — this preserves
+    # the UUID that the PCB footprint path points at.
+    if j1_sym:
+        sch.schematicSymbols.append(j1_sym)
+        _connect_pi_header(sch, j1_sym, ROOT_PATH)
 
     # ── P-MOSFET power switch for MSPM0 ──────────────────────────────────────
     # DMG2302U used as PMOS substitute (same package/footprint as DMG2305UX)
@@ -901,11 +921,6 @@ def build_root(lib_src: str) -> Schematic:
     place_rc(sch, "R", 188, 25, "R_I2C_SCL", "4k7",
              "Resistor_SMD:R_0402_1005Metric", "+3V3", "ID_SCL", ROOT_PATH)
 
-    # ── Raspberry Pi 40-pin GPIO header ──────────────────────────────────────
-    # Placed below the sub-sheet boxes; spans ~48 mm vertically from J_Y downward.
-    # Left (odd) labels at x ≈ 25; right (even) labels at x ≈ 55.
-    place_pi_header(sch, 40, 230, ROOT_PATH)
-
     # ── Hierarchical sub-sheet boxes ─────────────────────────────────────────
     # Spread out horizontally with generous spacing
     _add_hsheet(sch,
@@ -954,6 +969,7 @@ def build_root(lib_src: str) -> Schematic:
         ],
     )
 
+    hide_extra_properties(sch)
     return sch
 
 

@@ -53,7 +53,7 @@ signals confined to a single sheet.
 
 ---
 
-## Rule 3 — Preserve hand-edited schematics
+## Rule 3 — Preserve hand-edited schematics; never break UUID links
 
 **Never regenerate a sheet from scratch if a hand-edited original exists.**
 
@@ -62,6 +62,16 @@ signals confined to a single sheet.
 - Preserve: all symbol positions, rotations, connected nets, property locations.
 - `PCB/laser_driver.kicad_sch` is the authoritative original for the laser driver circuit.
   Load it in `build_laser_driver()` rather than placing symbols by coordinate.
+- `PCB/laserhat_root_orig.kicad_sch` is the authoritative original for the root schematic's
+  40-pin GPIO header. `build_root()` loads `j1_sym` from it so the UUID
+  `212bfd25-0010-0000-0000-000000000001` is never changed — that UUID is what the PCB
+  footprint's `(path ...)` field references. Regenerating it with a fresh UUID silently
+  breaks schematic↔PCB synchronisation.
+
+**UUID invariant**: KiCad matches schematic symbols to PCB footprints via the symbol
+instance UUID embedded in the footprint as `(path "/<uuid>")`.  If a generator creates
+a new random UUID for a symbol that already has a footprint, that footprint becomes
+orphaned. Always preserve UUIDs for any symbol that has a matching PCB footprint.
 
 When copying lib symbols from an existing schematic, always call `_fix_lib_sym_angles(ls)`
 to set `pin.position.angle = 0` on any pin where `angle is None` (eeschema rejects the
