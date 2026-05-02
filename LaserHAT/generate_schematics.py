@@ -145,6 +145,54 @@ def apply_passive_hiding(sch: Schematic):
 
 _SHOW_PROP_KEYS = {"Reference", "Value"}
 
+def _inject_verbatim(out_path: str, orig_path: str, search_key: str,
+                     label: str = ""):
+    """Find search_key in orig_path and substitute the enclosing S-expr block
+    verbatim into out_path in place of whatever kiutils generated.
+
+    kiutils lossy round-trip drops (exclude_from_sim no) and silently ignores
+    (hide yes) on property effects (it only handles bare `hide`).  This is the
+    only reliable fix — post-process with the exact original text.
+    """
+    import sys
+
+    def _find_sexpr(text: str, key: str):
+        idx = text.find(key)
+        if idx < 0:
+            return None, -1, -1
+        depth = 0
+        for i, ch in enumerate(text[idx:]):
+            if ch == '(':
+                depth += 1
+            elif ch == ')':
+                depth -= 1
+                if depth == 0:
+                    return text[idx: idx + i + 1], idx, idx + i + 1
+        return None, -1, -1
+
+    with open(orig_path) as f:
+        orig_text = f.read()
+    with open(out_path) as f:
+        out_text = f.read()
+
+    orig_block, _, _ = _find_sexpr(orig_text, search_key)
+    if orig_block is None:
+        print(f"  WARNING: {label!r} key not found in {orig_path}", file=sys.stderr)
+        return
+
+    out_block, out_start, out_end = _find_sexpr(out_text, search_key)
+    if out_block is None:
+        print(f"  WARNING: {label!r} key not found in {out_path}", file=sys.stderr)
+        return
+
+    # Normalize: original uses tab indentation; kiutils uses spaces.
+    # Replace each tab with 2 spaces (one indent level = 2 spaces in kiutils output).
+    orig_normalized = orig_block.replace('\t', '  ')
+
+    with open(out_path, 'w') as f:
+        f.write(out_text[:out_start] + orig_normalized + out_text[out_end:])
+
+
 def hide_extra_properties(sch: Schematic):
     """Hide all schematic symbol properties except Reference and Value (Rule 1 / user rule)."""
     for sym in sch.schematicSymbols:
@@ -1024,6 +1072,20 @@ def main():
         except Exception as exc:
             print(f"  ERROR: {exc}", file=sys.stderr)
             raise
+
+    # Post-process root schematic: replace kiutils-generated Conn_02x20_Odd_Even blocks
+    # with verbatim originals.  kiutils silently drops (exclude_from_sim no) and fails
+    # to round-trip (hide yes) on property effects — text substitution is the only fix.
+    root_out = os.path.join(OUT_DIR, "LaserDriver.kicad_sch")
+    # 1. Lib symbol definition inside (lib_symbols ...)
+    _inject_verbatim(root_out, ORIG_ROOT,
+                     '(symbol "Connector_Generic:Conn_02x20_Odd_Even"',
+                     "lib symbol Conn_02x20_Odd_Even")
+    # 2. Schematic instance
+    _inject_verbatim(root_out, ORIG_ROOT,
+                     '(symbol (lib_id "Connector_Generic:Conn_02x20_Odd_Even")',
+                     "instance Conn_02x20_Odd_Even")
+    print("  Injected verbatim Conn_02x20_Odd_Even (lib symbol + instance).")
 
     print("\nDone — open LaserHAT/LaserDriver.kicad_pro in KiCad to verify.")
 
