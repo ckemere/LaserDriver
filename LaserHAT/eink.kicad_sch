@@ -1,0 +1,85 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "b5f3c962-bf62-49dd-a930-25e93dc82b4d")
+	(paper "A4")
+	(lib_symbols)
+	(hierarchical_label "EINK_RESET"
+		(shape input)
+		(at 151.13 87.63 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "47bffc0d-5944-4d3c-bfaf-0bf9bba26aaa")
+	)
+	(hierarchical_label "EINK_SCK"
+		(shape input)
+		(at 151.13 80.01 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "59e36747-af65-440f-865e-99f908156422")
+	)
+	(hierarchical_label "EINK_DC"
+		(shape input)
+		(at 151.13 85.09 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "62b1ee5e-50ee-4dfb-9961-939987580266")
+	)
+	(hierarchical_label "EINK_BUSY"
+		(shape output)
+		(at 151.13 90.17 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "957c8d5a-ef1a-49e6-8c4e-5a8fada7b1c9")
+	)
+	(hierarchical_label "EINK_COPI"
+		(shape input)
+		(at 151.13 74.93 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "a7393400-dd53-4c25-981c-a82e221aad48")
+	)
+	(hierarchical_label "EINK_CS"
+		(shape input)
+		(at 151.13 82.55 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d1913e90-e09c-4402-ae02-1beb2433f2d0")
+	)
+	(hierarchical_label "EINK_CIPO"
+		(shape output)
+		(at 151.13 77.47 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "dbdfee92-6b9b-4d8d-bcbd-eb6c1fd18f1a")
+	)
+)
