@@ -14,6 +14,168 @@
 		(comment 3 "Q2 must be Si1902DL (1.25A) for red laser; BSS138DW ok for blue")
 	)
 	(lib_symbols
+		(symbol "1N4148W_1"
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "D"
+				(at 0 2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "1N4148W"
+				(at 0 -2.54 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Diode_SMD:D_SOD-123"
+				(at 0 -4.445 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Description" "75V 0.15A Fast Switching Diode, SOD-123"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Sim.Device" "D"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Sim.Pins" "1=K 2=A"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "ki_keywords" "diode"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "D*SOD?123*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "1N4148W_1_0_1"
+				(polyline
+					(pts
+						(xy -1.27 1.27) (xy -1.27 -1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy -1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "1N4148W_1_1_1"
+				(pin passive line
+					(at -3.81 0 0)
+					(length 2.54)
+					(name "K"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 3.81 0 180)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Amplifier_Operational:TLV2371DBV"
 			(pin_names
 				(offset 0.127)
@@ -343,210 +505,6 @@
 						)
 					)
 					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "Connector:Conn_01x03_Pin"
-			(pin_names
-				(offset 1.016)
-				(hide yes)
-			)
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "J"
-				(at 0 5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "Conn_01x03_Pin"
-				(at 0 -5.08 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "Description" "Generic connector, single row, 01x03, script generated"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_locked" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "connector"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "Connector*:*_1x??_*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "Conn_01x03_Pin_1_1"
-				(rectangle
-					(start 0.8636 2.667)
-					(end 0 2.413)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start 0.8636 0.127)
-					(end 0 -0.127)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(rectangle
-					(start 0.8636 -2.413)
-					(end 0 -2.667)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 2.54) (xy 0.8636 2.54)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy 0.8636 0)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -2.54) (xy 0.8636 -2.54)
-					)
-					(stroke
-						(width 0.1524)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(pin passive line
-					(at 5.08 2.54 180)
-					(length 3.81)
-					(name "Pin_1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 0 180)
-					(length 3.81)
-					(name "Pin_2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 5.08 -2.54 180)
-					(length 3.81)
-					(name "Pin_3"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -1665,162 +1623,6 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Diode:1N4148W"
-			(exclude_from_sim no)
-			(in_bom yes)
-			(on_board yes)
-			(property "Reference" "D"
-				(at 0 2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "1N4148W"
-				(at 0 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" "Diode_SMD:D_SOD-123"
-				(at 0 -4.445 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "75V 0.15A Fast Switching Diode, SOD-123"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Sim.Device" "D"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Sim.Pins" "1=K 2=A"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "diode"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "D*SOD?123*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "1N4148W_0_1"
-				(polyline
-					(pts
-						(xy -1.27 1.27) (xy -1.27 -1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 0) (xy -1.27 0)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "1N4148W_1_1"
-				(pin passive line
-					(at -3.81 0 0)
-					(length 2.54)
-					(name "K"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 3.81 0 180)
-					(length 2.54)
-					(name "A"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
 		(symbol "Diode:BAT54"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -2036,185 +1838,6 @@
 						)
 					)
 					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-			)
-			(embedded_fonts no)
-		)
-		(symbol "Jumper:SolderJumper_2_Open"
-			(pin_names
-				(offset 0)
-			)
-			(exclude_from_sim no)
-			(in_bom no)
-			(on_board yes)
-			(property "Reference" "JP"
-				(at 0 2.032 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Value" "SolderJumper_2_Open"
-				(at 0 -2.54 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Footprint" ""
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Datasheet" "~"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "Description" "Solder Jumper, 2-pole, open"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-				)
-			)
-			(property "ki_keywords" "solder jumper SPST"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "SolderJumper*Open*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "SolderJumper_2_Open_0_1"
-				(polyline
-					(pts
-						(xy -0.254 1.016) (xy -0.254 -1.016)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start -0.254 -1.016)
-					(mid -1.2656 0)
-					(end -0.254 1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start -0.254 -1.016)
-					(mid -1.2656 0)
-					(end -0.254 1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(arc
-					(start 0.254 1.016)
-					(mid 1.2656 0)
-					(end 0.254 -1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start 0.254 1.016)
-					(mid 1.2656 0)
-					(end 0.254 -1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(polyline
-					(pts
-						(xy 0.254 1.016) (xy 0.254 -1.016)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-			)
-			(symbol "SolderJumper_2_Open_1_1"
-				(pin passive line
-					(at -3.81 0 0)
-					(length 2.54)
-					(name "A"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "1"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-				)
-				(pin passive line
-					(at 3.81 0 180)
-					(length 2.54)
-					(name "B"
-						(effects
-							(font
-								(size 1.27 1.27)
-							)
-						)
-					)
-					(number "2"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2706,27 +2329,24 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "SolderJumper_2_Open_1"
-			(pin_numbers
-				(hide yes)
-			)
+		(symbol "Switch:SW_SPDT"
 			(pin_names
 				(offset 0)
 				(hide yes)
 			)
 			(exclude_from_sim no)
-			(in_bom no)
+			(in_bom yes)
 			(on_board yes)
-			(property "Reference" "JP"
-				(at 0 2.032 0)
+			(property "Reference" "SW"
+				(at 0 5.08 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Value" "SolderJumper_2_Open"
-				(at 0 -2.54 0)
+			(property "Value" "SW_SPDT"
+				(at 0 -5.08 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -2743,6 +2363,15 @@
 				)
 			)
 			(property "Datasheet" "~"
+				(at 0 -7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Switch, single pole double throw"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2751,7 +2380,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Solder Jumper, 2-pole, open"
+			(property "ki_keywords" "switch single-pole double-throw spdt ON-ON"
 				(at 0 0 0)
 				(effects
 					(font
@@ -2760,88 +2389,21 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "solder jumper SPST"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(property "ki_fp_filters" "SolderJumper*Open*"
-				(at 0 0 0)
-				(effects
-					(font
-						(size 1.27 1.27)
-					)
-					(hide yes)
-				)
-			)
-			(symbol "SolderJumper_2_Open_1_0_1"
-				(polyline
-					(pts
-						(xy -0.254 1.016) (xy -0.254 -1.016)
-					)
+			(symbol "SW_SPDT_0_1"
+				(circle
+					(center -2.032 0)
+					(radius 0.4572)
 					(stroke
 						(width 0)
 						(type default)
 					)
 					(fill
 						(type none)
-					)
-				)
-				(arc
-					(start -0.254 -1.016)
-					(mid -1.2656 0)
-					(end -0.254 1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start -0.254 -1.016)
-					(mid -1.2656 0)
-					(end -0.254 1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
-					)
-				)
-				(arc
-					(start 0.254 1.016)
-					(mid 1.2656 0)
-					(end 0.254 -1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(arc
-					(start 0.254 1.016)
-					(mid 1.2656 0)
-					(end 0.254 -1.016)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type outline)
 					)
 				)
 				(polyline
 					(pts
-						(xy 0.254 1.016) (xy 0.254 -1.016)
+						(xy -1.651 0.254) (xy 1.651 2.286)
 					)
 					(stroke
 						(width 0)
@@ -2851,10 +2413,61 @@
 						(type none)
 					)
 				)
+				(circle
+					(center 2.032 2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 2.032 -2.54)
+					(radius 0.4572)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
 			)
-			(symbol "SolderJumper_2_Open_1_1_1"
+			(symbol "SW_SPDT_1_1"
+				(rectangle
+					(start -3.175 3.81)
+					(end 3.175 -3.81)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
 				(pin passive line
-					(at -3.81 0 0)
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 5.08 2.54 180)
 					(length 2.54)
 					(name "A"
 						(effects
@@ -2872,16 +2485,16 @@
 					)
 				)
 				(pin passive line
-					(at 3.81 0 180)
+					(at 5.08 -2.54 180)
 					(length 2.54)
-					(name "B"
+					(name "C"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "2"
+					(number "3"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3525,6 +3138,131 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "power:+12V"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "+12V"
+				(at 0 3.556 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"+12V\""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "+12V_0_1"
+				(polyline
+					(pts
+						(xy -0.762 1.27) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 2.54) (xy 0.762 1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 2.54)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "+12V_1_1"
+				(pin power_in line
+					(at 0 0 90)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "power:+3V3"
 			(power)
 			(exclude_from_sim no)
@@ -3852,7 +3590,7 @@
 		)
 		(uuid "09b34aa9-7ddb-4ad4-be08-ee99b12de5ab")
 	)
-	(text "Current steering pair\n(use BSS138DW SOT-363 for matched Vth)"
+	(text "Current steering pair"
 		(exclude_from_sim no)
 		(at 150.368 183.896 0)
 		(effects
@@ -3862,9 +3600,9 @@
 		)
 		(uuid "0b13b2f2-681a-4103-b26a-06735571dec4")
 	)
-	(text "Dummy load\n~matches LD Vf"
+	(text "Dummy load tries to ~match LD Vf for switching\n4.7V Zener + 1N4148W matches 2 red (series) LDs (or 1 blue)\nUser a 1.8V Zener for a single red LD\n"
 		(exclude_from_sim no)
-		(at 113.538 147.574 90)
+		(at 82.296 148.082 0)
 		(effects
 			(font
 				(size 1.524 1.524)
@@ -3912,19 +3650,9 @@
 		)
 		(uuid "b83cb15b-8ac7-48e8-80bc-120aca9f7691")
 	)
-	(text "Choose for 12V or 9V"
-		(exclude_from_sim no)
-		(at 172.72 50.8 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-		)
-		(uuid "ccd7d816-cb8c-41c0-b7ed-18fb104d58ac")
-	)
 	(text "Jumper to bypass for just 5V"
 		(exclude_from_sim no)
-		(at 219.202 42.164 0)
+		(at 189.992 42.164 0)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -3951,12 +3679,6 @@
 		(uuid "1381f8d6-5e37-4ce9-8f6f-6b225dbc7273")
 	)
 	(junction
-		(at 85.09 55.88)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "2cd8e633-1302-49f0-a6e6-c6d284b205da")
-	)
-	(junction
 		(at 170.18 125.73)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3981,6 +3703,12 @@
 		(uuid "56dfa489-0856-43d9-b6b6-79547ade5733")
 	)
 	(junction
+		(at 166.37 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "6530cd5d-f83b-46c8-9a13-76ecf19173cc")
+	)
+	(junction
 		(at 200.66 156.21)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3993,64 +3721,22 @@
 		(uuid "857f4664-0c16-4ed6-8116-4241b6822d64")
 	)
 	(junction
-		(at 90.17 68.58)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "ac464e99-6953-4498-81f5-f0060d1e4eac")
-	)
-	(junction
 		(at 119.38 55.88)
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "b34a692e-2ccd-4aee-adcc-9bcf4f6cc878")
 	)
 	(junction
-		(at 157.48 78.74)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "c7dd7908-ba62-424e-8ec3-0edcf0e3982f")
-	)
-	(junction
-		(at 185.42 55.88)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "cb96da9d-c341-4fb7-ab54-fc09af6d873b")
-	)
-	(junction
-		(at 245.11 53.34)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "ee8970b1-874b-47b5-a82b-a069c5de93d6")
-	)
-	(junction
-		(at 127 140.97)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f5dac157-83f0-4779-badd-951f9f89f044")
-	)
-	(junction
-		(at 238.76 74.93)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f64b89e4-0f89-4f6a-b299-cc83607548c5")
-	)
-	(junction
-		(at 127 158.75)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f8fa06f0-be7f-4dea-89ac-580e0571691b")
-	)
-	(junction
-		(at 232.41 53.34)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "f941919e-dc79-44d0-9818-1b63b3bae665")
-	)
-	(junction
 		(at 127 125.73)
 		(diameter 0)
 		(color 0 0 0 0)
-		(uuid "ff6dd108-f163-4511-b68d-53f887834e30")
+		(uuid "ca54f063-0483-4409-a301-b4e9785cf8ae")
+	)
+	(junction
+		(at 175.26 55.88)
+		(diameter 0)
+		(color 0 0 0 0)
+		(uuid "dd7ed4f5-3074-42aa-98f6-ca4919b3dae6")
 	)
 	(wire
 		(pts
@@ -4061,26 +3747,6 @@
 			(type default)
 		)
 		(uuid "046dafec-27d2-41d9-a9a0-13bc50ce52c3")
-	)
-	(wire
-		(pts
-			(xy 232.41 74.93) (xy 232.41 67.31)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "066827d6-27ba-45ef-8bfd-256596320513")
-	)
-	(wire
-		(pts
-			(xy 127 158.75) (xy 127 160.02)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "06f242f6-f628-4429-8d6b-d6bdfa3f48fe")
 	)
 	(wire
 		(pts
@@ -4104,26 +3770,6 @@
 	)
 	(wire
 		(pts
-			(xy 147.32 158.75) (xy 139.7 158.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "10485808-8807-44d7-83f1-f8664acbb36e")
-	)
-	(wire
-		(pts
-			(xy 127 158.75) (xy 132.08 158.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "119ce47b-8bd4-4b55-8922-9538f18c6953")
-	)
-	(wire
-		(pts
 			(xy 96.52 55.88) (xy 96.52 59.69)
 		)
 		(stroke
@@ -4134,13 +3780,13 @@
 	)
 	(wire
 		(pts
-			(xy 85.09 55.88) (xy 85.09 59.69)
+			(xy 175.26 55.88) (xy 185.42 55.88)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "16733009-0fc4-4126-89d0-e4a4b69b947a")
+		(uuid "1a282641-1561-42b9-baba-881bcfa61e55")
 	)
 	(wire
 		(pts
@@ -4214,16 +3860,6 @@
 	)
 	(wire
 		(pts
-			(xy 245.11 67.31) (xy 245.11 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "341c03b6-a80c-46cf-a25f-57635d220356")
-	)
-	(wire
-		(pts
 			(xy 175.26 147.32) (xy 175.26 156.21)
 		)
 		(stroke
@@ -4231,26 +3867,6 @@
 			(type default)
 		)
 		(uuid "351bfccb-641a-4f3c-b7fa-1dbbe4476f4a")
-	)
-	(wire
-		(pts
-			(xy 85.09 55.88) (xy 96.52 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "393a151f-e063-4689-92c6-a57811e66585")
-	)
-	(wire
-		(pts
-			(xy 127 137.16) (xy 127 140.97)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "46bfd0a9-1314-4771-85c0-2024132f9f0e")
 	)
 	(wire
 		(pts
@@ -4264,16 +3880,6 @@
 	)
 	(wire
 		(pts
-			(xy 127 125.73) (xy 127 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "492262bf-2caf-461a-8303-2e4dbd32c355")
-	)
-	(wire
-		(pts
 			(xy 200.66 152.4) (xy 200.66 156.21)
 		)
 		(stroke
@@ -4281,16 +3887,6 @@
 			(type default)
 		)
 		(uuid "498a9dca-8c69-415e-be11-fbd961027e13")
-	)
-	(wire
-		(pts
-			(xy 85.09 64.77) (xy 85.09 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "4f4de2b1-0ed9-4d52-bee5-8453c09bf85b")
 	)
 	(wire
 		(pts
@@ -4304,16 +3900,6 @@
 	)
 	(wire
 		(pts
-			(xy 127 140.97) (xy 147.32 140.97)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "53e7f3a4-0492-4f33-b159-cd0a54b05615")
-	)
-	(wire
-		(pts
 			(xy 142.24 93.98) (xy 142.24 90.17)
 		)
 		(stroke
@@ -4324,7 +3910,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 125.73) (xy 170.18 125.73)
+			(xy 102.87 125.73) (xy 127 125.73)
 		)
 		(stroke
 			(width 0)
@@ -4364,16 +3950,6 @@
 	)
 	(wire
 		(pts
-			(xy 245.11 74.93) (xy 238.76 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "609b54ad-b969-42e2-aa87-e04f6e53c3a4")
-	)
-	(wire
-		(pts
 			(xy 146.05 190.5) (xy 146.05 194.31)
 		)
 		(stroke
@@ -4384,7 +3960,7 @@
 	)
 	(wire
 		(pts
-			(xy 127 167.64) (xy 127 170.18)
+			(xy 127 157.48) (xy 127 170.18)
 		)
 		(stroke
 			(width 0)
@@ -4434,17 +4010,17 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 55.88) (xy 185.42 58.42)
+			(xy 119.38 55.88) (xy 119.38 60.96)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "6a39d8a8-e5aa-46a5-86c7-a90b5edd161d")
+		(uuid "74111436-67c9-4e3f-bd16-ceda70d1b55e")
 	)
 	(wire
 		(pts
-			(xy 212.09 50.8) (xy 212.09 46.99)
+			(xy 182.88 50.8) (xy 182.88 46.99)
 		)
 		(stroke
 			(width 0)
@@ -4461,26 +4037,6 @@
 			(type default)
 		)
 		(uuid "795a96be-fad0-46c6-9ee9-5b7dc9c8adb4")
-	)
-	(wire
-		(pts
-			(xy 245.11 53.34) (xy 232.41 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7c0f4967-ad38-4856-badd-3d9a1520aee3")
-	)
-	(wire
-		(pts
-			(xy 214.63 53.34) (xy 232.41 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "7c523499-f826-4042-8a1e-ba19796dfb9c")
 	)
 	(wire
 		(pts
@@ -4501,6 +4057,16 @@
 			(type default)
 		)
 		(uuid "7d57f0eb-a585-4cc2-b12f-8e2b119bb1ab")
+	)
+	(wire
+		(pts
+			(xy 127 134.62) (xy 127 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7d761dde-1cf7-4e36-867f-f9d3b3b49f02")
 	)
 	(wire
 		(pts
@@ -4534,6 +4100,26 @@
 	)
 	(wire
 		(pts
+			(xy 166.37 55.88) (xy 175.26 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "82f84b34-1131-4c9d-802b-45f7f2365756")
+	)
+	(wire
+		(pts
+			(xy 157.48 55.88) (xy 166.37 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8805a6dd-ec69-4d67-a17e-9a2f3b7e7b8c")
+	)
+	(wire
+		(pts
 			(xy 142.24 44.45) (xy 142.24 55.88)
 		)
 		(stroke
@@ -4544,33 +4130,13 @@
 	)
 	(wire
 		(pts
-			(xy 212.09 50.8) (xy 214.63 50.8)
+			(xy 182.88 50.8) (xy 185.42 50.8)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "8a013b28-236e-4129-8709-485cfb0f5996")
-	)
-	(wire
-		(pts
-			(xy 127 140.97) (xy 127 143.51)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8e0593d4-9ef1-4250-87c1-c4b88ebcba03")
-	)
-	(wire
-		(pts
-			(xy 185.42 55.88) (xy 214.63 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "90220bdc-7899-4e22-b53d-8d2d92bb795a")
 	)
 	(wire
 		(pts
@@ -4581,6 +4147,16 @@
 			(type default)
 		)
 		(uuid "94c55d6e-c408-49d3-97ef-b0a53ba2f3bb")
+	)
+	(wire
+		(pts
+			(xy 127 125.73) (xy 170.18 125.73)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9b35a7c6-84be-4a4d-a69c-bb43ec1ba3ec")
 	)
 	(wire
 		(pts
@@ -4624,13 +4200,23 @@
 	)
 	(wire
 		(pts
-			(xy 212.09 46.99) (xy 200.66 46.99)
+			(xy 182.88 46.99) (xy 177.8 46.99)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "a2fe6d05-0908-4600-96fd-94ef31da35f4")
+	)
+	(wire
+		(pts
+			(xy 175.26 74.93) (xy 175.26 69.85)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a56fba44-6f07-4cfe-a306-2d3d2e7f3b17")
 	)
 	(wire
 		(pts
@@ -4644,26 +4230,6 @@
 	)
 	(wire
 		(pts
-			(xy 185.42 73.66) (xy 185.42 78.74)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "a8b97f33-88f9-4849-85fb-b2993b9824a7")
-	)
-	(wire
-		(pts
-			(xy 157.48 73.66) (xy 157.48 78.74)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ae0cbc3e-8219-4fcd-8c7e-2e8dbbf1b354")
-	)
-	(wire
-		(pts
 			(xy 96.52 55.88) (xy 119.38 55.88)
 		)
 		(stroke
@@ -4671,16 +4237,6 @@
 			(type default)
 		)
 		(uuid "ae732dc6-546f-422f-a86f-0e430dbeefca")
-	)
-	(wire
-		(pts
-			(xy 147.32 142.24) (xy 147.32 140.97)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ae7e0bff-47e4-4921-90aa-5c89733db1e6")
 	)
 	(wire
 		(pts
@@ -4694,7 +4250,7 @@
 	)
 	(wire
 		(pts
-			(xy 74.93 55.88) (xy 85.09 55.88)
+			(xy 74.93 55.88) (xy 96.52 55.88)
 		)
 		(stroke
 			(width 0)
@@ -4724,16 +4280,6 @@
 	)
 	(wire
 		(pts
-			(xy 238.76 74.93) (xy 232.41 74.93)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "b827dbe9-2fb6-448f-a3b2-8ab6dbbcb457")
-	)
-	(wire
-		(pts
 			(xy 204.47 140.97) (xy 200.66 140.97)
 		)
 		(stroke
@@ -4741,16 +4287,6 @@
 			(type default)
 		)
 		(uuid "bd804124-4756-422c-9147-979d364747e5")
-	)
-	(wire
-		(pts
-			(xy 147.32 157.48) (xy 147.32 158.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "be9d7405-db33-4fb5-b828-7896bd109b5e")
 	)
 	(wire
 		(pts
@@ -4774,6 +4310,16 @@
 	)
 	(wire
 		(pts
+			(xy 127 142.24) (xy 127 149.86)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "cc728a8a-2a76-46f7-b2b8-791998e624a0")
+	)
+	(wire
+		(pts
 			(xy 146.05 55.88) (xy 142.24 55.88)
 		)
 		(stroke
@@ -4794,16 +4340,6 @@
 	)
 	(wire
 		(pts
-			(xy 157.48 55.88) (xy 185.42 55.88)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "d7f32799-32ed-4dbe-9dda-7963bca17dcb")
-	)
-	(wire
-		(pts
 			(xy 175.26 156.21) (xy 200.66 156.21)
 		)
 		(stroke
@@ -4811,16 +4347,6 @@
 			(type default)
 		)
 		(uuid "e25d45ff-7eef-4be5-b45e-6e51613e7647")
-	)
-	(wire
-		(pts
-			(xy 123.19 125.73) (xy 127 125.73)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e3463ac1-d5db-4d28-bde8-0ab62e0bff9f")
 	)
 	(wire
 		(pts
@@ -4834,23 +4360,23 @@
 	)
 	(wire
 		(pts
-			(xy 90.17 68.58) (xy 96.52 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e9e4b74f-ef23-47b8-a3af-ce33800298e7")
-	)
-	(wire
-		(pts
-			(xy 245.11 53.34) (xy 248.92 53.34)
+			(xy 195.58 53.34) (xy 226.06 53.34)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "e9ef2eb7-cda5-47b4-ba4a-83eaadf7a27c")
+	)
+	(wire
+		(pts
+			(xy 175.26 64.77) (xy 175.26 55.88)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f25755a1-4839-493e-b9d8-fbe78675a92d")
 	)
 	(wire
 		(pts
@@ -4874,53 +4400,13 @@
 	)
 	(wire
 		(pts
-			(xy 232.41 53.34) (xy 232.41 62.23)
+			(xy 157.48 66.04) (xy 157.48 78.74)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
-		(uuid "f56dbcf0-706a-456e-969e-5abacbfcc96a")
-	)
-	(wire
-		(pts
-			(xy 245.11 62.23) (xy 245.11 53.34)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fc2e3527-85d6-4ba4-8b09-985a2c6ff885")
-	)
-	(wire
-		(pts
-			(xy 127 151.13) (xy 127 158.75)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fd083373-fb35-4496-9f70-479e0b9e7bc8")
-	)
-	(wire
-		(pts
-			(xy 185.42 78.74) (xy 157.48 78.74)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "fdd0d68b-c3a3-4ea6-9d02-5bbefd546519")
-	)
-	(wire
-		(pts
-			(xy 85.09 68.58) (xy 90.17 68.58)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "ff6c883d-f1aa-46d8-8a48-c67ef3e9b29a")
+		(uuid "fafefdf9-fb4c-4d08-9274-736c8a0fc2b6")
 	)
 	(label "IDrive"
 		(at 146.05 208.28 0)
@@ -4942,6 +4428,16 @@
 		)
 		(uuid "6d88435f-73a5-4f5b-93a6-d9756093cfdf")
 	)
+	(label "SW"
+		(at 139.7 55.88 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left bottom)
+		)
+		(uuid "99d5b4d4-e888-4dac-9b6a-cacbfb427e68")
+	)
 	(label "LaserDrive"
 		(at 127 190.5 0)
 		(effects
@@ -4952,16 +4448,71 @@
 		)
 		(uuid "c88a6c8a-995c-445b-ab98-46b4e909b9e9")
 	)
-	(hierarchical_label "LASER_V"
+	(global_label "LASER_V"
 		(shape input)
 		(at 115.57 189.23 180)
+		(fields_autoplaced yes)
 		(effects
 			(font
 				(size 1.27 1.27)
 			)
 			(justify right)
 		)
-		(uuid "10babf83-7b95-4e16-8639-835dae6febcc")
+		(uuid "6cb3f3cd-e8e6-4148-bb5e-68866ad68ef3")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 104.7834 189.23 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LASER_V"
+		(shape input)
+		(at 102.87 125.73 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "bf613b69-19ad-496f-b277-fe16cb2ff2e2")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 92.0834 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LASER_V"
+		(shape input)
+		(at 226.06 53.34 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "c6ff52c4-896a-43c6-813b-8fb6fe8b2b66")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 236.8466 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
 	)
 	(hierarchical_label "LASER_VREF"
 		(shape input)
@@ -4976,7 +4527,7 @@
 	)
 	(hierarchical_label "V_LASER_BOOST_IN"
 		(shape input)
-		(at 200.66 46.99 180)
+		(at 177.8 46.99 180)
 		(effects
 			(font
 				(size 1.27 1.27)
@@ -4984,17 +4535,6 @@
 			(justify right)
 		)
 		(uuid "59b90d77-50f3-447d-92a2-a160c84e77ad")
-	)
-	(hierarchical_label "LASER_V"
-		(shape input)
-		(at 123.19 125.73 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "b0c181d1-b1af-4bb3-b00f-df03cf1da2fd")
 	)
 	(hierarchical_label "PWM_LASER"
 		(shape input)
@@ -5007,17 +4547,6 @@
 		)
 		(uuid "b517ff2b-7c83-4065-b1cf-447d431c9f72")
 	)
-	(hierarchical_label "LASER_V"
-		(shape output)
-		(at 248.92 53.34 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left)
-		)
-		(uuid "c7f87663-eb40-47b9-95a2-682bb16a19fa")
-	)
 	(hierarchical_label "DIODE_ADC"
 		(shape input)
 		(at 204.47 140.97 0)
@@ -5028,17 +4557,6 @@
 			(justify left)
 		)
 		(uuid "c9d5ffa1-8fe4-40ea-8539-bb829051caed")
-	)
-	(hierarchical_label "BOOST_EN"
-		(shape input)
-		(at 119.38 60.96 180)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify right)
-		)
-		(uuid "d0bc4625-fb00-4ff7-9648-72f1119979f6")
 	)
 	(hierarchical_label "V_LASER_BOOST_IN"
 		(shape input)
@@ -5061,109 +4579,6 @@
 			(justify right)
 		)
 		(uuid "f0f12569-9b67-4ec8-b94b-fe4a2f0751e2")
-	)
-	(symbol
-		(lib_id "Diode:1N4148W")
-		(at 147.32 153.67 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "012d59ea-b280-4cac-a294-e9dec444da34")
-		(property "Reference" "D4"
-			(at 149.86 152.3999 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "1N4148W"
-			(at 149.86 154.9399 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 151.765 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
-			(at 147.32 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "75V 0.15A Fast Switching Diode, SOD-123"
-			(at 147.32 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Device" "D"
-			(at 147.32 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Pins" "1=K 2=A"
-			(at 147.32 153.67 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 147.32 153.67 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "797e5c38-0696-4970-984b-cfeefde7dafb")
-		)
-		(pin "2"
-			(uuid "2aa1977a-1c4a-435b-9660-c7576fbc81c0")
-		)
-		(instances
-			(project "laser_driver"
-				(path "/9cdd3b64-a968-4bb6-984c-df1d2be4df26"
-					(reference "D3")
-					(unit 1)
-				)
-			)
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "D4")
-					(unit 1)
-				)
-			)
-		)
 	)
 	(symbol
 		(lib_id "Device:R")
@@ -5248,6 +4663,72 @@
 		)
 	)
 	(symbol
+		(lib_id "power:+12V")
+		(at 166.37 55.88 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "07438b79-41ae-4e59-ae83-59053da454ac")
+		(property "Reference" "#PWR040"
+			(at 166.37 59.69 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "+12V"
+			(at 166.37 50.8 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 166.37 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 166.37 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"+12V\""
+			(at 166.37 55.88 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "89a4dfe3-a157-4b52-b3d7-2eee00654b1d")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
+					(reference "#PWR040")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Transistor_FET:Q_Dual_NMOS_S1G1D2S2G2D1")
 		(at 167.64 175.26 0)
 		(unit 2)
@@ -5266,7 +4747,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "BSS138DW"
+		(property "Value" "SI3134KDWA-TP"
 			(at 173.99 176.5299 0)
 			(effects
 				(font
@@ -5293,7 +4774,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Dual NMOS transistor, 6 pin package"
+		(property "Description" "750mA 150mW 700mΩ@1.8V 1.1V 2 N-Channel SOT-363 FET, MOSFET Arrays RoHS"
 			(at 167.64 175.26 0)
 			(effects
 				(font
@@ -5302,7 +4783,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C3290118"
 			(at 167.64 175.26 0)
 			(effects
 				(font
@@ -5372,7 +4853,7 @@
 				(justify right)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
 			(at 181.61 128.27 0)
 			(effects
 				(font
@@ -5433,7 +4914,7 @@
 				)
 			)
 		)
-		(property "Value" "L"
+		(property "Value" "22uH"
 			(at 130.81 41.91 90)
 			(effects
 				(font
@@ -5441,7 +4922,7 @@
 				)
 			)
 		)
-		(property "Footprint" ""
+		(property "Footprint" "Inductor_SMD:L_APV_ANR6045"
 			(at 130.81 44.45 0)
 			(effects
 				(font
@@ -5468,7 +4949,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C7427158"
 			(at 130.81 44.45 90)
 			(effects
 				(font
@@ -5495,7 +4976,7 @@
 	(symbol
 		(lib_name "GND_1")
 		(lib_id "power:GND")
-		(at 238.76 74.93 0)
+		(at 175.26 74.93 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5504,7 +4985,7 @@
 		(fields_autoplaced yes)
 		(uuid "3a78e02c-aed0-4fa9-a4ed-9b09a058a23b")
 		(property "Reference" "#PWR011"
-			(at 238.76 81.28 0)
+			(at 175.26 81.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5513,7 +4994,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 238.76 80.01 0)
+			(at 175.26 80.01 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5521,7 +5002,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 238.76 74.93 0)
+			(at 175.26 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5530,7 +5011,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 238.76 74.93 0)
+			(at 175.26 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5539,7 +5020,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 238.76 74.93 0)
+			(at 175.26 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5554,6 +5035,104 @@
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
 					(reference "#PWR011")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_name "1N4148W_1")
+		(lib_id "Diode:1N4148W")
+		(at 127 153.67 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "40dd3b4d-768c-4d30-b4d1-88645f83696f")
+		(property "Reference" "D2"
+			(at 129.54 152.3999 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "Zener 4.7V, 1.5W"
+			(at 129.54 154.9399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Diode_SMD:D_SMA"
+			(at 131.445 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 127 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 127 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" "D"
+			(at 127 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" "1=K 2=A"
+			(at 127 153.67 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C5161049"
+			(at 127 153.67 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "263d8489-c02f-43f7-bae5-cf9d5f70ad91")
+		)
+		(pin "2"
+			(uuid "ed163138-0e9e-4c1b-9b8c-915ab8906929")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
+					(reference "D2")
 					(unit 1)
 				)
 			)
@@ -5815,7 +5394,7 @@
 	)
 	(symbol
 		(lib_id "Device:C_Small")
-		(at 232.41 64.77 0)
+		(at 175.26 67.31 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -5823,7 +5402,7 @@
 		(dnp no)
 		(uuid "5cf932d5-49e8-4e1f-88cf-55fb9064b55f")
 		(property "Reference" "C9"
-			(at 233.91 62.77 0)
+			(at 176.76 65.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5831,7 +5410,7 @@
 			)
 		)
 		(property "Value" "22µF 16V"
-			(at 233.91 66.77 0)
+			(at 176.76 69.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5839,7 +5418,7 @@
 			)
 		)
 		(property "Footprint" "Capacitor_SMD:C_1206_3216Metric"
-			(at 232.41 64.77 0)
+			(at 175.26 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5848,7 +5427,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 232.41 64.77 0)
+			(at 175.26 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5857,7 +5436,7 @@
 			)
 		)
 		(property "Description" "Unpolarized capacitor, small symbol"
-			(at 232.41 64.77 0)
+			(at 175.26 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5866,7 +5445,7 @@
 			)
 		)
 		(property "LCSC Part #" ""
-			(at 232.41 64.77 0)
+			(at 175.26 67.31 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -5884,194 +5463,6 @@
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
 					(reference "C9")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Diode:1N4148W")
-		(at 147.32 146.05 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "5f48747a-e48b-4b8b-a228-4bbc3251c8d0")
-		(property "Reference" "D3"
-			(at 149.86 144.7799 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "1N4148W"
-			(at 149.86 147.3199 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 151.765 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
-			(at 147.32 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "75V 0.15A Fast Switching Diode, SOD-123"
-			(at 147.32 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Device" "D"
-			(at 147.32 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Pins" "1=K 2=A"
-			(at 147.32 146.05 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 147.32 146.05 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "9350b0aa-cd4c-4736-b9b8-86fc7d857946")
-		)
-		(pin "2"
-			(uuid "26f96a69-aab7-4ead-aec0-46683be662fa")
-		)
-		(instances
-			(project "laser_driver"
-				(path "/9cdd3b64-a968-4bb6-984c-df1d2be4df26"
-					(reference "D2")
-					(unit 1)
-				)
-			)
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "D3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Jumper:SolderJumper_2_Open")
-		(at 127 147.32 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "6457a672-b978-4bb3-af82-c20701aca954")
-		(property "Reference" "JP5"
-			(at 129.54 147.32 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "~"
-			(at 122.428 138.176 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-				(hide yes)
-			)
-		)
-		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm"
-			(at 127 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 127 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Solder Jumper, 2-pole, open"
-			(at 127 147.32 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 127 147.32 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "373bf7a7-2ccd-46a9-8524-88d5c8b3a187")
-		)
-		(pin "1"
-			(uuid "9dbe92d6-5d56-424c-938c-80797c2815ad")
-		)
-		(instances
-			(project ""
-				(path "/9cdd3b64-a968-4bb6-984c-df1d2be4df26"
-					(reference "JP1")
-					(unit 1)
-				)
-			)
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "JP5")
 					(unit 1)
 				)
 			)
@@ -6233,88 +5624,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Device:R")
-		(at 127 133.35 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "8aca0e32-f0f4-4d85-ac8f-082a3d08c338")
-		(property "Reference" "R9"
-			(at 134.874 131.572 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "33"
-			(at 134.874 134.874 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 127 133.35 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" ""
-			(at 127 133.35 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" ""
-			(at 127 133.35 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 127 133.35 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "b5f63757-859f-47be-84b0-a7cde5ae7490")
-		)
-		(pin "2"
-			(uuid "9efcc31b-3ff6-473f-b270-629707599583")
-		)
-		(instances
-			(project "laser_driver"
-				(path "/9cdd3b64-a968-4bb6-984c-df1d2be4df26"
-					(reference "R4")
-					(unit 1)
-				)
-			)
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "R9")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "power:GND")
 		(at 101.6 207.01 0)
 		(unit 1)
@@ -6461,7 +5770,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "95785310-f681-45fe-ab9a-ce4cc08a14db")
-		(property "Reference" "Rsense"
+		(property "Reference" "Rs1"
 			(at 150.114 226.314 0)
 			(effects
 				(font
@@ -6477,7 +5786,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
+		(property "Footprint" "Resistor_SMD:R_1206_3216Metric"
 			(at 146.05 226.06 0)
 			(effects
 				(font
@@ -6495,7 +5804,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "1W 10Ω Current Sense Resistor ±50ppm/℃ ±1% 1206 Chip Resistor - Surface Mount RoHS"
 			(at 146.05 226.06 0)
 			(effects
 				(font
@@ -6504,7 +5813,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C42460620"
 			(at 146.05 226.06 0)
 			(effects
 				(font
@@ -6528,7 +5837,7 @@
 			)
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "Rsense")
+					(reference "Rs1")
 					(unit 1)
 				)
 			)
@@ -6622,7 +5931,7 @@
 	(symbol
 		(lib_name "GND_1")
 		(lib_id "power:GND")
-		(at 90.17 68.58 0)
+		(at 96.52 68.58 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6631,7 +5940,7 @@
 		(fields_autoplaced yes)
 		(uuid "9b23ca3f-6f07-4858-a550-9de0186fa2b9")
 		(property "Reference" "#PWR012"
-			(at 90.17 74.93 0)
+			(at 96.52 74.93 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6640,7 +5949,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 90.17 73.66 0)
+			(at 96.52 73.66 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6648,7 +5957,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 90.17 68.58 0)
+			(at 96.52 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6657,7 +5966,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 90.17 68.58 0)
+			(at 96.52 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6666,7 +5975,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 90.17 68.58 0)
+			(at 96.52 68.58 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6758,79 +6067,6 @@
 		)
 	)
 	(symbol
-		(lib_id "Connector:Conn_01x03_Pin")
-		(at 219.71 53.34 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "a00682bc-fc87-4d02-9972-e788c6364b7c")
-		(property "Reference" "J3"
-			(at 220.98 52.0699 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "Conn_01x03_Pin"
-			(at 220.98 54.6099 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" ""
-			(at 219.71 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 219.71 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Generic connector, single row, 01x03, script generated"
-			(at 219.71 53.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "2f792154-f70a-4020-a123-4aae9ddec0e2")
-		)
-		(pin "3"
-			(uuid "c8a89d2d-9544-4c62-a19a-3d02d969781a")
-		)
-		(pin "1"
-			(uuid "d0fd84a3-9a09-4bad-97a6-7426df2d6e20")
-		)
-		(instances
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "J3")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
 		(lib_id "Device:R")
 		(at 200.66 148.59 0)
 		(unit 1)
@@ -6907,161 +6143,6 @@
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
 					(reference "R11")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_name "SolderJumper_2_Open_1")
-		(lib_id "Jumper:SolderJumper_2_Open")
-		(at 157.48 69.85 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "a6efaa6a-10d4-4c91-8100-2c1fa434a370")
-		(property "Reference" "JP2"
-			(at 160.02 68.5799 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "SolderJumper_2_Open"
-			(at 160.02 71.1199 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm"
-			(at 157.48 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 157.48 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Solder Jumper, 2-pole, open"
-			(at 157.48 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 157.48 69.85 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "71e80357-8366-435d-b59c-e0104c7f31b1")
-		)
-		(pin "1"
-			(uuid "102c3c28-541d-4199-8806-c0f287f3edaa")
-		)
-		(instances
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "JP2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C_Small")
-		(at 245.11 64.77 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "a7c94b45-4129-4a0d-8214-000af8e868c9")
-		(property "Reference" "C10"
-			(at 246.61 62.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100nF 16V"
-			(at 246.61 66.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 245.11 64.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 245.11 64.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Unpolarized capacitor, small symbol"
-			(at 245.11 64.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 245.11 64.77 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "50b256b0-864b-41b5-96d5-cf726808fc1e")
-		)
-		(pin "2"
-			(uuid "a1f23e68-fc40-4cf9-9f87-500c78daa317")
-		)
-		(instances
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "C10")
 					(unit 1)
 				)
 			)
@@ -7401,7 +6482,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "BSS138DW"
+		(property "Value" "SI3134KDWA-TP"
 			(at 130.81 176.5299 0)
 			(effects
 				(font
@@ -7428,7 +6509,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Dual NMOS transistor, 6 pin package 340mA"
+		(property "Description" "750mA 150mW 700mΩ@1.8V 1.1V 2 N-Channel SOT-363 FET, MOSFET Arrays RoHS"
 			(at 124.46 175.26 0)
 			(effects
 				(font
@@ -7437,7 +6518,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C919584"
+		(property "LCSC Part #" "C3290118"
 			(at 124.46 175.26 0)
 			(effects
 				(font
@@ -7507,7 +6588,7 @@
 				(justify left)
 			)
 		)
-		(property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_1x01_P2.54mm_Vertical"
+		(property "Footprint" "TestPoint:TestPoint_Pad_D1.5mm"
 			(at 146.05 223.52 0)
 			(effects
 				(font
@@ -7562,6 +6643,104 @@
 		)
 	)
 	(symbol
+		(lib_name "1N4148W_1")
+		(lib_id "Diode:1N4148W")
+		(at 127 138.43 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "caa430b1-fef2-41d8-89de-7b3c27e40ce7")
+		(property "Reference" "D3"
+			(at 129.54 137.1599 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "1N4148W"
+			(at 129.54 139.6999 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "Footprints:D_SOD-323F"
+			(at 131.445 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
+			(at 127 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "DIODE GP 100V 250mA SOD-323F"
+			(at 127 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Device" "D"
+			(at 127 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Sim.Pins" "1=K 2=A"
+			(at 127 138.43 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C119617"
+			(at 127 138.43 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "4462b604-6ef2-4d14-ba8f-00865a0ce0b5")
+		)
+		(pin "2"
+			(uuid "ca493ee6-2547-4731-b1c1-44d9c07c220a")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
+					(reference "D3")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:D")
 		(at 149.86 55.88 180)
 		(unit 1)
@@ -7587,7 +6766,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Diode_SMD:D_SMA"
+		(property "Footprint" "Diode_SMD:D_SOD-123F"
 			(at 149.86 55.88 0)
 			(effects
 				(font
@@ -7632,7 +6811,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C83852"
+		(property "LCSC Part #" "C894423"
 			(at 149.86 55.88 0)
 			(effects
 				(font
@@ -7729,113 +6908,34 @@
 		)
 	)
 	(symbol
-		(lib_name "R_1")
-		(lib_id "Device:R")
-		(at 185.42 62.23 0)
+		(lib_id "Switch:SW_SPDT")
+		(at 190.5 53.34 0)
+		(mirror y)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
-		(uuid "e5eee858-ae56-4be1-ada6-da1a49f5d4ad")
-		(property "Reference" "R7"
-			(at 187.96 60.9599 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "140 1%"
-			(at 187.96 63.4999 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 183.642 62.23 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 185.42 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Resistor"
-			(at 185.42 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 185.42 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "08553113-aa54-4402-9ebf-a3e0ce351bce")
-		)
-		(pin "1"
-			(uuid "4aedc40e-bc3a-4426-b068-33f0c6d97800")
-		)
-		(instances
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "R7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Jumper:SolderJumper_2_Open")
-		(at 135.89 158.75 180)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "e62ba9c9-559a-46ac-93b0-23836ba07351")
-		(property "Reference" "JP6"
-			(at 135.89 161.29 0)
+		(uuid "fb1992ec-b56f-48bf-9d08-ed33b484d0f0")
+		(property "Reference" "SW5"
+			(at 190.5 44.45 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 			)
 		)
-		(property "Value" "~"
-			(at 135.89 162.56 0)
+		(property "Value" "SW_SPDT"
+			(at 190.5 46.99 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
-				(hide yes)
 			)
 		)
-		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm"
-			(at 135.89 158.75 0)
+		(property "Footprint" "ELEC327-Kicad:SW_EG1270"
+			(at 190.5 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7844,7 +6944,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 135.89 158.75 0)
+			(at 190.5 60.96 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7852,8 +6952,8 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Solder Jumper, 2-pole, open"
-			(at 135.89 158.75 0)
+		(property "Description" "Switch, single pole double throw"
+			(at 190.5 53.34 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7861,289 +6961,19 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
-			(at 135.89 158.75 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "9e7712f0-8e04-43b0-926c-aa142fdac48c")
+		(pin "3"
+			(uuid "cf972018-22f4-4743-9789-99df382e2b76")
 		)
 		(pin "1"
-			(uuid "75ebb21b-0b25-4bd4-9824-528fb886f82f")
-		)
-		(instances
-			(project "laser_driver"
-				(path "/9cdd3b64-a968-4bb6-984c-df1d2be4df26"
-					(reference "JP2")
-					(unit 1)
-				)
-			)
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "JP6")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:C_Small")
-		(at 85.09 62.23 0)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(uuid "e8586cb4-18e6-432d-8617-938dc0bbab63")
-		(property "Reference" "C7"
-			(at 86.59 60.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Value" "100nF 10V"
-			(at 86.59 64.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-			)
-		)
-		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
-			(at 85.09 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 85.09 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Unpolarized capacitor, small symbol"
-			(at 85.09 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 85.09 62.23 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "6c2a61c8-136b-4719-ae9e-5604f39a5c33")
+			(uuid "ad2b1f00-bff8-473f-a4cf-60f674926b1a")
 		)
 		(pin "2"
-			(uuid "9849ec5d-dfa2-4a12-91e1-c32487967793")
+			(uuid "8bb00e6c-e6f9-459a-b6d3-c89071ea2eff")
 		)
 		(instances
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "C7")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Diode:1N4148W")
-		(at 127 163.83 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "f44f72c8-b90d-467c-ac40-102917d19bd4")
-		(property "Reference" "D2"
-			(at 129.54 162.5599 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "1N4148W"
-			(at 129.54 165.0999 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Diode_SMD:D_SOD-123"
-			(at 131.445 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "https://www.vishay.com/docs/85748/1n4148w.pdf"
-			(at 127 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "75V 0.15A Fast Switching Diode, SOD-123"
-			(at 127 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Device" "D"
-			(at 127 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Sim.Pins" "1=K 2=A"
-			(at 127 163.83 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 127 163.83 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "aa761e64-f526-41a8-b3ff-efeffc4f8e3b")
-		)
-		(pin "2"
-			(uuid "8313329a-ab41-4d34-b89b-b42708f85337")
-		)
-		(instances
-			(project ""
-				(path "/9cdd3b64-a968-4bb6-984c-df1d2be4df26"
-					(reference "D1")
-					(unit 1)
-				)
-			)
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "D2")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_name "SolderJumper_2_Open_1")
-		(lib_id "Jumper:SolderJumper_2_Open")
-		(at 185.42 69.85 90)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom no)
-		(on_board yes)
-		(dnp no)
-		(uuid "f781212e-4570-4d44-9345-5235a250f565")
-		(property "Reference" "JP3"
-			(at 187.96 68.5799 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Value" "SolderJumper_2_Open"
-			(at 187.96 71.1199 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify right)
-			)
-		)
-		(property "Footprint" "Jumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm"
-			(at 185.42 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 185.42 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Solder Jumper, 2-pole, open"
-			(at 185.42 69.85 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 185.42 69.85 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "2"
-			(uuid "a987dd3b-1d95-48f0-8d68-5a8a1557a9af")
-		)
-		(pin "1"
-			(uuid "d71cbce0-6613-470e-9401-ab895d5d8e21")
-		)
-		(instances
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000002"
-					(reference "JP3")
+					(reference "SW5")
 					(unit 1)
 				)
 			)
