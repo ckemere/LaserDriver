@@ -2192,8 +2192,17 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 177.8 87.63 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C307331"
+			(at 177.8 87.63 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2235,7 +2244,7 @@
 				)
 			)
 		)
-		(property "Value" "5.1K"
+		(property "Value" "5.1k"
 			(at 133.35 95.25 90)
 			(effects
 				(font
@@ -2261,8 +2270,17 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "5.1kΩ 100mW Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 133.35 99.06 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C25905"
+			(at 133.35 99.06 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2341,7 +2359,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C2977777"
+		(property "LCSC Part #" "C2977777"
 			(at 173.99 101.6 0)
 			(effects
 				(font
@@ -2762,8 +2780,17 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 154.94 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C307331"
+			(at 154.94 96.52 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -2839,7 +2866,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C2927038"
+		(property "LCSC Part #" "C2927038"
 			(at 107.95 106.68 0)
 			(effects
 				(font
@@ -2994,7 +3021,7 @@
 				)
 			)
 		)
-		(property "Value" "5.1K"
+		(property "Value" "5.1k"
 			(at 127 92.71 90)
 			(effects
 				(font
@@ -3020,8 +3047,17 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "5.1kΩ 100mW Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 127 96.52 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C25905"
+			(at 127 96.52 90)
 			(effects
 				(font
 					(size 1.27 1.27)

@@ -4623,7 +4623,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "100mW 4.7kΩ 50V Thin Film Resistor ±50ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 200.66 162.56 0)
 			(effects
 				(font
@@ -4632,7 +4632,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C25900"
 			(at 200.66 162.56 0)
 			(effects
 				(font
@@ -4832,7 +4832,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "0b2388b4-d81b-4b7e-b79c-1cd2039f5154")
 		(property "Reference" "J4"
@@ -4940,7 +4940,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Inductor"
+		(property "Description" "2A 22uH ±20% 2.2A Magnetic Shielded Inductor SMD,6x6mm Fixed Inductors RoHS"
 			(at 130.81 44.45 0)
 			(effects
 				(font
@@ -5435,7 +5435,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "22uF ±10% 16V Ceramic Capacitor X5R 1206"
 			(at 175.26 67.31 0)
 			(effects
 				(font
@@ -5444,7 +5444,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C12891"
 			(at 175.26 67.31 0)
 			(effects
 				(font
@@ -5488,7 +5488,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "187K 1%"
+		(property "Value" "187k 1%"
 			(at 160.02 63.4999 0)
 			(effects
 				(font
@@ -5515,7 +5515,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "62.5mW 187kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 157.48 62.23 0)
 			(effects
 				(font
@@ -5524,7 +5524,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C844101"
 			(at 157.48 62.23 0)
 			(effects
 				(font
@@ -5555,7 +5555,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "74374760-1b15-42f5-a064-65c7ba5069d4")
 		(property "Reference" "J2"
 			(at 173.99 147.066 0)
@@ -5889,7 +5889,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "10nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 101.6 201.93 0)
 			(effects
 				(font
@@ -5898,7 +5898,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C15195"
 			(at 101.6 201.93 0)
 			(effects
 				(font
@@ -6083,7 +6083,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "1k 0.1%"
 			(at 204.216 148.844 0)
 			(effects
 				(font
@@ -6109,7 +6109,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "100mW 1kΩ Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 200.66 148.59 0)
 			(effects
 				(font
@@ -6118,7 +6118,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C843869"
 			(at 200.66 148.59 0)
 			(effects
 				(font
@@ -6168,7 +6168,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "10K 1%"
+		(property "Value" "10k"
 			(at 144.78 87.6299 0)
 			(effects
 				(font
@@ -6195,7 +6195,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "200mW 10kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 142.24 86.36 0)
 			(effects
 				(font
@@ -6204,7 +6204,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C25744"
 			(at 142.24 86.36 0)
 			(effects
 				(font
@@ -6337,7 +6337,7 @@
 				)
 			)
 		)
-		(property "Value" "22µF 10V"
+		(property "Value" "22µF 16V"
 			(at 98.02 64.23 0)
 			(effects
 				(font
@@ -6363,7 +6363,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "22uF ±10% 16V Ceramic Capacitor X5R 1206"
 			(at 96.52 62.23 0)
 			(effects
 				(font
@@ -6372,7 +6372,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C12891"
 			(at 96.52 62.23 0)
 			(effects
 				(font
@@ -6608,15 +6608,6 @@
 		)
 		(property "Description" "test point"
 			(at 146.05 218.44 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 146.05 218.44 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6934,7 +6925,7 @@
 				)
 			)
 		)
-		(property "Footprint" "ELEC327-Kicad:SW_EG1270"
+		(property "Footprint" "Button_Switch_SMD:SW_SPDT_PCM12"
 			(at 190.5 53.34 0)
 			(effects
 				(font
@@ -6953,6 +6944,15 @@
 			)
 		)
 		(property "Description" "Switch, single pole double throw"
+			(at 190.5 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C221841"
 			(at 190.5 53.34 0)
 			(effects
 				(font

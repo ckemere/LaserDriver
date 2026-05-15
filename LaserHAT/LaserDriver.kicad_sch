@@ -1901,7 +1901,7 @@
 			)
 			(embedded_fonts no)
 		)
-		(symbol "Device:LED_Dual_AKAK"
+		(symbol "Device:LED_ABGR"
 			(pin_names
 				(offset 0)
 				(hide yes)
@@ -1910,15 +1910,15 @@
 			(in_bom yes)
 			(on_board yes)
 			(property "Reference" "D"
-				(at 0 5.715 0)
+				(at 0 9.398 0)
 				(effects
 					(font
 						(size 1.27 1.27)
 					)
 				)
 			)
-			(property "Value" "LED_Dual_AKAK"
-				(at 0 -6.35 0)
+			(property "Value" "LED_ABGR"
+				(at 0 -8.89 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -1926,7 +1926,7 @@
 				)
 			)
 			(property "Footprint" ""
-				(at 0.762 0 0)
+				(at 0 -1.27 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -1935,7 +1935,7 @@
 				)
 			)
 			(property "Datasheet" "~"
-				(at 0.762 0 0)
+				(at 0 -1.27 0)
 				(effects
 					(font
 						(size 1.27 1.27)
@@ -1943,7 +1943,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Dual LED, cathodes on pins 2 and 4"
+			(property "Description" "RGB LED, anode/blue/green/red"
 				(at 0 0 0)
 				(effects
 					(font
@@ -1952,7 +1952,7 @@
 					(hide yes)
 				)
 			)
-			(property "ki_keywords" "LED diode bicolor dual"
+			(property "ki_keywords" "LED RGB diode"
 				(at 0 0 0)
 				(effects
 					(font
@@ -1970,34 +1970,36 @@
 					(hide yes)
 				)
 			)
-			(symbol "LED_Dual_AKAK_0_1"
-				(polyline
-					(pts
-						(xy -5.08 2.54) (xy 2.032 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
+			(symbol "LED_ABGR_0_0"
+				(text "R"
+					(at -1.905 3.81 0)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
 					)
 				)
-				(polyline
-					(pts
-						(xy -5.08 -2.54) (xy 2.032 -2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
+				(text "G"
+					(at -1.905 -1.27 0)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
 					)
 				)
+				(text "B"
+					(at -1.905 -6.35 0)
+					(effects
+						(font
+							(size 1.27 1.27)
+						)
+					)
+				)
+			)
+			(symbol "LED_ABGR_0_1"
 				(polyline
 					(pts
-						(xy -1.27 3.81) (xy -1.27 1.27) (xy 1.27 2.54) (xy -1.27 3.81)
+						(xy -1.27 6.35) (xy -1.27 3.81)
 					)
 					(stroke
 						(width 0.254)
@@ -2009,10 +2011,294 @@
 				)
 				(polyline
 					(pts
-						(xy -1.27 -1.27) (xy -1.27 -3.81) (xy 1.27 -2.54) (xy -1.27 -1.27)
+						(xy -1.27 6.35) (xy -1.27 3.81) (xy -1.27 3.81)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 5.08) (xy -2.54 5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 5.08) (xy 1.27 5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 1.27) (xy -1.27 -1.27)
 					)
 					(stroke
 						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 1.27) (xy -1.27 -1.27) (xy -1.27 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 0) (xy -2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -3.81) (xy -1.27 -6.35)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -5.08) (xy -2.54 -5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.27 -5.08) (xy 1.27 -5.08)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 6.35) (xy 0.508 7.874) (xy -0.254 7.874) (xy 0.508 7.874) (xy 0.508 7.112)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 1.27) (xy 0.508 2.794) (xy -0.254 2.794) (xy 0.508 2.794) (xy 0.508 2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy -1.016 -3.81) (xy 0.508 -2.286) (xy -0.254 -2.286) (xy 0.508 -2.286) (xy 0.508 -3.048)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 6.35) (xy 1.524 7.874) (xy 0.762 7.874) (xy 1.524 7.874) (xy 1.524 7.112)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 1.27) (xy 1.524 2.794) (xy 0.762 2.794) (xy 1.524 2.794) (xy 1.524 2.032)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -3.81) (xy 1.524 -2.286) (xy 0.762 -2.286) (xy 1.524 -2.286) (xy 1.524 -3.048)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 6.35) (xy 1.27 3.81) (xy -1.27 5.08) (xy 1.27 6.35)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 1.27 6.35)
+					(end 1.27 6.35)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 1.27 3.81)
+					(end 1.27 6.35)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 1.27) (xy 1.27 -1.27) (xy -1.27 0) (xy 1.27 1.27)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 1.27 1.27)
+					(end 1.27 1.27)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy -1.27 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 0) (xy 2.54 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(rectangle
+					(start 1.27 -1.27)
+					(end 1.27 1.27)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -3.81) (xy 1.27 -6.35) (xy -1.27 -5.08) (xy 1.27 -3.81)
+					)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 1.27 -5.08) (xy 2.032 -5.08) (xy 2.032 5.08) (xy 1.27 5.08)
+					)
+					(stroke
+						(width 0)
 						(type default)
 					)
 					(fill
@@ -2020,8 +2306,19 @@
 					)
 				)
 				(circle
-					(center 0 0)
-					(radius 4.572)
+					(center 2.032 0)
+					(radius 0.254)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type outline)
+					)
+				)
+				(rectangle
+					(start 2.794 8.382)
+					(end -2.794 -7.62)
 					(stroke
 						(width 0.254)
 						(type default)
@@ -2030,91 +2327,19 @@
 						(type background)
 					)
 				)
-				(polyline
-					(pts
-						(xy 1.27 3.81) (xy 1.27 1.27)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 1.27 -1.27) (xy 1.27 -3.81)
-					)
-					(stroke
-						(width 0.254)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 2.032 5.08) (xy 3.556 6.604) (xy 2.794 6.604) (xy 3.556 6.604) (xy 3.556 5.842)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.302 4.064) (xy 4.826 5.588) (xy 4.064 5.588) (xy 4.826 5.588) (xy 4.826 4.826)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.81 2.54) (xy 1.905 2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
-				(polyline
-					(pts
-						(xy 3.81 -2.54) (xy 1.905 -2.54)
-					)
-					(stroke
-						(width 0)
-						(type default)
-					)
-					(fill
-						(type none)
-					)
-				)
 			)
-			(symbol "LED_Dual_AKAK_1_1"
-				(pin input line
-					(at -7.62 2.54 0)
-					(length 3.048)
-					(name "A1"
+			(symbol "LED_ABGR_1_1"
+				(pin passive line
+					(at -5.08 5.08 0)
+					(length 2.54)
+					(name "RK"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "1"
+					(number "4"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2122,10 +2347,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at -7.62 -2.54 0)
-					(length 3.048)
-					(name "A2"
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "GK"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2140,10 +2365,10 @@
 						)
 					)
 				)
-				(pin input line
-					(at 7.62 2.54 180)
-					(length 3.81)
-					(name "K1"
+				(pin passive line
+					(at -5.08 -5.08 0)
+					(length 2.54)
+					(name "BK"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -2158,17 +2383,17 @@
 						)
 					)
 				)
-				(pin input line
-					(at 7.62 -2.54 180)
-					(length 3.81)
-					(name "K2"
+				(pin passive line
+					(at 5.08 0 180)
+					(length 2.54)
+					(name "A"
 						(effects
 							(font
 								(size 1.27 1.27)
 							)
 						)
 					)
-					(number "4"
+					(number "1"
 						(effects
 							(font
 								(size 1.27 1.27)
@@ -3409,12 +3634,6 @@
 		(uuid "3cd1bda0-18db-417d-b581-a0c50623df68")
 	)
 	(junction
-		(at 318.77 110.49)
-		(diameter 0)
-		(color 0 0 0 0)
-		(uuid "3ed95060-5e89-411e-850b-262d4d99de91")
-	)
-	(junction
 		(at 62.23 116.84)
 		(diameter 0)
 		(color 0 0 0 0)
@@ -3588,16 +3807,6 @@
 	)
 	(wire
 		(pts
-			(xy 321.31 125.73) (xy 321.31 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "1046ba77-df0e-4196-aaa7-93b2316c00aa")
-	)
-	(wire
-		(pts
 			(xy 191.77 129.54) (xy 196.85 129.54)
 		)
 		(stroke
@@ -3638,7 +3847,7 @@
 	)
 	(wire
 		(pts
-			(xy 313.69 149.86) (xy 313.69 146.05)
+			(xy 330.2 148.59) (xy 330.2 144.78)
 		)
 		(stroke
 			(width 0)
@@ -3748,6 +3957,16 @@
 	)
 	(wire
 		(pts
+			(xy 330.2 128.27) (xy 323.85 128.27)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "32468ff1-6e51-4121-ba50-70b5bb6213d2")
+	)
+	(wire
+		(pts
 			(xy 58.42 38.1) (xy 60.96 38.1)
 		)
 		(stroke
@@ -3815,16 +4034,6 @@
 			(type solid)
 		)
 		(uuid "3b2261b8-cc6a-4f24-9a9d-8411b13f362c")
-	)
-	(wire
-		(pts
-			(xy 318.77 110.49) (xy 318.77 102.87)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "3cab8813-bdf3-437b-9fe1-fcd64dd2e50f")
 	)
 	(wire
 		(pts
@@ -3958,6 +4167,16 @@
 	)
 	(wire
 		(pts
+			(xy 318.77 102.87) (xy 318.77 113.03)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "59f7011c-19f7-4e3b-9603-4945fd1fd0d7")
+	)
+	(wire
+		(pts
 			(xy 76.2 109.22) (xy 85.09 109.22)
 		)
 		(stroke
@@ -3965,16 +4184,6 @@
 			(type default)
 		)
 		(uuid "61054a82-fb14-4a03-97f6-aaef26b9b211")
-	)
-	(wire
-		(pts
-			(xy 316.23 129.54) (xy 313.69 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "616eeed2-4144-48a0-89f9-cd18b0670c16")
 	)
 	(wire
 		(pts
@@ -3998,23 +4207,13 @@
 	)
 	(wire
 		(pts
-			(xy 323.85 149.86) (xy 323.85 146.05)
+			(xy 313.69 148.59) (xy 313.69 144.78)
 		)
 		(stroke
 			(width 0)
 			(type default)
 		)
 		(uuid "641191e5-cb22-4a7c-9f52-133366b22aeb")
-	)
-	(wire
-		(pts
-			(xy 318.77 110.49) (xy 321.31 110.49)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "644a0c95-8373-4fe8-817c-4b402bc58d09")
 	)
 	(wire
 		(pts
@@ -4055,6 +4254,16 @@
 			(type solid)
 		)
 		(uuid "6c897b01-6835-4bf3-885d-4b22704f8f6e")
+	)
+	(wire
+		(pts
+			(xy 330.2 128.27) (xy 330.2 137.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6cf5644e-e340-4d59-a8ba-2ac96145b0d3")
 	)
 	(wire
 		(pts
@@ -4205,16 +4414,6 @@
 			(type solid)
 		)
 		(uuid "8930c626-5f36-458c-88ae-90e6918556cc")
-	)
-	(wire
-		(pts
-			(xy 313.69 129.54) (xy 313.69 138.43)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "8a545117-d420-49ca-98a8-2c0e7c3c0293")
 	)
 	(wire
 		(pts
@@ -4388,7 +4587,7 @@
 	)
 	(wire
 		(pts
-			(xy 323.85 138.43) (xy 323.85 137.16)
+			(xy 313.69 137.16) (xy 313.69 135.89)
 		)
 		(stroke
 			(width 0)
@@ -4478,16 +4677,6 @@
 	)
 	(wire
 		(pts
-			(xy 321.31 129.54) (xy 323.85 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "c0d25ff1-e1f6-4295-8d24-9b602ddd3140")
-	)
-	(wire
-		(pts
 			(xy 76.2 33.02) (xy 73.66 33.02)
 		)
 		(stroke
@@ -4545,6 +4734,16 @@
 			(type default)
 		)
 		(uuid "cbcb6e0a-0aa1-47ae-af83-befcef9f362b")
+	)
+	(wire
+		(pts
+			(xy 313.69 123.19) (xy 313.69 128.27)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d29cdc7f-97c6-4c32-a4f8-725d92d7b4ea")
 	)
 	(wire
 		(pts
@@ -4638,6 +4837,16 @@
 	)
 	(wire
 		(pts
+			(xy 323.85 128.27) (xy 323.85 123.19)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dc97a8df-3c15-45b8-8656-56660982e58a")
+	)
+	(wire
+		(pts
 			(xy 76.2 68.58) (xy 76.2 80.01)
 		)
 		(stroke
@@ -4678,16 +4887,6 @@
 	)
 	(wire
 		(pts
-			(xy 316.23 125.73) (xy 316.23 129.54)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "e69522f4-ea1d-4713-b971-e11b528db6a9")
-	)
-	(wire
-		(pts
 			(xy 76.2 63.5) (xy 73.66 63.5)
 		)
 		(stroke
@@ -4725,16 +4924,6 @@
 			(type default)
 		)
 		(uuid "f1b932e3-5a5d-489b-9a5e-01fdfbb9c703")
-	)
-	(wire
-		(pts
-			(xy 318.77 110.49) (xy 316.23 110.49)
-		)
-		(stroke
-			(width 0)
-			(type default)
-		)
-		(uuid "f2d4cdb5-86d2-4c76-b6d9-743444e7f11c")
 	)
 	(wire
 		(pts
@@ -6141,7 +6330,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "500"
+		(property "Value" "470"
 			(at 354.33 140.9699 0)
 			(effects
 				(font
@@ -6168,7 +6357,16 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "100mW 470Ω Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+			(at 351.79 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C25117"
 			(at 351.79 139.7 0)
 			(effects
 				(font
@@ -6238,7 +6436,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "Emerald Green LED Indication - Discrete 3V 0603"
 			(at 275.59 127 0)
 			(effects
 				(font
@@ -6249,6 +6447,15 @@
 		)
 		(property "Sim.Pins" "1=K 2=A"
 			(at 275.59 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C5336487"
+			(at 275.59 127 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6289,7 +6496,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "100n"
+		(property "Value" "100nF"
 			(at 64.9858 178.9493 0)
 			(effects
 				(font
@@ -6316,7 +6523,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 67.31 177.8 0)
 			(effects
 				(font
@@ -6325,7 +6532,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C307331"
 			(at 67.31 177.8 0)
 			(effects
 				(font
@@ -6351,7 +6558,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 323.85 149.86 0)
+		(at 313.69 148.59 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6360,7 +6567,7 @@
 		(fields_autoplaced yes)
 		(uuid "160998f4-e336-4689-a611-4dcbcd167d9a")
 		(property "Reference" "#PWR038"
-			(at 323.85 156.21 0)
+			(at 313.69 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6369,7 +6576,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 323.85 154.94 0)
+			(at 313.69 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6377,7 +6584,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 323.85 149.86 0)
+			(at 313.69 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6386,7 +6593,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 323.85 149.86 0)
+			(at 313.69 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6395,7 +6602,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 323.85 149.86 0)
+			(at 313.69 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6460,7 +6667,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "100mW 3.9kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 93.98 170.18 0)
 			(effects
 				(font
@@ -6469,7 +6676,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C51721"
 			(at 93.98 170.18 0)
 			(effects
 				(font
@@ -6512,7 +6719,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "500"
+		(property "Value" "200"
 			(at 289.56 142.2399 0)
 			(effects
 				(font
@@ -6539,7 +6746,16 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "100mW 200Ω Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+			(at 287.02 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C25087"
 			(at 287.02 140.97 0)
 			(effects
 				(font
@@ -6558,91 +6774,6 @@
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "R14")
-					(unit 1)
-				)
-			)
-		)
-	)
-	(symbol
-		(lib_id "Device:LED_Dual_AKAK")
-		(at 318.77 118.11 270)
-		(unit 1)
-		(exclude_from_sim no)
-		(in_bom yes)
-		(on_board yes)
-		(dnp no)
-		(fields_autoplaced yes)
-		(uuid "2a896eb8-360f-4afe-9d20-5a215631d1af")
-		(property "Reference" "D8"
-			(at 326.39 116.7129 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Value" "LED_Dual_AKAK"
-			(at 326.39 119.2529 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(justify left)
-			)
-		)
-		(property "Footprint" "LED_SMD:LED_LiteOn_LTST-C295K_1.6x0.8mm"
-			(at 318.77 118.872 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Datasheet" "~"
-			(at 318.77 118.872 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "Description" "Dual LED, cathodes on pins 2 and 4"
-			(at 318.77 118.11 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part#" "C5878883"
-			(at 318.77 118.11 90)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(pin "1"
-			(uuid "280dcb12-a89b-453c-b17b-2d2575e9f3af")
-		)
-		(pin "4"
-			(uuid "824d7368-91ab-4047-8e6a-7bcff42a98ec")
-		)
-		(pin "2"
-			(uuid "2740ef3f-92d1-4732-b9ec-6d96808ac262")
-		)
-		(pin "3"
-			(uuid "b11fb57d-872d-40e9-b3a6-d2a7d27fd14f")
-		)
-		(instances
-			(project "LaserDriver"
-				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
-					(reference "D8")
 					(unit 1)
 				)
 			)
@@ -6779,7 +6910,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 313.69 142.24 0)
+		(at 330.2 140.97 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -6787,7 +6918,7 @@
 		(dnp no)
 		(uuid "3820c16d-2b50-4ebd-a8fa-9f1704db2320")
 		(property "Reference" "R16"
-			(at 316.23 140.9699 0)
+			(at 332.74 139.6999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6795,8 +6926,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "500"
-			(at 316.23 143.5099 0)
+		(property "Value" "470"
+			(at 332.74 142.2399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6805,7 +6936,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 311.912 142.24 90)
+			(at 328.422 140.97 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6814,7 +6945,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 313.69 142.24 0)
+			(at 330.2 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6822,8 +6953,17 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
-			(at 313.69 142.24 0)
+		(property "Description" "100mW 470Ω Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+			(at 330.2 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C25117"
+			(at 330.2 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -6891,15 +7031,6 @@
 			)
 		)
 		(property "Description" "Solder Jumper, 2-pole, open"
-			(at 96.52 180.34 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
 			(at 96.52 180.34 0)
 			(effects
 				(font
@@ -7031,7 +7162,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor, small symbol"
+		(property "Description" "100mW 3.9kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 101.6 170.18 0)
 			(effects
 				(font
@@ -7040,7 +7171,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C51721"
 			(at 101.6 170.18 0)
 			(effects
 				(font
@@ -7066,7 +7197,7 @@
 	)
 	(symbol
 		(lib_id "power:GND")
-		(at 313.69 149.86 0)
+		(at 330.2 148.59 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7075,7 +7206,7 @@
 		(fields_autoplaced yes)
 		(uuid "5427eefb-8f24-4b85-a3a4-6952ef1df407")
 		(property "Reference" "#PWR037"
-			(at 313.69 156.21 0)
+			(at 330.2 154.94 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7084,7 +7215,7 @@
 			)
 		)
 		(property "Value" "GND"
-			(at 313.69 154.94 0)
+			(at 330.2 153.67 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7092,7 +7223,7 @@
 			)
 		)
 		(property "Footprint" ""
-			(at 313.69 149.86 0)
+			(at 330.2 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7101,7 +7232,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 313.69 149.86 0)
+			(at 330.2 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7110,7 +7241,7 @@
 			)
 		)
 		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
-			(at 313.69 149.86 0)
+			(at 330.2 148.59 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7203,7 +7334,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "59fbabdb-b344-4cfe-aebd-144a147c3337")
 		(property "Reference" "J7"
@@ -7511,7 +7642,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "200"
 			(at 303.53 142.2399 0)
 			(effects
 				(font
@@ -7538,7 +7669,16 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "100mW 200Ω Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+			(at 300.99 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C25087"
 			(at 300.99 140.97 0)
 			(effects
 				(font
@@ -7608,7 +7748,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "Emerald Green LED Indication - Discrete 3V 0603"
 			(at 287.02 127 0)
 			(effects
 				(font
@@ -7619,6 +7759,15 @@
 		)
 		(property "Sim.Pins" "1=K 2=A"
 			(at 287.02 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C5336487"
+			(at 287.02 127 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7694,7 +7843,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C632000"
+		(property "LCSC Part #" "C632000"
 			(at 62.23 109.22 0)
 			(effects
 				(font
@@ -7723,7 +7872,7 @@
 	)
 	(symbol
 		(lib_id "Device:D_Zener")
-		(at 323.85 133.35 90)
+		(at 313.69 132.08 90)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7732,7 +7881,7 @@
 		(fields_autoplaced yes)
 		(uuid "8df920f8-ba80-4d1b-b7eb-aefde70f031c")
 		(property "Reference" "D10"
-			(at 326.39 132.0799 90)
+			(at 316.23 130.8099 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7741,7 +7890,7 @@
 			)
 		)
 		(property "Value" "D_Zener 6.2V"
-			(at 326.39 134.6199 90)
+			(at 316.23 133.3499 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7750,7 +7899,7 @@
 			)
 		)
 		(property "Footprint" "Diode_SMD:D_SOD-523"
-			(at 323.85 133.35 0)
+			(at 313.69 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7759,7 +7908,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 323.85 133.35 0)
+			(at 313.69 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7768,7 +7917,7 @@
 			)
 		)
 		(property "Description" "Zener diode"
-			(at 323.85 133.35 0)
+			(at 313.69 132.08 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7776,8 +7925,8 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C2886074"
-			(at 323.85 133.35 90)
+		(property "LCSC Part #" "C2886074"
+			(at 313.69 132.08 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7909,7 +8058,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "20mA 2.2V 160° Red 54mW 0603 LED Indication - Discrete RoHS"
 			(at 351.79 125.73 0)
 			(effects
 				(font
@@ -7920,6 +8069,15 @@
 		)
 		(property "Sim.Pins" "1=K 2=A"
 			(at 351.79 125.73 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C5336487"
+			(at 351.79 125.73 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7944,7 +8102,7 @@
 	)
 	(symbol
 		(lib_id "Device:R")
-		(at 323.85 142.24 0)
+		(at 313.69 140.97 0)
 		(unit 1)
 		(exclude_from_sim no)
 		(in_bom yes)
@@ -7952,7 +8110,7 @@
 		(dnp no)
 		(uuid "ab69fb84-eb6d-48dc-8a29-e6c51f1bae4e")
 		(property "Reference" "R17"
-			(at 326.39 140.9699 0)
+			(at 316.23 139.6999 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7960,8 +8118,8 @@
 				(justify left)
 			)
 		)
-		(property "Value" "500"
-			(at 326.39 143.5099 0)
+		(property "Value" "1k 1%"
+			(at 316.23 142.2399 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7970,7 +8128,7 @@
 			)
 		)
 		(property "Footprint" "Resistor_SMD:R_0402_1005Metric"
-			(at 322.072 142.24 90)
+			(at 311.912 140.97 90)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7979,7 +8137,7 @@
 			)
 		)
 		(property "Datasheet" "~"
-			(at 323.85 142.24 0)
+			(at 313.69 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -7987,8 +8145,17 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
-			(at 323.85 142.24 0)
+		(property "Description" "100mW 1kΩ 75V Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+			(at 313.69 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C131360"
+			(at 313.69 140.97 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8259,15 +8426,6 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
-			(at 185.42 137.16 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
 		(pin "1"
 			(uuid "e76151fa-6825-4258-8d2a-bf2b420162eb")
 		)
@@ -8374,7 +8532,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 76.2 113.03 0)
 			(effects
 				(font
@@ -8392,7 +8550,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "1uF ±10% 10V Ceramic Capacitor X7R 0402"
 			(at 76.2 113.03 0)
 			(effects
 				(font
@@ -8401,7 +8559,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C52923"
 			(at 76.2 113.03 0)
 			(effects
 				(font
@@ -8444,7 +8602,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "1k 1%"
 			(at 278.13 142.2399 0)
 			(effects
 				(font
@@ -8471,7 +8629,16 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "100mW 1kΩ 75V Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+			(at 275.59 140.97 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C131360"
 			(at 275.59 140.97 0)
 			(effects
 				(font
@@ -8541,7 +8708,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "200mW 10kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 148.59 59.69 0)
 			(effects
 				(font
@@ -8550,7 +8717,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C25744"
 			(at 148.59 59.69 0)
 			(effects
 				(font
@@ -8569,6 +8736,100 @@
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "R7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Device:LED_ABGR")
+		(at 318.77 118.11 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "d47c9b84-0833-4016-a4c8-5f680e8d4ff6")
+		(property "Reference" "D11"
+			(at 327.66 116.8399 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Value" "LED_ABGR"
+			(at 327.66 119.3799 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(property "Footprint" "LED_SMD:LED_RGB_1210"
+			(at 320.04 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 320.04 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "RGB LED, anode/blue/green/red"
+			(at 318.77 118.11 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "MPN" "15-13D/R6GHBHC-A01/2T"
+			(at 318.77 118.11 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C2890623"
+			(at 318.77 118.11 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "4"
+			(uuid "d7b7913f-9afc-4295-a6ed-ee120330ce65")
+		)
+		(pin "3"
+			(uuid "932b6b4a-ea7a-4ee7-b356-739efde50e09")
+		)
+		(pin "1"
+			(uuid "5415c692-973b-4722-bfda-aed4d9d22101")
+		)
+		(pin "2"
+			(uuid "43d58e74-e438-4f7e-a80d-4942058628a6")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "D11")
 					(unit 1)
 				)
 			)
@@ -8654,7 +8915,7 @@
 				)
 			)
 		)
-		(property "Value" "100nF Ceramic"
+		(property "Value" "100nF"
 			(at 49.76 115.03 0)
 			(effects
 				(font
@@ -8680,7 +8941,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 48.26 113.03 0)
 			(effects
 				(font
@@ -8689,7 +8950,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C307331"
 			(at 48.26 113.03 0)
 			(effects
 				(font
@@ -8783,7 +9044,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(fields_autoplaced yes)
 		(uuid "ee8797c1-2d6c-4c55-9b5f-2c05ae1720ec")
 		(property "Reference" "J6"
@@ -8892,7 +9153,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Light emitting diode"
+		(property "Description" "Ice Blue LED Indication - Discrete 3.1V 0603"
 			(at 300.99 127 0)
 			(effects
 				(font
@@ -8903,6 +9164,15 @@
 		)
 		(property "Sim.Pins" "1=K 2=A"
 			(at 300.99 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "LCSC Part #" "C5336487"
+			(at 300.99 127 90)
 			(effects
 				(font
 					(size 1.27 1.27)

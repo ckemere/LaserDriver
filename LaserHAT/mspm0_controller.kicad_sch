@@ -3822,7 +3822,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 74.93 121.92 0)
 			(effects
 				(font
@@ -3831,7 +3831,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C307331"
 			(at 74.93 121.92 0)
 			(effects
 				(font
@@ -3964,7 +3964,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "10uF ±10% 16V Ceramic Capacitor X7R 0805"
 			(at 85.09 121.92 0)
 			(effects
 				(font
@@ -3973,7 +3973,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C95841"
 			(at 85.09 121.92 0)
 			(effects
 				(font
@@ -4050,7 +4050,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C720477"
+		(property "LCSC Part #" "C720477"
 			(at 96.52 208.28 0)
 			(effects
 				(font
@@ -4194,7 +4194,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C20618748"
+		(property "LCSC Part #" "C20618748"
 			(at 152.4 236.22 0)
 			(effects
 				(font
@@ -4354,7 +4354,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "10nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 118.11 134.62 0)
 			(effects
 				(font
@@ -4363,7 +4363,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C15195"
 			(at 118.11 134.62 0)
 			(effects
 				(font
@@ -4440,7 +4440,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C720477"
+		(property "LCSC Part #" "C720477"
 			(at 96.52 193.04 0)
 			(effects
 				(font
@@ -4517,7 +4517,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C720477"
+		(property "LCSC Part #" "C720477"
 			(at 96.52 185.42 0)
 			(effects
 				(font
@@ -4643,15 +4643,6 @@
 					(size 1.27 1.27)
 				)
 				(justify left top)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" ""
-			(at 234.95 90.17 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
 				(hide yes)
 			)
 		)
@@ -4827,7 +4818,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "100K 0.1%"
+		(property "Value" "100k 0.1%"
 			(at 142.24 124.4599 0)
 			(effects
 				(font
@@ -4854,7 +4845,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "100mW 100kΩ Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 139.7 123.19 0)
 			(effects
 				(font
@@ -4863,7 +4854,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C844674"
 			(at 139.7 123.19 0)
 			(effects
 				(font
@@ -4940,7 +4931,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Parth#" "C2680322"
+		(property "LCSC Part #" "C2680322"
 			(at 95.25 82.55 0)
 			(effects
 				(font
@@ -4992,7 +4983,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "47K"
+		(property "Value" "47k 1%"
 			(at 120.65 121.9199 0)
 			(effects
 				(font
@@ -5019,7 +5010,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Resistor"
+		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
 			(at 118.11 120.65 0)
 			(effects
 				(font
@@ -5028,7 +5019,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C25792"
 			(at 118.11 120.65 0)
 			(effects
 				(font
@@ -5105,7 +5096,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C720477"
+		(property "LCSC Part #" "C720477"
 			(at 368.3 97.79 0)
 			(effects
 				(font
@@ -5154,7 +5145,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Capacitor_SMD:C_0603_1608Metric"
+		(property "Footprint" "Capacitor_SMD:C_0402_1005Metric"
 			(at 163.83 121.92 0)
 			(effects
 				(font
@@ -5172,7 +5163,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Unpolarized capacitor, small symbol"
+		(property "Description" "470nF ±10% 16V Ceramic Capacitor X7R 0402"
 			(at 163.83 121.92 0)
 			(effects
 				(font
@@ -5181,7 +5172,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" ""
+		(property "LCSC Part #" "C47339"
 			(at 163.83 121.92 0)
 			(effects
 				(font
@@ -5589,7 +5580,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part#" "C720477"
+		(property "LCSC Part #" "C720477"
 			(at 96.52 200.66 0)
 			(effects
 				(font
