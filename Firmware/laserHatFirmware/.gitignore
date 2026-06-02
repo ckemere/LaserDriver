@@ -1,0 +1,8 @@
+syscfg_gen/
+build/
+*.o
+*.out
+*.map
+*.hex
+*.bin
+Debug/
