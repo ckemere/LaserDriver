@@ -165,14 +165,34 @@ Confirm `/boot/firmware/config.txt` has `enable_uart=1` and
 
 On Pi 3 / Pi 4 add `dtoverlay=disable-bt` to `/boot/firmware/config.txt`
 if you want the full PL011 (`/dev/ttyAMA0`) instead of the mini-UART
-(`/dev/ttyS0`). The current firmware runs at 9600 8N1 on whichever
+(`/dev/ttyS0`). The current firmware runs at 115200 8N1 on whichever
 UART is on those pins.
 
 ### Quick UART smoke test
 
+The firmware speaks a tiny line-based ASCII protocol on UART0 (115200
+8N1, `\n`-terminated each direction):
+
+```
+i N    set intensity (peak PWM duty, 1..320)
+r N    set ramp-up duration (in 10 µs ticks)
+h N    set hold and trailing-low duration (in 10 µs ticks)
+t      trigger one pulse
+?      query state -> "OK i=N r=N h=N b=BBBB phase=W|T tick=TTT"
+```
+
+Defaults at boot: `i=320 r=8000 h=10000`. Each command echoes the
+resulting value as `OK ...`; out-of-range / unknown / busy responses
+come back as `ERR <reason>`. `t` does not ACK immediately — the ACK
+pair is `OK pulse start=TTT` when the state machine enters the
+pulse, then `OK pulse end=TTT` when it returns to idle.
+
 ```bash
-picocom -b 9600 /dev/ttyS0
-# type a byte — the MCU echoes it back
+picocom -b 115200 /dev/ttyS0
+# at the prompt:
+#   ?      <enter>   -> OK i=320 r=8000 h=10000 b=0 phase=W tick=...
+#   i 100  <enter>   -> OK i=100
+#   t      <enter>   -> OK pulse start=... / OK pulse end=...
 # exit: Ctrl-A Ctrl-X
 ```
 
@@ -181,9 +201,9 @@ Or scriptable:
 ```python
 # pip install pyserial (or apt install python3-serial)
 import serial
-s = serial.Serial('/dev/ttyS0', 9600, timeout=1)
-s.write(b'Hello MSPM0\n')
-print(repr(s.read(len(b'Hello MSPM0\n'))))
+s = serial.Serial('/dev/ttyS0', 115200, timeout=1)
+s.write(b'?\n')
+print(s.readline())  # b'OK i=320 r=8000 h=10000 b=0 phase=W tick=...\n'
 ```
 
 You'll need to be in the `dialout` group:

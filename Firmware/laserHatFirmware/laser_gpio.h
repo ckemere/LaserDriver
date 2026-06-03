@@ -10,8 +10,8 @@
  *   - UART0 TX/RX pins muxed to UART0 function
  *   - Bridge pins PA21/PA22 configured as digital outputs
  *     (PA21 cleared = laser off, PA22 set = dummy path active)
- *   - BUTTON1 (PA3) configured as input with internal pull-down
- *     (matches the schematic: SW1 pin 2 -> +3V3, so press = HIGH)
+ *   - BUTTON1..4 (PA3..PA6) configured as inputs with internal pull-down
+ *     (matches the schematic: SW pin 2 -> +3V3, so press = HIGH)
  *   - STIM_MIRROR LED (PA13) configured as digital output, initial HIGH
  *
  * laser_gpio_enable_power_and_reset() resets the GPIOA peripheral and
@@ -30,6 +30,14 @@ void laser_gpio_init(void);
 static inline uint32_t laser_gpio_read_button1(void)
 {
     return BOARD_GPIO_PORT->DIN31_0 & BOARD_BUTTON1_PIN;
+}
+
+/* Returns a 4-bit raw mask: bit 0 = B1, bit 1 = B2, bit 2 = B3, bit 3 = B4.
+ * Each bit is 1 if the corresponding button reads HIGH (pressed). */
+static inline uint8_t laser_gpio_read_buttons_raw(void)
+{
+    uint32_t din = BOARD_GPIO_PORT->DIN31_0;
+    return (uint8_t)(((din >> 3) & 0x0Fu));  /* PA3..PA6 -> bits 0..3 */
 }
 
 static inline void laser_gpio_stim_mirror_set(void)

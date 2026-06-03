@@ -31,10 +31,21 @@
 #define BOARD_PWM_DUMMY_GPIO_FUNC   IOMUX_PINCM47_PF_GPIOA_DIO22
 #define BOARD_PWM_DUMMY_PWM_FUNC    IOMUX_PINCM47_PF_TIMA0_CCP0_CMPL
 
-/* ----- BUTTON1 (PA3) — pressed: pin -> +3V3, requires PULL_DOWN ----- */
+/* ----- BUTTON1..4 (PA3..PA6) — pressed: pin -> +3V3, PULL_DOWN ----- */
 #define BOARD_BUTTON1_PIN           (1u << 3)
 #define BOARD_BUTTON1_PINCM         IOMUX_PINCM8
-#define BOARD_BUTTON1_GPIO_FUNC     IOMUX_PINCM8_PF_GPIOA_DIO3
+
+#define BOARD_BUTTON2_PIN           (1u << 4)
+#define BOARD_BUTTON2_PINCM         IOMUX_PINCM9
+
+#define BOARD_BUTTON3_PIN           (1u << 5)
+#define BOARD_BUTTON3_PINCM         IOMUX_PINCM10
+
+#define BOARD_BUTTON4_PIN           (1u << 6)
+#define BOARD_BUTTON4_PINCM         IOMUX_PINCM11
+
+#define BOARD_BUTTON_MASK           (BOARD_BUTTON1_PIN | BOARD_BUTTON2_PIN | \
+                                     BOARD_BUTTON3_PIN | BOARD_BUTTON4_PIN)
 
 /* ----- STIM_MIRROR LED (PA13) ----- */
 #define BOARD_STIM_MIRROR_PIN       (1u << 13)

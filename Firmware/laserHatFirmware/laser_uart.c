@@ -1,14 +1,90 @@
 #include "laser_uart.h"
 #include "mcu.h"
+#include <stdbool.h>
+
+/* ------------------------------------------------------------------
+ * RX ring buffer — single-producer (UART ISR), single-consumer (main).
+ * Power-of-two size lets us use a simple mask instead of modulo.
+ * ------------------------------------------------------------------ */
+#define RX_BUF_SIZE   256u
+#define RX_BUF_MASK   (RX_BUF_SIZE - 1u)
+
+static volatile uint8_t  rx_buf[RX_BUF_SIZE];
+static volatile uint32_t rx_head;   /* written by ISR */
+static volatile uint32_t rx_tail;   /* written by main */
+
+static inline void rx_push(uint8_t byte)
+{
+    uint32_t next = (rx_head + 1u) & RX_BUF_MASK;
+    if (next != rx_tail) {           /* drop on overflow */
+        rx_buf[rx_head] = byte;
+        rx_head = next;
+    }
+}
+
+bool laser_uart_rx_pop(uint8_t *out)
+{
+    if (rx_tail == rx_head) {
+        return false;
+    }
+    *out = rx_buf[rx_tail];
+    rx_tail = (rx_tail + 1u) & RX_BUF_MASK;
+    return true;
+}
+
+/* ------------------------------------------------------------------
+ * Blocking TX
+ * ------------------------------------------------------------------ */
+void laser_uart_tx_byte(uint8_t byte)
+{
+    while ((UART0->STAT & UART_STAT_TXFF_MASK) != 0u) { /* wait */ }
+    UART0->TXDATA = byte;
+}
+
+void laser_uart_tx_str(const char *s)
+{
+    while (*s) {
+        laser_uart_tx_byte((uint8_t)*s++);
+    }
+}
+
+void laser_uart_tx_u32(uint32_t value)
+{
+    /* Up to 10 digits for uint32_t (4294967295). */
+    char buf[10];
+    int  n = 0;
+
+    if (value == 0u) {
+        laser_uart_tx_byte('0');
+        return;
+    }
+    while (value > 0u) {
+        buf[n++] = (char)('0' + (value % 10u));
+        value  /= 10u;
+    }
+    while (n-- > 0) {
+        laser_uart_tx_byte((uint8_t)buf[n]);
+    }
+}
+
+/* ------------------------------------------------------------------
+ * RX ISR — push bytes into the ring; no protocol logic here.
+ * ------------------------------------------------------------------ */
+void UART0_IRQHandler(void)
+{
+    if (UART0->CPU_INT.IIDX == UART_CPU_INT_IIDX_STAT_RXIFG) {
+        rx_push((uint8_t)(UART0->RXDATA & UART_RXDATA_DATA_MASK));
+    }
+}
 
 /*
- * 9600 baud at 32 MHz BUSCLK with 16x oversampling:
- *   divisor = 32e6 / (16 * 9600) = 208.333...
- *   IBRD = 208, FBRD = round(0.333 * 64) = 21
- * SysConfig generates the same pair.
+ * 115200 baud at 32 MHz BUSCLK with 16x oversampling:
+ *   divisor = 32e6 / (16 * 115200) = 17.361...
+ *   IBRD = 17, FBRD = round(0.361 * 64) = 23
+ * Actual ≈ 115210 baud, well within UART tolerance.
  */
-#define UART_IBRD_9600   208u
-#define UART_FBRD_9600   21u
+#define UART_IBRD        17u
+#define UART_FBRD        23u
 
 static inline void update_reg(volatile uint32_t *reg, uint32_t value, uint32_t mask)
 {
@@ -50,9 +126,9 @@ void laser_uart_init(void)
     /* 16x oversampling. */
     update_reg(&UART0->CTL0, UART_CTL0_HSE_OVS16, UART_CTL0_HSE_MASK);
 
-    /* Baud rate divisor: 9600 @ 32 MHz BUSCLK / 16. */
-    update_reg(&UART0->IBRD, UART_IBRD_9600, UART_IBRD_DIVINT_MASK);
-    update_reg(&UART0->FBRD, UART_FBRD_9600, UART_FBRD_DIVFRAC_MASK);
+    /* Baud rate divisor: 115200 @ 32 MHz BUSCLK / 16. */
+    update_reg(&UART0->IBRD, UART_IBRD, UART_IBRD_DIVINT_MASK);
+    update_reg(&UART0->FBRD, UART_FBRD, UART_FBRD_DIVFRAC_MASK);
     /* Per TRM: any LCRH write latches IBRD/FBRD.  Re-trigger by rewriting
      * the same LCRH value. */
     UART0->LCRH = UART0->LCRH;

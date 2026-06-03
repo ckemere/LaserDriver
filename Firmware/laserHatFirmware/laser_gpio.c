@@ -9,20 +9,19 @@
  * floating inputs.
  */
 static const uint8_t kUnusedPincm[] = {
-    IOMUX_PINCM1,  IOMUX_PINCM2,  IOMUX_PINCM7,  IOMUX_PINCM9,
-    IOMUX_PINCM10, IOMUX_PINCM11, IOMUX_PINCM14, IOMUX_PINCM19,
-    IOMUX_PINCM20, IOMUX_PINCM34, IOMUX_PINCM36, IOMUX_PINCM38,
-    IOMUX_PINCM39, IOMUX_PINCM40, IOMUX_PINCM54, IOMUX_PINCM55,
-    IOMUX_PINCM59, IOMUX_PINCM60,
+    IOMUX_PINCM1,  IOMUX_PINCM2,  IOMUX_PINCM7,  IOMUX_PINCM14,
+    IOMUX_PINCM19, IOMUX_PINCM20, IOMUX_PINCM34, IOMUX_PINCM36,
+    IOMUX_PINCM38, IOMUX_PINCM39, IOMUX_PINCM40, IOMUX_PINCM54,
+    IOMUX_PINCM55, IOMUX_PINCM59, IOMUX_PINCM60,
 };
 
-/* Matching pin bit masks for the DOUT and DOE registers. */
+/* Matching pin bit masks for the DOUT and DOE registers.
+ * PA4..PA6 (BUTTON2..4) are now used, so removed from this list. */
 #define UNUSED_PIN_MASK \
-    ((1u << 0)  | (1u << 1)  | (1u << 2)  | (1u << 4)  | \
-     (1u << 5)  | (1u << 6)  | (1u << 7)  | (1u << 8)  | \
-     (1u << 9)  | (1u << 12) | (1u << 14) | (1u << 16) | \
-     (1u << 17) | (1u << 18) | (1u << 24) | (1u << 25) | \
-     (1u << 26) | (1u << 27))
+    ((1u << 0)  | (1u << 1)  | (1u << 2)  | (1u << 7)  | \
+     (1u << 8)  | (1u << 9)  | (1u << 12) | (1u << 14) | \
+     (1u << 16) | (1u << 17) | (1u << 18) | (1u << 24) | \
+     (1u << 25) | (1u << 26) | (1u << 27))
 
 /* IOMUX function code 1 is "GPIO" on every PINCM. */
 #define PINCM_FUNC_GPIO         ((uint32_t) 0x00000001u)
@@ -61,10 +60,14 @@ void laser_gpio_init(void)
     IOMUX->SECCFG.PINCM[BOARD_PWM_DUMMY_PINCM] =
         IOMUX_PINCM_PC_CONNECTED | PINCM_FUNC_GPIO;
 
-    /* ----- BUTTON1: digital input with internal pull-down ----- */
-    IOMUX->SECCFG.PINCM[BOARD_BUTTON1_PINCM] =
+    /* ----- BUTTON1..4: digital inputs with internal pull-down ----- */
+    const uint32_t button_pincm_cfg =
         IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE |
         IOMUX_PINCM_PIPD_ENABLE  | PINCM_FUNC_GPIO;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON1_PINCM] = button_pincm_cfg;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON2_PINCM] = button_pincm_cfg;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON3_PINCM] = button_pincm_cfg;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON4_PINCM] = button_pincm_cfg;
 
     /* ----- STIM_MIRROR LED: digital output ----- */
     IOMUX->SECCFG.PINCM[BOARD_STIM_MIRROR_PINCM] =
