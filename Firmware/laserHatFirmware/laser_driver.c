@@ -41,19 +41,29 @@
  */
 #define DEBOUNCE_TICKS          1000u
 
+/*
+ * Boot-phase indicator: blink STIM_MIRROR LED for ~4 s at power-on before
+ * accepting button triggers.  At 100 kHz, 4 s = 400 000 ticks; toggling
+ * every 10 000 ticks gives a 5 Hz blink.
+ */
+#define BOOT_BLINK_TICKS        400000u
+#define BOOT_BLINK_HALF_PERIOD  10000u
+
 /* -----------------------------------------------------------------------
  * State machine types
  * ----------------------------------------------------------------------- */
 
-/* Top-level: are we idle (waiting for a trigger) or running a laser pulse? */
+/* Top-level: boot blink, waiting for a trigger, or running a laser pulse? */
 typedef enum {
+    OVERALL_BOOT,
     OVERALL_WAITING,
     OVERALL_TRIGGERED,
 } OverallPhase;
 
-/* Button debounce sub-state. */
+/* Button debounce sub-state.  Buttons are wired to +3V3 on press,
+ * configured PULL_DOWN in syscfg, so a pressed pin reads HIGH. */
 typedef enum {
-    BUTTON_IDLE,        /* pin is HIGH (not pressed) */
+    BUTTON_IDLE,        /* pin is LOW (not pressed) */
     BUTTON_PRESSED,     /* confirmed press, waiting for release */
     BUTTON_RELEASED,    /* release confirmed — triggers laser on this tick */
 } ButtonPhase;
@@ -134,9 +144,10 @@ static void tick_timer_init(void)
  * Advance state by one tick.  Returns state unchanged if no new TIMG0 tick
  * has fired (guards against spurious WFI wakeups from other sources).
  *
- * Button is polled by reading PB21 directly; active-low, pulled up by SysConfig.
- * A BUTTON_RELEASED event (set for exactly one tick after confirmed release)
- * is consumed by the overall phase logic to start a laser pulse cycle.
+ * Button is polled by reading PA3 directly; active-high (pin connects to
+ * +3V3 on press), pull-down configured by SysConfig.  A BUTTON_RELEASED
+ * event (set for exactly one tick after confirmed release) is consumed
+ * by the overall phase logic to start a laser pulse cycle.
  */
 static MachineState get_next_state(MachineState s)
 {
@@ -145,8 +156,8 @@ static MachineState get_next_state(MachineState s)
         return s;
     last_tick++;
 
-    /* --- Button debounce --- */
-    bool pin_pressed = (DL_GPIO_readPins(BUTTON_PORT, BUTTON_TRIGGER_PIN) == 0);
+    /* --- Button debounce (active-high) --- */
+    bool pin_pressed = (DL_GPIO_readPins(BUTTON_PORT, BUTTON_TRIGGER_PIN) != 0);
     bool trigger = false;
 
     switch (s.button) {
@@ -183,6 +194,17 @@ static MachineState get_next_state(MachineState s)
 
     /* --- Overall and laser phases --- */
     switch (s.overall) {
+        case OVERALL_BOOT:
+            s.tick_count++;
+            if (s.tick_count >= BOOT_BLINK_TICKS) {
+                s.tick_count = 0;
+                s.overall    = OVERALL_WAITING;
+                /* Drop any button press observed during the boot window. */
+                s.button     = BUTTON_IDLE;
+                s.debounce_ticks = 0;
+            }
+            break;
+
         case OVERALL_WAITING:
             /* Ignore button presses that arrive while a cycle is in progress. */
             if (trigger) {
@@ -246,14 +268,25 @@ static MachineState get_next_state(MachineState s)
 
 /*
  * Drive hardware to match the current state.
- * When waiting for a trigger, laser is always off (GPIO-safe).
- * During a triggered cycle, switches pin mux between GPIO-safe and PWM
- * and sets the PWM duty from ramp_step.
+ * - Boot: laser off, STIM_MIRROR blinks from tick_count.
+ * - Waiting: laser off, STIM_MIRROR off.
+ * - Triggered: PWM follows the waveform; STIM_MIRROR mirrors laser-on.
  */
 static void set_output(MachineState s)
 {
+    if (s.overall == OVERALL_BOOT) {
+        laser_pins_to_gpio_safe();
+        if ((s.tick_count / BOOT_BLINK_HALF_PERIOD) & 1u) {
+            DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+        } else {
+            DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+        }
+        return;
+    }
+
     if (s.overall == OVERALL_WAITING) {
         laser_pins_to_gpio_safe();
+        DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
         return;
     }
 
@@ -295,13 +328,11 @@ static void set_output(MachineState s)
 
 volatile uint8_t gEchoData = 0;
 
-volatile int gTimerWakeUp = 0;
-
 int main(void)
 {
     SYSCFG_DL_init();
-    /* PA8 = 0 (laser path LOW), PA22 = 1 (dummy HIGH), PB21 pull-up enabled
-     * — all set by GPIO init in SYSCFG_DL_init().
+    /* PA21 = 0 (laser path LOW), PA22 = 1 (dummy HIGH), PA3 pull-down
+     * enabled — all set by GPIO init in SYSCFG_DL_init().
      */
 
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
@@ -317,23 +348,14 @@ int main(void)
     NVIC_EnableIRQ(TIMG0_INT_IRQn);
     DL_TimerG_startCounter(TIMG0);
 
-    MachineState state = { OVERALL_WAITING, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
+    MachineState state = { OVERALL_BOOT, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
 
     NVIC_ClearPendingIRQ(UART_0_INST_INT_IRQN);
     NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
-    NVIC_EnableIRQ(TIMER_0_INST_INT_IRQN);
-    DL_TimerG_startCounter(TIMER_0_INST);
-
 
     while (1) {
         state = get_next_state(state);
         set_output(state);
-
-        if (gTimerWakeUp == 1) {
-            DL_GPIO_togglePins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
-            gTimerWakeUp = 0;
-        }
-
         __WFI();
     }
 }
@@ -355,17 +377,6 @@ void UART_0_INST_IRQHandler(void)
         case DL_UART_MAIN_IIDX_RX:
             gEchoData = DL_UART_Main_receiveData(UART_0_INST);
             DL_UART_Main_transmitData(UART_0_INST, gEchoData);
-            break;
-        default:
-            break;
-    }
-}
-
-void TIMER_0_INST_IRQHandler(void)
-{
-    switch (DL_TimerG_getPendingInterrupt(TIMER_0_INST)) {
-        case DL_TIMER_IIDX_ZERO:
-            gTimerWakeUp = 1;
             break;
         default:
             break;

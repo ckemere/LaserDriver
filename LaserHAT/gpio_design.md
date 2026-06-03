@@ -115,6 +115,19 @@ timer change, no syscfg change.
 Bench verification still TBD: PA21 should toggle at 100 kHz during a
 triggered pulse with PA22 as its hardware complement.
 
+### Button wiring (SW1..SW4)
+
+Each button has one terminal on its `BUTTONn` net (→ MCU PAn) and the
+other terminal on **`MSPM0_3V3`**. Pressing a button shorts the MCU pin
+to +3V3. Firmware therefore:
+
+- configures each button pin as **INPUT with internal `PULL_DOWN`**, and
+- reads them **active-high** (pressed = pin reads non-zero).
+
+Originally syscfg used `PULL_UP` and the firmware read the pin as
+active-low — that combination read every button as stuck HIGH and never
+saw a press. Fixed 2026-06-03.
+
 ### Remaining firmware/HW gaps
 
 - syscfg already pins BUTTON.TRIGGER on PA3 (matches `BUTTON1` on the
