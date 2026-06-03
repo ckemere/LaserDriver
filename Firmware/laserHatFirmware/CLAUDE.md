@@ -2,21 +2,22 @@
 
 ## Target
 - Device: MSPM0G3507SRHBR (Cortex-M0+, VQFN-32, U7 on the HAT)
-- SDK headers + startup + linker scripts: /opt/ti/mspm0_sdk_2_10_00_04
+- SDK headers + startup + linker scripts: vendored at `sdk/` (no external SDK path required)
 - Toolchains supported:
   - TI ARM LLVM (Clang) at /opt/ti/ti-cgt-armllvm_5.1.0.LTS — driven by `Makefile`
   - arm-none-eabi-gcc (Pi-native) — driven by `Makefile.gcc`
 
-The firmware has **no SysConfig dependency**. All peripheral init is
-hand-written register code in `laser_*.c`; pin assignments live in
-`board.h`. Memory layout and startup come straight from the SDK.
+The firmware has **no SysConfig dependency** and **no external SDK
+path dependency**. All peripheral init is hand-written register code
+in `laser_*.c`; pin assignments live in `board.h`. Memory layout,
+startup, CMSIS, and device headers are all in `sdk/` and committed to
+the repo. The only external dependency is the compiler itself.
 
 ## Building with TI ARM LLVM (workstation)
 
 ```bash
 export PATH=/opt/ti/ti-cgt-armllvm_5.1.0.LTS/bin:$PATH
 export TI_ARM_LLVM=/opt/ti/ti-cgt-armllvm_5.1.0.LTS
-export SDK_ROOT=/opt/ti/mspm0_sdk_2_10_00_04
 make clean && make all
 # -> build/laser_driver.out
 ```
@@ -28,14 +29,14 @@ deprecated; T must be written as t") is known harmless.
 
 ```bash
 sudo apt install gcc-arm-none-eabi
-# Vendor the SDK headers/startup/linker (read-only); any path works
-make -f Makefile.gcc SDK_ROOT=/path/to/mspm0_sdk clean all
+make -f Makefile.gcc clean all
 # -> build_gcc/laser_driver.elf
 #    build_gcc/laser_driver.bin   (raw image for BSL)
 #    build_gcc/laser_driver.hex   (Intel HEX for OpenOCD / probes)
 ```
 
-The same source tree builds under both toolchains.
+The same source tree builds under both toolchains. SDK files are
+already in the repo under `sdk/` — no additional downloads needed.
 
 ## Module layout
 

@@ -1,21 +1,21 @@
 # ============================================================
 # Laser Driver - MSPM0G3507 — TI ARM CLANG build (workstation)
 # ============================================================
-# This Makefile drives the existing TI ti-cgt-armllvm toolchain.  No
-# SysConfig dependency: all peripheral init lives in laser_*.c, pin
-# assignments in board.h, memory layout taken from the SDK's stock
-# linker script.
+# SDK headers/startup/linker are vendored under ./sdk so this build
+# has no external SDK path dependency.  Only the tiarmclang toolchain
+# itself is external.  See Makefile.gcc for the Pi-native arm-none-eabi
+# build with no TI tooling at all.
 
 # Tools
-SDK_ROOT        := /opt/ti/mspm0_sdk_2_10_00_04
 CC              := /opt/ti/ti-cgt-armllvm_5.1.0.LTS/bin/tiarmclang
 
 # Paths
 PROJ_DIR        := .
+SDK_DIR         := $(PROJ_DIR)/sdk
 BUILD_DIR       := $(PROJ_DIR)/build
 
 # Source files
-STARTUP_SRC     := $(SDK_ROOT)/source/ti/devices/msp/m0p/startup_system_files/ticlang/startup_mspm0g350x_ticlang.c
+STARTUP_SRC     := $(SDK_DIR)/source/ti/devices/msp/m0p/startup_system_files/ticlang/startup_mspm0g350x_ticlang.c
 STARTUP_OBJ     := $(BUILD_DIR)/startup_mspm0g350x_ticlang.o
 
 OBJS            := $(BUILD_DIR)/laser_driver.o \
@@ -33,16 +33,15 @@ CPU_FLAGS       := -mcpu=cortex-m0plus -mthumb
 OPT_FLAGS       := -O0 -g
 DEVICE_DEFS     := -D__MSPM0G3507__
 INCLUDES        := \
-    -I$(SDK_ROOT)/source \
-    -I$(SDK_ROOT)/source/ti/devices/msp \
-    -I$(SDK_ROOT)/source/ti/devices/msp/m0p \
-    -I$(SDK_ROOT)/source/ti/devices/msp/m0p/peripheral_library \
-    -I$(SDK_ROOT)/source/third_party/CMSIS/Core/Include
+    -I$(SDK_DIR)/source \
+    -I$(SDK_DIR)/source/ti/devices/msp \
+    -I$(SDK_DIR)/source/ti/devices/msp/m0p \
+    -I$(SDK_DIR)/source/third_party/CMSIS/Core/Include
 
 CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(DEVICE_DEFS) $(INCLUDES)
 
 # Linker flags
-LINKER_CMD      := $(SDK_ROOT)/source/ti/devices/msp/m0p/linker_files/ticlang/mspm0g3507.cmd
+LINKER_CMD      := $(SDK_DIR)/source/ti/devices/msp/m0p/linker_files/ticlang/mspm0g3507.cmd
 LFLAGS          := -Wl,--rom_model \
                    -Wl,-m,$(BUILD_DIR)/laser_driver.map \
                    -T$(LINKER_CMD)
