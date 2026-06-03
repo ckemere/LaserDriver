@@ -58,10 +58,34 @@ softwareupdate --install-rosetta
 
 ## Building on the Raspberry Pi
 
-Use `Makefile.gcc` with stock arm-none-eabi-gcc:
+### Pi package dependencies
 
 ```bash
-sudo apt install gcc-arm-none-eabi
+sudo apt update
+sudo apt install \
+    git \
+    make \
+    gcc-arm-none-eabi          # cross-compiler for the MSPM0
+```
+
+Recommended additions for testing, flashing, and debugging:
+
+```bash
+sudo apt install \
+    picocom                    # interactive serial terminal
+    python3-serial             # pyserial, for scripted UART tests
+    openocd                    # SWD flashing via Pi GPIO (linuxgpiod)
+    gdb-multiarch              # ARM-capable debugger
+```
+
+`make` and `git` ship with Raspberry Pi OS by default, but listed for
+completeness on a minimal install. `openocd` and `gdb-multiarch` are
+not used by the current firmware build but you'll want them for
+`make flash` and on-target debugging once those land.
+
+### Build
+
+```bash
 make -f Makefile.gcc clean all
 # → build_gcc/laser_driver.elf
 #   build_gcc/laser_driver.bin   (raw image for BSL)
@@ -93,7 +117,6 @@ UART is on those pins.
 ### Quick UART smoke test
 
 ```bash
-sudo apt install picocom python3-serial
 picocom -b 9600 /dev/ttyS0
 # type a byte — the MCU echoes it back
 # exit: Ctrl-A Ctrl-X
@@ -114,13 +137,6 @@ You'll need to be in the `dialout` group:
 ```bash
 sudo usermod -aG dialout $USER && newgrp dialout
 ```
-
-### Future Pi-side tools
-
-Not in the repo yet, but worth installing when we get to them:
-
-- **OpenOCD** for SWD flashing via `linuxgpiod` (`apt install openocd`).
-- **pyserial** for the host-side UART smoke tests and protocol client.
 
 ---
 
