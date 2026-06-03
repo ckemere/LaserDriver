@@ -8,8 +8,28 @@
 #   startup/              -> ticlang + gcc startup sources
 #   linker/               -> ticlang + gcc memory layout
 
-# Tools
-CC              := /opt/ti/ti-cgt-armllvm_5.1.0.LTS/bin/tiarmclang
+# Tools — TI ARM CLANG.  Default install paths per OS; override on
+# the command line (make CC=...) or via the CC environment variable
+# if your install lives elsewhere.
+#
+#   Linux:  /opt/ti/ti-cgt-armllvm_<ver>.LTS/bin/tiarmclang
+#   macOS:  ~/ti/ti-cgt-armllvm_<ver>.LTS/bin/tiarmclang
+#
+# Apple Silicon Macs: TI ships the toolchain x86_64-only, so Rosetta
+# must be installed (softwareupdate --install-rosetta).
+TI_TOOLCHAIN_VER ?= 5.1.0.LTS
+UNAME_S          := $(shell uname -s)
+# Only apply the OS default if the user hasn't overridden CC.  Make
+# initialises CC=cc from its implicit rules, which makes `?=` no-op,
+# so check $(origin CC) explicitly.
+ifeq ($(origin CC),default)
+  ifeq ($(UNAME_S),Linux)
+    CC := /opt/ti/ti-cgt-armllvm_$(TI_TOOLCHAIN_VER)/bin/tiarmclang
+  endif
+  ifeq ($(UNAME_S),Darwin)
+    CC := $(HOME)/ti/ti-cgt-armllvm_$(TI_TOOLCHAIN_VER)/bin/tiarmclang
+  endif
+endif
 
 # Paths
 PROJ_DIR        := .
