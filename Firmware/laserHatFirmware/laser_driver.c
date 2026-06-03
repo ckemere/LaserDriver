@@ -1,6 +1,8 @@
 
 #include "ti_msp_dl_config.h"
 #include "laser_pwm_control.h"
+#include "laser_sysctl.h"
+#include "laser_gpio.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -334,6 +336,14 @@ int main(void)
     /* PA21 = 0 (laser path LOW), PA22 = 1 (dummy HIGH), PA3 pull-down
      * enabled — all set by GPIO init in SYSCFG_DL_init().
      */
+
+    /* Hand-rolled SYSCTL + GPIO config running in parallel with SysConfig's.
+     * Same registers, same values; behavior unchanged.  Once every
+     * peripheral has a register-level replacement these calls take over
+     * and SYSCFG_DL_init() goes away. */
+    laser_sysctl_init();
+    laser_gpio_enable_power_and_reset();
+    laser_gpio_init();
 
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
     DL_DAC12_enable(DAC0);

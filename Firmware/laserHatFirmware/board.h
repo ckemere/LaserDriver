@@ -1,0 +1,60 @@
+#ifndef BOARD_H
+#define BOARD_H
+
+/*
+ * LaserHAT board pin map for MSPM0G3507SRHBR (U7, VQFN-32).
+ *
+ * Centralizes the pin assignments so peripheral modules can be written
+ * without depending on the SysConfig-generated ti_msp_dl_config.h.
+ *
+ * Pin masks use the bare bit-position convention (1U << n).  PINCM
+ * indices are the IOMUX register indices used to configure the pin.
+ * Function codes come from the device header (mspm0g350x.h) and select
+ * the alternate peripheral function on that PINCM.
+ */
+
+#include <stdint.h>
+#include <ti/devices/msp/msp.h>
+
+/* All used pins are on GPIOA on this board. */
+#define BOARD_GPIO_PORT             GPIOA
+
+/* ----- PWM bridge: laser side (PA21) ----- */
+#define BOARD_PWM_LASER_PIN         (1u << 21)
+#define BOARD_PWM_LASER_PINCM       IOMUX_PINCM46
+#define BOARD_PWM_LASER_GPIO_FUNC   IOMUX_PINCM46_PF_GPIOA_DIO21
+#define BOARD_PWM_LASER_PWM_FUNC    IOMUX_PINCM46_PF_TIMA0_CCP0
+
+/* ----- PWM bridge: dummy side (PA22) ----- */
+#define BOARD_PWM_DUMMY_PIN         (1u << 22)
+#define BOARD_PWM_DUMMY_PINCM       IOMUX_PINCM47
+#define BOARD_PWM_DUMMY_GPIO_FUNC   IOMUX_PINCM47_PF_GPIOA_DIO22
+#define BOARD_PWM_DUMMY_PWM_FUNC    IOMUX_PINCM47_PF_TIMA0_CCP0_CMPL
+
+/* ----- BUTTON1 (PA3) — pressed: pin -> +3V3, requires PULL_DOWN ----- */
+#define BOARD_BUTTON1_PIN           (1u << 3)
+#define BOARD_BUTTON1_PINCM         IOMUX_PINCM8
+#define BOARD_BUTTON1_GPIO_FUNC     IOMUX_PINCM8_PF_GPIOA_DIO3
+
+/* ----- STIM_MIRROR LED (PA13) ----- */
+#define BOARD_STIM_MIRROR_PIN       (1u << 13)
+#define BOARD_STIM_MIRROR_PINCM     IOMUX_PINCM35
+#define BOARD_STIM_MIRROR_GPIO_FUNC IOMUX_PINCM35_PF_GPIOA_DIO13
+
+/* ----- DAC OUT (PA15) — output disconnected at IOMUX; DAC drives pin via VREF mux ----- */
+#define BOARD_DAC_OUT_PIN           (1u << 15)
+#define BOARD_DAC_OUT_PINCM         IOMUX_PINCM37
+
+/* ----- UART0 TX (PA10) / RX (PA11) ----- */
+#define BOARD_UART_TX_PIN           (1u << 10)
+#define BOARD_UART_TX_PINCM         IOMUX_PINCM21
+#define BOARD_UART_TX_FUNC          IOMUX_PINCM21_PF_UART0_TX
+
+#define BOARD_UART_RX_PIN           (1u << 11)
+#define BOARD_UART_RX_PINCM         IOMUX_PINCM22
+#define BOARD_UART_RX_FUNC          IOMUX_PINCM22_PF_UART0_RX
+
+/* ----- VREF+ (PA23) ----- */
+#define BOARD_VREF_POS_PINCM        IOMUX_PINCM48
+
+#endif /* BOARD_H */

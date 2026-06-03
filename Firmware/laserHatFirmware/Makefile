@@ -18,6 +18,8 @@ STARTUP_OBJ     := $(BUILD_DIR)/startup_mspm0g350x_ticlang.o
 
 OBJS            := $(BUILD_DIR)/laser_driver.o \
                    $(BUILD_DIR)/laser_pwm_control.o \
+                   $(BUILD_DIR)/laser_sysctl.o \
+                   $(BUILD_DIR)/laser_gpio.o \
                    $(BUILD_DIR)/ti_msp_dl_config.o \
                    $(STARTUP_OBJ)
 
@@ -69,6 +71,12 @@ $(BUILD_DIR)/laser_driver.o: $(PROJ_DIR)/laser_driver.c $(SYSCFG_STAMP) | $(BUIL
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/laser_pwm_control.o: $(PROJ_DIR)/laser_pwm_control.c $(SYSCFG_STAMP) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/laser_sysctl.o: $(PROJ_DIR)/laser_sysctl.c $(SYSCFG_STAMP) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/laser_gpio.o: $(PROJ_DIR)/laser_gpio.c $(SYSCFG_STAMP) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Compile SysConfig generated source
