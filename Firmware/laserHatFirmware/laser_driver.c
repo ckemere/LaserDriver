@@ -1,11 +1,12 @@
 
-#include "ti_msp_dl_config.h"
+#include <ti/devices/msp/msp.h>
 #include "laser_pwm_control.h"
 #include "laser_sysctl.h"
 #include "laser_gpio.h"
 #include "laser_timera.h"
 #include "laser_timerg.h"
 #include "laser_dac.h"
+#include "laser_uart.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -298,15 +299,9 @@ volatile uint8_t gEchoData = 0;
 
 int main(void)
 {
-    SYSCFG_DL_init();
-    /* PA21 = 0 (laser path LOW), PA22 = 1 (dummy HIGH), PA3 pull-down
-     * enabled — all set by GPIO init in SYSCFG_DL_init().
-     */
-
-    /* Hand-rolled SYSCTL + GPIO config running in parallel with SysConfig's.
-     * Same registers, same values; behavior unchanged.  Once every
-     * peripheral has a register-level replacement these calls take over
-     * and SYSCFG_DL_init() goes away. */
+    /* Boot sequence — pure register-level, no SysConfig dependency.
+     * Order matters: SYSCTL/clocks first, GPIO before any peripheral
+     * that needs pin mux, peripherals after their pin mux is set. */
     laser_sysctl_init();
     laser_gpio_enable_power_and_reset();
     laser_gpio_init();
@@ -315,23 +310,19 @@ int main(void)
     laser_dac_init();
     laser_dac_write12(DAC_SETPOINT);
     laser_dac_enable();
+    laser_uart_init();
 
-    /* laser_pwm_init() in laser_pwm_control.c re-runs the same TIMA0
-     * config laser_timera_init() already did — kept for now until that
-     * file is retired in favour of the register-level module. */
-    laser_pwm_init();
     laser_pins_to_gpio_safe();
     laser_timera_start();
 
     NVIC_SetPriority(TIMG0_INT_IRQn, 0);
     NVIC_EnableIRQ(TIMG0_INT_IRQn);
     laser_timerg_start();
-    DL_TimerG_startCounter(TIMG0);
-
-    MachineState state = { OVERALL_BOOT, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
 
     NVIC_ClearPendingIRQ(UART0_INT_IRQn);
     NVIC_EnableIRQ(UART0_INT_IRQn);
+
+    MachineState state = { OVERALL_BOOT, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
 
     while (1) {
         state = get_next_state(state);

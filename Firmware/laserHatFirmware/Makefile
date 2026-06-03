@@ -1,15 +1,17 @@
 # ============================================================
-# Laser Driver - MSPM0G3507
+# Laser Driver - MSPM0G3507 — TI ARM CLANG build (workstation)
 # ============================================================
+# This Makefile drives the existing TI ti-cgt-armllvm toolchain.  No
+# SysConfig dependency: all peripheral init lives in laser_*.c, pin
+# assignments in board.h, memory layout taken from the SDK's stock
+# linker script.
 
 # Tools
 SDK_ROOT        := /opt/ti/mspm0_sdk_2_10_00_04
-SYSCONFIG_ROOT  := /opt/ti/sysconfig_1.27.0
 CC              := /opt/ti/ti-cgt-armllvm_5.1.0.LTS/bin/tiarmclang
 
 # Paths
 PROJ_DIR        := .
-SYSCFG_DIR      := $(PROJ_DIR)/syscfg_gen
 BUILD_DIR       := $(PROJ_DIR)/build
 
 # Source files
@@ -23,37 +25,27 @@ OBJS            := $(BUILD_DIR)/laser_driver.o \
                    $(BUILD_DIR)/laser_timera.o \
                    $(BUILD_DIR)/laser_timerg.o \
                    $(BUILD_DIR)/laser_dac.o \
-                   $(BUILD_DIR)/ti_msp_dl_config.o \
+                   $(BUILD_DIR)/laser_uart.o \
                    $(STARTUP_OBJ)
-
-# SysConfig
-SYSCFG_FILE     := laser_driver.syscfg
-SYSCFG_STAMP    := $(SYSCFG_DIR)/.generated
-SYSCFG_PRODUCT  := $(SDK_ROOT)/.metadata/product.json
 
 # Compiler flags
 CPU_FLAGS       := -mcpu=cortex-m0plus -mthumb
 OPT_FLAGS       := -O0 -g
+DEVICE_DEFS     := -D__MSPM0G3507__
 INCLUDES        := \
-    -I$(SYSCFG_DIR) \
     -I$(SDK_ROOT)/source \
     -I$(SDK_ROOT)/source/ti/devices/msp \
     -I$(SDK_ROOT)/source/ti/devices/msp/m0p \
     -I$(SDK_ROOT)/source/ti/devices/msp/m0p/peripheral_library \
     -I$(SDK_ROOT)/source/third_party/CMSIS/Core/Include
 
-CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(INCLUDES) \
-                   @$(SYSCFG_DIR)/device.opt
+CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(DEVICE_DEFS) $(INCLUDES)
 
 # Linker flags
-DRIVERLIB       := $(SDK_ROOT)/source/ti/driverlib/lib/ticlang/m0p/mspm0g1x0x_g3x0x/driverlib.a
 LINKER_CMD      := $(SDK_ROOT)/source/ti/devices/msp/m0p/linker_files/ticlang/mspm0g3507.cmd
 LFLAGS          := -Wl,--rom_model \
                    -Wl,-m,$(BUILD_DIR)/laser_driver.map \
-                   -T$(LINKER_CMD) \
-                   -Wl,--search_path=$(SDK_ROOT)/source \
-                   $(SYSCFG_DIR)/device.cmd.genlibs \
-                   $(SYSCFG_DIR)/device_linker.cmd
+                   -T$(LINKER_CMD)
 
 # Output
 TARGET          := $(BUILD_DIR)/laser_driver.out
@@ -65,58 +57,17 @@ TARGET          := $(BUILD_DIR)/laser_driver.out
 all: $(TARGET)
 	@echo "Build complete: $(TARGET)"
 
-# Link
 $(TARGET): $(OBJS) | $(BUILD_DIR)
 	$(CC) $(CPU_FLAGS) $(OBJS) $(LFLAGS) -o $@
 
-# Compile app source
-$(BUILD_DIR)/laser_driver.o: $(PROJ_DIR)/laser_driver.c $(SYSCFG_STAMP) | $(BUILD_DIR)
+$(BUILD_DIR)/%.o: $(PROJ_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/laser_pwm_control.o: $(PROJ_DIR)/laser_pwm_control.c $(SYSCFG_STAMP) | $(BUILD_DIR)
+$(STARTUP_OBJ): $(STARTUP_SRC) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/laser_sysctl.o: $(PROJ_DIR)/laser_sysctl.c $(SYSCFG_STAMP) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/laser_gpio.o: $(PROJ_DIR)/laser_gpio.c $(SYSCFG_STAMP) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/laser_timera.o: $(PROJ_DIR)/laser_timera.c $(SYSCFG_STAMP) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/laser_timerg.o: $(PROJ_DIR)/laser_timerg.c $(SYSCFG_STAMP) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(BUILD_DIR)/laser_dac.o: $(PROJ_DIR)/laser_dac.c $(SYSCFG_STAMP) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Compile SysConfig generated source
-$(BUILD_DIR)/ti_msp_dl_config.o: $(SYSCFG_DIR)/ti_msp_dl_config.c $(SYSCFG_STAMP) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# Compile startup file
-$(STARTUP_OBJ): $(STARTUP_SRC) $(SYSCFG_STAMP) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-# SysConfig code generation
-$(SYSCFG_STAMP): $(SYSCFG_FILE) | $(SYSCFG_DIR)
-	@echo "Running SysConfig..."
-	$(SYSCONFIG_ROOT)/sysconfig_cli.sh \
-		--script $(SYSCFG_FILE) \
-		--product $(SYSCFG_PRODUCT) \
-		--compiler ticlang \
-		--output $(SYSCFG_DIR)
-	@touch $(SYSCFG_STAMP)
-
-# Create output directories
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
-$(SYSCFG_DIR):
-	mkdir -p $(SYSCFG_DIR)
-
-# Clean everything that isn't committed
 clean:
-	rm -rf $(BUILD_DIR) $(SYSCFG_DIR)
-
+	rm -rf $(BUILD_DIR)
