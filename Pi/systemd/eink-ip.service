@@ -1,0 +1,27 @@
+# LaserHAT eink IP-address display — oneshot on boot, then on timer.
+#
+# Install:
+#   sudo cp Pi/systemd/eink-ip.* /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now eink-ip.timer
+#
+# Edit the User= line below to match your Pi account if it isn't
+# kemerelab, and adjust ExecStart / WorkingDirectory if the repo or
+# venv live somewhere other than the defaults below.
+
+[Unit]
+Description=LaserHAT eink IP display
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=kemerelab
+Group=kemerelab
+WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
+ExecStart=/home/kemerelab/.venvs/laserhat/bin/python eink_ip.py
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

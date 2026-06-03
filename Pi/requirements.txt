@@ -1,0 +1,13 @@
+# LaserHAT Pi-side Python dependencies.
+#
+# Install into a venv:
+#   python3 -m venv ~/.venvs/laserhat
+#   ~/.venvs/laserhat/bin/pip install -r requirements.txt
+#
+# Versions pinned to the latest known-good as of June 2026; bump as
+# upstream releases compatible patches.
+
+adafruit-circuitpython-epd>=2.10.0
+adafruit-blinka>=8.40.0
+Pillow>=10.0.0
+pyserial>=3.5
