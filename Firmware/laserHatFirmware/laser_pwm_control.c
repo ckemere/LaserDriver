@@ -4,16 +4,16 @@
 /*
  * IOMUX indices and function codes for the two bridge pins.
  *
- *   PA8  PINCM19  GPIO fn = 0x1  TIMA0_CCP0      fn = 0x5  (laser, direct)
+ *   PA21 PINCM46  GPIO fn = 0x1  TIMA0_CCP0      fn = 0x5  (laser, direct)
  *   PA22 PINCM47  GPIO fn = 0x1  TIMA0_CCP0_CMPL fn = 0x7  (dummy, complement)
  */
-#define PA8_PINCM       BRIDGE_LASER_LASER_IOMUX   /* IOMUX_PINCM19 */
-#define PA22_PINCM      BRIDGE_DUMMY_DUMMY_IOMUX   /* IOMUX_PINCM47 */
+#define LASER_PINCM     BRIDGE_LASER_LASER_IOMUX   /* IOMUX_PINCM46 (PA21) */
+#define DUMMY_PINCM     BRIDGE_DUMMY_DUMMY_IOMUX   /* IOMUX_PINCM47 (PA22) */
 
-#define PA8_GPIO_FUNC   IOMUX_PINCM19_PF_GPIOA_DIO08
-#define PA22_GPIO_FUNC  IOMUX_PINCM47_PF_GPIOA_DIO22
-#define PA8_PWM_FUNC    IOMUX_PINCM19_PF_TIMA0_CCP0
-#define PA22_PWM_FUNC   IOMUX_PINCM47_PF_TIMA0_CCP0_CMPL
+#define LASER_GPIO_FUNC IOMUX_PINCM46_PF_GPIOA_DIO21
+#define DUMMY_GPIO_FUNC IOMUX_PINCM47_PF_GPIOA_DIO22
+#define LASER_PWM_FUNC  IOMUX_PINCM46_PF_TIMA0_CCP0
+#define DUMMY_PWM_FUNC  IOMUX_PINCM47_PF_TIMA0_CCP0_CMPL
 
 /*
  * Configure TIMA0 for 100 kHz edge-aligned UP-counting complementary PWM.
@@ -82,30 +82,29 @@ void laser_pwm_init(void)
  * Sequence:
  *   1. Pre-load DOUT registers before touching IOMUX so each pin drives
  *      the correct level the instant it switches to GPIO.
- *   2. Switch PA8 (laser, CCP0) to GPIO first so the laser path is
+ *   2. Switch PA21 (laser, CCP0) to GPIO first so the laser path is
  *      defined and OFF (LOW) while PA22 is still PWM-complemented.
  *   3. Switch PA22 (dummy, CCP0_CMPL) to GPIO HIGH last.
  */
 void laser_pins_to_gpio_safe(void)
 {
-    DL_GPIO_clearPins(GPIOA, BRIDGE_LASER_LASER_PIN);    /* PA8  = 0 */
+    DL_GPIO_clearPins(GPIOA, BRIDGE_LASER_LASER_PIN);    /* PA21 = 0 */
     DL_GPIO_setPins(GPIOA, BRIDGE_DUMMY_DUMMY_PIN);      /* PA22 = 1 */
 
-    IOMUX->SECCFG.PINCM[PA8_PINCM]  = IOMUX_PINCM_PC_CONNECTED | PA8_GPIO_FUNC;
-    IOMUX->SECCFG.PINCM[PA22_PINCM] = IOMUX_PINCM_PC_CONNECTED | PA22_GPIO_FUNC;
+    IOMUX->SECCFG.PINCM[LASER_PINCM] = IOMUX_PINCM_PC_CONNECTED | LASER_GPIO_FUNC;
+    IOMUX->SECCFG.PINCM[DUMMY_PINCM] = IOMUX_PINCM_PC_CONNECTED | DUMMY_GPIO_FUNC;
 }
 
 /*
  * Switch bridge pins to TIMA0 peripheral function.
- * 
  *
  * Sequence:
  *   1. Switch PA22 (dummy, CCP0_CMPL) first: complement output is active
  *      while the laser pin is still GPIO-HIGH, maintaining the current path.
- *   2. Switch PA8 (laser, CCP0) second: laser now follows PWM.
+ *   2. Switch PA21 (laser, CCP0) second: laser now follows PWM.
  */
 void laser_pins_to_pwm(void)
 {
-    IOMUX->SECCFG.PINCM[PA22_PINCM] = IOMUX_PINCM_PC_CONNECTED | PA22_PWM_FUNC;
-    IOMUX->SECCFG.PINCM[PA8_PINCM]  = IOMUX_PINCM_PC_CONNECTED | PA8_PWM_FUNC;
+    IOMUX->SECCFG.PINCM[DUMMY_PINCM] = IOMUX_PINCM_PC_CONNECTED | DUMMY_PWM_FUNC;
+    IOMUX->SECCFG.PINCM[LASER_PINCM] = IOMUX_PINCM_PC_CONNECTED | LASER_PWM_FUNC;
 }

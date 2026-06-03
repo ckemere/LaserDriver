@@ -6,7 +6,7 @@
 
 /*
  * DAC setpoint applied once at boot before pulses begin.
- * 100 out of 4095 on a 2.5 V reference ≈ 61 mV.
+ * 500 out of 4095 on a 2.5 V reference ≈ 305 mV.
  */
 #define DAC_SETPOINT            500
 
@@ -211,8 +211,7 @@ static MachineState get_next_state(MachineState s)
                     if (s.tick_count >= HOLD_TICKS) {
                         s.tick_count = 0;
                         s.ramp_step  = RAMP_STEPS;
-                        s.laser      = LASER_HOLD_LOW;
-                        // s.laser      = LASER_RAMP_DOWN;
+                        s.laser      = LASER_RAMP_DOWN;
                     }
                     break;
 
@@ -309,6 +308,7 @@ int main(void)
     DL_DAC12_enable(DAC0);
 
     laser_pwm_init();
+    laser_pins_to_gpio_safe();
     DL_TimerA_startCounter(TIMA0);
 
     tick_timer_init();
