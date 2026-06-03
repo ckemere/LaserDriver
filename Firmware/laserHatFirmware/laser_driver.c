@@ -48,20 +48,19 @@
 #define DEBOUNCE_TICKS          1000u
 
 /*
- * Boot-phase indicator: blink STIM_MIRROR LED for ~4 s at power-on before
- * accepting button triggers.  At 100 kHz, 4 s = 400 000 ticks; toggling
- * every 10 000 ticks gives a 5 Hz blink.
+ * Power-on boot blink: 20 toggles of STIM_MIRROR at ~5 Hz before the
+ * state machine starts.  Pure busy-wait, no timer dependence.
+ *   100 ms at 32 MHz BUSCLK ≈ 3.2 M cycles.
  */
-#define BOOT_BLINK_TICKS        400000u
-#define BOOT_BLINK_HALF_PERIOD  10000u
+#define BOOT_BLINK_FLASHES      20u
+#define BOOT_BLINK_HALF_CYCLES  3200000u
 
 /* -----------------------------------------------------------------------
  * State machine types
  * ----------------------------------------------------------------------- */
 
-/* Top-level: boot blink, waiting for a trigger, or running a laser pulse? */
+/* Top-level: waiting for a trigger, or running a laser pulse? */
 typedef enum {
-    OVERALL_BOOT,
     OVERALL_WAITING,
     OVERALL_TRIGGERED,
 } OverallPhase;
@@ -103,6 +102,15 @@ typedef struct {
 
 /* Incremented only in TIMG0 ISR; read in get_next_state(). */
 static volatile uint32_t isr_ticks = 0;
+
+/* Busy-wait roughly `cycles` BUSCLK cycles.  Used only for the boot
+ * blink.  ~3 cycles per loop iteration on Cortex-M0+; precision is
+ * irrelevant for a power-on indicator. */
+static void delay_cycles(uint32_t cycles)
+{
+    volatile uint32_t i = cycles / 3u;
+    while (i--) { /* nop */ }
+}
 
 
 /* -----------------------------------------------------------------------
@@ -163,17 +171,6 @@ static MachineState get_next_state(MachineState s)
 
     /* --- Overall and laser phases --- */
     switch (s.overall) {
-        case OVERALL_BOOT:
-            s.tick_count++;
-            if (s.tick_count >= BOOT_BLINK_TICKS) {
-                s.tick_count = 0;
-                s.overall    = OVERALL_WAITING;
-                /* Drop any button press observed during the boot window. */
-                s.button     = BUTTON_IDLE;
-                s.debounce_ticks = 0;
-            }
-            break;
-
         case OVERALL_WAITING:
             /* Ignore button presses that arrive while a cycle is in progress. */
             if (trigger) {
@@ -237,22 +234,11 @@ static MachineState get_next_state(MachineState s)
 
 /*
  * Drive hardware to match the current state.
- * - Boot: laser off, STIM_MIRROR blinks from tick_count.
  * - Waiting: laser off, STIM_MIRROR off.
  * - Triggered: PWM follows the waveform; STIM_MIRROR mirrors laser-on.
  */
 static void set_output(MachineState s)
 {
-    if (s.overall == OVERALL_BOOT) {
-        laser_pins_to_gpio_safe();
-        if ((s.tick_count / BOOT_BLINK_HALF_PERIOD) & 1u) {
-            laser_gpio_stim_mirror_set();
-        } else {
-            laser_gpio_stim_mirror_clear();
-        }
-        return;
-    }
-
     if (s.overall == OVERALL_WAITING) {
         laser_pins_to_gpio_safe();
         laser_gpio_stim_mirror_clear();
@@ -305,6 +291,17 @@ int main(void)
     laser_sysctl_init();
     laser_gpio_enable_power_and_reset();
     laser_gpio_init();
+
+    /* Power-on boot indicator.  Runs as a plain busy-wait before any
+     * timer is enabled so the state machine doesn't need a dedicated
+     * boot phase. */
+    for (uint32_t n = 0; n < BOOT_BLINK_FLASHES; n++) {
+        laser_gpio_stim_mirror_set();
+        delay_cycles(BOOT_BLINK_HALF_CYCLES);
+        laser_gpio_stim_mirror_clear();
+        delay_cycles(BOOT_BLINK_HALF_CYCLES);
+    }
+
     laser_timera_init();
     laser_timerg_init();
     laser_dac_init();
@@ -322,7 +319,7 @@ int main(void)
     NVIC_ClearPendingIRQ(UART0_INT_IRQn);
     NVIC_EnableIRQ(UART0_INT_IRQn);
 
-    MachineState state = { OVERALL_BOOT, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
+    MachineState state = { OVERALL_WAITING, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
 
     while (1) {
         state = get_next_state(state);
