@@ -54,9 +54,20 @@ TARGET_ELF      := $(BUILD_DIR)/laser_driver.elf
 TARGET_BIN      := $(BUILD_DIR)/laser_driver.bin
 TARGET_HEX      := $(BUILD_DIR)/laser_driver.hex
 
+# OpenOCD (Pi-side SWD flashing)
+OPENOCD            ?= openocd
+OPENOCD_INTERFACE  ?= openocd/pi-swd.cfg
+OPENOCD_TARGET     ?= target/mspm0.cfg
+# Override on Pi 5: make flash OPENOCD_GPIOCHIP=4
+OPENOCD_GPIOCHIP   ?= 0
+OPENOCD_GPIO_ARGS  := \
+    -c "adapter gpio swclk -chip $(OPENOCD_GPIOCHIP) 25" \
+    -c "adapter gpio swdio -chip $(OPENOCD_GPIOCHIP) 24" \
+    -c "adapter gpio srst  -chip $(OPENOCD_GPIOCHIP) 18"
+
 # ============================================================
 
-.PHONY: all clean size
+.PHONY: all clean size flash load burn reset
 
 all: $(TARGET_ELF) $(TARGET_BIN) $(TARGET_HEX) size
 
@@ -83,3 +94,16 @@ $(BUILD_DIR):
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+# Flash the freshly-built ELF to the MCU over SWD via OpenOCD.
+# `load` and `burn` are aliases for the same action.
+flash load burn: $(TARGET_ELF)
+	$(OPENOCD) -f $(OPENOCD_INTERFACE) $(OPENOCD_GPIO_ARGS) \
+	    -f $(OPENOCD_TARGET) \
+	    -c "program $(TARGET_ELF) verify reset exit"
+
+# Reset the MCU without changing what's in flash.
+reset:
+	$(OPENOCD) -f $(OPENOCD_INTERFACE) $(OPENOCD_GPIO_ARGS) \
+	    -f $(OPENOCD_TARGET) \
+	    -c "init; reset; exit"
