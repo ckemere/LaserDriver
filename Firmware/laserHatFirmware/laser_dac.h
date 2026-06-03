@@ -2,7 +2,7 @@
 #define LASER_DAC_H
 
 #include <stdint.h>
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * DAC0 + internal VREF register-level driver.

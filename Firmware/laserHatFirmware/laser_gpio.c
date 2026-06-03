@@ -1,6 +1,6 @@
 #include "laser_gpio.h"
 #include "board.h"
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * PINCM indices for every pin not otherwise claimed by the application.

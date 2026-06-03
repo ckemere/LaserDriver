@@ -1,5 +1,5 @@
 #include "laser_sysctl.h"
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * Register-level SYSCTL init.  Mirrors SYSCFG_DL_SYSCTL_init() but without

@@ -1,6 +1,6 @@
 #include "laser_pwm_control.h"
 #include "board.h"
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * Runtime IOMUX switching between GPIO-safe and TIMA0_CCP0 / CCP0_CMPL

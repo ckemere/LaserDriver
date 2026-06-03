@@ -24,7 +24,7 @@ void laser_gpio_init(void);
 
 /* Tiny inlines so the hot-path button read in laser_driver.c doesn't
  * need driverlib either.  All return 0 or a bit mask. */
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 #include "board.h"
 
 static inline uint32_t laser_gpio_read_button1(void)

@@ -2,16 +2,30 @@
 
 ## Target
 - Device: MSPM0G3507SRHBR (Cortex-M0+, VQFN-32, U7 on the HAT)
-- SDK headers + startup + linker scripts: vendored at `sdk/` (no external SDK path required)
 - Toolchains supported:
   - TI ARM LLVM (Clang) at /opt/ti/ti-cgt-armllvm_5.1.0.LTS — driven by `Makefile`
   - arm-none-eabi-gcc (Pi-native) — driven by `Makefile.gcc`
 
-The firmware has **no SysConfig dependency** and **no external SDK
-path dependency**. All peripheral init is hand-written register code
-in `laser_*.c`; pin assignments live in `board.h`. Memory layout,
-startup, CMSIS, and device headers are all in `sdk/` and committed to
-the repo. The only external dependency is the compiler itself.
+The firmware has no SysConfig dependency and no external SDK path
+dependency. All peripheral init is hand-written register code in
+`laser_*.c`; pin assignments are in `board.h`. The hand-curated
+`mcu.h` exposes only the peripheral pointers, IRQ numbers, IOMUX
+function codes, and CMSIS config this firmware actually uses. The
+peripheral register layouts and bit definitions in `hw/` and CMSIS in
+`cmsis/` come straight from the TI SDK (originals listed at the top
+of `mcu.h`). The only external dependency is the compiler itself.
+
+### Repository layout
+
+```
+mcu.h                    self-contained device header (~150 lines)
+cmsis/                   minimal CMSIS Cortex-M0+ (7 files)
+hw/                      peripheral register layouts + bit fields (7 files)
+startup/                 startup_mspm0g350x_{gcc,ticlang}.c
+linker/                  mspm0g3507.{lds,cmd}
+laser_*.c / laser_*.h    application code
+board.h                  pin assignments
+```
 
 ## Building with TI ARM LLVM (workstation)
 

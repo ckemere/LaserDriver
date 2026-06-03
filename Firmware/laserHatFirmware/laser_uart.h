@@ -2,7 +2,7 @@
 #define LASER_UART_H
 
 #include <stdint.h>
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * UART0 register-level driver — placeholder echo path until a real

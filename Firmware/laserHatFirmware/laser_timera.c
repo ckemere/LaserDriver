@@ -1,5 +1,5 @@
 #include "laser_timera.h"
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * Mirrors the driverlib-driven init that was in laser_pwm_init() — same

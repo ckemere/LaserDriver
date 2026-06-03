@@ -2,7 +2,7 @@
 #define LASER_TIMERG_H
 
 #include <stdint.h>
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * TIMG0 register-level driver — 100 kHz state-machine tick.

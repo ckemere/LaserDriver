@@ -1,5 +1,5 @@
 #include "laser_dac.h"
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /* SysConfig generates this; chip needs ~320 cycles for VREF to settle. */
 #define VREF_SETTLE_CYCLES   320u

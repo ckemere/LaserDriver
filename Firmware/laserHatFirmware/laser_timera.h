@@ -26,7 +26,7 @@ void laser_timera_start(void);
 
 /* Hot-path duty update.  Inline so the state machine doesn't pay a
  * call overhead per tick. */
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 static inline void laser_timera_set_duty(uint32_t step)
 {
     /* CC_01[0] = CC0 register; UP mode -> duty = step / period. */

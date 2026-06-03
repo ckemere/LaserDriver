@@ -1,5 +1,5 @@
 #include "laser_timerg.h"
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 #define TICK_PERIOD_COUNTS  320u  /* 32 MHz / 320 = 100 kHz */
 

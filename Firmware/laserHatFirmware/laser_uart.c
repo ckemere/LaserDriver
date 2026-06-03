@@ -1,5 +1,5 @@
 #include "laser_uart.h"
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /*
  * 9600 baud at 32 MHz BUSCLK with 16x oversampling:

@@ -14,7 +14,7 @@
  */
 
 #include <stdint.h>
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 
 /* All used pins are on GPIOA on this board. */
 #define BOARD_GPIO_PORT             GPIOA

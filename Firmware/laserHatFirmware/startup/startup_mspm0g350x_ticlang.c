@@ -33,7 +33,7 @@
 *****************************************************************************/
 
 #include <stdint.h>
-#include <ti/devices/msp/msp.h>
+#include "../mcu.h"
 
 /* Linker variable that marks the top of the stack. */
 extern unsigned long __STACK_END;

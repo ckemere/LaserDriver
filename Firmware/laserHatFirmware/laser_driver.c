@@ -1,5 +1,5 @@
 
-#include <ti/devices/msp/msp.h>
+#include "mcu.h"
 #include "laser_pwm_control.h"
 #include "laser_sysctl.h"
 #include "laser_gpio.h"
