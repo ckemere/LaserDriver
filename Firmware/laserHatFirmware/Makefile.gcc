@@ -57,7 +57,7 @@ TARGET_HEX      := $(BUILD_DIR)/laser_driver.hex
 # OpenOCD (Pi-side SWD flashing)
 OPENOCD            ?= openocd
 OPENOCD_INTERFACE  ?= openocd/pi-swd.cfg
-OPENOCD_TARGET     ?= target/mspm0.cfg
+OPENOCD_TARGET     ?= target/ti_mspm0.cfg
 # Override on Pi 5: make flash OPENOCD_GPIOCHIP=4
 OPENOCD_GPIOCHIP   ?= 0
 OPENOCD_GPIO_ARGS  := \

@@ -123,9 +123,11 @@ make reset             # just reset the MCU, leave flash contents alone
 2. **No other process holding the SWD pins.** If you've configured
    GPIO 18/24/25 for anything else in `/boot/firmware/config.txt`,
    `make flash` will fail to claim the lines.
-3. **OpenOCD ≥ 0.12.0** (Pi OS Bookworm ships this) for the MSPM0
-   target driver. If `target/mspm0.cfg` isn't found, install a newer
-   OpenOCD or build from source.
+3. **OpenOCD with the TI MSPM0 target driver.** The Pi OS Bookworm
+   `openocd` package (0.12.0+dev) ships `target/ti_mspm0.cfg`, which
+   is what `make flash` defaults to. If your install puts the file
+   under a different name, override:
+   `make flash OPENOCD_TARGET=target/whatever.cfg`.
 
 **Pi 5 note:** the Pi 5 exposes the user GPIO bank as
 `/dev/gpiochip4` (RP1 chip), not `/dev/gpiochip0`. Override the chip
