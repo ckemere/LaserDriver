@@ -1,11 +1,19 @@
 # LaserHAT firmware build & install
 
-Two supported toolchains:
+Two supported toolchains, picked automatically by `Makefile` based on `uname`:
 
-| Makefile        | Toolchain             | Where you'd typically run it       |
-| --------------- | --------------------- | ---------------------------------- |
-| `Makefile`      | TI ARM CLANG          | Linux / macOS workstation          |
-| `Makefile.gcc`  | arm-none-eabi-gcc     | Raspberry Pi (or any Linux/macOS)  |
+| Makefile           | Toolchain             | Selected on                       |
+| ------------------ | --------------------- | --------------------------------- |
+| `Makefile.gcc`     | arm-none-eabi-gcc     | ARM Linux (Raspberry Pi)          |
+| `Makefile.ticlang` | TI ARM CLANG          | x86_64 Linux, macOS (Intel + AS)  |
+
+Plain `make` dispatches to the right one. To force a particular
+toolchain on any host, invoke explicitly:
+
+```bash
+make -f Makefile.gcc      # GCC build, regardless of host
+make -f Makefile.ticlang  # TI CLANG build, regardless of host
+```
 
 Both build the same source tree against the in-tree headers under
 `mcu.h`, `cmsis/`, `hw/`, `startup/`, and `linker/`. No SysConfig, no
@@ -86,7 +94,8 @@ not used by the current firmware build but you'll want them for
 ### Build
 
 ```bash
-make -f Makefile.gcc clean all
+make clean all
+# (the dispatcher Makefile auto-routes to Makefile.gcc on ARM Linux)
 # → build_gcc/laser_driver.elf
 #   build_gcc/laser_driver.bin   (raw image for BSL)
 #   build_gcc/laser_driver.hex   (Intel HEX for OpenOCD / probes)

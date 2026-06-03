@@ -1,87 +1,38 @@
 # ============================================================
-# Laser Driver - MSPM0G3507 — TI ARM CLANG build (workstation)
+# Laser Driver - top-level dispatcher
 # ============================================================
-# All required SDK files are vendored in-tree:
-#   mcu.h                 -> hand-curated MSPM0G3507 device header
-#   cmsis/                -> minimal CMSIS Cortex-M0+ core (7 files)
-#   hw/                   -> peripheral register layout headers (7 files)
-#   startup/              -> ticlang + gcc startup sources
-#   linker/               -> ticlang + gcc memory layout
+# Picks a toolchain Makefile based on `uname`:
+#
+#   ARM Linux  (Raspberry Pi)   -> Makefile.gcc      (arm-none-eabi-gcc)
+#   x86_64 Linux                -> Makefile.ticlang  (TI ARM CLANG)
+#   macOS  (Intel or Apple Si)  -> Makefile.ticlang  (TI ARM CLANG)
+#
+# All targets (`all`, `clean`, etc.) and command-line overrides
+# (`CC=...`, `TI_TOOLCHAIN_VER=...`) are forwarded to the chosen
+# sub-Makefile.  To force a toolchain explicitly:
+#
+#   make -f Makefile.gcc      # GCC build (any host)
+#   make -f Makefile.ticlang  # TI CLANG build (any host)
 
-# Tools — TI ARM CLANG.  Default install paths per OS; override on
-# the command line (make CC=...) or via the CC environment variable
-# if your install lives elsewhere.
-#
-#   Linux:  /opt/ti/ti-cgt-armllvm_<ver>.LTS/bin/tiarmclang
-#   macOS:  ~/ti/ti-cgt-armllvm_<ver>.LTS/bin/tiarmclang
-#
-# Apple Silicon Macs: TI ships the toolchain x86_64-only, so Rosetta
-# must be installed (softwareupdate --install-rosetta).
-TI_TOOLCHAIN_VER ?= 5.1.0.LTS
-UNAME_S          := $(shell uname -s)
-# Only apply the OS default if the user hasn't overridden CC.  Make
-# initialises CC=cc from its implicit rules, which makes `?=` no-op,
-# so check $(origin CC) explicitly.
-ifeq ($(origin CC),default)
-  ifeq ($(UNAME_S),Linux)
-    CC := /opt/ti/ti-cgt-armllvm_$(TI_TOOLCHAIN_VER)/bin/tiarmclang
-  endif
-  ifeq ($(UNAME_S),Darwin)
-    CC := $(HOME)/ti/ti-cgt-armllvm_$(TI_TOOLCHAIN_VER)/bin/tiarmclang
+UNAME_S := $(shell uname -s)
+UNAME_M := $(shell uname -m)
+
+# ARM Linux = Raspberry Pi (or any ARM-class Linux host).  TI ARM
+# CLANG isn't available for ARM hosts, so fall back to GCC.
+ifeq ($(UNAME_S),Linux)
+  ifneq (,$(filter $(UNAME_M),aarch64 armv7l armv6l))
+    SUB := Makefile.gcc
   endif
 endif
+SUB ?= Makefile.ticlang
 
-# Paths
-PROJ_DIR        := .
-BUILD_DIR       := $(PROJ_DIR)/build
+# Forward every goal (and the implicit default goal) to the chosen
+# Makefile.  --no-print-directory keeps the output clean.
+.DEFAULT_GOAL := all
+all:
+	@$(MAKE) --no-print-directory -f $(SUB) all
 
-# Source files
-STARTUP_SRC     := $(PROJ_DIR)/startup/startup_mspm0g350x_ticlang.c
-STARTUP_OBJ     := $(BUILD_DIR)/startup_mspm0g350x_ticlang.o
+%:
+	@$(MAKE) --no-print-directory -f $(SUB) $@
 
-OBJS            := $(BUILD_DIR)/laser_driver.o \
-                   $(BUILD_DIR)/laser_pwm_control.o \
-                   $(BUILD_DIR)/laser_sysctl.o \
-                   $(BUILD_DIR)/laser_gpio.o \
-                   $(BUILD_DIR)/laser_timera.o \
-                   $(BUILD_DIR)/laser_timerg.o \
-                   $(BUILD_DIR)/laser_dac.o \
-                   $(BUILD_DIR)/laser_uart.o \
-                   $(STARTUP_OBJ)
-
-# Compiler flags
-CPU_FLAGS       := -mcpu=cortex-m0plus -mthumb
-OPT_FLAGS       := -O0 -g
-INCLUDES        := -I$(PROJ_DIR)
-CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(INCLUDES)
-
-# Linker
-LINKER_CMD      := $(PROJ_DIR)/linker/mspm0g3507.cmd
-LFLAGS          := -Wl,--rom_model \
-                   -Wl,-m,$(BUILD_DIR)/laser_driver.map \
-                   -T$(LINKER_CMD)
-
-# Output
-TARGET          := $(BUILD_DIR)/laser_driver.out
-
-# ============================================================
-
-.PHONY: all clean
-
-all: $(TARGET)
-	@echo "Build complete: $(TARGET)"
-
-$(TARGET): $(OBJS) | $(BUILD_DIR)
-	$(CC) $(CPU_FLAGS) $(OBJS) $(LFLAGS) -o $@
-
-$(BUILD_DIR)/%.o: $(PROJ_DIR)/%.c | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(STARTUP_OBJ): $(STARTUP_SRC) | $(BUILD_DIR)
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-
-clean:
-	rm -rf $(BUILD_DIR)
+.PHONY: all

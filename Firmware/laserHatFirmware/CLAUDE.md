@@ -3,8 +3,10 @@
 ## Target
 - Device: MSPM0G3507SRHBR (Cortex-M0+, VQFN-32, U7 on the HAT)
 - Toolchains supported:
-  - TI ARM LLVM (Clang) at /opt/ti/ti-cgt-armllvm_5.1.0.LTS — driven by `Makefile`
+  - TI ARM LLVM (Clang) at /opt/ti/ti-cgt-armllvm_5.1.0.LTS — driven by `Makefile.ticlang`
   - arm-none-eabi-gcc (Pi-native) — driven by `Makefile.gcc`
+  - Plain `Makefile` is a dispatcher that picks one based on `uname`
+    (ARM Linux → gcc, x86_64 Linux / macOS → ticlang).
 
 The firmware has no SysConfig dependency and no external SDK path
 dependency. All peripheral init is hand-written register code in
