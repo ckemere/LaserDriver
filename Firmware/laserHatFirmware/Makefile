@@ -21,6 +21,7 @@ OBJS            := $(BUILD_DIR)/laser_driver.o \
                    $(BUILD_DIR)/laser_sysctl.o \
                    $(BUILD_DIR)/laser_gpio.o \
                    $(BUILD_DIR)/laser_timera.o \
+                   $(BUILD_DIR)/laser_timerg.o \
                    $(BUILD_DIR)/ti_msp_dl_config.o \
                    $(STARTUP_OBJ)
 
@@ -81,6 +82,9 @@ $(BUILD_DIR)/laser_gpio.o: $(PROJ_DIR)/laser_gpio.c $(SYSCFG_STAMP) | $(BUILD_DI
 	$(CC) $(CFLAGS) -c $< -o $@
 
 $(BUILD_DIR)/laser_timera.o: $(PROJ_DIR)/laser_timera.c $(SYSCFG_STAMP) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/laser_timerg.o: $(PROJ_DIR)/laser_timerg.c $(SYSCFG_STAMP) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Compile SysConfig generated source

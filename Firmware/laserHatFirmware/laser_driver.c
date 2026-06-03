@@ -4,6 +4,7 @@
 #include "laser_sysctl.h"
 #include "laser_gpio.h"
 #include "laser_timera.h"
+#include "laser_timerg.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -346,6 +347,7 @@ int main(void)
     laser_gpio_enable_power_and_reset();
     laser_gpio_init();
     laser_timera_init();
+    laser_timerg_init();
 
     DL_DAC12_output12(DAC0, DAC_SETPOINT);
     DL_DAC12_enable(DAC0);
