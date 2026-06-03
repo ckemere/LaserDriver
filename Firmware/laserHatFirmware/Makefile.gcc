@@ -1,0 +1,96 @@
+# ============================================================
+# Laser Driver - MSPM0G3507 — arm-none-eabi-gcc build (Pi-native)
+# ============================================================
+# Mirrors the ticlang Makefile but targets stock arm-none-eabi-gcc so
+# the firmware can be built directly on the Raspberry Pi without the
+# TI toolchain.  Vendor the MSPM0 SDK (headers + startup + linker) and
+# point SDK_ROOT at it.
+#
+# Pi install:
+#   sudo apt install gcc-arm-none-eabi
+#   git clone or copy the SDK tree onto the Pi at e.g. ~/mspm0_sdk
+#   make -f Makefile.gcc SDK_ROOT=$HOME/mspm0_sdk
+
+# Tools
+CROSS           ?= arm-none-eabi
+CC              := $(CROSS)-gcc
+OBJCOPY         := $(CROSS)-objcopy
+SIZE            := $(CROSS)-size
+
+# Paths (override SDK_ROOT on the Pi)
+SDK_ROOT        ?= /opt/ti/mspm0_sdk_2_10_00_04
+PROJ_DIR        := .
+BUILD_DIR       := $(PROJ_DIR)/build_gcc
+
+# Source files
+STARTUP_SRC     := $(SDK_ROOT)/source/ti/devices/msp/m0p/startup_system_files/gcc/startup_mspm0g350x_gcc.c
+STARTUP_OBJ     := $(BUILD_DIR)/startup_mspm0g350x_gcc.o
+LINKER_SCRIPT   := $(SDK_ROOT)/source/ti/devices/msp/m0p/linker_files/gcc/mspm0g3507.lds
+
+OBJS            := $(BUILD_DIR)/laser_driver.o \
+                   $(BUILD_DIR)/laser_pwm_control.o \
+                   $(BUILD_DIR)/laser_sysctl.o \
+                   $(BUILD_DIR)/laser_gpio.o \
+                   $(BUILD_DIR)/laser_timera.o \
+                   $(BUILD_DIR)/laser_timerg.o \
+                   $(BUILD_DIR)/laser_dac.o \
+                   $(BUILD_DIR)/laser_uart.o \
+                   $(STARTUP_OBJ)
+
+# Compiler flags
+CPU_FLAGS       := -mcpu=cortex-m0plus -mthumb
+OPT_FLAGS       := -Os -g3
+DEVICE_DEFS     := -D__MSPM0G3507__
+WARN_FLAGS      := -Wall -Wextra -Wno-unused-parameter
+DEAD_CODE       := -ffunction-sections -fdata-sections
+INCLUDES        := \
+    -I$(SDK_ROOT)/source \
+    -I$(SDK_ROOT)/source/ti/devices/msp \
+    -I$(SDK_ROOT)/source/ti/devices/msp/m0p \
+    -I$(SDK_ROOT)/source/ti/devices/msp/m0p/peripheral_library \
+    -I$(SDK_ROOT)/source/third_party/CMSIS/Core/Include
+
+CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(WARN_FLAGS) $(DEAD_CODE) \
+                   $(DEVICE_DEFS) $(INCLUDES) -std=c11
+
+# Linker flags
+LFLAGS          := $(CPU_FLAGS) -T$(LINKER_SCRIPT) \
+                   -Wl,-Map=$(BUILD_DIR)/laser_driver.map \
+                   -Wl,--gc-sections \
+                   --specs=nano.specs --specs=nosys.specs \
+                   -nostartfiles
+
+# Output
+TARGET_ELF      := $(BUILD_DIR)/laser_driver.elf
+TARGET_BIN      := $(BUILD_DIR)/laser_driver.bin
+TARGET_HEX      := $(BUILD_DIR)/laser_driver.hex
+
+# ============================================================
+
+.PHONY: all clean size
+
+all: $(TARGET_ELF) $(TARGET_BIN) $(TARGET_HEX) size
+
+size: $(TARGET_ELF)
+	@$(SIZE) $<
+
+$(TARGET_ELF): $(OBJS) | $(BUILD_DIR)
+	$(CC) $(OBJS) $(LFLAGS) -o $@
+
+$(TARGET_BIN): $(TARGET_ELF)
+	$(OBJCOPY) -O binary $< $@
+
+$(TARGET_HEX): $(TARGET_ELF)
+	$(OBJCOPY) -O ihex $< $@
+
+$(BUILD_DIR)/%.o: $(PROJ_DIR)/%.c | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(STARTUP_OBJ): $(STARTUP_SRC) | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR):
+	mkdir -p $(BUILD_DIR)
+
+clean:
+	rm -rf $(BUILD_DIR)
