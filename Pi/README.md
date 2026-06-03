@@ -1,17 +1,29 @@
 # LaserHAT Pi-side
 
-Pi-side Python code that talks to the LaserHAT. Currently the only thing
-in here is an eink MVP that paints the Pi's primary IP address onto the
-SSD1680Z display so you can see where to point your browser / SSH client.
+Pi-side Python code that talks to the LaserHAT. Two layers:
+
+- `laser_hat.py` is the UART client class — wraps the line protocol
+  (`?`, `i N`, `r N`, `h N`, `t`) into a thread-safe `LaserHat` object.
+  Shared by every front-end (eink GUI, future browser, future network
+  bridge).
+- `eink_gui.py` is the long-running daemon that drives the SSD1680Z
+  panel: polls the MCU at 20 Hz, runs the button-driven UI, pushes
+  config changes back, and re-paints the panel on change.
 
 ```
 Pi/
+  laser_hat.py           LaserHat class + CLI smoke tool
   eink_ip.py             one-shot: render IP + hostname, exit
+  eink_gui.py            long-running GUI daemon
   requirements.txt       Python deps
   systemd/
     eink-ip.service      runs eink_ip.py once on boot + each timer fire
     eink-ip.timer        re-render every 5 min so DHCP changes show up
+    eink-gui.service     runs eink_gui.py until killed
 ```
+
+`eink-ip.timer` and `eink-gui.service` both drive the panel — enable
+one or the other, not both.
 
 ---
 
@@ -89,6 +101,76 @@ sudo systemctl disable --now eink-ip.timer
 # Watch live (useful when debugging):
 journalctl -u eink-ip.service -f
 ```
+
+---
+
+## The eink GUI
+
+`eink_gui.py` is a long-running daemon. Run it manually first to
+confirm it works:
+
+```bash
+cd ~/Code/LaserDriver/Pi
+~/.venvs/laserhat/bin/python eink_gui.py
+# Ctrl-C to stop.
+```
+
+### Button mapping
+
+Per the LaserHAT mechanical layout — B1 / B2 on the left edge of the
+display, B3 / B4 below it:
+
+```
++--------+
+|   B1   |  trigger pulse  (firmware fires on release, no UART needed)
++--------+
+|        |
+|  EINK  |
+|        |
++--------+
+|   B2   |  cycle selected parameter (i → r → h → i …)
++--------+
++---+----+
+|B3 | B4 |  decrement / increment the selected parameter
++---+----+
+```
+
+Step sizes are coarse for usability (`i`: 8, `r`: 200 ticks, `h`: 500
+ticks). Edit `PARAMS` in `eink_gui.py` to tune them.
+
+The eink full refresh takes ~3 seconds, so the GUI coalesces changes:
+button presses queue up in firmware-debounced state, the Pi reads
+them at 20 Hz and only repaints after a 2-second quiet window.
+
+### LaserHat CLI
+
+`laser_hat.py` doubles as a quick CLI when you want to poke the
+firmware without the panel:
+
+```bash
+~/.venvs/laserhat/bin/python laser_hat.py query
+~/.venvs/laserhat/bin/python laser_hat.py set i 100
+~/.venvs/laserhat/bin/python laser_hat.py trigger
+~/.venvs/laserhat/bin/python laser_hat.py watch     # live poll, Ctrl-C
+```
+
+### Deploy as a service
+
+If `eink-ip.timer` is currently enabled, disable it first — both
+services drive the same panel:
+
+```bash
+sudo systemctl disable --now eink-ip.timer
+
+sudo cp ~/Code/LaserDriver/Pi/systemd/eink-gui.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now eink-gui.service
+journalctl -u eink-gui.service -f
+```
+
+Same paths-to-edit caveat as `eink-ip.service`: `User=`, `Group=`,
+`WorkingDirectory=`, and the python prefix in `ExecStart=` assume
+the user's `kemerelab` account.
 
 ---
 

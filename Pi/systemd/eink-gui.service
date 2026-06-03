@@ -1,0 +1,31 @@
+# LaserHAT eink GUI — long-running daemon.
+#
+# Conflicts with eink-ip.timer (both paint the same panel).  Pick one:
+#
+#   sudo systemctl disable --now eink-ip.timer
+#   sudo cp Pi/systemd/eink-gui.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now eink-gui.service
+#
+# Edit User=, Group=, WorkingDirectory=, and the ExecStart= python
+# prefix below if your Pi account isn't 'kemerelab' or the venv lives
+# somewhere other than ~/.venvs/laserhat.
+
+[Unit]
+Description=LaserHAT eink GUI (UART poller + display)
+After=network-online.target dev-ttyS0.device
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=kemerelab
+Group=kemerelab
+WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
+ExecStart=/home/kemerelab/.venvs/laserhat/bin/python eink_gui.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
