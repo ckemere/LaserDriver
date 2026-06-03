@@ -445,15 +445,19 @@ static void drain_uart(const MachineState *s)
 {
     uint8_t b;
     while (laser_uart_rx_pop(&b)) {
-        if (b == '\n') {
+        /* Accept LF, CR, or CRLF as a line terminator.  picocom sends
+         * CR on Enter; pyserial writes LF; minicom can be either. */
+        if (b == '\n' || b == '\r') {
             if (line_overflowed) {
                 emit_err("overflow");
                 line_overflowed = false;
-            } else {
+                line_len = 0;
+            } else if (line_len > 0u) {
                 line_buf[line_len] = '\0';
                 process_line(s);
+                line_len = 0;
             }
-            line_len = 0;
+            /* Empty line (CRLF's LF, or just blank Enter): silently skip. */
         } else if (line_len + 1u >= LINE_BUF_SIZE) {
             line_overflowed = true;
         } else {

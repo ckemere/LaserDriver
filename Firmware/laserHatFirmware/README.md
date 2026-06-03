@@ -196,14 +196,12 @@ picocom -b 115200 /dev/ttyS0
 # exit: Ctrl-A Ctrl-X
 ```
 
-Or scriptable:
+Or scriptable — `host_tools/smoke_test.py` exercises the whole
+command set end-to-end:
 
-```python
-# pip install pyserial (or apt install python3-serial)
-import serial
-s = serial.Serial('/dev/ttyS0', 115200, timeout=1)
-s.write(b'?\n')
-print(s.readline())  # b'OK i=320 r=8000 h=10000 b=0 phase=W tick=...\n'
+```bash
+python3 host_tools/smoke_test.py            # default /dev/ttyS0
+python3 host_tools/smoke_test.py /dev/ttyAMA0
 ```
 
 You'll need to be in the `dialout` group:
