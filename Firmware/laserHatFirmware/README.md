@@ -113,15 +113,13 @@ sudo apt install openocd
 make flash             # builds if needed, then programs and resets
 # `make load` and `make burn` are aliases for the same thing.
 make reset             # just reset the MCU, leave flash contents alone
-make verify            # post-flash compare (skipped by default — see below)
 ```
 
-`make flash` does not run OpenOCD's `verify` step. The CRC verify
-algorithm hangs on `ti_mspm0.cfg` in stock Bookworm OpenOCD; the
-write itself is reliable. If you want belt-and-braces, run
-`make verify` separately — it does a binary compare via
-`verify_image`. After flashing, you'll know it took if the
-STIM_MIRROR LED blinks for ~4 seconds on power-up.
+`make flash` does not run an OpenOCD verify pass. The target-side
+CRC algorithm in `ti_mspm0.cfg` / OpenOCD 0.12.0+dev hangs the MCU
+even though the write itself is reliable. Visual confirmation is the
+~4-second STIM_MIRROR boot blink right after the flash command
+finishes.
 
 **Prerequisites:**
 

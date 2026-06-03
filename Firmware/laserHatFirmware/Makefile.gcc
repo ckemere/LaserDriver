@@ -67,7 +67,7 @@ OPENOCD_GPIO_ARGS  := \
 
 # ============================================================
 
-.PHONY: all clean size flash load burn reset verify
+.PHONY: all clean size flash load burn reset
 
 all: $(TARGET_ELF) $(TARGET_BIN) $(TARGET_HEX) size
 
@@ -96,20 +96,14 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 # Flash the freshly-built ELF to the MCU over SWD via OpenOCD.
-# `load` and `burn` are aliases for the same action.
-# `verify` is intentionally NOT in the program command — the CRC
-# verify algorithm hangs on ti_mspm0.cfg in OpenOCD 0.12.0+dev.  The
-# write itself is reliable; `make verify` runs a post-flash binary
-# compare if you want belt-and-braces.
+# `load` and `burn` are aliases for the same action.  No verify step:
+# the target-side CRC algorithm in ti_mspm0.cfg / OpenOCD 0.12.0+dev
+# hangs the MCU, but the write itself is reliable.  Visual confirmation
+# is the ~4-second STIM_MIRROR boot blink.
 flash load burn: $(TARGET_ELF)
 	$(OPENOCD) -f $(OPENOCD_INTERFACE) $(OPENOCD_GPIO_ARGS) \
 	    -f $(OPENOCD_TARGET) \
 	    -c "program $(TARGET_ELF) reset exit"
-
-verify: $(TARGET_ELF)
-	$(OPENOCD) -f $(OPENOCD_INTERFACE) $(OPENOCD_GPIO_ARGS) \
-	    -f $(OPENOCD_TARGET) \
-	    -c "init; reset halt; verify_image $(TARGET_ELF); reset; exit"
 
 # Reset the MCU without changing what's in flash.
 reset:
