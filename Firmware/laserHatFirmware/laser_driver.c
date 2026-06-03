@@ -103,43 +103,6 @@ typedef struct {
 /* Incremented only in TIMG0 ISR; read in get_next_state(). */
 static volatile uint32_t isr_ticks = 0;
 
-/*
- * Write the laser PWM duty step.  Call only while pins are in PWM mode.
- * UP mode: CC0 = step -> duty = step / 320.
- */
-static inline void set_laser_step(uint32_t step)
-{
-    DL_TimerA_setCaptureCompareValue(TIMA0, step, DL_TIMER_CC_0_INDEX);
-}
-
-/*
- * Configure TIMG0 as a 100 kHz periodic tick source for the state machine.
- * TIMA0 (PWM) runs independently and has no interrupt.
- */
-static void tick_timer_init(void)
-{
-    DL_TimerG_reset(TIMG0);
-    DL_TimerG_enablePower(TIMG0);
-    delay_cycles(16);
-
-    static const DL_TimerG_ClockConfig clkCfg = {
-        .clockSel    = DL_TIMER_CLOCK_BUSCLK,
-        .divideRatio = DL_TIMER_CLOCK_DIVIDE_1,
-        .prescale    = 0U,
-    };
-    DL_TimerG_setClockConfig(TIMG0, (DL_TimerG_ClockConfig *)&clkCfg);
-
-    static const DL_TimerG_TimerConfig tmrCfg = {
-        .timerMode    = DL_TIMER_TIMER_MODE_PERIODIC,
-        .period       = 319,   /* 320 counts at 32 MHz = 100 kHz */
-        .startTimer   = DL_TIMER_STOP,
-        .genIntermInt = DL_TIMER_INTERM_INT_DISABLED,
-        .counterVal   = 0U,
-    };
-    DL_TimerG_initTimerMode(TIMG0, (DL_TimerG_TimerConfig *)&tmrCfg);
-
-    DL_TimerG_enableClock(TIMG0);
-}
 
 /* -----------------------------------------------------------------------
  * State machine
@@ -162,7 +125,7 @@ static MachineState get_next_state(MachineState s)
     last_tick++;
 
     /* --- Button debounce (active-high) --- */
-    bool pin_pressed = (DL_GPIO_readPins(BUTTON_PORT, BUTTON_TRIGGER_PIN) != 0);
+    bool pin_pressed = (laser_gpio_read_button1() != 0);
     bool trigger = false;
 
     switch (s.button) {
@@ -282,16 +245,16 @@ static void set_output(MachineState s)
     if (s.overall == OVERALL_BOOT) {
         laser_pins_to_gpio_safe();
         if ((s.tick_count / BOOT_BLINK_HALF_PERIOD) & 1u) {
-            DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+            laser_gpio_stim_mirror_set();
         } else {
-            DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+            laser_gpio_stim_mirror_clear();
         }
         return;
     }
 
     if (s.overall == OVERALL_WAITING) {
         laser_pins_to_gpio_safe();
-        DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+        laser_gpio_stim_mirror_clear();
         return;
     }
 
@@ -299,7 +262,7 @@ static void set_output(MachineState s)
         case LASER_IDLE:
         case LASER_HOLD_LOW:
             laser_pins_to_gpio_safe();
-            DL_GPIO_clearPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+            laser_gpio_stim_mirror_clear();
 
             break;
 
@@ -309,17 +272,17 @@ static void set_output(MachineState s)
                 laser_pins_to_gpio_safe();
             } else {
                 laser_pins_to_pwm();
-                set_laser_step(s.ramp_step);
+                laser_timera_set_duty(s.ramp_step);
             }
-            DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+            laser_gpio_stim_mirror_set();
 
             break;
 
         case LASER_HOLD_HIGH:
             laser_pins_to_pwm();
-            set_laser_step(RAMP_STEPS);
+            laser_timera_set_duty(RAMP_STEPS);
             
-            DL_GPIO_setPins(GPIO_LEDS_PORT, GPIO_LEDS_USER_LED_1_PIN);
+            laser_gpio_stim_mirror_set();
             break;
 
         default:
@@ -353,23 +316,22 @@ int main(void)
     laser_dac_write12(DAC_SETPOINT);
     laser_dac_enable();
 
-    DL_DAC12_output12(DAC0, DAC_SETPOINT);
-    DL_DAC12_enable(DAC0);
-
+    /* laser_pwm_init() in laser_pwm_control.c re-runs the same TIMA0
+     * config laser_timera_init() already did — kept for now until that
+     * file is retired in favour of the register-level module. */
     laser_pwm_init();
     laser_pins_to_gpio_safe();
-    DL_TimerA_startCounter(TIMA0);
+    laser_timera_start();
 
-    tick_timer_init();
-    DL_TimerG_enableInterrupt(TIMG0, DL_TIMERG_INTERRUPT_ZERO_EVENT);
     NVIC_SetPriority(TIMG0_INT_IRQn, 0);
     NVIC_EnableIRQ(TIMG0_INT_IRQn);
+    laser_timerg_start();
     DL_TimerG_startCounter(TIMG0);
 
     MachineState state = { OVERALL_BOOT, LASER_IDLE, BUTTON_IDLE, 0, 0, 0 };
 
-    NVIC_ClearPendingIRQ(UART_0_INST_INT_IRQN);
-    NVIC_EnableIRQ(UART_0_INST_INT_IRQN);
+    NVIC_ClearPendingIRQ(UART0_INT_IRQn);
+    NVIC_EnableIRQ(UART0_INT_IRQn);
 
     while (1) {
         state = get_next_state(state);
@@ -380,24 +342,16 @@ int main(void)
 
 void TIMG0_IRQHandler(void)
 {
-    switch (DL_TimerG_getPendingInterrupt(TIMG0)) {
-        case DL_TIMERG_IIDX_ZERO:
-            isr_ticks++;
-            break;
-        default:
-            break;
+    if (laser_timerg_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
+        isr_ticks++;
     }
 }
 
-void UART_0_INST_IRQHandler(void)
+void UART0_IRQHandler(void)
 {
-    switch (DL_UART_Main_getPendingInterrupt(UART_0_INST)) {
-        case DL_UART_MAIN_IIDX_RX:
-            gEchoData = DL_UART_Main_receiveData(UART_0_INST);
-            DL_UART_Main_transmitData(UART_0_INST, gEchoData);
-            break;
-        default:
-            break;
+    if (UART0->CPU_INT.IIDX == UART_CPU_INT_IIDX_STAT_RXIFG) {
+        gEchoData = (uint8_t)(UART0->RXDATA & UART_RXDATA_DATA_MASK);
+        UART0->TXDATA = gEchoData;
     }
 }
 
