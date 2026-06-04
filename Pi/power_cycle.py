@@ -42,7 +42,9 @@ import time
 
 POWER_PIN = 23   # MCU_POWER_EN -> P-MOSFET gate
 NRST_PIN  = 18   # MSPM0 NRST
-QUIET_PIN_INPUTS = [14, 24, 25]   # UART TX, SWDIO, SWCLK
+# Pins to park (mode + drive state) so they can't phantom-power the MSP
+# through its IO ESD diodes during the brief power-off window.
+QUIET_PINS = [14, 24, 25]   # UART TX, SWDIO, SWCLK
 
 DEFAULT_OFF_MS = 500
 
@@ -51,36 +53,60 @@ def _pinctrl(*args: str) -> None:
     subprocess.run(["pinctrl", *args], check=True)
 
 
+def _get_pin_mode(pin: int) -> str:
+    """Return the current `pinctrl` mode string for `pin`.
+
+    pinctrl get output looks like:
+        14: a5    pn | hi // GPIO14 = TXD1
+    The second whitespace-separated token is the function / mode:
+    a0..a8 = alt functions, ip = input, op = output, no = no function.
+    """
+    out = subprocess.run(["pinctrl", "get", str(pin)],
+                         capture_output=True, text=True, check=True)
+    parts = out.stdout.split()
+    # parts[0] = "14:" ; parts[1] = "a5" (or whatever)
+    return parts[1] if len(parts) > 1 else "ip"
+
+
 def power_cycle(off_ms: int = DEFAULT_OFF_MS) -> None:
     if shutil.which("pinctrl") is None:
         print("error: pinctrl not found in PATH.  Install with:\n"
               "    sudo apt install raspi-utils", file=sys.stderr)
         raise SystemExit(2)
 
-    # 1. Park signal pins so they can't phantom-power the MSP through
-    #    its IO ESD diodes once the rail drops.
-    for pin in QUIET_PIN_INPUTS:
+    # 0. Save the current mode of every pin we're about to override, so
+    #    we can restore them after the cycle.  Crucial for GPIO 14
+    #    (UART TX) — the kernel UART driver doesn't auto-reclaim it
+    #    once another tool has stomped on its alt-function setting.
+    saved_modes = {pin: _get_pin_mode(pin) for pin in QUIET_PINS}
+
+    # 1. Park signal pins as plain inputs (high-Z).
+    for pin in QUIET_PINS:
         _pinctrl("set", str(pin), "ip")
-    # 2. Assert NRST.  Belt-and-braces: even if some current still
-    #    sneaks into the rail, the MSP can't run code.
+    # 2. Assert NRST.  Even if some current still sneaks into VDD via
+    #    a remaining IO clamp, the MSP can't actually run.
     _pinctrl("set", str(NRST_PIN), "op", "dl")
     # 3. Cut the 3V3 rail.
     _pinctrl("set", str(POWER_PIN), "op", "dl")
     time.sleep(off_ms / 1000.0)
     # 4. Restore the rail.
     _pinctrl("set", str(POWER_PIN), "op", "dh")
-    # 5. Give the LDO + decoupling caps a moment to settle.
+    # 5. Let LDO + decoupling caps settle.
     time.sleep(0.05)
     # 6. Release NRST.  MCU boots from here.
     _pinctrl("set", str(NRST_PIN), "op", "dh")
-    # 7. Release the power pin to input so the on-board pull-up holds
-    #    the MOSFET on without us continuing to drive it.
+    # 7. Release the power pin and NRST to input so their on-board
+    #    pull-ups hold the MOSFET on / NRST high without us driving.
     _pinctrl("set", str(POWER_PIN), "ip")
-    # 8. Release NRST to input too.
-    _pinctrl("set", str(NRST_PIN), "ip")
-    # 9. Wait through the MCU's BCR + early SystemInit so the next tool
-    #    (openocd) lands inside the boot-blink window with the MCU
-    #    properly initialised.
+    _pinctrl("set", str(NRST_PIN),  "ip")
+    # 8. Restore each parked pin to its previous mode.  The UART TX
+    #    line is the one this is really for — the SWD pins typically
+    #    saved as "ip" and we re-set them to "ip", which is a no-op.
+    for pin, mode in saved_modes.items():
+        _pinctrl("set", str(pin), mode)
+    # 9. Wait through the MCU's BCR + early SystemInit so anything
+    #    that runs after this lands inside the boot-blink window with
+    #    the MCU properly initialised.
     time.sleep(0.1)
 
 
