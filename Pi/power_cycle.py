@@ -46,6 +46,14 @@ NRST_PIN  = 18   # MSPM0 NRST
 # through its IO ESD diodes during the brief power-off window.
 QUIET_PINS = [14, 24, 25]   # UART TX, SWDIO, SWCLK
 
+# If we capture GPIO 14 in plain-input mode, that probably means a
+# previous power_cycle left it parked instead of restoring the kernel
+# UART driver's alt function.  Fall back to this alt so we don't carry
+# the broken state forward indefinitely.
+# - a5 = mini-UART (TXD1), used by /dev/ttyS0  (the LaserHAT default)
+# - a0 = PL011    (TXD0), used by /dev/ttyAMA0
+UART_TX_FALLBACK_ALT = "a5"
+
 DEFAULT_OFF_MS = 500
 
 
@@ -79,6 +87,13 @@ def power_cycle(off_ms: int = DEFAULT_OFF_MS) -> None:
     #    (UART TX) — the kernel UART driver doesn't auto-reclaim it
     #    once another tool has stomped on its alt-function setting.
     saved_modes = {pin: _get_pin_mode(pin) for pin in QUIET_PINS}
+    # If 14 is already parked (a previous run failed to restore it),
+    # use the known UART alt as the restore target instead of carrying
+    # the broken state forward.
+    if saved_modes.get(14) == "ip":
+        print(f"GPIO 14 was already parked as input; will restore to "
+              f"{UART_TX_FALLBACK_ALT} instead of 'ip'.", file=sys.stderr)
+        saved_modes[14] = UART_TX_FALLBACK_ALT
 
     # 1. Park signal pins as plain inputs (high-Z).
     for pin in QUIET_PINS:
