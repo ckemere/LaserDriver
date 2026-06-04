@@ -121,14 +121,57 @@ even though the write itself is reliable. Visual confirmation is the
 ~4-second STIM_MIRROR boot blink right after the flash command
 finishes.
 
-`openocd/pi-swd.cfg` includes `reset_config srst_only srst_nogate
-connect_assert_srst` so OpenOCD holds NRST asserted *during* the
-SWD probe. The firmware reclaims PA19 (SWDIO) as a plain GPIO input
-shortly after boot; without connect-under-reset the second flash
-fails with "Error connecting DP: cannot read IDR". With NRST held,
-the MCU stays in reset (PA19 reverts to its default SWDIO function),
-the probe succeeds, and NRST releases at the end of the OpenOCD
-session.
+#### What `make flash` actually does
+
+The flashing dance evolved to dodge two MSPM0-specific quirks that
+made naive flashing unreliable. Today the rule does three things in
+order:
+
+1. **`power_cycle`** (Pi/power_cycle.py, a prerequisite of the rule).
+   Park Pi GPIOs 14 (UART TX), 24 (SWDIO), 25 (SWCLK) as inputs and
+   assert NRST so the MSP can't be **phantom-powered** through its IO
+   ESD diodes — a HIGH on any of those lines clamps back to the MSP's
+   VDD rail and keeps the chip half-running even after GPIO 23 cuts
+   the P-MOSFET. Then drop GPIO 23 LOW for 500 ms (cap drain), release
+   it, release NRST, and restore each parked pin to the alt-function
+   mode it had before (saved at the start of the cycle so the kernel
+   UART driver continues to own GPIO 14).
+
+2. **OpenOCD probes SWD while the MCU is in the boot blink window.**
+   PA19 is in its hardware-default SWDIO function for the ~4 seconds
+   it takes the boot blink to finish. (PA19 reclaim is now opt-in via
+   the `g` UART command — see protocol below — so the next firmware
+   boot also stays SWD-friendly until something asks otherwise.)
+
+3. **Explicit `init` / `halt` / `flash write_image` / `reset run` /
+   `shutdown`**, instead of OpenOCD's higher-level `program ... reset`.
+   The shorthand tries to halt-on-reset using DEMCR vector catch, and
+   that latch doesn't engage reliably on MSPM0 — halt times out and
+   init fails. Halting a freely-running CPU (i.e. one in the boot
+   blink busy-wait) via a plain DAP halt request works every time.
+
+The OpenOCD config (`openocd/pi-swd.cfg`) uses
+`reset_config srst_only srst_nogate` — NRST is wired but OpenOCD does
+not assert it during connect (an earlier attempt with
+`connect_assert_srst` made MEM-AP examination fail because DEBUGSS was
+held in reset alongside the core).
+
+#### Recovery if `make flash` leaves something stuck
+
+If a flash run is interrupted mid-cycle and leaves GPIO 14 parked as
+plain input, the kernel UART driver doesn't reclaim the line and the
+web app / smoke test will report "MCU no response". Restore by hand:
+
+```bash
+pinctrl get 14                # current state
+pinctrl set 14 a5             # back to mini-UART (/dev/ttyS0)
+# or `a0` if you've enabled PL011 with dtoverlay=disable-bt
+```
+
+`power_cycle.py` now detects this state on its next run and
+auto-restores to the configured fallback alt
+(`UART_TX_FALLBACK_ALT` in the script — defaults to `a5`), so a fresh
+`make flash` is also a valid recovery path.
 
 **Prerequisites:**
 
@@ -186,22 +229,30 @@ The firmware speaks a tiny line-based ASCII protocol on UART0 (115200
 i N    set intensity (peak PWM duty, 1..320)
 r N    set ramp-up duration (in 10 µs ticks)
 h N    set hold and trailing-low duration (in 10 µs ticks)
-t      trigger one pulse
-?      query state -> "OK i=N r=N h=N b=BBBB phase=W|T tick=TTT"
+t      trigger one pulse via UART
+g      arm PA19 as a GPIO-input trigger (was SWDIO at boot)
+?      query state -> "OK i=N r=N h=N b=BBBB g=0|1 phase=W|T tick=TTT"
 ```
 
-Defaults at boot: `i=320 r=8000 h=10000`. Each command echoes the
+Defaults at boot: `i=320 r=8000 h=10000 g=0`. Each command echoes the
 resulting value as `OK ...`; out-of-range / unknown / busy responses
 come back as `ERR <reason>`. `t` does not ACK immediately — the ACK
 pair is `OK pulse start=TTT` when the state machine enters the
 pulse, then `OK pulse end=TTT` when it returns to idle.
 
+`g` is one-way: once armed, PA19 stays a GPIO trigger input until the
+MCU is reset. This keeps SWD reflashing reliable on a fresh boot — the
+firmware never reconfigures the SWDIO pin unless a client explicitly
+asks. The web app's *TRIGGER (GPIO)* button sends `g` automatically
+before driving Pi GPIO 24, so users don't need to think about it.
+
 ```bash
 picocom -b 115200 /dev/ttyS0
 # at the prompt:
-#   ?      <enter>   -> OK i=320 r=8000 h=10000 b=0 phase=W tick=...
+#   ?      <enter>   -> OK i=320 r=8000 h=10000 b=0 g=0 phase=W tick=...
 #   i 100  <enter>   -> OK i=100
 #   t      <enter>   -> OK pulse start=... / OK pulse end=...
+#   g      <enter>   -> OK g=1   (then Pi GPIO 24 edges become triggers)
 # exit: Ctrl-A Ctrl-X
 ```
 
