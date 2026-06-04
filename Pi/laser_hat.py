@@ -134,9 +134,11 @@ class LaserHat:
             self._ser.flush()
             reply = self._ser.readline().decode("ascii", errors="replace").rstrip("\r\n")
         # 't' has no immediate OK; firmware emits "OK pulse start=..." when
-        # it actually triggers (which can take a few ms).  Treat anything
-        # other than a synchronous ERR as success.
-        return not reply.startswith("ERR")
+        # it actually triggers (which can take a few ms).  An empty reply
+        # means the readline() timed out — a powered-off or wedged MCU —
+        # so report failure rather than a phantom success (matches
+        # get_state()).  A synchronous "ERR ..." (e.g. busy) is failure too.
+        return bool(reply) and not reply.startswith("ERR")
 
     def arm_gpio_trigger(self) -> bool:
         """Reclaim PA19 on the MCU from SWDIO to a GPIO-input trigger
