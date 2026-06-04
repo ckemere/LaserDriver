@@ -69,10 +69,10 @@ static uint32_t    g_active_ticks_per_step;  /* derived at latch time */
 
 /*
  * Button debounce: require the pin to be stable for this many polls
- * before accepting a state change.  Polling happens once per TIMG0
- * tick in the main loop, so at 100 kHz, 1000 polls = 10 ms.
+ * before accepting a state change.  Main loop polls at the
+ * housekeeping rate (1 kHz), so 10 polls = 10 ms.
  */
-#define DEBOUNCE_TICKS          1000u
+#define DEBOUNCE_TICKS            10u
 #define NUM_BUTTONS                4u
 
 /*
@@ -141,6 +141,11 @@ static volatile bool     g_pulse_end_evt = false;
 static BtnPhase g_btn_phase[NUM_BUTTONS];
 static uint16_t g_btn_debounce[NUM_BUTTONS];
 static uint8_t  g_btn_mask = 0u;   /* bit n = button (n+1) debounced-pressed */
+
+/* Set by TIMG6_IRQHandler at 1 kHz; cleared by main when it actually
+ * runs housekeeping work.  TIMG0 ticks also wake main from WFI, but
+ * main sees no flag and re-WFIs immediately. */
+static volatile bool g_housekeeping_due = false;
 
 /* -----------------------------------------------------------------------
  * Boot blink delay
@@ -286,7 +291,7 @@ static inline void set_output_from_state(void)
 
 void TIMG0_IRQHandler(void)
 {
-    if (laser_timerg_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
+    if (laser_timerg_tick_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
         g_isr_ticks++;
         state_machine_tick();
         set_output_from_state();
@@ -534,7 +539,8 @@ int main(void)
     }
 
     laser_timera_init();
-    laser_timerg_init();
+    laser_timerg_init_tick();
+    laser_timerg_init_housekeeping();
     laser_dac_init();
     laser_dac_write12(DAC_SETPOINT);
     laser_dac_enable();
@@ -543,20 +549,34 @@ int main(void)
     laser_pins_to_gpio_safe();
     laser_timera_start();
 
-    /* TIMG0 ISR now runs the state machine; needs the highest NVIC
-     * priority on M0+ (numerically 0). */
+    /* TIMG0 ISR now runs the state machine; gets the highest NVIC
+     * priority (numerically 0 on M0+).  TIMG6 housekeeping runs at a
+     * lower priority so it can never delay a pulse tick. */
     NVIC_SetPriority(TIMG0_INT_IRQn, 0);
+    NVIC_SetPriority(TIMG6_INT_IRQn, 3);
     NVIC_EnableIRQ(TIMG0_INT_IRQn);
-    laser_timerg_start();
+    NVIC_EnableIRQ(TIMG6_INT_IRQn);
+    laser_timerg_start_tick();
+    laser_timerg_start_housekeeping();
 
     NVIC_ClearPendingIRQ(UART0_INT_IRQn);
     NVIC_EnableIRQ(UART0_INT_IRQn);
 
     while (1) {
-        drain_uart();
-        poll_buttons();
-        emit_pending_pulse_events();
+        if (g_housekeeping_due) {
+            g_housekeeping_due = false;
+            drain_uart();
+            poll_buttons();
+            emit_pending_pulse_events();
+        }
         __WFI();
+    }
+}
+
+void TIMG6_IRQHandler(void)
+{
+    if (laser_timerg_housekeeping_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
+        g_housekeeping_due = true;
     }
 }
 

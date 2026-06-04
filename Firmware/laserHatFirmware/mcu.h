@@ -49,6 +49,7 @@ typedef enum IRQn
   SysTick_IRQn        = -1,
   UART0_INT_IRQn      = 15,
   TIMG0_INT_IRQn      = 16,
+  TIMG6_INT_IRQn      = 17,
 } IRQn_Type;
 
 #include "cmsis/core_cm0plus.h"
@@ -74,6 +75,7 @@ typedef enum IRQn
 #define GPIOA_BASE     (0x400A0000U)
 #define TIMA0_BASE     (0x40860000U)
 #define TIMG0_BASE     (0x40084000U)
+#define TIMG6_BASE     (0x40868000U)
 #define UART0_BASE     (0x40108000U)
 #define DAC0_BASE      (0x40018000U)
 #define VREF_BASE      (0x40030000U)
@@ -83,6 +85,7 @@ typedef enum IRQn
 #define GPIOA   ((GPIO_Regs    *) GPIOA_BASE)
 #define TIMA0   ((GPTIMER_Regs *) TIMA0_BASE)
 #define TIMG0   ((GPTIMER_Regs *) TIMG0_BASE)
+#define TIMG6   ((GPTIMER_Regs *) TIMG6_BASE)
 #define UART0   ((UART_Regs    *) UART0_BASE)
 #define DAC0    ((DAC12_Regs   *) DAC0_BASE)
 #define VREF    ((VREF_Regs    *) VREF_BASE)
