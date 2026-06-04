@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """LaserHat eink GUI on the slim SSD1680 driver.
 
-Polls the MSPM0 firmware at 20 Hz, runs press-edge detection on the
-debounced button mask, dispatches to a tiny UI state machine, pushes
-config edits back, and repaints the panel with partial refresh for
-fast feedback.
+A broker client (hat_client.HatClient): it does NOT open the serial port,
+so it runs alongside the web GUI.  Button presses arrive as EVT_BUTTON
+broadcasts (the firmware reports debounced edges); state arrives as
+broadcast snapshots — no polling.  The UI state machine dispatches button
+edges, pushes config edits back through the broker, and repaints the
+panel with partial refresh for fast feedback.
 
 Button mapping (per physical layout):
 
@@ -32,9 +34,11 @@ Refresh strategy:
 
 from __future__ import annotations
 
+import os
 import socket
 import subprocess
 import sys
+import threading
 import time
 from dataclasses import dataclass
 from typing import Optional
@@ -42,7 +46,8 @@ from typing import Optional
 from PIL import Image, ImageDraw, ImageFont
 
 from eink_panel import EinkPanel
-from laser_hat import LaserHat, State
+from hat_client import DEFAULT_SOCKET, HatClient
+from laser_hat import State
 
 
 # --------------------------------------------------------------- config
@@ -113,8 +118,9 @@ def _value_for(state: State, name: str) -> int:
     return {"i": state.intensity, "r": state.ramp_ticks, "h": state.hold_ticks}[name]
 
 
-def _set_for(hat: LaserHat, name: str):
-    return {"i": hat.set_intensity, "r": hat.set_ramp, "h": hat.set_hold}[name]
+def _set_for(client: HatClient, name: str):
+    return {"i": client.set_intensity, "r": client.set_ramp,
+            "h": client.set_hold}[name]
 
 
 # --------------------------------------------------------------- render
@@ -176,8 +182,37 @@ def render(
 
 # --------------------------------------------------------------- main loop
 def main() -> int:
-    print("opening UART …", file=sys.stderr)
-    hat = LaserHat()
+    sock = os.environ.get("LASERHAT_SOCK", DEFAULT_SOCKET)
+
+    # UI state shared between the broker reader thread (button callback)
+    # and the main render loop.
+    ui = {"selected": 0, "last_press": 0.0}
+    ui_lock = threading.Lock()
+
+    def handle_button(edges: int, client: HatClient) -> None:
+        with ui_lock:
+            ui["last_press"] = time.monotonic()
+            if edges & B2:                       # cycle selected parameter
+                ui["selected"] = (ui["selected"] + 1) % len(PARAMS)
+            selected = ui["selected"]
+        # B3 / B4: -/+ on the selected parameter, pushed via the broker.
+        # The resulting state broadcast repaints us.
+        direction = (-1 if edges & B3 else 0) + (1 if edges & B4 else 0)
+        if direction:
+            st = client.get_state()
+            if st is not None:
+                p = PARAMS[selected]
+                cur = _value_for(st, p.name)
+                new = max(p.minimum, min(p.maximum, cur + direction * p.step))
+                if new != cur:
+                    _set_for(client, p.name)(new)
+
+    def on_update(msg: dict) -> None:
+        if msg.get("type") == "event" and msg.get("event") == "button":
+            handle_button(int(msg.get("edges", 0)), client)
+
+    print(f"connecting to broker at {sock} …", file=sys.stderr)
+    client = HatClient(sock, on_update=on_update)
 
     print("opening display …", file=sys.stderr)
     panel = EinkPanel(rotation=1)
@@ -186,69 +221,46 @@ def main() -> int:
     hostname = socket.gethostname()
     print(f"IP {ip}  hostname {hostname}", file=sys.stderr)
 
-    state = hat.get_state()
+    # Wait for the first broadcast state (broker polls the MCU on connect).
+    deadline = time.monotonic() + 5.0
+    state = None
+    while state is None and time.monotonic() < deadline:
+        state = client.get_state()
+        time.sleep(0.05)
     if state is None:
         print("ERROR: no response from MCU; is it flashed and powered?",
               file=sys.stderr)
         return 1
 
-    selected = 0
-    prev_buttons = state.button_mask
-
-    # First paint: force full refresh to clear ghosting.
+    with ui_lock:
+        selected = ui["selected"]
     render(panel, state, selected, ip, hostname, force_full=True)
-
     last_painted_key = (state.intensity, state.ramp_ticks, state.hold_ticks,
                         state.phase, selected, ip)
-    last_press_at  = 0.0
-    last_ip_check  = time.monotonic()
+    last_ip_check = time.monotonic()
 
     while True:
         now = time.monotonic()
-
-        new_state = hat.get_state()
-        if new_state is None:
+        state = client.get_state()
+        with ui_lock:
+            selected = ui["selected"]
+            last_press_at = ui["last_press"]
+        if state is None:
             time.sleep(POLL_INTERVAL)
             continue
-
-        # Press-edge detection.
-        edges = new_state.button_mask & ~prev_buttons
-        prev_buttons = new_state.button_mask
-        if edges:
-            last_press_at = now
-
-        # B2: cycle selected parameter.
-        if edges & B2:
-            selected = (selected + 1) % len(PARAMS)
-
-        # B3 / B4: -/+ on selected.
-        for bit, direction in ((B3, -1), (B4, +1)):
-            if edges & bit:
-                p = PARAMS[selected]
-                cur = _value_for(new_state, p.name)
-                new = max(p.minimum, min(p.maximum, cur + direction * p.step))
-                if new != cur:
-                    _set_for(hat, p.name)(new)
-                    # Refresh our snapshot of the value without waiting
-                    # for the next poll, so multiple presses stack up
-                    # correctly within one settle window.
-                    setattr(new_state,
-                            {"i": "intensity",
-                             "r": "ramp_ticks",
-                             "h": "hold_ticks"}[p.name], new)
 
         # Periodic IP refresh.
         if now - last_ip_check >= IP_CHECK_GAP:
             last_ip_check = now
             ip = primary_ip()
 
-        # Render when state has changed AND the user has been quiet for
-        # SETTLE_GAP — that way a burst of B4 presses coalesces to one
-        # refresh at the final value.
-        key = (new_state.intensity, new_state.ramp_ticks, new_state.hold_ticks,
-               new_state.phase, selected, ip)
+        # Repaint when something visible changed AND the user has been quiet
+        # for SETTLE_GAP, so a burst of B4 presses coalesces to one refresh
+        # at the final value.
+        key = (state.intensity, state.ramp_ticks, state.hold_ticks,
+               state.phase, selected, ip)
         if key != last_painted_key and (now - last_press_at) >= SETTLE_GAP:
-            render(panel, new_state, selected, ip, hostname)
+            render(panel, state, selected, ip, hostname)
             last_painted_key = key
 
         time.sleep(POLL_INTERVAL)
