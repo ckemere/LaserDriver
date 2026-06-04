@@ -65,8 +65,8 @@ already in the repo under `sdk/` — no additional downloads needed.
 | `laser_timera.c/h` | TIMA0 100 kHz complementary PWM |
 | `laser_timerg.c/h` | TIMG0 100 kHz state-machine tick |
 | `laser_dac.c/h` | DAC0 + internal VREF (2.5 V) |
-| `laser_uart.c/h` | UART0 at 9600 baud (placeholder echo) |
-| `laser_driver.c` | State machine, boot sequence, IRQ handlers, `main` |
+| `laser_uart.c/h` | UART0 at 115200 8N1, RX ring buffer + blocking TX |
+| `laser_driver.c` | State machine, boot sequence, IRQ handlers, line parser, `main` |
 
 Each peripheral module exposes an `_init()` (and where useful `_start()`)
 plus inline hot-path helpers. None of them include any `dl_*.h` driverlib
@@ -97,24 +97,36 @@ after `laser_timera_init()` so the IOMUX state at boot is unambiguous.
 
 ## ISR and state-machine style
 
-Keep ISRs to a single volatile flag/counter update:
+All pulse timing lives in **one** ISR. `TIMG0_IRQHandler` (the 100 kHz
+tick) is the only place the state machine runs: it acks the timer,
+advances the machine, and drives the outputs:
 
 ```c
 void TIMG0_IRQHandler(void)
 {
-    if (laser_timerg_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
-        isr_ticks++;
+    if (laser_timerg_tick_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
+        g_isr_ticks++;
+        state_machine_tick();      /* advance MachineState */
+        set_output_from_state();   /* idempotent hardware writes */
     }
 }
 ```
 
-No state-machine logic, peripheral writes, or multi-step code inside
-ISRs. Flags written by ISRs and read in `main` are `volatile`.
+This is deliberate: keeping the whole machine in the highest-priority
+tick ISR means UART parsing, button polling, and housekeeping (all in
+`main`) can take as long as they like without shifting a PWM-duty
+write. The other ISRs stay minimal — `UART0_IRQHandler` pushes one RX
+byte into a ring; `TIMG6_IRQHandler` sets a housekeeping flag;
+`GROUP1_IRQHandler` sets the hardware-trigger flag. Flags shared
+between an ISR and `main` are `volatile`.
 
-State is fully captured in `MachineState`. The main loop is three
-lines: `get_next_state(state)` → `set_output(state)` → `__WFI()`.
-`get_next_state` owns transitions; `set_output` owns hardware writes
-and is idempotent.
+State is fully captured in `MachineState`. Within the tick ISR,
+`state_machine_tick()` owns transitions; `set_output_from_state()` owns
+hardware writes and is idempotent (it keeps a RAM shadow of the last
+applied output so a steady phase doesn't re-mux every tick). `main`
+only reads the machine for the `?` status response and drains
+ISR-produced pulse-event records to emit the `OK pulse start/end` ACKs
+off the interrupt path.
 
 ## Commit rules
 
