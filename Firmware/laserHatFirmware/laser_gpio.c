@@ -100,10 +100,14 @@ void laser_gpio_init(void)
 void laser_gpio_arm_pi_trigger(void)
 {
     /* Switch PA19's PINCM from boot-default SWDIO to plain GPIO input.
-     * Function code 1 = GPIO.  Enable INENA so we can read the level. */
+     * Function code 1 = GPIO.  Enable INENA so we can read the level,
+     * and enable the internal pull-DOWN so the line idles LOW when the
+     * Pi releases GPIO 24 (e.g. at Python process exit).  Without this,
+     * gpiozero closing the line lets it float and the input transition
+     * looks like a rising edge to our ISR -> spurious pulse fires. */
     IOMUX->SECCFG.PINCM[BOARD_PI_TRIGGER_PINCM] =
         IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE |
-        BOARD_PI_TRIGGER_GPIO_FUNC;
+        IOMUX_PINCM_PIPD_ENABLE  | BOARD_PI_TRIGGER_GPIO_FUNC;
 
     /* POLARITY31_16: each DIO again gets a 2-bit field (RISE=01).
      * PA19 sits at index 19, so within the upper-half register that's

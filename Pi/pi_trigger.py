@@ -46,7 +46,15 @@ class PiTrigger:
         self._pin.off()
 
     def close(self) -> None:
-        self._pin.close()
+        # Drive low explicitly before releasing the line.  gpiozero's
+        # close() sets the pin back to input/high-impedance; without
+        # this step, the input transition can look like a rising edge
+        # to the MCU and fire a spurious pulse.  The MCU also has an
+        # internal pull-down on PA19 as a backstop.
+        try:
+            self._pin.off()
+        finally:
+            self._pin.close()
 
     def __enter__(self) -> "PiTrigger":
         return self
