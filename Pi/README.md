@@ -1,32 +1,40 @@
 # LaserHAT Pi-side
 
-Pi-side Python code that talks to the LaserHAT. Three layers:
+Pi-side Python code that talks to the LaserHAT. Four pieces:
 
-- `eink_panel.py` is a slim self-contained SSD1680 / GDEY0213B74
-  driver on top of `spidev` + `gpiozero` + Pillow. Supports both
-  full refresh (~3 s, clears ghosting) and partial refresh (~300 ms,
-  used by the GUI for interactive UI). Replaces `adafruit_epd` —
-  we own the speed knobs.
-- `laser_hat.py` is the UART client class — wraps the line protocol
-  (`?`, `i N`, `r N`, `h N`, `t`) into a thread-safe `LaserHat` object.
-  Shared by every front-end (eink GUI, future browser, future network
-  bridge).
-- `eink_gui.py` is the long-running daemon that polls the MCU at
-  20 Hz, runs the button-driven UI, pushes config changes back, and
-  re-paints the panel on change.
+- `eink_panel.py` — slim self-contained SSD1680 / GDEY0213B74 driver
+  on `spidev` + `gpiozero` + Pillow. Full refresh (~3 s) and partial
+  refresh (~300 ms) modes.
+- `laser_hat.py` — thread-safe UART client class wrapping the
+  firmware's line protocol (`?`, `i N`, `r N`, `h N`, `t`). Shared by
+  every front-end.
+- `eink_gui.py` — long-running daemon that polls the MCU at 20 Hz,
+  runs the button-driven UI, pushes config changes back, and repaints
+  the panel.
+- `web_app.py` — Flask web GUI; same controls + trigger button +
+  live state, accessed from any browser on the LAN.
 
 ```
 Pi/
   eink_panel.py          SSD1680 driver (full + partial refresh)
   laser_hat.py           LaserHat class + CLI smoke tool
   eink_ip.py             one-shot: render IP + hostname, exit
-  eink_gui.py            long-running GUI daemon
-  requirements.txt       Python deps (spidev, gpiozero, Pillow, pyserial)
+  eink_gui.py            long-running eink GUI daemon
+  web_app.py             Flask web GUI
+  templates/
+    index.html           single-page browser UI (vanilla JS)
+  requirements.txt       Python deps
   systemd/
     eink-ip.service      runs eink_ip.py once on boot + each timer fire
     eink-ip.timer        re-render every 5 min so DHCP changes show up
     eink-gui.service     runs eink_gui.py until killed
+    laserhat-web.service runs web_app.py until killed
 ```
+
+**One UART, one client.** `eink-gui.service` and `laserhat-web.service`
+both want exclusive access to `/dev/ttyS0`. Pick one at a time. A
+unified daemon that owns the UART and serves both surfaces is the
+right answer once we've stabilised the two pieces separately.
 
 `eink-ip.timer` and `eink-gui.service` both drive the panel — enable
 one or the other, not both.
@@ -184,6 +192,50 @@ journalctl -u eink-gui.service -f
 Same paths-to-edit caveat as `eink-ip.service`: `User=`, `Group=`,
 `WorkingDirectory=`, and the python prefix in `ExecStart=` assume
 the user's `kemerelab` account.
+
+---
+
+## The web GUI
+
+`web_app.py` is a Flask app that serves the same controls as the eink
+GUI from a browser, plus a big trigger button. Single-page, vanilla
+JS, ~500 ms state polling.
+
+```bash
+# (stop the eink GUI first if it's running)
+sudo systemctl stop eink-gui.service
+
+cd ~/Code/LaserDriver/Pi
+~/.venvs/laserhat/bin/python web_app.py
+# → serving on 0.0.0.0:8080 (http://<pi-ip>:8080/)
+```
+
+Open `http://<pi-ip>:8080/` from any device on the LAN. Each parameter
+has a step input (preset to 8 / 200 / 500 ticks; edit freely) and ±
+buttons. Trigger button is disabled while a pulse is running so you
+can't fire `t` and get back `ERR busy`.
+
+### Deploy as a service
+
+```bash
+sudo systemctl disable --now eink-gui.service     # if it's enabled
+sudo cp ~/Code/LaserDriver/Pi/systemd/laserhat-web.service /etc/systemd/system/
+sudo systemctl daemon-reload
+sudo systemctl enable --now laserhat-web.service
+journalctl -u laserhat-web.service -f
+```
+
+The unit's `Conflicts=eink-gui.service` line stops eink-gui
+automatically if you start the web service while eink-gui is running.
+
+### Port override
+
+`PORT` env var picks the bind port; the service unit sets 8080. To
+run on 5000:
+
+```bash
+PORT=5000 ~/.venvs/laserhat/bin/python web_app.py
+```
 
 ---
 

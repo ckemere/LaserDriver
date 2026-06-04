@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LaserHAT — {{ hostname }}</title>
+  <style>
+    :root {
+      --bg: #fafafa;
+      --fg: #1a1a1a;
+      --muted: #666;
+      --accent: #c0212c;
+      --ok: #1f7a32;
+      --card: #fff;
+      --border: #ddd;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #161618;
+        --fg: #eee;
+        --muted: #999;
+        --accent: #ff5260;
+        --ok: #4ad368;
+        --card: #1f1f22;
+        --border: #2a2a2f;
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg);
+                 font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; }
+    body { padding: 20px; max-width: 720px; margin: 0 auto; }
+
+    header { display: flex; justify-content: space-between; align-items: baseline;
+             padding-bottom: 12px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    header h1 { margin: 0; font-size: 22px; }
+    header .meta { color: var(--muted); font-size: 13px; font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+
+    .phase-pill { display: inline-block; padding: 2px 10px; border-radius: 12px;
+                  font-size: 12px; font-weight: 600; letter-spacing: 0.05em; }
+    .phase-W { background: #e8e8e8; color: #444; }
+    .phase-T { background: var(--accent); color: white; }
+
+    .card { background: var(--card); border: 1px solid var(--border);
+            border-radius: 10px; padding: 16px; margin-bottom: 16px; }
+
+    .row { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+    .row label { width: 70px; font-weight: 600; color: var(--muted); font-size: 14px; }
+    .row .value { font-family: ui-monospace, "SF Mono", Menlo, monospace;
+                  font-size: 18px; min-width: 110px; text-align: right; }
+    .row .unit { color: var(--muted); font-size: 13px; min-width: 80px; }
+    .row button { padding: 8px 14px; font-size: 18px; min-width: 40px;
+                  background: var(--card); color: var(--fg); border: 1px solid var(--border);
+                  border-radius: 8px; cursor: pointer; }
+    .row button:hover { background: var(--bg); }
+    .row button:active { transform: translateY(1px); }
+    .row .step-input { width: 70px; padding: 6px; font-family: ui-monospace, monospace;
+                       border: 1px solid var(--border); border-radius: 6px;
+                       background: var(--card); color: var(--fg); }
+
+    .trigger-row { margin-top: 24px; text-align: center; }
+    .trigger { font-size: 22px; padding: 16px 40px; border: none; border-radius: 12px;
+               background: var(--accent); color: white; cursor: pointer; font-weight: 700;
+               letter-spacing: 0.05em; min-width: 220px; }
+    .trigger:hover { filter: brightness(1.1); }
+    .trigger:disabled { background: #aaa; cursor: not-allowed; }
+    .trigger:active { transform: translateY(1px); }
+
+    .buttons { display: flex; gap: 8px; margin-top: 12px; justify-content: center; }
+    .btn-pill { padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px;
+                font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); }
+    .btn-pill.lit { background: var(--accent); color: white; border-color: var(--accent); }
+
+    footer { color: var(--muted); font-size: 12px; margin-top: 20px; text-align: center; }
+    .err { color: var(--accent); }
+    code { font-family: ui-monospace, monospace; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>LaserHAT</h1>
+    <span class="meta">
+      {{ hostname }} · {{ ip }} ·
+      <span id="phase" class="phase-pill phase-W">WAIT</span>
+    </span>
+  </header>
+
+  <div class="card">
+    <div class="row">
+      <label>intensity</label>
+      <button data-knob="i" data-dir="-1">−</button>
+      <input class="step-input" data-knob="i" id="step-i" type="number" value="8" min="1" max="320">
+      <button data-knob="i" data-dir="+1">+</button>
+      <span class="value" id="val-i">—</span>
+      <span class="unit">/ 320</span>
+    </div>
+
+    <div class="row">
+      <label>ramp</label>
+      <button data-knob="r" data-dir="-1">−</button>
+      <input class="step-input" data-knob="r" id="step-r" type="number" value="200" min="1">
+      <button data-knob="r" data-dir="+1">+</button>
+      <span class="value" id="val-r">—</span>
+      <span class="unit" id="unit-r">ticks</span>
+    </div>
+
+    <div class="row">
+      <label>hold</label>
+      <button data-knob="h" data-dir="-1">−</button>
+      <input class="step-input" data-knob="h" id="step-h" type="number" value="500" min="1">
+      <button data-knob="h" data-dir="+1">+</button>
+      <span class="value" id="val-h">—</span>
+      <span class="unit" id="unit-h">ticks</span>
+    </div>
+  </div>
+
+  <div class="trigger-row">
+    <button id="trigger" class="trigger">TRIGGER PULSE</button>
+  </div>
+
+  <div class="card">
+    <div style="font-size: 13px; color: var(--muted); margin-bottom: 6px;">
+      hardware buttons (live, debounced by the MCU)
+    </div>
+    <div class="buttons">
+      <span class="btn-pill" id="btn1">B1 trigger</span>
+      <span class="btn-pill" id="btn2">B2</span>
+      <span class="btn-pill" id="btn3">B3</span>
+      <span class="btn-pill" id="btn4">B4</span>
+    </div>
+  </div>
+
+  <footer>
+    state polls every 500 ms · <code>tick=<span id="tick">—</span></code>
+    <span id="err" class="err"></span>
+  </footer>
+
+<script>
+"use strict";
+
+const $ = id => document.getElementById(id);
+const POLL_MS = 500;
+
+function fmtTicks(n) {
+  return `${n} (${(n/100).toFixed(1)} ms)`;
+}
+
+async function postSet(knob, value) {
+  const resp = await fetch(`/api/set/${knob}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ value }),
+  });
+  return resp.ok;
+}
+
+async function postTrigger() {
+  const resp = await fetch("/api/trigger", { method: "POST" });
+  return resp.ok;
+}
+
+let lastState = null;
+
+async function refresh() {
+  try {
+    const resp = await fetch("/api/state");
+    const s = await resp.json();
+    if (!s.ok) {
+      $("err").textContent = "MCU: no response";
+      return;
+    }
+    $("err").textContent = "";
+    $("val-i").textContent = s.intensity;
+    $("val-r").textContent = s.ramp_ticks;
+    $("unit-r").textContent = `ticks (${(s.ramp_ticks/100).toFixed(1)} ms)`;
+    $("val-h").textContent = s.hold_ticks;
+    $("unit-h").textContent = `ticks (${(s.hold_ticks/100).toFixed(1)} ms)`;
+    $("tick").textContent = s.tick;
+
+    const phaseEl = $("phase");
+    phaseEl.textContent = s.phase === "T" ? "TRIG" : "WAIT";
+    phaseEl.className = `phase-pill phase-${s.phase}`;
+    $("trigger").disabled = s.phase === "T";
+
+    for (let i = 0; i < 4; i++) {
+      const el = $("btn" + (i + 1));
+      const lit = (s.button_mask & (1 << i)) !== 0;
+      el.classList.toggle("lit", lit);
+    }
+    lastState = s;
+  } catch (e) {
+    $("err").textContent = "fetch error: " + e;
+  }
+}
+
+document.querySelectorAll("button[data-knob]").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    if (!lastState) return;
+    const knob = btn.dataset.knob;
+    const dir = parseInt(btn.dataset.dir, 10);
+    const step = parseInt($("step-" + knob).value, 10) || 0;
+    if (!step) return;
+    const current = { i: lastState.intensity,
+                      r: lastState.ramp_ticks,
+                      h: lastState.hold_ticks }[knob];
+    const next = current + dir * step;
+    const ok = await postSet(knob, next);
+    if (!ok) $("err").textContent = "firmware rejected";
+    refresh();
+  });
+});
+
+$("trigger").addEventListener("click", async () => {
+  await postTrigger();
+  refresh();
+});
+
+setInterval(refresh, POLL_MS);
+refresh();
+</script>
+</body>
+</html>

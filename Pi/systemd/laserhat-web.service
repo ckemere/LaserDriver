@@ -1,0 +1,35 @@
+# LaserHAT web GUI (Flask) — long-running daemon.
+#
+# Conflicts with eink-gui.service: both want exclusive UART access.
+# Stop one before starting the other:
+#
+#   sudo systemctl stop eink-gui.service
+#   sudo cp Pi/systemd/laserhat-web.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now laserhat-web.service
+#
+# Then browse to http://<pi>:8080/ from any device on the LAN.
+#
+# Edit User=, Group=, paths and ExecStart= if your Pi account isn't
+# 'kemerelab' or the venv lives somewhere other than ~/.venvs/laserhat.
+
+[Unit]
+Description=LaserHAT web GUI (Flask)
+After=network-online.target dev-ttyS0.device
+Wants=network-online.target
+Conflicts=eink-gui.service
+
+[Service]
+Type=simple
+User=kemerelab
+Group=kemerelab
+WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
+Environment=PORT=8080
+ExecStart=/home/kemerelab/.venvs/laserhat/bin/python web_app.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
