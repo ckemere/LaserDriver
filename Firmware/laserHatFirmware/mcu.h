@@ -47,6 +47,7 @@ typedef enum IRQn
   SVCall_IRQn         = -5,
   PendSV_IRQn         = -2,
   SysTick_IRQn        = -1,
+  GPIOA_INT_IRQn      = 1,    /* shared IRQ 1, handler is GROUP1_IRQHandler */
   UART0_INT_IRQn      = 15,
   TIMG0_INT_IRQn      = 16,
   TIMG6_INT_IRQn      = 17,
@@ -108,7 +109,7 @@ typedef enum IRQn
 #define IOMUX_PINCM22  (21u)   /* PA11 — UART0 RX */
 #define IOMUX_PINCM34  (33u)   /* PA12 — unused */
 #define IOMUX_PINCM35  (34u)   /* PA13 — STIM_MIRROR LED */
-#define IOMUX_PINCM36  (35u)   /* PA14 — unused */
+#define IOMUX_PINCM36  (35u)   /* PA14 — BNC trigger input */
 #define IOMUX_PINCM37  (36u)   /* PA15 — DAC OUT */
 #define IOMUX_PINCM38  (37u)   /* PA16 — unused */
 #define IOMUX_PINCM39  (38u)   /* PA17 — unused */

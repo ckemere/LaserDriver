@@ -562,6 +562,13 @@ int main(void)
     NVIC_ClearPendingIRQ(UART0_INT_IRQn);
     NVIC_EnableIRQ(UART0_INT_IRQn);
 
+    /* GPIOA IRQ (shared GROUP1 vector) for the BNC trigger edge.
+     * Higher priority than housekeeping so a trigger reaches the ISR
+     * before the next 1 kHz housekeeping wake. */
+    NVIC_SetPriority(GPIOA_INT_IRQn, 1);
+    NVIC_ClearPendingIRQ(GPIOA_INT_IRQn);
+    NVIC_EnableIRQ(GPIOA_INT_IRQn);
+
     while (1) {
         if (g_housekeeping_due) {
             g_housekeeping_due = false;
@@ -577,6 +584,19 @@ void TIMG6_IRQHandler(void)
 {
     if (laser_timerg_housekeeping_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
         g_housekeeping_due = true;
+    }
+}
+
+/* MSPM0G3507 routes GPIOA (and several other peripherals) through the
+ * shared INT_GROUP1 vector; the startup file names the handler
+ * GROUP1_IRQHandler.  We're the only GROUP1 source in use, so a single
+ * MIS check is enough. */
+void GROUP1_IRQHandler(void)
+{
+    uint32_t mis = GPIOA->CPU_INT.MIS;
+    if (mis & BOARD_BNC_TRIGGER_PIN) {
+        GPIOA->CPU_INT.ICLR = BOARD_BNC_TRIGGER_PIN;
+        g_hw_trigger_pending = true;
     }
 }
 

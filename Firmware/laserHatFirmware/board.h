@@ -47,6 +47,10 @@
 #define BOARD_BUTTON_MASK           (BOARD_BUTTON1_PIN | BOARD_BUTTON2_PIN | \
                                      BOARD_BUTTON3_PIN | BOARD_BUTTON4_PIN)
 
+/* ----- BNC trigger input (PA14) — external TTL pulse, rising edge ----- */
+#define BOARD_BNC_TRIGGER_PIN       (1u << 14)
+#define BOARD_BNC_TRIGGER_PINCM     IOMUX_PINCM36
+
 /* ----- STIM_MIRROR LED (PA13) ----- */
 #define BOARD_STIM_MIRROR_PIN       (1u << 13)
 #define BOARD_STIM_MIRROR_PINCM     IOMUX_PINCM35
