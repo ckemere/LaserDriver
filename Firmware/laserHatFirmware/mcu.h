@@ -114,6 +114,7 @@ typedef enum IRQn
 #define IOMUX_PINCM38  (37u)   /* PA16 — unused */
 #define IOMUX_PINCM39  (38u)   /* PA17 — unused */
 #define IOMUX_PINCM40  (39u)   /* PA18 — unused */
+#define IOMUX_PINCM41  (40u)   /* PA19 — boots as SWDIO; reclaimed as Pi trigger input */
 #define IOMUX_PINCM46  (45u)   /* PA21 — PWM_LASER (TIMA0_CCP0) */
 #define IOMUX_PINCM47  (46u)   /* PA22 — PWM_DUMMY (TIMA0_CCP0_CMPL) */
 #define IOMUX_PINCM48  (47u)   /* PA23 — VREF+ */

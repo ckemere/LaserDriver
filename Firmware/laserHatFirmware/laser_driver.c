@@ -538,6 +538,10 @@ int main(void)
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
     }
 
+    /* Boot blink is done; SWD is no longer needed until the next reset.
+     * Reclaim PA19 as a GPIO-input trigger source for the Pi. */
+    laser_gpio_arm_pi_trigger();
+
     laser_timera_init();
     laser_timerg_init_tick();
     laser_timerg_init_housekeeping();
@@ -594,8 +598,9 @@ void TIMG6_IRQHandler(void)
 void GROUP1_IRQHandler(void)
 {
     uint32_t mis = GPIOA->CPU_INT.MIS;
-    if (mis & BOARD_BNC_TRIGGER_PIN) {
-        GPIOA->CPU_INT.ICLR = BOARD_BNC_TRIGGER_PIN;
+    uint32_t fired_mask = mis & (BOARD_BNC_TRIGGER_PIN | BOARD_PI_TRIGGER_PIN);
+    if (fired_mask) {
+        GPIOA->CPU_INT.ICLR = fired_mask;
         g_hw_trigger_pending = true;
     }
 }

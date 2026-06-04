@@ -79,7 +79,9 @@ void laser_gpio_init(void)
     /* POLARITY15_0: each DIO gets a 2-bit field (RISE=01).  PA14 → bits 28-29. */
     BOARD_GPIO_PORT->POLARITY15_0 =
         (BOARD_GPIO_PORT->POLARITY15_0 & ~(0x3u << 28)) | (0x1u << 28);
-    /* Clear any latched interrupt, then unmask PA14 at the GPIOA peripheral. */
+    /* Clear any latched interrupt, then unmask PA14 at the GPIOA peripheral.
+     * The Pi-trigger input (PA19) gets added to IMASK later by
+     * laser_gpio_arm_pi_trigger() once boot is past the SWD-needed window. */
     BOARD_GPIO_PORT->CPU_INT.ICLR  = BOARD_BNC_TRIGGER_PIN;
     BOARD_GPIO_PORT->CPU_INT.IMASK = BOARD_BNC_TRIGGER_PIN;
 
@@ -93,4 +95,24 @@ void laser_gpio_init(void)
     BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_PWM_DUMMY_PIN | BOARD_STIM_MIRROR_PIN;
     BOARD_GPIO_PORT->DOESET31_0  =
         BOARD_PWM_LASER_PIN | BOARD_PWM_DUMMY_PIN | BOARD_STIM_MIRROR_PIN;
+}
+
+void laser_gpio_arm_pi_trigger(void)
+{
+    /* Switch PA19's PINCM from boot-default SWDIO to plain GPIO input.
+     * Function code 1 = GPIO.  Enable INENA so we can read the level. */
+    IOMUX->SECCFG.PINCM[BOARD_PI_TRIGGER_PINCM] =
+        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE |
+        BOARD_PI_TRIGGER_GPIO_FUNC;
+
+    /* POLARITY31_16: each DIO again gets a 2-bit field (RISE=01).
+     * PA19 sits at index 19, so within the upper-half register that's
+     * (19-16) * 2 = bits 6-7. */
+    BOARD_GPIO_PORT->POLARITY31_16 =
+        (BOARD_GPIO_PORT->POLARITY31_16 & ~(0x3u << 6)) | (0x1u << 6);
+
+    /* Clear any latched edge, then OR PA19 into the existing IMASK so
+     * the BNC trigger's mask isn't disturbed. */
+    BOARD_GPIO_PORT->CPU_INT.ICLR  = BOARD_PI_TRIGGER_PIN;
+    BOARD_GPIO_PORT->CPU_INT.IMASK |= BOARD_PI_TRIGGER_PIN;
 }
