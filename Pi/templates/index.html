@@ -59,12 +59,16 @@
                        background: var(--card); color: var(--fg); }
 
     .trigger-row { margin-top: 24px; text-align: center; }
-    .trigger { font-size: 22px; padding: 16px 40px; border: none; border-radius: 12px;
+    .trigger { font-size: 20px; padding: 14px 28px; border: none; border-radius: 12px;
                background: var(--accent); color: white; cursor: pointer; font-weight: 700;
-               letter-spacing: 0.05em; min-width: 220px; }
+               letter-spacing: 0.05em; min-width: 200px; margin: 0 6px; }
     .trigger:hover { filter: brightness(1.1); }
     .trigger:disabled { background: #aaa; cursor: not-allowed; }
     .trigger:active { transform: translateY(1px); }
+    .trigger-gpio { background: var(--ok); }
+    .trigger-note { color: var(--muted); font-size: 12px; margin-top: 10px;
+                    max-width: 520px; margin-left: auto; margin-right: auto;
+                    line-height: 1.4; }
 
     .buttons { display: flex; gap: 8px; margin-top: 12px; justify-content: center; }
     .btn-pill { padding: 4px 10px; border: 1px solid var(--border); border-radius: 6px;
@@ -115,7 +119,13 @@
   </div>
 
   <div class="trigger-row">
-    <button id="trigger" class="trigger">TRIGGER PULSE</button>
+    <button id="trigger" class="trigger">TRIGGER (UART)</button>
+    <button id="trigger-gpio" class="trigger trigger-gpio">TRIGGER (GPIO)</button>
+    <div class="trigger-note">
+      UART path waits for byte send + parse + state-machine tick (~300–700 µs,
+      with scheduler jitter).  GPIO path drives Pi GPIO 24 high so the MCU's
+      PA19 edge ISR fires the pulse directly (~50–100 µs, deterministic).
+    </div>
   </div>
 
   <div class="card">
@@ -154,8 +164,9 @@ async function postSet(knob, value) {
   return resp.ok;
 }
 
-async function postTrigger() {
-  const resp = await fetch("/api/trigger", { method: "POST" });
+async function postTrigger(path = "uart") {
+  const url = path === "gpio" ? "/api/trigger_gpio" : "/api/trigger";
+  const resp = await fetch(url, { method: "POST" });
   return resp.ok;
 }
 
@@ -180,7 +191,8 @@ async function refresh() {
     const phaseEl = $("phase");
     phaseEl.textContent = s.phase === "T" ? "TRIG" : "WAIT";
     phaseEl.className = `phase-pill phase-${s.phase}`;
-    $("trigger").disabled = s.phase === "T";
+    $("trigger").disabled      = s.phase === "T";
+    $("trigger-gpio").disabled = s.phase === "T";
 
     for (let i = 0; i < 4; i++) {
       const el = $("btn" + (i + 1));
@@ -211,7 +223,12 @@ document.querySelectorAll("button[data-knob]").forEach(btn => {
 });
 
 $("trigger").addEventListener("click", async () => {
-  await postTrigger();
+  await postTrigger("uart");
+  refresh();
+});
+
+$("trigger-gpio").addEventListener("click", async () => {
+  await postTrigger("gpio");
   refresh();
 });
 

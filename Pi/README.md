@@ -1,6 +1,6 @@
 # LaserHAT Pi-side
 
-Pi-side Python code that talks to the LaserHAT. Four pieces:
+Pi-side Python code that talks to the LaserHAT. Five pieces:
 
 - `eink_panel.py` — slim self-contained SSD1680 / GDEY0213B74 driver
   on `spidev` + `gpiozero` + Pillow. Full refresh (~3 s) and partial
@@ -8,16 +8,21 @@ Pi-side Python code that talks to the LaserHAT. Four pieces:
 - `laser_hat.py` — thread-safe UART client class wrapping the
   firmware's line protocol (`?`, `i N`, `r N`, `h N`, `t`). Shared by
   every front-end.
+- `pi_trigger.py` — `PiTrigger` class + CLI. Drives Pi GPIO 24 high
+  briefly so the MCU's PA19 edge ISR fires a pulse directly,
+  bypassing UART entirely (~50–100 µs end-to-end vs ~300–700 µs for
+  a UART `t` command — and far less jitter).
 - `eink_gui.py` — long-running daemon that polls the MCU at 20 Hz,
   runs the button-driven UI, pushes config changes back, and repaints
   the panel.
-- `web_app.py` — Flask web GUI; same controls + trigger button +
-  live state, accessed from any browser on the LAN.
+- `web_app.py` — Flask web GUI; same controls plus *two* trigger
+  buttons (UART path and GPIO path), so you can compare the two.
 
 ```
 Pi/
   eink_panel.py          SSD1680 driver (full + partial refresh)
   laser_hat.py           LaserHat class + CLI smoke tool
+  pi_trigger.py          PiTrigger class + CLI (GPIO-path trigger)
   eink_ip.py             one-shot: render IP + hostname, exit
   eink_gui.py            long-running eink GUI daemon
   web_app.py             Flask web GUI

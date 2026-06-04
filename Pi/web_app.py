@@ -9,7 +9,8 @@ Routes:
     GET  /                  the single page
     GET  /api/state         current MCU state as JSON
     POST /api/set/<knob>    body { "value": N } where knob in {i, r, h}
-    POST /api/trigger       fire a pulse
+    POST /api/trigger       fire a pulse via UART 't' command
+    POST /api/trigger_gpio  fire a pulse via Pi GPIO 24 -> MSPM0 PA19 edge
     GET  /api/healthz       cheap liveness check
 
 The app binds 0.0.0.0:8080 by default; override via PORT env var.
@@ -32,6 +33,7 @@ from typing import Optional
 from flask import Flask, jsonify, render_template, request
 
 from laser_hat import LaserHat, State
+from pi_trigger import PiTrigger
 
 
 # --------------------------------------------------------------- helpers
@@ -67,9 +69,10 @@ def _state_dict(state: Optional[State]) -> dict:
 
 
 # --------------------------------------------------------------- app
-def create_app(hat: LaserHat) -> Flask:
+def create_app(hat: LaserHat, gpio_trigger: PiTrigger) -> Flask:
     app = Flask(__name__)
     app.config["hat"] = hat
+    app.config["gpio_trigger"] = gpio_trigger
     app.config["hostname"] = socket.gethostname()
 
     @app.route("/")
@@ -106,8 +109,18 @@ def create_app(hat: LaserHat) -> Flask:
 
     @app.route("/api/trigger", methods=["POST"])
     def api_trigger():
+        """UART-path trigger ('t' command).  Emits OK pulse start/end."""
         ok = app.config["hat"].trigger()
-        return jsonify(ok=ok)
+        return jsonify(ok=ok, path="uart")
+
+    @app.route("/api/trigger_gpio", methods=["POST"])
+    def api_trigger_gpio():
+        """GPIO-path trigger (rising edge on Pi GPIO 24 -> MSPM0 PA19).
+        Bypasses UART entirely; firmware fires the pulse from its GPIO
+        edge ISR.  No ACK from the MCU — use ? afterwards if you want
+        to observe the phase. """
+        app.config["gpio_trigger"].fire()
+        return jsonify(ok=True, path="gpio")
 
     @app.route("/api/healthz")
     def api_healthz():
@@ -123,10 +136,13 @@ def main() -> int:
     print(f"opening UART …", file=sys.stderr)
     hat = LaserHat()
 
+    print(f"opening GPIO trigger pin …", file=sys.stderr)
+    gpio_trigger = PiTrigger()
+
     print(f"serving on {host}:{port} (http://{primary_ip()}:{port}/)",
           file=sys.stderr)
 
-    app = create_app(hat)
+    app = create_app(hat, gpio_trigger)
     # threaded=True so a slow UART round-trip doesn't block other clients.
     app.run(host=host, port=port, debug=False, threaded=True)
     return 0
