@@ -10,9 +10,10 @@
 
 spidev>=3.6
 gpiozero>=2.0
-# lgpio is the gpiozero pin factory of choice on Bookworm/Pi 5; the
-# fallback (RPi.GPIO) is broken for edge detection on recent kernels.
-lgpio>=0.2
+# lgpio is the gpiozero pin factory of choice on Bookworm/Pi 5.  Install
+# the apt package python3-lgpio, NOT via pip (the source build needs
+# swig and is unnecessary — Pi OS ships a prebuilt binary).  The venv
+# inherits it via --system-site-packages.
 Pillow>=10.0.0
 pyserial>=3.5
 # Web GUI

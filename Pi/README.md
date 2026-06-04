@@ -44,15 +44,19 @@ one or the other, not both.
 ## One-time install
 
 ```bash
-sudo apt install python3-venv python3-pil python3-spidev
+sudo apt install python3-venv python3-pil python3-spidev \
+                 python3-gpiozero python3-lgpio
 
 python3 -m venv --system-site-packages ~/.venvs/laserhat
 ~/.venvs/laserhat/bin/pip install -r ~/Code/LaserDriver/Pi/requirements.txt
 ```
 
 `--system-site-packages` lets the venv see Pi OS's pre-installed
-`gpiozero` / Pillow / spidev where they already exist, instead of
-rebuilding them. Pip will only install whatever's missing.
+`gpiozero` / Pillow / spidev / lgpio. Pip only installs what's
+missing (Flask and pyserial, typically). **`python3-lgpio` matters:**
+without it `gpiozero` falls back to `RPi.GPIO`, which is broken on
+recent Pi OS kernels. Installing it via pip needs `swig` and a C
+build — don't bother, the apt package is prebuilt and fine.
 
 Make sure SPI is enabled (it has to be, for both the eink and any future
 sensor work):
