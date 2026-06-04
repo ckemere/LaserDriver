@@ -74,8 +74,13 @@ void laser_gpio_init(void)
         IOMUX_PINCM_PC_CONNECTED | PINCM_FUNC_GPIO;
 
     /* ----- BNC trigger: digital input, rising-edge interrupt ----- */
+    /* Enable the internal pull-DOWN so a released/unterminated line idles
+     * LOW instead of floating; otherwise noise on an open BNC can look
+     * like a rising edge and fire the laser.  Active-high, matching the
+     * Pi-trigger input (PA19) armed in laser_gpio_arm_pi_trigger(). */
     IOMUX->SECCFG.PINCM[BOARD_BNC_TRIGGER_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE | PINCM_FUNC_GPIO;
+        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE |
+        IOMUX_PINCM_PIPD_ENABLE  | PINCM_FUNC_GPIO;
     /* POLARITY15_0: each DIO gets a 2-bit field (RISE=01).  PA14 → bits 28-29. */
     BOARD_GPIO_PORT->POLARITY15_0 =
         (BOARD_GPIO_PORT->POLARITY15_0 & ~(0x3u << 28)) | (0x1u << 28);
