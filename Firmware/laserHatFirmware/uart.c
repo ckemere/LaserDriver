@@ -41,29 +41,10 @@ void laser_uart_tx_byte(uint8_t byte)
     UART0->TXDATA = byte;
 }
 
-void laser_uart_tx_str(const char *s)
+void laser_uart_tx_buf(const uint8_t *buf, uint32_t len)
 {
-    while (*s) {
-        laser_uart_tx_byte((uint8_t)*s++);
-    }
-}
-
-void laser_uart_tx_u32(uint32_t value)
-{
-    /* Up to 10 digits for uint32_t (4294967295). */
-    char buf[10];
-    int  n = 0;
-
-    if (value == 0u) {
-        laser_uart_tx_byte('0');
-        return;
-    }
-    while (value > 0u) {
-        buf[n++] = (char)('0' + (value % 10u));
-        value  /= 10u;
-    }
-    while (n-- > 0) {
-        laser_uart_tx_byte((uint8_t)buf[n]);
+    for (uint32_t i = 0u; i < len; i++) {
+        laser_uart_tx_byte(buf[i]);
     }
 }
 

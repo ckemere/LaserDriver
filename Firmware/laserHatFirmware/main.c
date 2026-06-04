@@ -6,6 +6,9 @@
 #include "tick_timers.h"
 #include "dac.h"
 #include "uart.h"
+#include "protocol.h"
+#include "framing.h"
+#include "cobs.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -27,12 +30,16 @@
  *   g_hw_trigger_pending        set by the BNC / Pi-GPIO edge ISR
  *                               (GROUP1_IRQHandler)
  *
- * Pulse-event ACKs (OK pulse start/end) are emitted from the main
- * loop on PulseEvent records the ISR fills at the WAITING<->TRIGGERED
- * edges, so laser_uart_tx_*'s blocking writes stay out of interrupt
- * context.  Each record carries its own via_uart bit, so the ACK pair
- * for a UART-initiated pulse is gated independently of whatever source
- * triggers the next pulse.
+ * Pulse events (EVT_PULSE_START / EVT_PULSE_END) are emitted from the
+ * main loop on PulseEvent records the ISR fills at the WAITING<->TRIGGERED
+ * edges, so the blocking UART frame writes stay out of interrupt context.
+ * Events are emitted for *every* pulse regardless of trigger source: the
+ * host is a broker that reads all typed frames and routes them by type, so
+ * there's no per-source ACK gating to get wrong.
+ *
+ * Wire protocol is binary framed (COBS + CRC16); see protocol.h / framing.h
+ * and the host mirror Pi/protocol.py.  The UART RX ISR still just pushes
+ * bytes into a ring; the main loop feeds them to a frame decoder.
  *
  * Config edits arrive in main (parser) and are read by the ISR at
  * latch time.  Each parser command writes a single g_config_live field
@@ -132,29 +139,31 @@ static volatile bool g_hw_trigger_pending     = false;
 
 /* Per-pulse event record handed from the ISR (which fills it at a phase
  * transition) to the main loop's blocking UART TX path (which drains it).
- * Each event carries its own via_uart bit so a UART pulse's start/end ACK
- * gating cannot be stomped by a *different* trigger source starting the
- * next pulse before main has drained this one.  Write the payload
- * (tick, via_uart) *before* setting .pending, so a reader that observes
- * .pending is guaranteed to also see the matching payload. */
+ * Write the payload (tick) *before* setting .pending, so a reader that
+ * observes .pending is guaranteed to also see the matching tick. */
 typedef struct {
     uint32_t tick;
-    bool     via_uart;
     bool     pending;
 } PulseEvent;
 
-static volatile PulseEvent g_pulse_start_evt = { 0u, false, false };
-static volatile PulseEvent g_pulse_end_evt   = { 0u, false, false };
-
-/* ISR-only: tracks whether the in-flight pulse was UART-initiated.  Set
- * when the pulse starts and read when it ends (same pulse, before any
- * next pulse can begin) to stamp the end event's own via_uart copy. */
-static bool g_pulse_via_uart = false;
+static volatile PulseEvent g_pulse_start_evt = { 0u, false };
+static volatile PulseEvent g_pulse_end_evt   = { 0u, false };
 
 /* Button state — owned by main loop. */
 static BtnPhase g_btn_phase[NUM_BUTTONS];
 static uint16_t g_btn_debounce[NUM_BUTTONS];
 static uint8_t  g_btn_mask = 0u;   /* bit n = button (n+1) debounced-pressed */
+
+/* Button-change event, produced by poll_buttons and drained by the main
+ * loop's frame TX (both run in the 1 kHz housekeeping block, so no
+ * cross-context volatility is needed).  .edges is the just-pressed
+ * (rising) bits; .mask is the full debounced state. */
+typedef struct {
+    uint8_t mask;
+    uint8_t edges;
+    bool    pending;
+} ButtonEvent;
+static ButtonEvent g_btn_event = { 0u, 0u, false };
 
 /* PA19 (SWDIO) stays in its boot-default SWDIO function until the host
  * sends `g\n` over UART, at which point the firmware reclaims it as a
@@ -201,13 +210,11 @@ static inline void latch_config_from_live(void)
 static inline void state_machine_tick(void)
 {
     /* --- Combine trigger sources --- */
-    bool from_uart   = g_uart_trigger_pending;
-    bool from_button = g_button_trigger_pending;
-    bool from_hw     = g_hw_trigger_pending;
+    bool trigger = g_uart_trigger_pending || g_button_trigger_pending
+                   || g_hw_trigger_pending;
     g_uart_trigger_pending   = false;
     g_button_trigger_pending = false;
     g_hw_trigger_pending     = false;
-    bool trigger = from_uart || from_button || from_hw;
 
     /* --- Overall + laser phases --- */
     switch (g_state.overall) {
@@ -218,10 +225,8 @@ static inline void state_machine_tick(void)
                 g_state.laser      = LASER_RAMP_UP;
                 g_state.ramp_step  = 0u;
                 g_state.tick_count = 0u;
-                g_pulse_via_uart   = from_uart;
-                g_pulse_start_evt.tick     = g_isr_ticks;
-                g_pulse_start_evt.via_uart = from_uart;
-                g_pulse_start_evt.pending  = true;
+                g_pulse_start_evt.tick    = g_isr_ticks;
+                g_pulse_start_evt.pending = true;
             }
             break;
 
@@ -264,9 +269,8 @@ static inline void state_machine_tick(void)
                         g_state.ramp_step  = 0u;
                         g_state.laser      = LASER_IDLE;
                         g_state.overall    = OVERALL_WAITING;
-                        g_pulse_end_evt.tick     = g_isr_ticks;
-                        g_pulse_end_evt.via_uart = g_pulse_via_uart;
-                        g_pulse_end_evt.pending  = true;
+                        g_pulse_end_evt.tick    = g_isr_ticks;
+                        g_pulse_end_evt.pending = true;
                     }
                     break;
 
@@ -366,6 +370,7 @@ void TIMG0_IRQHandler(void)
 
 static void poll_buttons(void)
 {
+    uint8_t old_mask = g_btn_mask;
     uint8_t raw_mask = laser_gpio_read_buttons_raw();
 
     for (unsigned n = 0; n < NUM_BUTTONS; n++) {
@@ -391,171 +396,163 @@ static void poll_buttons(void)
             g_btn_debounce[n] = 0u;
         }
     }
+
+    /* Report any change in the debounced mask so clients can react to
+     * presses without polling.  edges = bits that just went pressed. */
+    if (g_btn_mask != old_mask) {
+        g_btn_event.mask    = g_btn_mask;
+        g_btn_event.edges   = (uint8_t)(g_btn_mask & (uint8_t)~old_mask);
+        g_btn_event.pending = true;
+    }
 }
 
 /* -----------------------------------------------------------------------
- * UART protocol  (unchanged wire format)
+ * UART protocol — binary framed (COBS + CRC16)
  *
- *   i N    set intensity (1..320, peak PWM duty)
- *   r N    set ramp-up ticks
- *   h N    set hold ticks
- *   t      trigger one pulse; ACK is "OK pulse start=..." + "OK pulse end=..."
- *   g      arm the PA19 (Pi-GPIO) trigger.  PA19 starts as SWDIO so SWD
- *          reflashing always works on a fresh boot; sending `g` switches
- *          PA19 to a GPIO input with rising-edge interrupt.  No disarm —
- *          reset the MCU to restore SWDIO.
- *   ?      query state — one line:
- *          OK i=N r=N h=N b=BBBB g=0|1 phase=W|T tick=TTT
+ * Command frames (host -> MCU) are decoded here; response/event frames
+ * (MCU -> host) are encoded and sent.  See protocol.h for the type/field
+ * map and Pi/protocol.py for the host mirror.  The RX ISR pushes bytes
+ * into a ring; this code feeds them to the frame decoder.
+ *
+ *   CMD_SET_INTENSITY u16   -> RSP_ACK
+ *   CMD_SET_RAMP/HOLD u32   -> RSP_ACK
+ *   CMD_TRIGGER             -> RSP_ACK, then EVT_PULSE_START/_END
+ *   CMD_ARM                 -> RSP_ACK   (reclaim PA19 from SWDIO)
+ *   CMD_QUERY               -> RSP_STATUS
+ *   (async)                 -> EVT_BUTTON on any debounced button change
  * ----------------------------------------------------------------------- */
 
-#define LINE_BUF_SIZE   64u
+static FrameDecoder g_rx_decoder;
 
-static char  line_buf[LINE_BUF_SIZE];
-static uint8_t line_len = 0u;
-static bool   line_overflowed = false;
-
-static bool parse_decimal(const char *s, uint32_t *out)
+/* Encode one frame and push it out the UART (blocking). */
+static void tx_frame(uint8_t type, const uint8_t *payload, size_t len)
 {
-    uint32_t v = 0u;
-    bool got_digit = false;
-    while (*s == ' ' || *s == '\t') s++;
-    if (*s == '\0' || *s == '\r') return false;
-    while (*s >= '0' && *s <= '9') {
-        uint32_t digit = (uint32_t)(*s - '0');
-        /* Reject before the multiply/add can wrap past UINT32_MAX, so an
-         * over-long value can't silently alias a small in-range one
-         * (e.g. 4294967297 -> 1).  Callers still range-check the result. */
-        if (v > (UINT32_MAX - digit) / 10u) {
-            return false;
-        }
-        v = v * 10u + digit;
-        got_digit = true;
-        s++;
+    uint8_t wire[COBS_ENCODE_MAX(FRAME_MAX_BODY) + 1u];
+    size_t  n = frame_encode(type, payload, len, wire, sizeof wire);
+    if (n != 0u) {
+        laser_uart_tx_buf(wire, (uint32_t)n);
     }
-    while (*s == ' ' || *s == '\t' || *s == '\r') s++;
-    if (*s != '\0') return false;
-    if (!got_digit) return false;
-    *out = v;
-    return true;
 }
 
-static void emit_ok_kv(char verb, uint32_t value)
+static inline void put_u16(uint8_t *p, uint16_t v)
 {
-    laser_uart_tx_str("OK ");
-    laser_uart_tx_byte((uint8_t)verb);
-    laser_uart_tx_byte('=');
-    laser_uart_tx_u32(value);
-    laser_uart_tx_byte('\n');
+    p[0] = (uint8_t)(v & 0xFFu);
+    p[1] = (uint8_t)(v >> 8);
 }
 
-static void emit_err(const char *reason)
+static inline void put_u32(uint8_t *p, uint32_t v)
 {
-    laser_uart_tx_str("ERR ");
-    laser_uart_tx_str(reason);
-    laser_uart_tx_byte('\n');
+    p[0] = (uint8_t)(v & 0xFFu);
+    p[1] = (uint8_t)((v >> 8)  & 0xFFu);
+    p[2] = (uint8_t)((v >> 16) & 0xFFu);
+    p[3] = (uint8_t)((v >> 24) & 0xFFu);
 }
 
-static void emit_pulse_event(const char *kind, uint32_t tick)
+static void emit_ack(uint8_t cmd_type, uint8_t status)
 {
-    laser_uart_tx_str("OK pulse ");
-    laser_uart_tx_str(kind);
-    laser_uart_tx_byte('=');
-    laser_uart_tx_u32(tick);
-    laser_uart_tx_byte('\n');
+    uint8_t payload[2] = { cmd_type, status };
+    tx_frame(RSP_ACK, payload, sizeof payload);
 }
 
 static void emit_status(void)
 {
-    /* Snapshot the volatile fields the ISR owns once each; not strictly
-     * necessary on M0+ but makes intent explicit. */
-    OverallPhase phase = g_state.overall;
-    uint32_t     tick  = g_isr_ticks;
-
-    laser_uart_tx_str("OK i=");
-    laser_uart_tx_u32(g_config_live.intensity);
-    laser_uart_tx_str(" r=");
-    laser_uart_tx_u32(g_config_live.ramp_ticks);
-    laser_uart_tx_str(" h=");
-    laser_uart_tx_u32(g_config_live.hold_ticks);
-    laser_uart_tx_str(" b=");
-    laser_uart_tx_u32(g_btn_mask);
-    laser_uart_tx_str(" g=");
-    laser_uart_tx_byte(g_pi_trigger_armed ? '1' : '0');
-    laser_uart_tx_str(" phase=");
-    laser_uart_tx_byte(phase == OVERALL_WAITING ? 'W' : 'T');
-    laser_uart_tx_str(" tick=");
-    laser_uart_tx_u32(tick);
-    laser_uart_tx_byte('\n');
+    /* Field layout matches PROTO_STATUS_FIELD_LEN / Python "<HIIBBBI".
+     * Written byte-by-byte (little-endian) to avoid any struct padding. */
+    uint8_t p[PROTO_STATUS_FIELD_LEN];
+    put_u16(&p[0],  g_config_live.intensity);
+    put_u32(&p[2],  g_config_live.ramp_ticks);
+    put_u32(&p[6],  g_config_live.hold_ticks);
+    p[10] = g_btn_mask;
+    p[11] = g_pi_trigger_armed ? 1u : 0u;
+    p[12] = (g_state.overall == OVERALL_WAITING) ? PHASE_WAITING
+                                                 : PHASE_TRIGGERED;
+    put_u32(&p[13], g_isr_ticks);
+    tx_frame(RSP_STATUS, p, sizeof p);
 }
 
-static void process_line(void)
+static void emit_pulse_event(uint8_t type, uint32_t tick)
 {
-    const char *p = line_buf;
-    while (*p == ' ' || *p == '\t') p++;
-    if (*p == '\0' || *p == '\r') return;     /* blank line */
+    uint8_t p[4];
+    put_u32(p, tick);
+    tx_frame(type, p, sizeof p);
+}
 
-    char verb = *p++;
+/* Decode a fixed-width little-endian field of the expected length. */
+static bool payload_u16(const uint8_t *p, size_t len, uint32_t *out)
+{
+    if (len != 2u) return false;
+    *out = (uint32_t)p[0] | ((uint32_t)p[1] << 8);
+    return true;
+}
+
+static bool payload_u32(const uint8_t *p, size_t len, uint32_t *out)
+{
+    if (len != 4u) return false;
+    *out = (uint32_t)p[0] | ((uint32_t)p[1] << 8)
+         | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
+    return true;
+}
+
+static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
+{
     uint32_t arg = 0u;
 
-    switch (verb) {
-        case 'i':
-            if (!parse_decimal(p, &arg)) { emit_err("bad_arg"); return; }
-            if (arg < INTENSITY_MIN || arg > INTENSITY_MAX) {
-                emit_err("range"); return;
+    switch (type) {
+        case CMD_SET_INTENSITY:
+            if (!payload_u16(payload, len, &arg) ||
+                arg < INTENSITY_MIN || arg > INTENSITY_MAX) {
+                emit_ack(type, ACK_RANGE); return;
             }
-            /* Single aligned store; atomic on Cortex-M0+.  The ISR's
-             * config snapshot is taken atomically at latch time, so no
-             * IRQ bracketing is needed here. */
+            /* Single aligned store; atomic on Cortex-M0+.  The ISR snapshots
+             * config atomically at latch time, so no IRQ bracketing here. */
             g_config_live.intensity = (uint16_t)arg;
-            emit_ok_kv('i', arg);
+            emit_ack(type, ACK_OK);
             break;
 
-        case 'r':
-            if (!parse_decimal(p, &arg)) { emit_err("bad_arg"); return; }
-            if (arg < RAMP_TICKS_MIN || arg > RAMP_TICKS_MAX) {
-                emit_err("range"); return;
+        case CMD_SET_RAMP:
+            if (!payload_u32(payload, len, &arg) ||
+                arg < RAMP_TICKS_MIN || arg > RAMP_TICKS_MAX) {
+                emit_ack(type, ACK_RANGE); return;
             }
-            /* Single aligned store; atomic on Cortex-M0+ (see 'i'). */
-            g_config_live.ramp_ticks = arg;
-            emit_ok_kv('r', arg);
+            g_config_live.ramp_ticks = arg;   /* single aligned store (see above) */
+            emit_ack(type, ACK_OK);
             break;
 
-        case 'h':
-            if (!parse_decimal(p, &arg)) { emit_err("bad_arg"); return; }
-            if (arg < HOLD_TICKS_MIN || arg > HOLD_TICKS_MAX) {
-                emit_err("range"); return;
+        case CMD_SET_HOLD:
+            if (!payload_u32(payload, len, &arg) ||
+                arg < HOLD_TICKS_MIN || arg > HOLD_TICKS_MAX) {
+                emit_ack(type, ACK_RANGE); return;
             }
-            /* Single aligned store; atomic on Cortex-M0+ (see 'i'). */
-            g_config_live.hold_ticks = arg;
-            emit_ok_kv('h', arg);
+            g_config_live.hold_ticks = arg;   /* single aligned store (see above) */
+            emit_ack(type, ACK_OK);
             break;
 
-        case 't':
+        case CMD_TRIGGER:
             if (g_state.overall != OVERALL_WAITING) {
-                emit_err("busy");
+                emit_ack(type, ACK_BUSY);
                 return;
             }
             g_uart_trigger_pending = true;
-            /* No immediate ACK — "OK pulse start=..." will follow from
-             * the main loop when the ISR transitions to TRIGGERED. */
+            emit_ack(type, ACK_OK);
+            /* EVT_PULSE_START / _END follow from the main loop. */
             break;
 
-        case 'g':
-            /* `g` arms the Pi-GPIO (PA19) trigger.  No disarm — to put
-             * PA19 back as SWDIO, reset the MCU.  Idempotent: re-issuing
-             * 'g' just re-runs the IOMUX write.
-             * Canonical rationale: board.h (PA19) / README.md (UART protocol). */
+        case CMD_ARM:
+            /* Arm the Pi-GPIO (PA19) trigger.  No disarm — to put PA19 back
+             * as SWDIO, reset the MCU.  Idempotent: re-arming just re-runs
+             * the IOMUX write.
+             * Canonical rationale: board.h (PA19) / README.md. */
             laser_gpio_arm_pi_trigger();
             g_pi_trigger_armed = true;
-            emit_ok_kv('g', 1u);
+            emit_ack(type, ACK_OK);
             break;
 
-        case '?':
+        case CMD_QUERY:
             emit_status();
             break;
 
         default:
-            emit_err("unknown");
+            emit_ack(type, ACK_UNKNOWN);
             break;
     }
 }
@@ -564,45 +561,35 @@ static void drain_uart(void)
 {
     uint8_t b;
     while (laser_uart_rx_pop(&b)) {
-        /* Accept LF, CR, or CRLF as a line terminator. */
-        if (b == '\n' || b == '\r') {
-            if (line_overflowed) {
-                emit_err("overflow");
-                line_overflowed = false;
-                line_len = 0u;
-            } else if (line_len > 0u) {
-                line_buf[line_len] = '\0';
-                process_line();
-                line_len = 0u;
-            }
-        } else if (line_len + 1u >= LINE_BUF_SIZE) {
-            line_overflowed = true;
-        } else {
-            line_buf[line_len++] = (char)b;
+        uint8_t type;
+        uint8_t payload[FRAME_MAX_BODY];
+        size_t  len;
+        if (frame_decoder_push(&g_rx_decoder, b, &type,
+                               payload, sizeof payload, &len)) {
+            process_frame(type, payload, len);
         }
     }
 }
 
-static void emit_pending_pulse_events(void)
+static void emit_pending_events(void)
 {
-    /* The ISR fills each record's payload (tick, via_uart) before setting
-     * .pending, so reading .pending first guarantees the matching payload
-     * is already visible. */
+    /* The ISR fills each pulse record's tick before setting .pending, so
+     * reading .pending first guarantees the matching tick is visible.
+     * Pulse events are emitted for every trigger source. */
     if (g_pulse_start_evt.pending) {
-        uint32_t tick     = g_pulse_start_evt.tick;
-        bool     via_uart = g_pulse_start_evt.via_uart;
+        uint32_t tick = g_pulse_start_evt.tick;
         g_pulse_start_evt.pending = false;
-        if (via_uart) {
-            emit_pulse_event("start", tick);
-        }
+        emit_pulse_event(EVT_PULSE_START, tick);
     }
     if (g_pulse_end_evt.pending) {
-        uint32_t tick     = g_pulse_end_evt.tick;
-        bool     via_uart = g_pulse_end_evt.via_uart;
+        uint32_t tick = g_pulse_end_evt.tick;
         g_pulse_end_evt.pending = false;
-        if (via_uart) {
-            emit_pulse_event("end", tick);
-        }
+        emit_pulse_event(EVT_PULSE_END, tick);
+    }
+    if (g_btn_event.pending) {
+        uint8_t p[2] = { g_btn_event.mask, g_btn_event.edges };
+        g_btn_event.pending = false;
+        tx_frame(EVT_BUTTON, p, sizeof p);
     }
 }
 
@@ -635,6 +622,7 @@ int main(void)
     laser_dac_write12(DAC_SETPOINT);
     laser_dac_enable();
     laser_uart_init();
+    frame_decoder_init(&g_rx_decoder);
 
     laser_pins_to_gpio_safe();
     laser_timera_start();
@@ -664,7 +652,7 @@ int main(void)
             g_housekeeping_due = false;
             drain_uart();
             poll_buttons();
-            emit_pending_pulse_events();
+            emit_pending_events();
         }
         __WFI();
     }
