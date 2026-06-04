@@ -160,7 +160,8 @@ static uint8_t  g_btn_mask = 0u;   /* bit n = button (n+1) debounced-pressed */
  * sends `g\n` over UART, at which point the firmware reclaims it as a
  * GPIO-input trigger line.  This guarantees SWD reflashing always
  * works on a freshly-booted MCU; clients enable the GPIO-trigger path
- * explicitly when they want it. */
+ * explicitly when they want it.
+ * Canonical rationale: board.h (PA19 block) and README.md (UART protocol). */
 static bool g_pi_trigger_armed = false;
 
 /* Set by TIMG6_IRQHandler at 1 kHz; cleared by main when it actually
@@ -542,7 +543,8 @@ static void process_line(void)
         case 'g':
             /* `g` arms the Pi-GPIO (PA19) trigger.  No disarm — to put
              * PA19 back as SWDIO, reset the MCU.  Idempotent: re-issuing
-             * 'g' just re-runs the IOMUX write. */
+             * 'g' just re-runs the IOMUX write.
+             * Canonical rationale: board.h (PA19) / README.md (UART protocol). */
             laser_gpio_arm_pi_trigger();
             g_pi_trigger_armed = true;
             emit_ok_kv('g', 1u);

@@ -109,8 +109,9 @@ void laser_uart_init(void)
     UART0->CLKDIV = UART_CLKDIV_RATIO_DIV_BY_1;
 
     /* CTL0: normal mode, TX+RX enabled, no flow control.  Also clear
-     * FEN (FIFO enable bit lives here too) so we get one-byte RX
-     * interrupts to match the existing echo placeholder. */
+     * FEN (FIFO enable bit lives here too) so each received byte raises
+     * an RX interrupt immediately, instead of waiting for the FIFO
+     * threshold — the line parser wants every byte as it arrives. */
     update_reg(&UART0->CTL0,
         UART_CTL0_MODE_UART | UART_CTL0_RXE_ENABLE | UART_CTL0_TXE_ENABLE |
         UART_CTL0_RTSEN_DISABLE | UART_CTL0_CTSEN_DISABLE,

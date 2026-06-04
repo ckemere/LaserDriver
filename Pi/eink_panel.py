@@ -189,9 +189,10 @@ class EinkPanel:
         padded = Image.new("1", (RAM_W, PANEL_H), color=1)
         padded.paste(image, (0, 0))
 
-        # PIL "1" mode packs MSB-first per byte already; tobytes() gives
-        # exactly what the SSD1680 expects.  Invert because SSD1680 wants
-        # 1 = white, 0 = black, matching PIL "1" mode.
+        # No inversion needed: PIL "1" mode packs 8 pixels per byte,
+        # MSB-first, with 1 = white / 0 = black, and the SSD1680 BW RAM
+        # uses the same convention (1 = white). tobytes() therefore yields
+        # exactly what the panel expects.
         return bytearray(padded.tobytes())
 
     # ------------------------------------------------------------------

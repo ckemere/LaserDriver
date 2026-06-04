@@ -104,7 +104,9 @@ void laser_gpio_init(void)
 
 void laser_gpio_arm_pi_trigger(void)
 {
-    /* Switch PA19's PINCM from boot-default SWDIO to plain GPIO input.
+    /* Canonical SWDIO<->GPIO arming rationale: board.h (PA19 block) and
+     * README.md (UART protocol).
+     * Switch PA19's PINCM from boot-default SWDIO to plain GPIO input.
      * Function code 1 = GPIO.  Enable INENA so we can read the level,
      * and enable the internal pull-DOWN so the line idles LOW when the
      * Pi releases GPIO 24 (e.g. at Python process exit).  Without this,
