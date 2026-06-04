@@ -121,6 +121,15 @@ even though the write itself is reliable. Visual confirmation is the
 ~4-second STIM_MIRROR boot blink right after the flash command
 finishes.
 
+`openocd/pi-swd.cfg` includes `reset_config srst_only srst_nogate
+connect_assert_srst` so OpenOCD holds NRST asserted *during* the
+SWD probe. The firmware reclaims PA19 (SWDIO) as a plain GPIO input
+shortly after boot; without connect-under-reset the second flash
+fails with "Error connecting DP: cannot read IDR". With NRST held,
+the MCU stays in reset (PA19 reverts to its default SWDIO function),
+the probe succeeds, and NRST releases at the end of the OpenOCD
+session.
+
 **Prerequisites:**
 
 1. **`gpio` group membership** — needed to access `/dev/gpiochip*`
