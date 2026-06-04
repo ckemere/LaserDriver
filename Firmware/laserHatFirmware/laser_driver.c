@@ -10,23 +10,31 @@
 #include <stdint.h>
 
 /* -----------------------------------------------------------------------
- * Pulse configuration
+ * Architecture
  *
- *   intensity   peak PWM duty (1..PWM_PERIOD_COUNTS); sets the
- *               number of ramp steps and the held duty at the peak.
- *   ramp_ticks  total duration of the ramp-up phase (and ramp-down).
- *               Each step takes ramp_ticks / intensity ticks
- *               (rounded down, minimum 1 tick).
- *   hold_ticks  duration of the peak hold (also the dead time at the
- *               trailing edge before returning to WAITING).
+ * TIMG0_IRQHandler (100 kHz) is the *only* place pulse timing lives.
+ * It advances the state machine and drives the PWM / GPIO outputs.
+ * Nothing else - main loop, UART parser, future GPIO edge ISRs - is
+ * allowed to touch the pulse state.  This isolates pulse timing from
+ * everything else: UART parsing can take as long as it likes without
+ * shifting a single PWM-duty write.
  *
- * One TIMG0 tick = 10 µs at 100 kHz.
+ * Triggers are mediated through three volatile flags consumed (and
+ * cleared) by the tick ISR at the start of each tick:
  *
- * Two copies of the struct are kept: g_config_live is what the UART
- * protocol mutates; g_config_active is what the state machine reads.
- * The live copy is snapshotted into active on every WAITING -> TRIGGERED
- * transition, so a config change mid-pulse cannot glitch a running
- * waveform.
+ *   g_uart_trigger_pending      set by the UART parser on 't'
+ *   g_button_trigger_pending    set by main loop on BUTTON1 release
+ *   g_hw_trigger_pending        set by BNC / Pi-GPIO edge ISRs
+ *                               (wired in a later commit)
+ *
+ * Pulse-event ACKs (OK pulse start/end) are emitted from the main
+ * loop on flags the ISR sets at the WAITING<->TRIGGERED edges, so
+ * laser_uart_tx_*'s blocking writes stay out of interrupt context.
+ *
+ * Config edits arrive in main (parser) and are read by the ISR at
+ * latch time.  The parser brackets its write to g_config_live with
+ * __disable_irq() / __enable_irq() so the ISR can never latch a
+ * half-updated struct.
  * ----------------------------------------------------------------------- */
 
 #define PWM_PERIOD_COUNTS       320u
@@ -48,31 +56,28 @@ typedef struct {
     uint16_t intensity;
 } PulseConfig;
 
-static PulseConfig g_config_live = {
+static volatile PulseConfig g_config_live = {
     .ramp_ticks = RAMP_TICKS_DEFAULT,
     .hold_ticks = HOLD_TICKS_DEFAULT,
     .intensity  = INTENSITY_DEFAULT,
 };
-static PulseConfig g_config_active;
-static uint32_t    g_active_ticks_per_step;   /* derived at latch time */
+static PulseConfig g_config_active;          /* ISR-only */
+static uint32_t    g_active_ticks_per_step;  /* derived at latch time */
 
-/*
- * Boot-side init: applied once at the analog current limit and never
- * touched again at runtime.
- */
+/* Boot-side init: applied once at the analog current limit. */
 #define DAC_SETPOINT            500u
 
 /*
- * Button debounce: require the pin to be stable for this many ticks
- * before accepting a state change.  At 100 kHz, 1000 ticks = 10 ms.
+ * Button debounce: require the pin to be stable for this many polls
+ * before accepting a state change.  Main loop polls at the
+ * housekeeping rate (1 kHz), so 10 polls = 10 ms.
  */
-#define DEBOUNCE_TICKS          1000u
+#define DEBOUNCE_TICKS            10u
 #define NUM_BUTTONS                4u
 
 /*
- * Power-on boot blink: 20 toggles of STIM_MIRROR at ~5 Hz before the
- * state machine starts.  Pure busy-wait, no timer dependence.
- *   100 ms at 32 MHz BUSCLK ≈ 3.2 M cycles.
+ * Power-on boot blink: 20 toggles of STIM_MIRROR at ~5 Hz before any
+ * timer starts.  Pure busy-wait.  ~100 ms at 32 MHz BUSCLK ≈ 3.2 M cycles.
  */
 #define BOOT_BLINK_FLASHES      20u
 #define BOOT_BLINK_HALF_CYCLES  3200000u
@@ -87,11 +92,6 @@ typedef enum {
 } OverallPhase;
 
 typedef enum {
-    BTN_IDLE,       /* pin LOW (released) */
-    BTN_PRESSED,    /* confirmed pressed */
-} BtnPhase;
-
-typedef enum {
     LASER_IDLE,
     LASER_RAMP_UP,
     LASER_HOLD_HIGH,
@@ -104,30 +104,53 @@ typedef struct {
     LaserPhase   laser;
     uint32_t     ramp_step;
     uint32_t     tick_count;
-    BtnPhase     btn_phase[NUM_BUTTONS];
-    uint16_t     btn_debounce[NUM_BUTTONS];
-    uint8_t      btn_mask;    /* debounced; bit n = button n+1 pressed */
 } MachineState;
 
+typedef enum {
+    BTN_IDLE,       /* pin LOW (released) */
+    BTN_PRESSED,    /* confirmed pressed */
+} BtnPhase;
+
 /* -----------------------------------------------------------------------
- * Hardware helpers
+ * Cross-context globals
  * ----------------------------------------------------------------------- */
 
-/* Incremented only in TIMG0 ISR; read in get_next_state(). */
-static volatile uint32_t isr_ticks = 0;
+/* Pulse state — written only by TIMG0 ISR.  Main only reads .overall
+ * (one word, atomic on M0+) for the ? response. */
+static volatile MachineState g_state = { OVERALL_WAITING, LASER_IDLE, 0u, 0u };
+static volatile uint32_t     g_isr_ticks = 0u;
 
-/* Set true by the parser when a 't' command is received; consumed
- * (and cleared) by get_next_state().  Bool reads/writes are atomic
- * on Cortex-M0+ so no further protection needed. */
-static volatile bool g_uart_trigger_request = false;
+/* Trigger-source flags.  All bool reads/writes are atomic on M0+. */
+static volatile bool g_uart_trigger_pending   = false;
+static volatile bool g_button_trigger_pending = false;
+static volatile bool g_hw_trigger_pending     = false;
+/* True for the duration of a pulse if it was initiated by the UART 't'
+ * command — gates the OK pulse start/end ACK emission.  Written by ISR,
+ * read by main; only meaningful between the two event flags. */
+static volatile bool g_pulse_via_uart = false;
 
-/* True while a pulse initiated by a 't' command is running; gates the
- * "OK pulse start/end" ACK emission. */
-static bool g_pulse_via_uart = false;
-static uint32_t g_pulse_start_tick = 0;
+/* Pulse-event flags set by the ISR at phase transitions, consumed by
+ * the main loop's blocking UART TX path.  Write tick *before* the flag
+ * so a reader that sees the flag also sees the matching tick. */
+static volatile uint32_t g_pulse_start_evt_tick = 0u;
+static volatile bool     g_pulse_start_evt = false;
+static volatile uint32_t g_pulse_end_evt_tick = 0u;
+static volatile bool     g_pulse_end_evt = false;
 
-/* Busy-wait roughly `cycles` BUSCLK cycles.  Used only for the boot
- * blink.  ~3 cycles per loop iteration on Cortex-M0+. */
+/* Button state — owned by main loop. */
+static BtnPhase g_btn_phase[NUM_BUTTONS];
+static uint16_t g_btn_debounce[NUM_BUTTONS];
+static uint8_t  g_btn_mask = 0u;   /* bit n = button (n+1) debounced-pressed */
+
+/* Set by TIMG6_IRQHandler at 1 kHz; cleared by main when it actually
+ * runs housekeeping work.  TIMG0 ticks also wake main from WFI, but
+ * main sees no flag and re-WFIs immediately. */
+static volatile bool g_housekeeping_due = false;
+
+/* -----------------------------------------------------------------------
+ * Boot blink delay
+ * ----------------------------------------------------------------------- */
+
 static void delay_cycles(uint32_t cycles)
 {
     volatile uint32_t i = cycles / 3u;
@@ -135,120 +158,90 @@ static void delay_cycles(uint32_t cycles)
 }
 
 /* -----------------------------------------------------------------------
- * State machine
+ * State machine — runs entirely inside TIMG0_IRQHandler
  * ----------------------------------------------------------------------- */
 
-static void latch_config(void)
+static inline void latch_config_from_live(void)
 {
-    g_config_active = g_config_live;
-    g_active_ticks_per_step =
-        g_config_active.ramp_ticks / g_config_active.intensity;
+    /* Called from ISR; parser brackets its writes with __disable_irq()
+     * so a struct copy here is safe. */
+    g_config_active.ramp_ticks = g_config_live.ramp_ticks;
+    g_config_active.hold_ticks = g_config_live.hold_ticks;
+    g_config_active.intensity  = g_config_live.intensity;
+
+    g_active_ticks_per_step = g_config_active.ramp_ticks / g_config_active.intensity;
     if (g_active_ticks_per_step == 0u) {
         g_active_ticks_per_step = 1u;
     }
 }
 
-/*
- * Advance state by one tick.  Returns state unchanged if no new TIMG0
- * tick has fired (guards against spurious WFI wakeups from other
- * sources like UART RX).
- */
-static MachineState get_next_state(MachineState s)
+static inline void state_machine_tick(void)
 {
-    static uint32_t last_tick = 0;
-    if (isr_ticks == last_tick)
-        return s;
-    last_tick++;
-
-    /* --- Per-button debounce (active-high, all 4 buttons) --- */
-    uint8_t raw_mask = laser_gpio_read_buttons_raw();
-    bool    btn1_released_edge = false;
-
-    for (unsigned n = 0; n < NUM_BUTTONS; n++) {
-        bool raw_pressed = (raw_mask >> n) & 1u;
-        bool now_pressed = (s.btn_phase[n] == BTN_PRESSED);
-
-        if (raw_pressed != now_pressed) {
-            s.btn_debounce[n]++;
-            if (s.btn_debounce[n] >= DEBOUNCE_TICKS) {
-                s.btn_phase[n] = raw_pressed ? BTN_PRESSED : BTN_IDLE;
-                s.btn_debounce[n] = 0;
-                if (n == 0u && !raw_pressed) {
-                    /* BUTTON1 release fires a trigger. */
-                    btn1_released_edge = true;
-                }
-                /* Update mask bit. */
-                if (raw_pressed) {
-                    s.btn_mask |= (uint8_t)(1u << n);
-                } else {
-                    s.btn_mask &= (uint8_t)~(1u << n);
-                }
-            }
-        } else {
-            s.btn_debounce[n] = 0;
-        }
-    }
-
     /* --- Combine trigger sources --- */
-    bool trigger_from_uart = g_uart_trigger_request;
-    g_uart_trigger_request = false;
-    bool trigger = btn1_released_edge || trigger_from_uart;
+    bool from_uart   = g_uart_trigger_pending;
+    bool from_button = g_button_trigger_pending;
+    bool from_hw     = g_hw_trigger_pending;
+    g_uart_trigger_pending   = false;
+    g_button_trigger_pending = false;
+    g_hw_trigger_pending     = false;
+    bool trigger = from_uart || from_button || from_hw;
 
-    /* --- Overall and laser phases --- */
-    switch (s.overall) {
+    /* --- Overall + laser phases --- */
+    switch (g_state.overall) {
         case OVERALL_WAITING:
             if (trigger) {
-                latch_config();
-                s.overall    = OVERALL_TRIGGERED;
-                s.laser      = LASER_RAMP_UP;
-                s.ramp_step  = 0;
-                s.tick_count = 0;
-                if (trigger_from_uart) {
-                    g_pulse_via_uart   = true;
-                    g_pulse_start_tick = last_tick;
-                }
+                latch_config_from_live();
+                g_state.overall    = OVERALL_TRIGGERED;
+                g_state.laser      = LASER_RAMP_UP;
+                g_state.ramp_step  = 0u;
+                g_state.tick_count = 0u;
+                g_pulse_via_uart   = from_uart;
+                g_pulse_start_evt_tick = g_isr_ticks;
+                g_pulse_start_evt      = true;
             }
             break;
 
         case OVERALL_TRIGGERED:
-            s.tick_count++;
-            switch (s.laser) {
+            g_state.tick_count++;
+            switch (g_state.laser) {
                 case LASER_RAMP_UP:
-                    if (s.tick_count >= g_active_ticks_per_step) {
-                        s.tick_count = 0;
-                        s.ramp_step++;
-                        if (s.ramp_step >= g_config_active.intensity) {
-                            s.tick_count = 0;
-                            s.laser      = LASER_HOLD_HIGH;
+                    if (g_state.tick_count >= g_active_ticks_per_step) {
+                        g_state.tick_count = 0u;
+                        g_state.ramp_step++;
+                        if (g_state.ramp_step >= g_config_active.intensity) {
+                            g_state.tick_count = 0u;
+                            g_state.laser      = LASER_HOLD_HIGH;
                         }
                     }
                     break;
 
                 case LASER_HOLD_HIGH:
-                    if (s.tick_count >= g_config_active.hold_ticks) {
-                        s.tick_count = 0;
-                        s.ramp_step  = g_config_active.intensity;
-                        s.laser      = LASER_RAMP_DOWN;
+                    if (g_state.tick_count >= g_config_active.hold_ticks) {
+                        g_state.tick_count = 0u;
+                        g_state.ramp_step  = g_config_active.intensity;
+                        g_state.laser      = LASER_RAMP_DOWN;
                     }
                     break;
 
                 case LASER_RAMP_DOWN:
-                    if (s.tick_count >= g_active_ticks_per_step) {
-                        s.tick_count = 0;
-                        s.ramp_step--;
-                        if (s.ramp_step == 0) {
-                            s.tick_count = 0;
-                            s.laser      = LASER_HOLD_LOW;
+                    if (g_state.tick_count >= g_active_ticks_per_step) {
+                        g_state.tick_count = 0u;
+                        g_state.ramp_step--;
+                        if (g_state.ramp_step == 0u) {
+                            g_state.tick_count = 0u;
+                            g_state.laser      = LASER_HOLD_LOW;
                         }
                     }
                     break;
 
                 case LASER_HOLD_LOW:
-                    if (s.tick_count >= g_config_active.hold_ticks) {
-                        s.tick_count = 0;
-                        s.ramp_step  = 0;
-                        s.laser      = LASER_IDLE;
-                        s.overall    = OVERALL_WAITING;
+                    if (g_state.tick_count >= g_config_active.hold_ticks) {
+                        g_state.tick_count = 0u;
+                        g_state.ramp_step  = 0u;
+                        g_state.laser      = LASER_IDLE;
+                        g_state.overall    = OVERALL_WAITING;
+                        g_pulse_end_evt_tick = g_isr_ticks;
+                        g_pulse_end_evt      = true;
                     }
                     break;
 
@@ -257,24 +250,17 @@ static MachineState get_next_state(MachineState s)
             }
             break;
     }
-
-    return s;
 }
 
-/*
- * Drive hardware to match the current state.
- * - Waiting:   laser off, STIM_MIRROR off.
- * - Triggered: PWM follows the waveform; STIM_MIRROR mirrors laser-on.
- */
-static void set_output(MachineState s)
+static inline void set_output_from_state(void)
 {
-    if (s.overall == OVERALL_WAITING) {
+    if (g_state.overall == OVERALL_WAITING) {
         laser_pins_to_gpio_safe();
         laser_gpio_stim_mirror_clear();
         return;
     }
 
-    switch (s.laser) {
+    switch (g_state.laser) {
         case LASER_IDLE:
         case LASER_HOLD_LOW:
             laser_pins_to_gpio_safe();
@@ -283,11 +269,11 @@ static void set_output(MachineState s)
 
         case LASER_RAMP_UP:
         case LASER_RAMP_DOWN:
-            if (s.ramp_step == 0) {
+            if (g_state.ramp_step == 0u) {
                 laser_pins_to_gpio_safe();
             } else {
                 laser_pins_to_pwm();
-                laser_timera_set_duty(s.ramp_step);
+                laser_timera_set_duty(g_state.ramp_step);
             }
             laser_gpio_stim_mirror_set();
             break;
@@ -303,8 +289,50 @@ static void set_output(MachineState s)
     }
 }
 
+void TIMG0_IRQHandler(void)
+{
+    if (laser_timerg_tick_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
+        g_isr_ticks++;
+        state_machine_tick();
+        set_output_from_state();
+    }
+}
+
 /* -----------------------------------------------------------------------
- * UART protocol
+ * Main-loop button polling + debounce
+ * ----------------------------------------------------------------------- */
+
+static void poll_buttons(void)
+{
+    uint8_t raw_mask = laser_gpio_read_buttons_raw();
+
+    for (unsigned n = 0; n < NUM_BUTTONS; n++) {
+        bool raw_pressed = (raw_mask >> n) & 1u;
+        bool now_pressed = (g_btn_phase[n] == BTN_PRESSED);
+
+        if (raw_pressed != now_pressed) {
+            g_btn_debounce[n]++;
+            if (g_btn_debounce[n] >= DEBOUNCE_TICKS) {
+                g_btn_phase[n]    = raw_pressed ? BTN_PRESSED : BTN_IDLE;
+                g_btn_debounce[n] = 0u;
+                if (raw_pressed) {
+                    g_btn_mask |= (uint8_t)(1u << n);
+                } else {
+                    g_btn_mask &= (uint8_t)~(1u << n);
+                    if (n == 0u) {
+                        /* BUTTON1 release fires a pulse. */
+                        g_button_trigger_pending = true;
+                    }
+                }
+            }
+        } else {
+            g_btn_debounce[n] = 0u;
+        }
+    }
+}
+
+/* -----------------------------------------------------------------------
+ * UART protocol  (unchanged wire format)
  *
  *   i N    set intensity (1..320, peak PWM duty)
  *   r N    set ramp-up ticks
@@ -312,20 +340,17 @@ static void set_output(MachineState s)
  *   t      trigger one pulse; ACK is "OK pulse start=..." + "OK pulse end=..."
  *   ?      query state — one line:
  *          OK i=N r=N h=N b=BBBB phase=W|T tick=TTT
- *
- * Lines are \n-terminated.  Whitespace tolerated between verb and arg.
- * Unknown verbs or out-of-range args -> ERR <reason>.
  * ----------------------------------------------------------------------- */
 
 #define LINE_BUF_SIZE   64u
 
 static char  line_buf[LINE_BUF_SIZE];
-static uint8_t line_len = 0;
+static uint8_t line_len = 0u;
 static bool   line_overflowed = false;
 
 static bool parse_decimal(const char *s, uint32_t *out)
 {
-    uint32_t v = 0;
+    uint32_t v = 0u;
     bool got_digit = false;
     while (*s == ' ' || *s == '\t') s++;
     if (*s == '\0' || *s == '\r') return false;
@@ -335,7 +360,7 @@ static bool parse_decimal(const char *s, uint32_t *out)
         s++;
     }
     while (*s == ' ' || *s == '\t' || *s == '\r') s++;
-    if (*s != '\0') return false;          /* trailing garbage */
+    if (*s != '\0') return false;
     if (!got_digit) return false;
     *out = v;
     return true;
@@ -366,8 +391,13 @@ static void emit_pulse_event(const char *kind, uint32_t tick)
     laser_uart_tx_byte('\n');
 }
 
-static void emit_status(const MachineState *s)
+static void emit_status(void)
 {
+    /* Snapshot the volatile fields the ISR owns once each; not strictly
+     * necessary on M0+ but makes intent explicit. */
+    OverallPhase phase = g_state.overall;
+    uint32_t     tick  = g_isr_ticks;
+
     laser_uart_tx_str("OK i=");
     laser_uart_tx_u32(g_config_live.intensity);
     laser_uart_tx_str(" r=");
@@ -375,23 +405,22 @@ static void emit_status(const MachineState *s)
     laser_uart_tx_str(" h=");
     laser_uart_tx_u32(g_config_live.hold_ticks);
     laser_uart_tx_str(" b=");
-    laser_uart_tx_u32(s->btn_mask);
+    laser_uart_tx_u32(g_btn_mask);
     laser_uart_tx_str(" phase=");
-    laser_uart_tx_byte(s->overall == OVERALL_WAITING ? 'W' : 'T');
+    laser_uart_tx_byte(phase == OVERALL_WAITING ? 'W' : 'T');
     laser_uart_tx_str(" tick=");
-    laser_uart_tx_u32(isr_ticks);
+    laser_uart_tx_u32(tick);
     laser_uart_tx_byte('\n');
 }
 
-static void process_line(const MachineState *s)
+static void process_line(void)
 {
-    /* Strip leading whitespace. */
     const char *p = line_buf;
     while (*p == ' ' || *p == '\t') p++;
     if (*p == '\0' || *p == '\r') return;     /* blank line */
 
     char verb = *p++;
-    uint32_t arg = 0;
+    uint32_t arg = 0u;
 
     switch (verb) {
         case 'i':
@@ -399,7 +428,9 @@ static void process_line(const MachineState *s)
             if (arg < INTENSITY_MIN || arg > INTENSITY_MAX) {
                 emit_err("range"); return;
             }
+            __disable_irq();
             g_config_live.intensity = (uint16_t)arg;
+            __enable_irq();
             emit_ok_kv('i', arg);
             break;
 
@@ -408,7 +439,9 @@ static void process_line(const MachineState *s)
             if (arg < RAMP_TICKS_MIN || arg > RAMP_TICKS_MAX) {
                 emit_err("range"); return;
             }
+            __disable_irq();
             g_config_live.ramp_ticks = arg;
+            __enable_irq();
             emit_ok_kv('r', arg);
             break;
 
@@ -417,22 +450,24 @@ static void process_line(const MachineState *s)
             if (arg < HOLD_TICKS_MIN || arg > HOLD_TICKS_MAX) {
                 emit_err("range"); return;
             }
+            __disable_irq();
             g_config_live.hold_ticks = arg;
+            __enable_irq();
             emit_ok_kv('h', arg);
             break;
 
         case 't':
-            if (s->overall != OVERALL_WAITING) {
+            if (g_state.overall != OVERALL_WAITING) {
                 emit_err("busy");
                 return;
             }
-            g_uart_trigger_request = true;
-            /* No immediate ACK — "OK pulse start=..." follows when the
-             * state machine actually transitions. */
+            g_uart_trigger_pending = true;
+            /* No immediate ACK — "OK pulse start=..." will follow from
+             * the main loop when the ISR transitions to TRIGGERED. */
             break;
 
         case '?':
-            emit_status(s);
+            emit_status();
             break;
 
         default:
@@ -441,27 +476,46 @@ static void process_line(const MachineState *s)
     }
 }
 
-static void drain_uart(const MachineState *s)
+static void drain_uart(void)
 {
     uint8_t b;
     while (laser_uart_rx_pop(&b)) {
-        /* Accept LF, CR, or CRLF as a line terminator.  picocom sends
-         * CR on Enter; pyserial writes LF; minicom can be either. */
+        /* Accept LF, CR, or CRLF as a line terminator. */
         if (b == '\n' || b == '\r') {
             if (line_overflowed) {
                 emit_err("overflow");
                 line_overflowed = false;
-                line_len = 0;
+                line_len = 0u;
             } else if (line_len > 0u) {
                 line_buf[line_len] = '\0';
-                process_line(s);
-                line_len = 0;
+                process_line();
+                line_len = 0u;
             }
-            /* Empty line (CRLF's LF, or just blank Enter): silently skip. */
         } else if (line_len + 1u >= LINE_BUF_SIZE) {
             line_overflowed = true;
         } else {
             line_buf[line_len++] = (char)b;
+        }
+    }
+}
+
+static void emit_pending_pulse_events(void)
+{
+    /* Read flag-then-tick is wrong; ISR writes tick first then flag, so
+     * a reader that sees the flag has already seen the matching tick. */
+    if (g_pulse_start_evt) {
+        uint32_t tick = g_pulse_start_evt_tick;
+        g_pulse_start_evt = false;
+        if (g_pulse_via_uart) {
+            emit_pulse_event("start", tick);
+        }
+    }
+    if (g_pulse_end_evt) {
+        uint32_t tick = g_pulse_end_evt_tick;
+        g_pulse_end_evt = false;
+        if (g_pulse_via_uart) {
+            emit_pulse_event("end", tick);
+            g_pulse_via_uart = false;
         }
     }
 }
@@ -476,16 +530,21 @@ int main(void)
     laser_gpio_enable_power_and_reset();
     laser_gpio_init();
 
-    /* Power-on boot indicator.  Pure delay loop before any timer fires. */
-    for (uint32_t n = 0; n < BOOT_BLINK_FLASHES; n++) {
+    /* Boot indicator before any timer runs. */
+    for (uint32_t n = 0u; n < BOOT_BLINK_FLASHES; n++) {
         laser_gpio_stim_mirror_set();
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
         laser_gpio_stim_mirror_clear();
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
     }
 
+    /* Boot blink is done; SWD is no longer needed until the next reset.
+     * Reclaim PA19 as a GPIO-input trigger source for the Pi. */
+    laser_gpio_arm_pi_trigger();
+
     laser_timera_init();
-    laser_timerg_init();
+    laser_timerg_init_tick();
+    laser_timerg_init_housekeeping();
     laser_dac_init();
     laser_dac_write12(DAC_SETPOINT);
     laser_dac_enable();
@@ -494,47 +553,55 @@ int main(void)
     laser_pins_to_gpio_safe();
     laser_timera_start();
 
+    /* TIMG0 ISR now runs the state machine; gets the highest NVIC
+     * priority (numerically 0 on M0+).  TIMG6 housekeeping runs at a
+     * lower priority so it can never delay a pulse tick. */
     NVIC_SetPriority(TIMG0_INT_IRQn, 0);
+    NVIC_SetPriority(TIMG6_INT_IRQn, 3);
     NVIC_EnableIRQ(TIMG0_INT_IRQn);
-    laser_timerg_start();
+    NVIC_EnableIRQ(TIMG6_INT_IRQn);
+    laser_timerg_start_tick();
+    laser_timerg_start_housekeeping();
 
     NVIC_ClearPendingIRQ(UART0_INT_IRQn);
     NVIC_EnableIRQ(UART0_INT_IRQn);
 
-    MachineState state = { 0 };
-    state.overall = OVERALL_WAITING;
-
-    OverallPhase prev_overall = state.overall;
+    /* GPIOA IRQ (shared GROUP1 vector) for the BNC trigger edge.
+     * Higher priority than housekeeping so a trigger reaches the ISR
+     * before the next 1 kHz housekeeping wake. */
+    NVIC_SetPriority(GPIOA_INT_IRQn, 1);
+    NVIC_ClearPendingIRQ(GPIOA_INT_IRQn);
+    NVIC_EnableIRQ(GPIOA_INT_IRQn);
 
     while (1) {
-        /* Service UART input first — short and bounded. */
-        drain_uart(&state);
-
-        state = get_next_state(state);
-        set_output(state);
-
-        /* Emit pulse-event ACKs on overall-phase transitions, but only
-         * if the running pulse was initiated by a 't' command. */
-        if (prev_overall == OVERALL_WAITING && state.overall == OVERALL_TRIGGERED) {
-            if (g_pulse_via_uart) {
-                emit_pulse_event("start", g_pulse_start_tick);
-            }
-        } else if (prev_overall == OVERALL_TRIGGERED && state.overall == OVERALL_WAITING) {
-            if (g_pulse_via_uart) {
-                emit_pulse_event("end", isr_ticks);
-                g_pulse_via_uart = false;
-            }
+        if (g_housekeeping_due) {
+            g_housekeeping_due = false;
+            drain_uart();
+            poll_buttons();
+            emit_pending_pulse_events();
         }
-        prev_overall = state.overall;
-
         __WFI();
     }
 }
 
-void TIMG0_IRQHandler(void)
+void TIMG6_IRQHandler(void)
 {
-    if (laser_timerg_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
-        isr_ticks++;
+    if (laser_timerg_housekeeping_ack() == GPTIMER_CPU_INT_IIDX_STAT_Z) {
+        g_housekeeping_due = true;
+    }
+}
+
+/* MSPM0G3507 routes GPIOA (and several other peripherals) through the
+ * shared INT_GROUP1 vector; the startup file names the handler
+ * GROUP1_IRQHandler.  We're the only GROUP1 source in use, so a single
+ * MIS check is enough. */
+void GROUP1_IRQHandler(void)
+{
+    uint32_t mis = GPIOA->CPU_INT.MIS;
+    uint32_t fired_mask = mis & (BOARD_BNC_TRIGGER_PIN | BOARD_PI_TRIGGER_PIN);
+    if (fired_mask) {
+        GPIOA->CPU_INT.ICLR = fired_mask;
+        g_hw_trigger_pending = true;
     }
 }
 

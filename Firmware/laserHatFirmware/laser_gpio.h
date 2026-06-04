@@ -22,6 +22,14 @@
 void laser_gpio_enable_power_and_reset(void);
 void laser_gpio_init(void);
 
+/*
+ * Reclaim PA19 from SWDIO to a plain GPIO input + rising-edge interrupt.
+ * Called from main() AFTER the boot blink completes, so the SWD pin
+ * stays live long enough to flash this very firmware.  NRST always
+ * restores SWDIO at reset, so future re-flashes still work.
+ */
+void laser_gpio_arm_pi_trigger(void);
+
 /* Tiny inlines so the hot-path button read in laser_driver.c doesn't
  * need driverlib either.  All return 0 or a bit mask. */
 #include "mcu.h"

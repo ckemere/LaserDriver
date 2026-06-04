@@ -47,6 +47,18 @@
 #define BOARD_BUTTON_MASK           (BOARD_BUTTON1_PIN | BOARD_BUTTON2_PIN | \
                                      BOARD_BUTTON3_PIN | BOARD_BUTTON4_PIN)
 
+/* ----- BNC trigger input (PA14) — external TTL pulse, rising edge ----- */
+#define BOARD_BNC_TRIGGER_PIN       (1u << 14)
+#define BOARD_BNC_TRIGGER_PINCM     IOMUX_PINCM36
+
+/* ----- Pi trigger input (PA19, ex-SWDIO) — Pi GPIO 24 drives it ----- */
+/* Boots as SWDIO; firmware reclaims as a GPIO input after the boot
+ * blink so SWD reflashing still works (NRST restores the default mux).
+ * Mux function 1 = plain GPIO; the GPIOA peripheral name is DIO19. */
+#define BOARD_PI_TRIGGER_PIN        (1u << 19)
+#define BOARD_PI_TRIGGER_PINCM      IOMUX_PINCM41
+#define BOARD_PI_TRIGGER_GPIO_FUNC  ((uint32_t)0x00000001u)
+
 /* ----- STIM_MIRROR LED (PA13) ----- */
 #define BOARD_STIM_MIRROR_PIN       (1u << 13)
 #define BOARD_STIM_MIRROR_PINCM     IOMUX_PINCM35

@@ -47,8 +47,10 @@ typedef enum IRQn
   SVCall_IRQn         = -5,
   PendSV_IRQn         = -2,
   SysTick_IRQn        = -1,
+  GPIOA_INT_IRQn      = 1,    /* shared IRQ 1, handler is GROUP1_IRQHandler */
   UART0_INT_IRQn      = 15,
   TIMG0_INT_IRQn      = 16,
+  TIMG6_INT_IRQn      = 17,
 } IRQn_Type;
 
 #include "cmsis/core_cm0plus.h"
@@ -74,6 +76,7 @@ typedef enum IRQn
 #define GPIOA_BASE     (0x400A0000U)
 #define TIMA0_BASE     (0x40860000U)
 #define TIMG0_BASE     (0x40084000U)
+#define TIMG6_BASE     (0x40868000U)
 #define UART0_BASE     (0x40108000U)
 #define DAC0_BASE      (0x40018000U)
 #define VREF_BASE      (0x40030000U)
@@ -83,6 +86,7 @@ typedef enum IRQn
 #define GPIOA   ((GPIO_Regs    *) GPIOA_BASE)
 #define TIMA0   ((GPTIMER_Regs *) TIMA0_BASE)
 #define TIMG0   ((GPTIMER_Regs *) TIMG0_BASE)
+#define TIMG6   ((GPTIMER_Regs *) TIMG6_BASE)
 #define UART0   ((UART_Regs    *) UART0_BASE)
 #define DAC0    ((DAC12_Regs   *) DAC0_BASE)
 #define VREF    ((VREF_Regs    *) VREF_BASE)
@@ -105,11 +109,12 @@ typedef enum IRQn
 #define IOMUX_PINCM22  (21u)   /* PA11 — UART0 RX */
 #define IOMUX_PINCM34  (33u)   /* PA12 — unused */
 #define IOMUX_PINCM35  (34u)   /* PA13 — STIM_MIRROR LED */
-#define IOMUX_PINCM36  (35u)   /* PA14 — unused */
+#define IOMUX_PINCM36  (35u)   /* PA14 — BNC trigger input */
 #define IOMUX_PINCM37  (36u)   /* PA15 — DAC OUT */
 #define IOMUX_PINCM38  (37u)   /* PA16 — unused */
 #define IOMUX_PINCM39  (38u)   /* PA17 — unused */
 #define IOMUX_PINCM40  (39u)   /* PA18 — unused */
+#define IOMUX_PINCM41  (40u)   /* PA19 — boots as SWDIO; reclaimed as Pi trigger input */
 #define IOMUX_PINCM46  (45u)   /* PA21 — PWM_LASER (TIMA0_CCP0) */
 #define IOMUX_PINCM47  (46u)   /* PA22 — PWM_DUMMY (TIMA0_CCP0_CMPL) */
 #define IOMUX_PINCM48  (47u)   /* PA23 — VREF+ */
