@@ -24,12 +24,15 @@
  *
  *   g_uart_trigger_pending      set by the UART parser on 't'
  *   g_button_trigger_pending    set by main loop on BUTTON1 release
- *   g_hw_trigger_pending        set by BNC / Pi-GPIO edge ISRs
- *                               (wired in a later commit)
+ *   g_hw_trigger_pending        set by the BNC / Pi-GPIO edge ISR
+ *                               (GROUP1_IRQHandler)
  *
  * Pulse-event ACKs (OK pulse start/end) are emitted from the main
- * loop on flags the ISR sets at the WAITING<->TRIGGERED edges, so
- * laser_uart_tx_*'s blocking writes stay out of interrupt context.
+ * loop on PulseEvent records the ISR fills at the WAITING<->TRIGGERED
+ * edges, so laser_uart_tx_*'s blocking writes stay out of interrupt
+ * context.  Each record carries its own via_uart bit, so the ACK pair
+ * for a UART-initiated pulse is gated independently of whatever source
+ * triggers the next pulse.
  *
  * Config edits arrive in main (parser) and are read by the ISR at
  * latch time.  The parser brackets its write to g_config_live with
@@ -124,18 +127,27 @@ static volatile uint32_t     g_isr_ticks = 0u;
 static volatile bool g_uart_trigger_pending   = false;
 static volatile bool g_button_trigger_pending = false;
 static volatile bool g_hw_trigger_pending     = false;
-/* True for the duration of a pulse if it was initiated by the UART 't'
- * command — gates the OK pulse start/end ACK emission.  Written by ISR,
- * read by main; only meaningful between the two event flags. */
-static volatile bool g_pulse_via_uart = false;
 
-/* Pulse-event flags set by the ISR at phase transitions, consumed by
- * the main loop's blocking UART TX path.  Write tick *before* the flag
- * so a reader that sees the flag also sees the matching tick. */
-static volatile uint32_t g_pulse_start_evt_tick = 0u;
-static volatile bool     g_pulse_start_evt = false;
-static volatile uint32_t g_pulse_end_evt_tick = 0u;
-static volatile bool     g_pulse_end_evt = false;
+/* Per-pulse event record handed from the ISR (which fills it at a phase
+ * transition) to the main loop's blocking UART TX path (which drains it).
+ * Each event carries its own via_uart bit so a UART pulse's start/end ACK
+ * gating cannot be stomped by a *different* trigger source starting the
+ * next pulse before main has drained this one.  Write the payload
+ * (tick, via_uart) *before* setting .pending, so a reader that observes
+ * .pending is guaranteed to also see the matching payload. */
+typedef struct {
+    uint32_t tick;
+    bool     via_uart;
+    bool     pending;
+} PulseEvent;
+
+static volatile PulseEvent g_pulse_start_evt = { 0u, false, false };
+static volatile PulseEvent g_pulse_end_evt   = { 0u, false, false };
+
+/* ISR-only: tracks whether the in-flight pulse was UART-initiated.  Set
+ * when the pulse starts and read when it ends (same pulse, before any
+ * next pulse can begin) to stamp the end event's own via_uart copy. */
+static bool g_pulse_via_uart = false;
 
 /* Button state — owned by main loop. */
 static BtnPhase g_btn_phase[NUM_BUTTONS];
@@ -203,8 +215,9 @@ static inline void state_machine_tick(void)
                 g_state.ramp_step  = 0u;
                 g_state.tick_count = 0u;
                 g_pulse_via_uart   = from_uart;
-                g_pulse_start_evt_tick = g_isr_ticks;
-                g_pulse_start_evt      = true;
+                g_pulse_start_evt.tick     = g_isr_ticks;
+                g_pulse_start_evt.via_uart = from_uart;
+                g_pulse_start_evt.pending  = true;
             }
             break;
 
@@ -247,8 +260,9 @@ static inline void state_machine_tick(void)
                         g_state.ramp_step  = 0u;
                         g_state.laser      = LASER_IDLE;
                         g_state.overall    = OVERALL_WAITING;
-                        g_pulse_end_evt_tick = g_isr_ticks;
-                        g_pulse_end_evt      = true;
+                        g_pulse_end_evt.tick     = g_isr_ticks;
+                        g_pulse_end_evt.via_uart = g_pulse_via_uart;
+                        g_pulse_end_evt.pending  = true;
                     }
                     break;
 
@@ -523,21 +537,23 @@ static void drain_uart(void)
 
 static void emit_pending_pulse_events(void)
 {
-    /* Read flag-then-tick is wrong; ISR writes tick first then flag, so
-     * a reader that sees the flag has already seen the matching tick. */
-    if (g_pulse_start_evt) {
-        uint32_t tick = g_pulse_start_evt_tick;
-        g_pulse_start_evt = false;
-        if (g_pulse_via_uart) {
+    /* The ISR fills each record's payload (tick, via_uart) before setting
+     * .pending, so reading .pending first guarantees the matching payload
+     * is already visible. */
+    if (g_pulse_start_evt.pending) {
+        uint32_t tick     = g_pulse_start_evt.tick;
+        bool     via_uart = g_pulse_start_evt.via_uart;
+        g_pulse_start_evt.pending = false;
+        if (via_uart) {
             emit_pulse_event("start", tick);
         }
     }
-    if (g_pulse_end_evt) {
-        uint32_t tick = g_pulse_end_evt_tick;
-        g_pulse_end_evt = false;
-        if (g_pulse_via_uart) {
+    if (g_pulse_end_evt.pending) {
+        uint32_t tick     = g_pulse_end_evt.tick;
+        bool     via_uart = g_pulse_end_evt.via_uart;
+        g_pulse_end_evt.pending = false;
+        if (via_uart) {
             emit_pulse_event("end", tick);
-            g_pulse_via_uart = false;
         }
     }
 }
