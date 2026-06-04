@@ -35,9 +35,11 @@
  * triggers the next pulse.
  *
  * Config edits arrive in main (parser) and are read by the ISR at
- * latch time.  The parser brackets its write to g_config_live with
- * __disable_irq() / __enable_irq() so the ISR can never latch a
- * half-updated struct.
+ * latch time.  Each parser command writes a single g_config_live field
+ * with one aligned store (atomic on M0+), and the ISR copies the struct
+ * field-by-field at latch time, so no field is ever torn.  The latch is
+ * the consistency point: a pulse uses whatever fields are live when it
+ * triggers.
  * ----------------------------------------------------------------------- */
 
 #define PWM_PERIOD_COUNTS       320u
@@ -182,8 +184,9 @@ static void delay_cycles(uint32_t cycles)
 
 static inline void latch_config_from_live(void)
 {
-    /* Called from ISR; parser brackets its writes with __disable_irq()
-     * so a struct copy here is safe. */
+    /* Called from ISR.  Each live field is written by the parser with a
+     * single aligned store (atomic on M0+), so copying them here can never
+     * read a torn field. */
     g_config_active.ramp_ticks = g_config_live.ramp_ticks;
     g_config_active.hold_ticks = g_config_live.hold_ticks;
     g_config_active.intensity  = g_config_live.intensity;
@@ -275,39 +278,76 @@ static inline void state_machine_tick(void)
 
 static inline void set_output_from_state(void)
 {
+    /* Derive the desired output from the current state. */
+    bool     pwm    = false;   /* true = PWM mux, false = GPIO-safe */
+    uint16_t duty   = 0u;      /* only meaningful when pwm */
+    bool     mirror = false;   /* STIM_MIRROR LED on */
+
     if (g_state.overall == OVERALL_WAITING) {
-        laser_pins_to_gpio_safe();
-        laser_gpio_stim_mirror_clear();
-        return;
+        /* defaults: gpio-safe, mirror off */
+    } else {
+        switch (g_state.laser) {
+            case LASER_IDLE:
+            case LASER_HOLD_LOW:
+                /* gpio-safe, mirror off */
+                break;
+
+            case LASER_RAMP_UP:
+            case LASER_RAMP_DOWN:
+                if (g_state.ramp_step != 0u) {
+                    pwm  = true;
+                    duty = (uint16_t)g_state.ramp_step;
+                }
+                mirror = true;
+                break;
+
+            case LASER_HOLD_HIGH:
+                pwm    = true;
+                duty   = g_config_active.intensity;
+                mirror = true;
+                break;
+
+            default:
+                return;   /* unreachable; leave outputs untouched */
+        }
     }
 
-    switch (g_state.laser) {
-        case LASER_IDLE:
-        case LASER_HOLD_LOW:
-            laser_pins_to_gpio_safe();
-            laser_gpio_stim_mirror_clear();
-            break;
+    /* RAM shadow of what was last applied.  Compare against it and skip
+     * the (two IOMUX registers + duty) writes when nothing changed, so a
+     * steady HOLD_HIGH doesn't re-mux the bridge every 10 us.  We never
+     * read the IOMUX back — the shadow is the sole source of truth, so the
+     * locked-GPIO-vs-PWM safety property and the idempotent-set design are
+     * preserved (a forced first write establishes a known state). */
+    static bool     applied_valid  = false;
+    static bool     applied_pwm    = false;
+    static uint16_t applied_duty   = 0u;
+    static bool     applied_mirror = false;
 
-        case LASER_RAMP_UP:
-        case LASER_RAMP_DOWN:
-            if (g_state.ramp_step == 0u) {
-                laser_pins_to_gpio_safe();
-            } else {
-                laser_pins_to_pwm();
-                laser_timera_set_duty(g_state.ramp_step);
-            }
-            laser_gpio_stim_mirror_set();
-            break;
-
-        case LASER_HOLD_HIGH:
+    if (!applied_valid || pwm != applied_pwm) {
+        if (pwm) {
             laser_pins_to_pwm();
-            laser_timera_set_duty(g_config_active.intensity);
-            laser_gpio_stim_mirror_set();
-            break;
-
-        default:
-            break;
+            laser_timera_set_duty(duty);
+        } else {
+            laser_pins_to_gpio_safe();
+        }
+        applied_pwm  = pwm;
+        applied_duty = duty;
+    } else if (pwm && duty != applied_duty) {
+        /* Same PWM mux, new duty (ramp step): update duty only. */
+        laser_timera_set_duty(duty);
+        applied_duty = duty;
     }
+
+    if (!applied_valid || mirror != applied_mirror) {
+        if (mirror) {
+            laser_gpio_stim_mirror_set();
+        } else {
+            laser_gpio_stim_mirror_clear();
+        }
+        applied_mirror = mirror;
+    }
+
+    applied_valid = true;
 }
 
 void TIMG0_IRQHandler(void)
@@ -380,7 +420,14 @@ static bool parse_decimal(const char *s, uint32_t *out)
     while (*s == ' ' || *s == '\t') s++;
     if (*s == '\0' || *s == '\r') return false;
     while (*s >= '0' && *s <= '9') {
-        v = v * 10u + (uint32_t)(*s - '0');
+        uint32_t digit = (uint32_t)(*s - '0');
+        /* Reject before the multiply/add can wrap past UINT32_MAX, so an
+         * over-long value can't silently alias a small in-range one
+         * (e.g. 4294967297 -> 1).  Callers still range-check the result. */
+        if (v > (UINT32_MAX - digit) / 10u) {
+            return false;
+        }
+        v = v * 10u + digit;
         got_digit = true;
         s++;
     }
@@ -455,9 +502,10 @@ static void process_line(void)
             if (arg < INTENSITY_MIN || arg > INTENSITY_MAX) {
                 emit_err("range"); return;
             }
-            __disable_irq();
+            /* Single aligned store; atomic on Cortex-M0+.  The ISR's
+             * config snapshot is taken atomically at latch time, so no
+             * IRQ bracketing is needed here. */
             g_config_live.intensity = (uint16_t)arg;
-            __enable_irq();
             emit_ok_kv('i', arg);
             break;
 
@@ -466,9 +514,8 @@ static void process_line(void)
             if (arg < RAMP_TICKS_MIN || arg > RAMP_TICKS_MAX) {
                 emit_err("range"); return;
             }
-            __disable_irq();
+            /* Single aligned store; atomic on Cortex-M0+ (see 'i'). */
             g_config_live.ramp_ticks = arg;
-            __enable_irq();
             emit_ok_kv('r', arg);
             break;
 
@@ -477,9 +524,8 @@ static void process_line(void)
             if (arg < HOLD_TICKS_MIN || arg > HOLD_TICKS_MAX) {
                 emit_err("range"); return;
             }
-            __disable_irq();
+            /* Single aligned store; atomic on Cortex-M0+ (see 'i'). */
             g_config_live.hold_ticks = arg;
-            __enable_irq();
             emit_ok_kv('h', arg);
             break;
 
