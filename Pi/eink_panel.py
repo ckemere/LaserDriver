@@ -27,7 +27,10 @@ import time
 from typing import Optional
 
 import spidev
-from gpiozero import DigitalInputDevice, DigitalOutputDevice
+# DigitalInputDevice sets up edge detection in its ctor, which on
+# Bookworm Pi OS falls through to RPi.GPIO and then fails; we only
+# need to *read* BUSY, so InputDevice (the parent class) is enough.
+from gpiozero import DigitalOutputDevice, InputDevice
 from PIL import Image
 
 
@@ -74,7 +77,8 @@ class EinkPanel:
 
         self._dc   = DigitalOutputDevice(dc_pin)
         self._rst  = DigitalOutputDevice(rst_pin)
-        self._busy = DigitalInputDevice(busy_pin)
+        # InputDevice is fine — we only poll busy.value, no callbacks.
+        self._busy = InputDevice(busy_pin)
 
         self._rotation = rotation
         self._full_refresh_every = full_refresh_every
