@@ -96,21 +96,29 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 # Flash the freshly-built ELF to the MCU over SWD via OpenOCD.
-# `load` and `burn` are aliases.  No verify step: the target-side
-# CRC algorithm in ti_mspm0.cfg / OpenOCD 0.12.0+dev hangs the MCU,
-# but the write itself is reliable.  Visual confirmation is the
-# ~4-second STIM_MIRROR boot blink.
+# `load` and `burn` are aliases.
 #
-# `power_cycle` runs first: the firmware reconfigures PA19 (SWDIO) as
-# a plain GPIO input shortly after boot, which would otherwise leave
-# OpenOCD unable to probe the chip on subsequent flashes.  Cycling
-# MCU power via GPIO 23 brings the chip up fresh with PA19 in its
-# hardware-default SWDIO function, giving OpenOCD a clean window to
-# attach.
+# Sequence: power_cycle.py brings the MCU up at fresh boot with PA19
+# in its SWDIO default, the kernel UART driver is parked so it can't
+# phantom-power the chip, and NRST is released.  OpenOCD then runs
+# an explicit init / halt / flash write / reset sequence — rather
+# than `program ... reset`, which triggers an automatic reset+halt
+# inside init that we've observed timing out (the MCU is in the
+# middle of the boot-blink busy-wait when the halt request arrives,
+# and the subsequent reset's vector-catch isn't engaging).
+#
+# No verify step: the target-side CRC algorithm in ti_mspm0.cfg /
+# OpenOCD 0.12.0+dev hangs the MCU, but the write itself is reliable.
+# Visual confirmation of a successful flash is the ~4-second
+# STIM_MIRROR boot blink right after this rule finishes.
 flash load burn: $(TARGET_ELF) power_cycle
 	$(OPENOCD) -f $(OPENOCD_INTERFACE) $(OPENOCD_GPIO_ARGS) \
 	    -f $(OPENOCD_TARGET) \
-	    -c "program $(TARGET_ELF) reset exit"
+	    -c "init" \
+	    -c "halt" \
+	    -c "flash write_image erase $(TARGET_ELF)" \
+	    -c "reset run" \
+	    -c "shutdown"
 
 # Pulse Pi GPIO 23 (MCU_POWER_EN) LOW for 300 ms then HIGH.  Requires
 # the Pi-side venv with gpiozero (see Pi/README.md).
