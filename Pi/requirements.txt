@@ -4,10 +4,11 @@
 #   python3 -m venv ~/.venvs/laserhat
 #   ~/.venvs/laserhat/bin/pip install -r requirements.txt
 #
-# Versions pinned to the latest known-good as of June 2026; bump as
-# upstream releases compatible patches.
+# spidev + gpiozero handle the SSD1680 panel via the slim driver in
+# Pi/eink_panel.py.  Pillow is the rendering layer.  pyserial drives
+# UART comms with the MSPM0.
 
-adafruit-circuitpython-epd>=2.10.0
-adafruit-blinka>=8.40.0
+spidev>=3.6
+gpiozero>=2.0
 Pillow>=10.0.0
 pyserial>=3.5

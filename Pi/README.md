@@ -1,21 +1,27 @@
 # LaserHAT Pi-side
 
-Pi-side Python code that talks to the LaserHAT. Two layers:
+Pi-side Python code that talks to the LaserHAT. Three layers:
 
+- `eink_panel.py` is a slim self-contained SSD1680 / GDEY0213B74
+  driver on top of `spidev` + `gpiozero` + Pillow. Supports both
+  full refresh (~3 s, clears ghosting) and partial refresh (~300 ms,
+  used by the GUI for interactive UI). Replaces `adafruit_epd` —
+  we own the speed knobs.
 - `laser_hat.py` is the UART client class — wraps the line protocol
   (`?`, `i N`, `r N`, `h N`, `t`) into a thread-safe `LaserHat` object.
   Shared by every front-end (eink GUI, future browser, future network
   bridge).
-- `eink_gui.py` is the long-running daemon that drives the SSD1680Z
-  panel: polls the MCU at 20 Hz, runs the button-driven UI, pushes
-  config changes back, and re-paints the panel on change.
+- `eink_gui.py` is the long-running daemon that polls the MCU at
+  20 Hz, runs the button-driven UI, pushes config changes back, and
+  re-paints the panel on change.
 
 ```
 Pi/
+  eink_panel.py          SSD1680 driver (full + partial refresh)
   laser_hat.py           LaserHat class + CLI smoke tool
   eink_ip.py             one-shot: render IP + hostname, exit
   eink_gui.py            long-running GUI daemon
-  requirements.txt       Python deps
+  requirements.txt       Python deps (spidev, gpiozero, Pillow, pyserial)
   systemd/
     eink-ip.service      runs eink_ip.py once on boot + each timer fire
     eink-ip.timer        re-render every 5 min so DHCP changes show up
@@ -30,11 +36,15 @@ one or the other, not both.
 ## One-time install
 
 ```bash
-sudo apt install python3-venv python3-pil
+sudo apt install python3-venv python3-pil python3-spidev
 
-python3 -m venv ~/.venvs/laserhat
+python3 -m venv --system-site-packages ~/.venvs/laserhat
 ~/.venvs/laserhat/bin/pip install -r ~/Code/LaserDriver/Pi/requirements.txt
 ```
+
+`--system-site-packages` lets the venv see Pi OS's pre-installed
+`gpiozero` / Pillow / spidev where they already exist, instead of
+rebuilding them. Pip will only install whatever's missing.
 
 Make sure SPI is enabled (it has to be, for both the eink and any future
 sensor work):
@@ -138,9 +148,12 @@ display, B3 / B4 below it:
 Step sizes are coarse for usability (`i`: 8, `r`: 200 ticks, `h`: 500
 ticks). Edit `PARAMS` in `eink_gui.py` to tune them.
 
-The eink full refresh takes ~3 seconds, so the GUI coalesces changes:
-button presses queue up in firmware-debounced state, the Pi reads
-them at 20 Hz and only repaints after a 2-second quiet window.
+Refresh: routine UI updates use the panel's partial-refresh mode
+(~300 ms). Every 30th update we silently do a full refresh to clear
+ghosting; the first paint after boot is always full. After a button
+press, the GUI waits `SETTLE_GAP` (default 300 ms) of quiet before
+repainting, so a burst of B4 presses coalesces to a single refresh
+at the final value.
 
 ### LaserHat CLI
 
