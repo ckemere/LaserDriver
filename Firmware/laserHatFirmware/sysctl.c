@@ -1,4 +1,4 @@
-#include "laser_sysctl.h"
+#include "sysctl.h"
 #include "mcu.h"
 
 /*

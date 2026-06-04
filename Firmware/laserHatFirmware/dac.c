@@ -1,4 +1,4 @@
-#include "laser_dac.h"
+#include "dac.h"
 #include "mcu.h"
 
 /* SysConfig generates this; chip needs ~320 cycles for VREF to settle. */

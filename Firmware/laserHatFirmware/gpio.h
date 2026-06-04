@@ -1,5 +1,5 @@
-#ifndef LASER_GPIO_H
-#define LASER_GPIO_H
+#ifndef GPIO_H
+#define GPIO_H
 
 #include <stdint.h>
 
@@ -53,4 +53,4 @@ static inline void laser_gpio_stim_mirror_clear(void)
     BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_STIM_MIRROR_PIN;
 }
 
-#endif /* LASER_GPIO_H */
+#endif /* GPIO_H */

@@ -109,7 +109,8 @@ The original firmware configured `TIMA0_CCP0` on PA8 — but PA8 is
 unconnected on U7. PA21 (where `PWM_LASER` actually lands) also supports
 `TIMA0_CCP0` via PINCM46 PF=5, and PA22 supports `TIMA0_CCP0_CMPL` via
 PINCM47 PF=7 as before. So the fix was just changing the IOMUX function
-constants in `laser_pwm_control.c` from PINCM19/PA8 to PINCM46/PA21. No
+constants in `output_mux.c` (formerly `laser_pwm_control.c`) from
+PINCM19/PA8 to PINCM46/PA21. No
 timer change, no syscfg change.
 
 Bench verification still TBD: PA21 should toggle at 100 kHz during a

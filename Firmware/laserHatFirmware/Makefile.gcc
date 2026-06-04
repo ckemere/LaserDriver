@@ -23,14 +23,14 @@ STARTUP_SRC     := $(PROJ_DIR)/startup/startup_mspm0g350x_gcc.c
 STARTUP_OBJ     := $(BUILD_DIR)/startup_mspm0g350x_gcc.o
 LINKER_SCRIPT   := $(PROJ_DIR)/linker/mspm0g3507.lds
 
-OBJS            := $(BUILD_DIR)/laser_driver.o \
-                   $(BUILD_DIR)/laser_pwm_control.o \
-                   $(BUILD_DIR)/laser_sysctl.o \
-                   $(BUILD_DIR)/laser_gpio.o \
-                   $(BUILD_DIR)/laser_timera.o \
-                   $(BUILD_DIR)/laser_timerg.o \
-                   $(BUILD_DIR)/laser_dac.o \
-                   $(BUILD_DIR)/laser_uart.o \
+OBJS            := $(BUILD_DIR)/main.o \
+                   $(BUILD_DIR)/output_mux.o \
+                   $(BUILD_DIR)/sysctl.o \
+                   $(BUILD_DIR)/gpio.o \
+                   $(BUILD_DIR)/pwm_timer.o \
+                   $(BUILD_DIR)/tick_timers.o \
+                   $(BUILD_DIR)/dac.o \
+                   $(BUILD_DIR)/uart.o \
                    $(STARTUP_OBJ)
 
 # Compiler flags
@@ -44,15 +44,15 @@ CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(WARN_FLAGS) $(DEAD_CODE) \
 
 # Linker
 LFLAGS          := $(CPU_FLAGS) -T$(LINKER_SCRIPT) \
-                   -Wl,-Map=$(BUILD_DIR)/laser_driver.map \
+                   -Wl,-Map=$(BUILD_DIR)/main.map \
                    -Wl,--gc-sections \
                    --specs=nano.specs --specs=nosys.specs \
                    -nostartfiles
 
 # Output
-TARGET_ELF      := $(BUILD_DIR)/laser_driver.elf
-TARGET_BIN      := $(BUILD_DIR)/laser_driver.bin
-TARGET_HEX      := $(BUILD_DIR)/laser_driver.hex
+TARGET_ELF      := $(BUILD_DIR)/main.elf
+TARGET_BIN      := $(BUILD_DIR)/main.bin
+TARGET_HEX      := $(BUILD_DIR)/main.hex
 
 # OpenOCD (Pi-side SWD flashing)
 OPENOCD            ?= openocd

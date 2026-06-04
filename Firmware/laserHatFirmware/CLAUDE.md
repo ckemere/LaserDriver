@@ -9,8 +9,9 @@
     (ARM Linux → gcc, x86_64 Linux / macOS → ticlang).
 
 The firmware has no SysConfig dependency and no external SDK path
-dependency. All peripheral init is hand-written register code in
-`laser_*.c`; pin assignments are in `board.h`. The hand-curated
+dependency. All peripheral init is hand-written register code in the
+per-peripheral `*.c` modules (`gpio.c`, `uart.c`, `dac.c`, …); pin
+assignments are in `board.h`. The hand-curated
 `mcu.h` exposes only the peripheral pointers, IRQ numbers, IOMUX
 function codes, and CMSIS config this firmware actually uses. The
 peripheral register layouts and bit definitions in `hw/` and CMSIS in
@@ -25,7 +26,8 @@ cmsis/                   minimal CMSIS Cortex-M0+ (7 files)
 hw/                      peripheral register layouts + bit fields (7 files)
 startup/                 startup_mspm0g350x_{gcc,ticlang}.c
 linker/                  mspm0g3507.{lds,cmd}
-laser_*.c / laser_*.h    application code
+main.c                   state machine, boot, IRQ handlers, line parser
+gpio.c/h uart.c/h …      per-peripheral application modules
 board.h                  pin assignments
 ```
 
@@ -35,7 +37,7 @@ board.h                  pin assignments
 export PATH=/opt/ti/ti-cgt-armllvm_5.1.0.LTS/bin:$PATH
 export TI_ARM_LLVM=/opt/ti/ti-cgt-armllvm_5.1.0.LTS
 make clean && make all
-# -> build/laser_driver.out
+# -> build/main.out
 ```
 
 The lone toolchain warning ("Case insensitivity of options has been
@@ -46,9 +48,9 @@ deprecated; T must be written as t") is known harmless.
 ```bash
 sudo apt install gcc-arm-none-eabi
 make -f Makefile.gcc clean all
-# -> build_gcc/laser_driver.elf
-#    build_gcc/laser_driver.bin   (raw image for BSL)
-#    build_gcc/laser_driver.hex   (Intel HEX for OpenOCD / probes)
+# -> build_gcc/main.elf
+#    build_gcc/main.bin   (raw image for BSL)
+#    build_gcc/main.hex   (Intel HEX for OpenOCD / probes)
 ```
 
 The same source tree builds under both toolchains. SDK files are
@@ -59,14 +61,14 @@ already in the repo under `sdk/` — no additional downloads needed.
 | File | Responsibility |
 |---|---|
 | `board.h` | Pin map (PINCMs, masks, function codes) |
-| `laser_sysctl.c/h` | Clock tree, MFPCLK, BOR threshold |
-| `laser_gpio.c/h` | GPIOA power, IOMUX init, button/LED inlines |
-| `laser_pwm_control.c/h` | Runtime IOMUX flips between GPIO-safe and TIMA0 |
-| `laser_timera.c/h` | TIMA0 100 kHz complementary PWM |
-| `laser_timerg.c/h` | TIMG0 100 kHz state-machine tick |
-| `laser_dac.c/h` | DAC0 + internal VREF (2.5 V) |
-| `laser_uart.c/h` | UART0 at 115200 8N1, RX ring buffer + blocking TX |
-| `laser_driver.c` | State machine, boot sequence, IRQ handlers, line parser, `main` |
+| `sysctl.c/h` | Clock tree, MFPCLK, BOR threshold |
+| `gpio.c/h` | GPIOA power, IOMUX init, button/LED inlines |
+| `output_mux.c/h` | Runtime IOMUX flips between GPIO-safe and TIMA0 |
+| `pwm_timer.c/h` | TIMA0 100 kHz complementary PWM |
+| `tick_timers.c/h` | TIMG0 100 kHz state-machine tick |
+| `dac.c/h` | DAC0 + internal VREF (2.5 V) |
+| `uart.c/h` | UART0 at 115200 8N1, RX ring buffer + blocking TX |
+| `main.c` | State machine, boot sequence, IRQ handlers, line parser, `main` |
 
 Each peripheral module exposes an `_init()` (and where useful `_start()`)
 plus inline hot-path helpers. None of them include any `dl_*.h` driverlib
@@ -136,14 +138,14 @@ make clean && make all
 ```
 
 Stage only:
-- `laser_driver.c`
-- `laser_pwm_control.c` / `.h`
-- `laser_sysctl.c` / `.h`
-- `laser_gpio.c` / `.h`
-- `laser_timera.c` / `.h`
-- `laser_timerg.c` / `.h`
-- `laser_dac.c` / `.h`
-- `laser_uart.c` / `.h`
+- `main.c`
+- `output_mux.c` / `.h`
+- `sysctl.c` / `.h`
+- `gpio.c` / `.h`
+- `pwm_timer.c` / `.h`
+- `tick_timers.c` / `.h`
+- `dac.c` / `.h`
+- `uart.c` / `.h`
 - `board.h`
 - `Makefile`, `Makefile.gcc`
 - `CLAUDE.md`

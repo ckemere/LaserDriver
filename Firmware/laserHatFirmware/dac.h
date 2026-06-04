@@ -1,5 +1,5 @@
-#ifndef LASER_DAC_H
-#define LASER_DAC_H
+#ifndef DAC_H
+#define DAC_H
 
 #include <stdint.h>
 #include "mcu.h"
@@ -24,4 +24,4 @@ static inline void laser_dac_write12(uint16_t code)
     DAC0->DATA0 = (uint32_t) code & DAC12_DATA0_DATA_VALUE_MASK;
 }
 
-#endif /* LASER_DAC_H */
+#endif /* DAC_H */

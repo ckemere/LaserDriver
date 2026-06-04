@@ -1,11 +1,11 @@
 #include "mcu.h"
-#include "laser_pwm_control.h"
-#include "laser_sysctl.h"
-#include "laser_gpio.h"
-#include "laser_timera.h"
-#include "laser_timerg.h"
-#include "laser_dac.h"
-#include "laser_uart.h"
+#include "output_mux.h"
+#include "sysctl.h"
+#include "gpio.h"
+#include "pwm_timer.h"
+#include "tick_timers.h"
+#include "dac.h"
+#include "uart.h"
 #include <stdbool.h>
 #include <stdint.h>
 

@@ -1,5 +1,5 @@
-#ifndef LASER_UART_H
-#define LASER_UART_H
+#ifndef UART_H
+#define UART_H
 
 #include <stdint.h>
 #include <stdbool.h>
@@ -40,4 +40,4 @@ static inline uint32_t laser_uart_iidx(void)
     return UART0->CPU_INT.IIDX;
 }
 
-#endif /* LASER_UART_H */
+#endif /* UART_H */

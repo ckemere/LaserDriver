@@ -25,7 +25,7 @@ external SDK path.
 
 ```bash
 make clean && make all
-# → build/laser_driver.out
+# → build/main.out
 ```
 
 The Makefile defaults to TI ARM CLANG at
@@ -96,9 +96,9 @@ not used by the current firmware build but you'll want them for
 ```bash
 make clean all
 # (the dispatcher Makefile auto-routes to Makefile.gcc on ARM Linux)
-# → build_gcc/laser_driver.elf
-#   build_gcc/laser_driver.bin   (raw image for BSL)
-#   build_gcc/laser_driver.hex   (Intel HEX for OpenOCD / probes)
+# → build_gcc/main.elf
+#   build_gcc/main.bin   (raw image for BSL)
+#   build_gcc/main.hex   (Intel HEX for OpenOCD / probes)
 ```
 
 ### Flashing the MCU over SWD from the Pi

@@ -1,5 +1,5 @@
-#ifndef LASER_TIMERA_H
-#define LASER_TIMERA_H
+#ifndef PWM_TIMER_H
+#define PWM_TIMER_H
 
 #include <stdint.h>
 
@@ -33,4 +33,4 @@ static inline void laser_timera_set_duty(uint32_t step)
     TIMA0->COUNTERREGS.CC_01[0] = step;
 }
 
-#endif /* LASER_TIMERA_H */
+#endif /* PWM_TIMER_H */

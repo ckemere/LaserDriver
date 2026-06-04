@@ -1,5 +1,5 @@
-#ifndef LASER_PWM_CONTROL_H
-#define LASER_PWM_CONTROL_H
+#ifndef OUTPUT_MUX_H
+#define OUTPUT_MUX_H
 
 /*
  * Runtime IOMUX flips between GPIO-safe and TIMA0 PWM on the bridge
@@ -15,4 +15,4 @@
 void laser_pins_to_gpio_safe(void);
 void laser_pins_to_pwm(void);
 
-#endif /* LASER_PWM_CONTROL_H */
+#endif /* OUTPUT_MUX_H */

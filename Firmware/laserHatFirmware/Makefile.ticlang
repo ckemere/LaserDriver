@@ -39,14 +39,14 @@ BUILD_DIR       := $(PROJ_DIR)/build
 STARTUP_SRC     := $(PROJ_DIR)/startup/startup_mspm0g350x_ticlang.c
 STARTUP_OBJ     := $(BUILD_DIR)/startup_mspm0g350x_ticlang.o
 
-OBJS            := $(BUILD_DIR)/laser_driver.o \
-                   $(BUILD_DIR)/laser_pwm_control.o \
-                   $(BUILD_DIR)/laser_sysctl.o \
-                   $(BUILD_DIR)/laser_gpio.o \
-                   $(BUILD_DIR)/laser_timera.o \
-                   $(BUILD_DIR)/laser_timerg.o \
-                   $(BUILD_DIR)/laser_dac.o \
-                   $(BUILD_DIR)/laser_uart.o \
+OBJS            := $(BUILD_DIR)/main.o \
+                   $(BUILD_DIR)/output_mux.o \
+                   $(BUILD_DIR)/sysctl.o \
+                   $(BUILD_DIR)/gpio.o \
+                   $(BUILD_DIR)/pwm_timer.o \
+                   $(BUILD_DIR)/tick_timers.o \
+                   $(BUILD_DIR)/dac.o \
+                   $(BUILD_DIR)/uart.o \
                    $(STARTUP_OBJ)
 
 # Compiler flags
@@ -58,11 +58,11 @@ CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(INCLUDES)
 # Linker
 LINKER_CMD      := $(PROJ_DIR)/linker/mspm0g3507.cmd
 LFLAGS          := -Wl,--rom_model \
-                   -Wl,-m,$(BUILD_DIR)/laser_driver.map \
+                   -Wl,-m,$(BUILD_DIR)/main.map \
                    -T$(LINKER_CMD)
 
 # Output
-TARGET          := $(BUILD_DIR)/laser_driver.out
+TARGET          := $(BUILD_DIR)/main.out
 
 # ============================================================
 

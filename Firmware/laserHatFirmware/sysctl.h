@@ -1,5 +1,5 @@
-#ifndef LASER_SYSCTL_H
-#define LASER_SYSCTL_H
+#ifndef SYSCTL_H
+#define SYSCTL_H
 
 /*
  * System control init — register-level replacement for the SYSCTL portion
@@ -17,4 +17,4 @@
 
 void laser_sysctl_init(void);
 
-#endif /* LASER_SYSCTL_H */
+#endif /* SYSCTL_H */

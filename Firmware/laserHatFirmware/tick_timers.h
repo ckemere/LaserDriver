@@ -1,5 +1,5 @@
-#ifndef LASER_TIMERG_H
-#define LASER_TIMERG_H
+#ifndef TICK_TIMERS_H
+#define TICK_TIMERS_H
 
 #include <stdint.h>
 #include "mcu.h"
@@ -38,4 +38,4 @@ static inline uint32_t laser_timerg_housekeeping_ack(void)
     return TIMG6->CPU_INT.IIDX;
 }
 
-#endif /* LASER_TIMERG_H */
+#endif /* TICK_TIMERS_H */

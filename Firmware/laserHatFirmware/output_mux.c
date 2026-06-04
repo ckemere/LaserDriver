@@ -1,4 +1,4 @@
-#include "laser_pwm_control.h"
+#include "output_mux.h"
 #include "board.h"
 #include "mcu.h"
 
