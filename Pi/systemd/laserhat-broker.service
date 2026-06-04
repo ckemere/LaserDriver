@@ -1,0 +1,39 @@
+# LaserHAT broker — the single owner of /dev/ttyS0.
+#
+# Speaks the binary protocol to the MCU and serves the eink GUI and web
+# GUI over a Unix-domain socket at /run/laserhat/broker.sock.  Both GUIs
+# are clients of this daemon, so they no longer conflict over the UART —
+# run them together.
+#
+# Install:
+#   sudo cp Pi/systemd/laserhat-broker.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now laserhat-broker.service
+#
+# Edit User=, Group=, WorkingDirectory=, and the ExecStart= python prefix
+# if your Pi account isn't 'kemerelab' or the venv lives elsewhere.
+
+[Unit]
+Description=LaserHAT broker (owns /dev/ttyS0, serves GUIs over a Unix socket)
+After=dev-ttyS0.device
+Wants=dev-ttyS0.device
+
+[Service]
+Type=simple
+User=kemerelab
+Group=kemerelab
+# Serial port access; gpiozero needs the gpio group for the PA19 trigger pin.
+SupplementaryGroups=dialout gpio
+WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
+# systemd creates /run/laserhat (0750, owned by User) and exports it.
+RuntimeDirectory=laserhat
+RuntimeDirectoryMode=0750
+Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
+ExecStart=/home/kemerelab/.venvs/laserhat/bin/python broker.py
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

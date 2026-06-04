@@ -10,17 +10,22 @@
 # Edit User=, Group=, WorkingDirectory=, and the ExecStart= python
 # prefix below if your Pi account isn't 'kemerelab' or the venv lives
 # somewhere other than ~/.venvs/laserhat.
+#
+# A broker client now (connects to laserhat-broker.service over the Unix
+# socket); it no longer opens the UART, so it can run alongside the web GUI.
 
 [Unit]
-Description=LaserHAT eink GUI (UART poller + display)
-After=network-online.target dev-ttyS0.device
+Description=LaserHAT eink GUI (broker client + display)
+After=network-online.target laserhat-broker.service
 Wants=network-online.target
+Requires=laserhat-broker.service
 
 [Service]
 Type=simple
 User=kemerelab
 Group=kemerelab
 WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
+Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
 ExecStart=/home/kemerelab/.venvs/laserhat/bin/python eink_gui.py
 Restart=on-failure
 RestartSec=5
