@@ -35,11 +35,6 @@ void laser_gpio_arm_pi_trigger(void);
 #include "mcu.h"
 #include "board.h"
 
-static inline uint32_t laser_gpio_read_button1(void)
-{
-    return BOARD_GPIO_PORT->DIN31_0 & BOARD_BUTTON1_PIN;
-}
-
 /* Returns a 4-bit raw mask: bit 0 = B1, bit 1 = B2, bit 2 = B3, bit 3 = B4.
  * Each bit is 1 if the corresponding button reads HIGH (pressed). */
 static inline uint8_t laser_gpio_read_buttons_raw(void)
