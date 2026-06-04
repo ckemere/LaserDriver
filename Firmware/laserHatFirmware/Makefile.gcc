@@ -96,14 +96,31 @@ clean:
 	rm -rf $(BUILD_DIR)
 
 # Flash the freshly-built ELF to the MCU over SWD via OpenOCD.
-# `load` and `burn` are aliases for the same action.  No verify step:
-# the target-side CRC algorithm in ti_mspm0.cfg / OpenOCD 0.12.0+dev
-# hangs the MCU, but the write itself is reliable.  Visual confirmation
-# is the ~4-second STIM_MIRROR boot blink.
-flash load burn: $(TARGET_ELF)
+# `load` and `burn` are aliases.  No verify step: the target-side
+# CRC algorithm in ti_mspm0.cfg / OpenOCD 0.12.0+dev hangs the MCU,
+# but the write itself is reliable.  Visual confirmation is the
+# ~4-second STIM_MIRROR boot blink.
+#
+# `power_cycle` runs first: the firmware reconfigures PA19 (SWDIO) as
+# a plain GPIO input shortly after boot, which would otherwise leave
+# OpenOCD unable to probe the chip on subsequent flashes.  Cycling
+# MCU power via GPIO 23 brings the chip up fresh with PA19 in its
+# hardware-default SWDIO function, giving OpenOCD a clean window to
+# attach.
+flash load burn: $(TARGET_ELF) power_cycle
 	$(OPENOCD) -f $(OPENOCD_INTERFACE) $(OPENOCD_GPIO_ARGS) \
 	    -f $(OPENOCD_TARGET) \
 	    -c "program $(TARGET_ELF) reset exit"
+
+# Pulse Pi GPIO 23 (MCU_POWER_EN) LOW for 300 ms then HIGH.  Requires
+# the Pi-side venv with gpiozero (see Pi/README.md).
+.PHONY: power_cycle
+power_cycle:
+	@if [ -x $(HOME)/.venvs/laserhat/bin/python ]; then \
+	    $(HOME)/.venvs/laserhat/bin/python ../../Pi/power_cycle.py ; \
+	else \
+	    python3 ../../Pi/power_cycle.py ; \
+	fi
 
 # Reset the MCU without changing what's in flash.
 reset:

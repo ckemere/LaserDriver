@@ -142,6 +142,13 @@ static BtnPhase g_btn_phase[NUM_BUTTONS];
 static uint16_t g_btn_debounce[NUM_BUTTONS];
 static uint8_t  g_btn_mask = 0u;   /* bit n = button (n+1) debounced-pressed */
 
+/* PA19 (SWDIO) stays in its boot-default SWDIO function until the host
+ * sends `g\n` over UART, at which point the firmware reclaims it as a
+ * GPIO-input trigger line.  This guarantees SWD reflashing always
+ * works on a freshly-booted MCU; clients enable the GPIO-trigger path
+ * explicitly when they want it. */
+static bool g_pi_trigger_armed = false;
+
 /* Set by TIMG6_IRQHandler at 1 kHz; cleared by main when it actually
  * runs housekeeping work.  TIMG0 ticks also wake main from WFI, but
  * main sees no flag and re-WFIs immediately. */
@@ -338,8 +345,12 @@ static void poll_buttons(void)
  *   r N    set ramp-up ticks
  *   h N    set hold ticks
  *   t      trigger one pulse; ACK is "OK pulse start=..." + "OK pulse end=..."
+ *   g      arm the PA19 (Pi-GPIO) trigger.  PA19 starts as SWDIO so SWD
+ *          reflashing always works on a fresh boot; sending `g` switches
+ *          PA19 to a GPIO input with rising-edge interrupt.  No disarm —
+ *          reset the MCU to restore SWDIO.
  *   ?      query state — one line:
- *          OK i=N r=N h=N b=BBBB phase=W|T tick=TTT
+ *          OK i=N r=N h=N b=BBBB g=0|1 phase=W|T tick=TTT
  * ----------------------------------------------------------------------- */
 
 #define LINE_BUF_SIZE   64u
@@ -406,6 +417,8 @@ static void emit_status(void)
     laser_uart_tx_u32(g_config_live.hold_ticks);
     laser_uart_tx_str(" b=");
     laser_uart_tx_u32(g_btn_mask);
+    laser_uart_tx_str(" g=");
+    laser_uart_tx_byte(g_pi_trigger_armed ? '1' : '0');
     laser_uart_tx_str(" phase=");
     laser_uart_tx_byte(phase == OVERALL_WAITING ? 'W' : 'T');
     laser_uart_tx_str(" tick=");
@@ -464,6 +477,15 @@ static void process_line(void)
             g_uart_trigger_pending = true;
             /* No immediate ACK — "OK pulse start=..." will follow from
              * the main loop when the ISR transitions to TRIGGERED. */
+            break;
+
+        case 'g':
+            /* `g` arms the Pi-GPIO (PA19) trigger.  No disarm — to put
+             * PA19 back as SWDIO, reset the MCU.  Idempotent: re-issuing
+             * 'g' just re-runs the IOMUX write. */
+            laser_gpio_arm_pi_trigger();
+            g_pi_trigger_armed = true;
+            emit_ok_kv('g', 1u);
             break;
 
         case '?':
@@ -538,9 +560,9 @@ int main(void)
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
     }
 
-    /* Boot blink is done; SWD is no longer needed until the next reset.
-     * Reclaim PA19 as a GPIO-input trigger source for the Pi. */
-    laser_gpio_arm_pi_trigger();
+    /* PA19 (SWDIO) stays in its boot-default SWDIO function until the
+     * host sends `g\n` over UART.  Keeps SWD reflashing reliable on a
+     * freshly-booted MCU regardless of what the previous firmware did. */
 
     laser_timera_init();
     laser_timerg_init_tick();

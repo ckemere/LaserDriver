@@ -116,9 +116,15 @@ def create_app(hat: LaserHat, gpio_trigger: PiTrigger) -> Flask:
     @app.route("/api/trigger_gpio", methods=["POST"])
     def api_trigger_gpio():
         """GPIO-path trigger (rising edge on Pi GPIO 24 -> MSPM0 PA19).
-        Bypasses UART entirely; firmware fires the pulse from its GPIO
-        edge ISR.  No ACK from the MCU — use ? afterwards if you want
-        to observe the phase. """
+        Bypasses UART for the trigger itself; firmware fires the pulse
+        from its GPIO edge ISR.
+
+        Sends `g` first to arm PA19 if not already armed — PA19 starts
+        each boot as SWDIO so SWD reflashing keeps working, and only
+        becomes the trigger input when the host asks for it.  The arm
+        command is idempotent on the firmware side.
+        """
+        app.config["hat"].arm_gpio_trigger()
         app.config["gpio_trigger"].fire()
         return jsonify(ok=True, path="gpio")
 

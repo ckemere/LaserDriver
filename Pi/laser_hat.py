@@ -25,13 +25,17 @@ DEFAULT_BAUD = 115200
 
 
 # Sample status line:
-#   OK i=320 r=8000 h=10000 b=0 phase=W tick=12345678
+#   OK i=320 r=8000 h=10000 b=0 g=0 phase=W tick=12345678
+#
+# The `g=` field was added when PA19 reclaim became opt-in; the regex
+# tolerates older firmware that omits it.
 _STATUS_RE = re.compile(
     r"^OK\s+"
     r"i=(?P<i>\d+)\s+"
     r"r=(?P<r>\d+)\s+"
     r"h=(?P<h>\d+)\s+"
     r"b=(?P<b>\d+)\s+"
+    r"(?:g=(?P<g>[01])\s+)?"
     r"phase=(?P<phase>[WT])\s+"
     r"tick=(?P<tick>\d+)\s*$"
 )
@@ -43,6 +47,7 @@ class State:
     ramp_ticks: int         # 100 kHz ticks
     hold_ticks: int
     button_mask: int        # 4 bits, bit n = button n+1 pressed
+    gpio_armed: bool        # True if PA19 is acting as the Pi-GPIO trigger input
     phase: str              # 'W' (waiting) or 'T' (triggered)
     tick: int               # MSPM0 isr_ticks at the time of query
 
@@ -102,6 +107,7 @@ class LaserHat:
             ramp_ticks=int(m["r"]),
             hold_ticks=int(m["h"]),
             button_mask=int(m["b"]),
+            gpio_armed=(m["g"] == "1") if m["g"] else False,
             phase=m["phase"],
             tick=int(m["tick"]),
         )
@@ -131,6 +137,17 @@ class LaserHat:
         # it actually triggers (which can take a few ms).  Treat anything
         # other than a synchronous ERR as success.
         return not reply.startswith("ERR")
+
+    def arm_gpio_trigger(self) -> bool:
+        """Reclaim PA19 on the MCU from SWDIO to a GPIO-input trigger
+        pin.  PA19 then responds to rising edges on Pi GPIO 24.
+
+        PA19 starts every boot as SWDIO so SWD flashing always works on
+        a fresh MCU; clients who want the GPIO-path trigger must opt in
+        by calling this once.  No disarm — reset the MCU to restore
+        SWDIO (e.g. `make flash` power-cycles the MCU via GPIO 23)."""
+        reply = self._send_line("g")
+        return reply is not None and reply.startswith("OK g=")
 
 
 # ----- quick CLI for smoke-testing without the GUI -------------------
