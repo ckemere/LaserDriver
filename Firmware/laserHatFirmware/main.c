@@ -299,42 +299,23 @@ static inline void set_output_from_state(void)
         }
     }
 
-    /* RAM shadow of what was last applied.  Compare against it and skip
-     * the (two IOMUX registers + duty) writes when nothing changed, so a
-     * steady HOLD_HIGH doesn't re-mux the bridge every 10 us.  We never
-     * read the IOMUX back — the shadow is the sole source of truth, so the
-     * locked-GPIO-vs-PWM safety property and the idempotent-set design are
-     * preserved (a forced first write establishes a known state). */
-    static bool     applied_valid  = false;
-    static bool     applied_pwm    = false;
-    static uint16_t applied_duty   = 0u;
-    static bool     applied_mirror = false;
-
-    if (!applied_valid || pwm != applied_pwm) {
-        if (pwm) {
-            laser_pins_to_pwm();
-            laser_timera_set_duty(duty);
-        } else {
-            laser_pins_to_gpio_safe();
-        }
-        applied_pwm  = pwm;
-        applied_duty = duty;
-    } else if (pwm && duty != applied_duty) {
-        /* Same PWM mux, new duty (ramp step): update duty only. */
+    /* Apply unconditionally every tick.  These are all plain register
+     * stores (no read-modify-write), so re-asserting the same value is
+     * cheap, and doing it every 10 us makes the safe laser-output state
+     * self-healing: if anything ever perturbed the IOMUX/GPIO, the next
+     * tick restores it. */
+    if (pwm) {
+        laser_pins_to_pwm();
         laser_timera_set_duty(duty);
-        applied_duty = duty;
+    } else {
+        laser_pins_to_gpio_safe();
     }
 
-    if (!applied_valid || mirror != applied_mirror) {
-        if (mirror) {
-            laser_gpio_stim_mirror_set();
-        } else {
-            laser_gpio_stim_mirror_clear();
-        }
-        applied_mirror = mirror;
+    if (mirror) {
+        laser_gpio_stim_mirror_set();
+    } else {
+        laser_gpio_stim_mirror_clear();
     }
-
-    applied_valid = true;
 }
 
 void TIMG0_IRQHandler(void)

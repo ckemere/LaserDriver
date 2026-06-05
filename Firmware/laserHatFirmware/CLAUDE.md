@@ -130,8 +130,9 @@ between an ISR and `main` are `volatile`.
 
 State is fully captured in `MachineState`. Within the tick ISR,
 `state_machine_tick()` owns transitions; `set_output_from_state()` owns
-hardware writes and is idempotent (it keeps a RAM shadow of the last
-applied output so a steady phase doesn't re-mux every tick). `main`
+hardware writes and is idempotent — it re-asserts the desired output
+state every tick (all plain register stores, no read-modify-write), so a
+perturbed IOMUX/GPIO self-heals within 10 µs. `main`
 only reads the machine for the `CMD_QUERY` → `RSP_STATUS` response and
 drains ISR-produced pulse-event records to emit the `EVT_PULSE_START` /
 `EVT_PULSE_END` frames off the interrupt path.
