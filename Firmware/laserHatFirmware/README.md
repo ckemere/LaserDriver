@@ -228,7 +228,7 @@ The firmware speaks a tiny line-based ASCII protocol on UART0 (115200
 ```
 i N    set intensity (peak PWM duty, 1..320)
 r N    set ramp-up duration (in 10 µs ticks)
-h N    set hold and trailing-low duration (in 10 µs ticks)
+h N    set hold (high) duration (in 10 µs ticks)
 t      trigger one pulse via UART
 g      arm PA19 as a GPIO-input trigger (was SWDIO at boot)
 ?      query state -> "OK i=N r=N h=N b=BBBB g=0|1 phase=W|T tick=TTT"

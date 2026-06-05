@@ -103,12 +103,13 @@ typedef enum {
     OVERALL_TRIGGERED,
 } OverallPhase;
 
+/* Pulse shape: ramp the duty up to `intensity` over the ramp window, hold
+ * at full for the hold window, then switch off.  There is no ramp-down or
+ * trailing-low phase — the laser turns off at the end of HOLD_HIGH. */
 typedef enum {
     LASER_IDLE,
     LASER_RAMP_UP,
     LASER_HOLD_HIGH,
-    LASER_RAMP_DOWN,
-    LASER_HOLD_LOW,
 } LaserPhase;
 
 typedef struct {
@@ -246,25 +247,8 @@ static inline void state_machine_tick(void)
 
                 case LASER_HOLD_HIGH:
                     if (g_state.tick_count >= g_config_active.hold_ticks) {
-                        g_state.tick_count = 0u;
-                        g_state.ramp_step  = g_config_active.intensity;
-                        g_state.laser      = LASER_RAMP_DOWN;
-                    }
-                    break;
-
-                case LASER_RAMP_DOWN:
-                    if (g_state.tick_count >= g_active_ticks_per_step) {
-                        g_state.tick_count = 0u;
-                        g_state.ramp_step--;
-                        if (g_state.ramp_step == 0u) {
-                            g_state.tick_count = 0u;
-                            g_state.laser      = LASER_HOLD_LOW;
-                        }
-                    }
-                    break;
-
-                case LASER_HOLD_LOW:
-                    if (g_state.tick_count >= g_config_active.hold_ticks) {
+                        /* End of hold: switch off and return to waiting.
+                         * No ramp-down / trailing-low phase. */
                         g_state.tick_count = 0u;
                         g_state.ramp_step  = 0u;
                         g_state.laser      = LASER_IDLE;
@@ -293,12 +277,10 @@ static inline void set_output_from_state(void)
     } else {
         switch (g_state.laser) {
             case LASER_IDLE:
-            case LASER_HOLD_LOW:
                 /* gpio-safe, mirror off */
                 break;
 
             case LASER_RAMP_UP:
-            case LASER_RAMP_DOWN:
                 if (g_state.ramp_step != 0u) {
                     pwm  = true;
                     duty = (uint16_t)g_state.ramp_step;
