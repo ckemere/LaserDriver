@@ -40,7 +40,6 @@ import subprocess
 import sys
 import threading
 import time
-from dataclasses import dataclass
 from typing import Optional
 
 from PIL import Image, ImageDraw, ImageFont
@@ -48,6 +47,7 @@ from PIL import Image, ImageDraw, ImageFont
 from eink_panel import EinkPanel
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
+from params import PARAMS
 
 
 # --------------------------------------------------------------- config
@@ -76,24 +76,17 @@ def load_font(size: int) -> ImageFont.ImageFont:
 
 
 # --------------------------------------------------------------- params
-@dataclass
-class Param:
-    name: str
-    step: int
-    minimum: int
-    maximum: int
-    fmt: callable    # value -> display string
-
-
+# Step sizes and ranges come from params.PARAMS (shared with the web GUI).
+# Only the eink-specific value formatting lives here, keyed by knob name.
 def _ticks_to_ms_str(ticks: int) -> str:
     return f"{ticks} ({ticks / 100:.1f} ms)"
 
 
-PARAMS: list[Param] = [
-    Param("i", step=8,   minimum=1, maximum=320,        fmt=lambda v: f"{v} / 320"),
-    Param("r", step=200, minimum=1, maximum=10_000_000, fmt=_ticks_to_ms_str),
-    Param("h", step=500, minimum=1, maximum=10_000_000, fmt=_ticks_to_ms_str),
-]
+_FMT = {
+    "i": lambda v: f"{v} / 320",
+    "r": _ticks_to_ms_str,
+    "h": _ticks_to_ms_str,
+}
 
 
 # --------------------------------------------------------------- helpers
@@ -167,7 +160,7 @@ def render(
         if idx == selected:
             draw.text((base_x - 11, y - 1), ">", fill=BLACK, font=font_med)
         draw.text((base_x, y), f"{p.name}:", fill=BLACK, font=font_med)
-        draw.text((base_x + 22, y), p.fmt(_value_for(state, p.name)),
+        draw.text((base_x + 22, y), _FMT[p.name](_value_for(state, p.name)),
                   fill=BLACK, font=font_med)
 
     # Bottom legend + IP / hostname

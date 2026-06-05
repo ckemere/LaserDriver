@@ -30,6 +30,7 @@ from flask import Flask, jsonify, render_template, request
 
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
+from params import PARAMS_BY_NAME
 
 
 # --------------------------------------------------------------- helpers
@@ -76,6 +77,7 @@ def create_app(client: HatClient) -> Flask:
             "index.html",
             hostname=app.config["hostname"],
             ip=primary_ip(),
+            params=PARAMS_BY_NAME,
         )
 
     @app.route("/api/state")
