@@ -20,7 +20,7 @@ import sys
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, os.path.join(HERE, "..", "..", "..", "Pi"))
+sys.path.insert(0, os.path.join(HERE, "..", "..", "Pi"))
 
 import protocol as proto          # noqa: E402
 from laser_hat import LaserUART, State   # noqa: E402

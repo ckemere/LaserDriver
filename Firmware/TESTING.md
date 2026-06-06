@@ -22,7 +22,7 @@ answered with `RSP_STATUS`; async `EVT_PULSE_START/END`, `EVT_BUTTON`.
 
 ## 1. Build the gcc firmware
 ```bash
-make -C Firmware/laserHatFirmware -f Makefile.gcc clean all
+make -C Firmware -f Makefile.gcc clean all
 ```
 - [ ] Builds to `build_gcc/main.elf` with **no errors and no `-Wall -Wextra`
       warnings** (this toolchain has flags the TI one doesn't — first place a
@@ -31,19 +31,19 @@ make -C Firmware/laserHatFirmware -f Makefile.gcc clean all
 ## 2. Flash (laser unplugged)
 ```bash
 sudo systemctl stop laserhat-broker.service     # frees GPIO 24 (= SWDIO)
-make -C Firmware/laserHatFirmware -f Makefile.gcc flash   # +OPENOCD_GPIOCHIP=4 on Pi 5
+make -C Firmware -f Makefile.gcc flash   # +OPENOCD_GPIOCHIP=4 on Pi 5
 ```
 - [ ] ~4 s `STIM_MIRROR` boot blink right after the command (= flash landed).
 
 ## 3. Raw link — the protocol's first real hardware test (broker stopped)
 ```bash
-cd Firmware/laserHatFirmware
+cd Firmware
 python3 host_tools/smoke_test.py                # broker must be stopped
 ```
 - [ ] `query` prints a `State(...)`.
 - [ ] After `config`, the echo `State` matches `i=100 r=2000 h=500`.
 - [ ] `trigger` reports `EVT_PULSE_START / EVT_PULSE_END` (LED blinks).
-- [ ] `python3 ../../Pi/laser_hat.py watch`, then press **B1** → `EVT_BUTTON`
+- [ ] `python3 ../Pi/laser_hat.py watch`, then press **B1** → `EVT_BUTTON`
       frames appear; B2/B3/B4 likewise.
 
 > This validates magic framing, CONFIG, status-as-ack, and field layout
@@ -53,8 +53,8 @@ python3 host_tools/smoke_test.py                # broker must be stopped
 ## 4. Pulse shape (ramp-down removal)
 With a long pulse for visibility:
 ```bash
-python3 ../../Pi/laser_hat.py config 320 200000 200000
-python3 ../../Pi/laser_hat.py trigger
+python3 ../Pi/laser_hat.py config 320 200000 200000
+python3 ../Pi/laser_hat.py trigger
 ```
 - [ ] Envelope on `PWM_LASER` (PA21) / the LED is **ramp up → hold → off**,
       with **no ramp-down tail**.

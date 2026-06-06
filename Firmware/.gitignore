@@ -1,2 +1,13 @@
 **/.settings/**
 **/.clangd
+
+# Build artifacts
+syscfg_gen/
+build/
+build_gcc/
+*.o
+*.out
+*.map
+*.hex
+*.bin
+Debug/

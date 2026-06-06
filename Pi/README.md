@@ -6,7 +6,7 @@ eink GUI and web GUI run at the same time.
 
 - `protocol.py` — the binary wire protocol (magic-word framing, no CRC;
   every command is answered with `RSP_STATUS`). Single Python source of
-  truth; mirror of `Firmware/laserHatFirmware/protocol.h`.
+  truth; mirror of `Firmware/protocol.h`.
 - `laser_hat.py` — the binary UART transport (`LaserUART`) plus the
   shared `State` dataclass. Used **only by the broker** (it is the lone
   serial-port owner). Also a small CLI smoke tool for the raw link.
@@ -72,7 +72,7 @@ DEV=$(~/.venvs/laserhat/bin/python Pi/fake_mcu.py &  sleep 0.3) # prints a /dev/
 ```
 
 The cross-toolchain codec agreement is checked by
-`Firmware/laserHatFirmware/host_tools/proto_crosscheck.py`.
+`Firmware/host_tools/proto_crosscheck.py`.
 
 ---
 

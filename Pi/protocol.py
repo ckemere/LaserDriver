@@ -2,7 +2,7 @@
 
 Frames are exchanged over /dev/ttyS0 in both directions.  This module is
 the single Python source of truth for the format; the firmware mirror is
-Firmware/laserHatFirmware/protocol.h.  Keep them in sync.
+Firmware/protocol.h.  Keep them in sync.
 
 Frame layout
 ------------

@@ -126,9 +126,9 @@ flash load burn: $(TARGET_ELF) power_cycle
 .PHONY: power_cycle
 power_cycle:
 	@if [ -x $(HOME)/.venvs/laserhat/bin/python ]; then \
-	    $(HOME)/.venvs/laserhat/bin/python ../../Pi/power_cycle.py ; \
+	    $(HOME)/.venvs/laserhat/bin/python ../Pi/power_cycle.py ; \
 	else \
-	    python3 ../../Pi/power_cycle.py ; \
+	    python3 ../Pi/power_cycle.py ; \
 	fi
 
 # Reset the MCU without changing what's in flash.
