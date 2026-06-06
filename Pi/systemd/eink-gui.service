@@ -1,18 +1,13 @@
 # LaserHAT eink GUI — long-running daemon.
 #
-# Conflicts with eink-ip.timer (both paint the same panel).  Pick one:
-#
-#   sudo systemctl disable --now eink-ip.timer
 #   sudo cp Pi/systemd/eink-gui.service /etc/systemd/system/
 #   sudo systemctl daemon-reload
 #   sudo systemctl enable --now eink-gui.service
 #
-# Edit User=, Group=, WorkingDirectory=, and the ExecStart= python
-# prefix below if your Pi account isn't 'kemerelab' or the venv lives
-# somewhere other than ~/.venvs/laserhat.
-#
-# A broker client now (connects to laserhat-broker.service over the Unix
-# socket); it no longer opens the UART, so it can run alongside the web GUI.
+# A broker client: connects to laserhat-broker.service over the Unix socket
+# and doesn't open the UART, so it runs alongside the web GUI. Edit User=,
+# Group=, WorkingDirectory=, and the ExecStart= python prefix below if your
+# Pi account isn't 'kemerelab' or the venv lives elsewhere.
 
 [Unit]
 Description=LaserHAT eink GUI (broker client + display)
