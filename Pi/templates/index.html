@@ -93,7 +93,7 @@
     <div class="row">
       <label>intensity</label>
       <button data-knob="i" data-dir="-1">−</button>
-      <input class="step-input" data-knob="i" id="step-i" type="number" value="8" min="1" max="320">
+      <input class="step-input" data-knob="i" id="step-i" type="number" value="{{ params['i'].step }}" min="1" max="{{ params['i'].maximum }}">
       <button data-knob="i" data-dir="+1">+</button>
       <span class="value" id="val-i">—</span>
       <span class="unit">/ 320</span>
@@ -102,7 +102,7 @@
     <div class="row">
       <label>ramp</label>
       <button data-knob="r" data-dir="-1">−</button>
-      <input class="step-input" data-knob="r" id="step-r" type="number" value="200" min="1">
+      <input class="step-input" data-knob="r" id="step-r" type="number" value="{{ params['r'].step }}" min="1" max="{{ params['r'].maximum }}">
       <button data-knob="r" data-dir="+1">+</button>
       <span class="value" id="val-r">—</span>
       <span class="unit" id="unit-r">ticks</span>
@@ -111,7 +111,7 @@
     <div class="row">
       <label>hold</label>
       <button data-knob="h" data-dir="-1">−</button>
-      <input class="step-input" data-knob="h" id="step-h" type="number" value="500" min="1">
+      <input class="step-input" data-knob="h" id="step-h" type="number" value="{{ params['h'].step }}" min="1" max="{{ params['h'].maximum }}">
       <button data-knob="h" data-dir="+1">+</button>
       <span class="value" id="val-h">—</span>
       <span class="unit" id="unit-h">ticks</span>

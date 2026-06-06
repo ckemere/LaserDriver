@@ -2,38 +2,35 @@
 """LaserHat web GUI.
 
 Tiny Flask app that exposes the LaserHat parameters and trigger button
-to a browser.  Reuses laser_hat.LaserHat for UART comms — same client
-object the eink GUI uses, just driven from HTTP routes.
+to a browser.  Talks to the broker daemon (broker.py) over its Unix
+socket via hat_client.HatClient — it does NOT open the serial port, so
+it can run at the same time as the eink GUI (both are broker clients).
 
 Routes:
     GET  /                  the single page
-    GET  /api/state         current MCU state as JSON
+    GET  /api/state         current MCU state as JSON (from the broker's cache)
     POST /api/set/<knob>    body { "value": N } where knob in {i, r, h}
-    POST /api/trigger       fire a pulse via UART 't' command
+    POST /api/trigger       fire a pulse via the UART trigger command
     POST /api/trigger_gpio  fire a pulse via Pi GPIO 24 -> MSPM0 PA19 edge
     GET  /api/healthz       cheap liveness check
 
-The app binds 0.0.0.0:8080 by default; override via PORT env var.
-
-NOTE: this process and Pi/eink_gui.py both want exclusive UART access.
-Stop one before starting the other.  A unified daemon that owns the
-UART and serves both surfaces will replace this once they both work.
+The app binds 0.0.0.0:8080 by default; override via PORT env var.  The
+broker socket path is LASERHAT_SOCK (default /run/laserhat/broker.sock).
 """
 
 from __future__ import annotations
 
-import json
 import os
 import socket
 import subprocess
 import sys
-from dataclasses import asdict
 from typing import Optional
 
 from flask import Flask, jsonify, render_template, request
 
-from laser_hat import LaserHat, State
-from pi_trigger import PiTrigger
+from hat_client import DEFAULT_SOCKET, HatClient
+from laser_hat import State
+from params import PARAMS_BY_NAME
 
 
 # --------------------------------------------------------------- helpers
@@ -69,10 +66,9 @@ def _state_dict(state: Optional[State]) -> dict:
 
 
 # --------------------------------------------------------------- app
-def create_app(hat: LaserHat, gpio_trigger: PiTrigger) -> Flask:
+def create_app(client: HatClient) -> Flask:
     app = Flask(__name__)
-    app.config["hat"] = hat
-    app.config["gpio_trigger"] = gpio_trigger
+    app.config["client"] = client
     app.config["hostname"] = socket.gethostname()
 
     @app.route("/")
@@ -81,11 +77,12 @@ def create_app(hat: LaserHat, gpio_trigger: PiTrigger) -> Flask:
             "index.html",
             hostname=app.config["hostname"],
             ip=primary_ip(),
+            params=PARAMS_BY_NAME,
         )
 
     @app.route("/api/state")
     def api_state():
-        return jsonify(_state_dict(app.config["hat"].get_state()))
+        return jsonify(_state_dict(app.config["client"].get_state()))
 
     @app.route("/api/set/<knob>", methods=["POST"])
     def api_set(knob: str):
@@ -96,9 +93,9 @@ def create_app(hat: LaserHat, gpio_trigger: PiTrigger) -> Flask:
             return jsonify(ok=False, error="bad_value"), 400
 
         setter = {
-            "i": app.config["hat"].set_intensity,
-            "r": app.config["hat"].set_ramp,
-            "h": app.config["hat"].set_hold,
+            "i": app.config["client"].set_intensity,
+            "r": app.config["client"].set_ramp,
+            "h": app.config["client"].set_hold,
         }.get(knob)
         if setter is None:
             return jsonify(ok=False, error="unknown_knob"), 400
@@ -109,24 +106,19 @@ def create_app(hat: LaserHat, gpio_trigger: PiTrigger) -> Flask:
 
     @app.route("/api/trigger", methods=["POST"])
     def api_trigger():
-        """UART-path trigger ('t' command).  Emits OK pulse start/end."""
-        ok = app.config["hat"].trigger()
+        """UART-path trigger.  Firmware emits pulse start/end events that
+        the broker broadcasts to all clients."""
+        ok = app.config["client"].trigger()
         return jsonify(ok=ok, path="uart")
 
     @app.route("/api/trigger_gpio", methods=["POST"])
     def api_trigger_gpio():
         """GPIO-path trigger (rising edge on Pi GPIO 24 -> MSPM0 PA19).
         Bypasses UART for the trigger itself; firmware fires the pulse
-        from its GPIO edge ISR.
-
-        Sends `g` first to arm PA19 if not already armed — PA19 starts
-        each boot as SWDIO so SWD reflashing keeps working, and only
-        becomes the trigger input when the host asks for it.  The arm
-        command is idempotent on the firmware side.
-        """
-        app.config["hat"].arm_gpio_trigger()
-        app.config["gpio_trigger"].fire()
-        return jsonify(ok=True, path="gpio")
+        from its GPIO edge ISR.  The broker owns the PiTrigger pin and
+        arms PA19 once (lazily) — no per-trigger re-arm here."""
+        ok = app.config["client"].trigger_gpio()
+        return jsonify(ok=ok, path="gpio")
 
     @app.route("/api/healthz")
     def api_healthz():
@@ -138,18 +130,16 @@ def create_app(hat: LaserHat, gpio_trigger: PiTrigger) -> Flask:
 def main() -> int:
     port = int(os.environ.get("PORT", "8080"))
     host = os.environ.get("HOST", "0.0.0.0")
+    sock = os.environ.get("LASERHAT_SOCK", DEFAULT_SOCKET)
 
-    print(f"opening UART …", file=sys.stderr)
-    hat = LaserHat()
-
-    print(f"opening GPIO trigger pin …", file=sys.stderr)
-    gpio_trigger = PiTrigger()
+    print(f"connecting to broker at {sock} …", file=sys.stderr)
+    client = HatClient(sock)
 
     print(f"serving on {host}:{port} (http://{primary_ip()}:{port}/)",
           file=sys.stderr)
 
-    app = create_app(hat, gpio_trigger)
-    # threaded=True so a slow UART round-trip doesn't block other clients.
+    app = create_app(client)
+    # threaded=True so a slow broker round-trip doesn't block other clients.
     app.run(host=host, port=port, debug=False, threaded=True)
     return 0
 

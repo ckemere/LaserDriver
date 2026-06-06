@@ -26,8 +26,10 @@ cmsis/                   minimal CMSIS Cortex-M0+ (7 files)
 hw/                      peripheral register layouts + bit fields (7 files)
 startup/                 startup_mspm0g350x_{gcc,ticlang}.c
 linker/                  mspm0g3507.{lds,cmd}
-main.c                   state machine, boot, IRQ handlers, line parser
+main.c                   state machine, boot, IRQ handlers, frame dispatch
 gpio.c/h uart.c/h …      per-peripheral application modules
+protocol.h               binary wire protocol map (mirror of Pi/protocol.py)
+framing.c/h              magic-word frame encode/decode
 board.h                  pin assignments
 ```
 
@@ -67,8 +69,10 @@ already in the repo under `sdk/` — no additional downloads needed.
 | `pwm_timer.c/h` | TIMA0 100 kHz complementary PWM |
 | `tick_timers.c/h` | TIMG0 100 kHz state-machine tick |
 | `dac.c/h` | DAC0 + internal VREF (2.5 V) |
-| `uart.c/h` | UART0 at 115200 8N1, RX ring buffer + blocking TX |
-| `main.c` | State machine, boot sequence, IRQ handlers, line parser, `main` |
+| `uart.c/h` | UART0 at 115200 8N1, RX ring buffer + blocking TX (`_tx_buf`) |
+| `protocol.h` | Binary wire protocol map (message types + field layout); mirror of `Pi/protocol.py` |
+| `framing.c/h` | Magic-word frame encode/decode (`SYNC \| TYPE \| payload`, no CRC) |
+| `main.c` | State machine, boot sequence, IRQ handlers, binary frame dispatch, `main` |
 
 Each peripheral module exposes an `_init()` (and where useful `_start()`)
 plus inline hot-path helpers. None of them include any `dl_*.h` driverlib
@@ -124,11 +128,12 @@ between an ISR and `main` are `volatile`.
 
 State is fully captured in `MachineState`. Within the tick ISR,
 `state_machine_tick()` owns transitions; `set_output_from_state()` owns
-hardware writes and is idempotent (it keeps a RAM shadow of the last
-applied output so a steady phase doesn't re-mux every tick). `main`
-only reads the machine for the `?` status response and drains
-ISR-produced pulse-event records to emit the `OK pulse start/end` ACKs
-off the interrupt path.
+hardware writes and is idempotent — it re-asserts the desired output
+state every tick (all plain register stores, no read-modify-write), so a
+perturbed IOMUX/GPIO self-heals within 10 µs. `main`
+only reads the machine for the `CMD_QUERY` → `RSP_STATUS` response and
+drains ISR-produced pulse-event records to emit the `EVT_PULSE_START` /
+`EVT_PULSE_END` frames off the interrupt path.
 
 ## Commit rules
 
@@ -146,6 +151,8 @@ Stage only:
 - `tick_timers.c` / `.h`
 - `dac.c` / `.h`
 - `uart.c` / `.h`
+- `protocol.h`
+- `framing.c` / `.h`
 - `board.h`
 - `Makefile`, `Makefile.gcc`
 - `CLAUDE.md`

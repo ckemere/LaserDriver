@@ -31,6 +31,7 @@ OBJS            := $(BUILD_DIR)/main.o \
                    $(BUILD_DIR)/tick_timers.o \
                    $(BUILD_DIR)/dac.o \
                    $(BUILD_DIR)/uart.o \
+                   $(BUILD_DIR)/framing.o \
                    $(STARTUP_OBJ)
 
 # Compiler flags

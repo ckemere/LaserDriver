@@ -1,9 +1,9 @@
 # LaserHAT web GUI (Flask) — long-running daemon.
 #
-# Conflicts with eink-gui.service: both want exclusive UART access.
-# Stop one before starting the other:
+# A broker client: it connects to laserhat-broker.service over the Unix
+# socket, so it no longer needs exclusive UART access and can run at the
+# same time as eink-gui.service.
 #
-#   sudo systemctl stop eink-gui.service
 #   sudo cp Pi/systemd/laserhat-web.service /etc/systemd/system/
 #   sudo systemctl daemon-reload
 #   sudo systemctl enable --now laserhat-web.service
@@ -15,9 +15,9 @@
 
 [Unit]
 Description=LaserHAT web GUI (Flask)
-After=network-online.target dev-ttyS0.device
+After=network-online.target laserhat-broker.service
 Wants=network-online.target
-Conflicts=eink-gui.service
+Requires=laserhat-broker.service
 
 [Service]
 Type=simple
@@ -25,6 +25,7 @@ User=kemerelab
 Group=kemerelab
 WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
 Environment=PORT=8080
+Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
 ExecStart=/home/kemerelab/.venvs/laserhat/bin/python web_app.py
 Restart=on-failure
 RestartSec=5
