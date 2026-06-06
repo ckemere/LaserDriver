@@ -7,7 +7,7 @@ should be scoped on their own.
 
 Commits live on the `audit-fixes` branch (merged to `main`). Build was
 confirmed clean after every firmware change (`make -C
-Firmware/laserHatFirmware`, output `build/main.out`), and the changes
+Firmware`, output `build/main.out`), and the changes
 were bench-tested on hardware.
 
 ## High priority — DONE

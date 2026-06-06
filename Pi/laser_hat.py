@@ -1,8 +1,8 @@
 """LaserHat binary UART transport (host side).
 
-Speaks the COBS+CRC16 framed protocol the MSPM0 firmware uses on
+Speaks the magic-word framed binary protocol the MSPM0 firmware uses on
 /dev/ttyS0 (115200 8N1).  See protocol.py for the wire format and
-Firmware/laserHatFirmware/protocol.h for the firmware mirror.
+Firmware/protocol.h for the firmware mirror.
 
 This module is the *single UART owner*: only the broker (broker.py)
 instantiates LaserUART.  GUIs talk to the broker over its Unix socket

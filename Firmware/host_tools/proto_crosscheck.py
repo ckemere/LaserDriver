@@ -13,7 +13,7 @@ import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FW = os.path.dirname(HERE)
-PI = os.path.join(FW, "..", "..", "Pi")
+PI = os.path.join(FW, "..", "Pi")
 sys.path.insert(0, PI)
 
 import protocol as p  # noqa: E402
