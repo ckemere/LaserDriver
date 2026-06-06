@@ -2,21 +2,25 @@
 
 Frames are exchanged over /dev/ttyS0 in both directions.  This module is
 the single Python source of truth for the format; the firmware mirror is
-Firmware/laserHatFirmware/protocol.h.  The two MUST stay in sync — if you
-change a message type or field layout here, change it there too.
+Firmware/laserHatFirmware/protocol.h.  Keep them in sync.
 
 Frame layout
 ------------
-    payload   = TYPE(u8) || fields (little-endian, fixed width)
-    body      = payload || CRC16_CCITT(payload)   (CRC as 2 bytes, LE)
-    wire      = COBS(body) || 0x00                (0x00 is the delimiter)
+    SYNC(2: DE AD) | TYPE(1) | payload (length implied by TYPE)
 
-COBS (Consistent Overhead Byte Stuffing) guarantees the encoded bytes
-never contain 0x00, so the 0x00 delimiter unambiguously ends a frame and
-a decoder can always resync on it.  A frame whose CRC fails (or that
-fails to COBS-decode) is dropped; the next 0x00 starts a fresh frame.
+Magic-word framing: a receiver scans for the 2-byte SYNC to find a frame
+boundary, reads TYPE, then the fixed number of payload bytes that TYPE
+implies.  There is no length field, no byte-stuffing, and no CRC:
 
-Everything here is pure stdlib.
+  * Integrity is end-to-end — every command is answered with RSP_STATUS
+    (the "status-as-ack"), so the broker confirms the MCU actually holds
+    the values it sent; STATUS / event fields are range-checked on receipt.
+  * The MCU's only inbound payload is CMD_CONFIG (bounded i/r/h, no
+    full-range field), and the broker guarantees a CONFIG payload never
+    contains the SYNC bytes (see avoid_magic), so the MCU's resync is
+    exact without a CRC.
+
+Pure stdlib.
 """
 
 from __future__ import annotations
@@ -24,194 +28,136 @@ from __future__ import annotations
 import struct
 from typing import Iterator, Tuple
 
+# --- framing -------------------------------------------------------------
+SYNC = b"\xDE\xAD"                 # both bytes >= 0x99 (see avoid_magic)
+# The only place SYNC could collide with a CONFIG payload is the low 16
+# bits of ramp or hold (the only adjacent full-range byte pair); this is
+# that 16-bit value, little-endian: r0=0xDE, r1=0xAD -> 0xADDE.
+MAGIC16 = SYNC[0] | (SYNC[1] << 8)
+
 # --- message types -------------------------------------------------------
-# Host -> MCU (commands).  High bit clear.
-CMD_SET_INTENSITY = 0x01   # u16
-CMD_SET_RAMP      = 0x02   # u32
-CMD_SET_HOLD      = 0x03   # u32
-CMD_TRIGGER       = 0x04   # (no fields)
-CMD_ARM           = 0x05   # (no fields)
-CMD_QUERY         = 0x06   # (no fields)
+# Host -> MCU (commands), high bit clear.
+CMD_CONFIG   = 0x01    # i u16, r u32, h u32   (the only payload-bearing cmd)
+CMD_TRIGGER  = 0x02    # —
+CMD_QUERY    = 0x03    # —
 
-# MCU -> Host (responses + events).  High bit set.
-RSP_ACK           = 0x81   # u8 cmd_type, u8 status
-RSP_STATUS        = 0x82   # u16 i, u32 r, u32 h, u8 btn, u8 armed, u8 phase, u32 tick
-EVT_PULSE_START   = 0x83   # u32 tick
-EVT_PULSE_END     = 0x84   # u32 tick
-EVT_BUTTON        = 0x85   # u8 mask, u8 edges
+# MCU -> Host (responses + events), high bit set.
+RSP_STATUS      = 0x81  # i u16, r u32, h u32, btn u8, phase u8, tick u32
+EVT_PULSE_START = 0x82  # tick u32
+EVT_PULSE_END   = 0x83  # tick u32
+EVT_BUTTON      = 0x84  # mask u8, edges u8
 
-# ACK status codes (RSP_ACK second byte).
-ACK_OK      = 0x00
-ACK_RANGE   = 0x01
-ACK_BUSY    = 0x02
-ACK_UNKNOWN = 0x03
-
-# Phase byte values in RSP_STATUS (match the firmware's 'W'/'T').
+# Phase byte values in RSP_STATUS (ASCII 'W' / 'T').
 PHASE_WAITING   = ord("W")
 PHASE_TRIGGERED = ord("T")
 
-# struct format for RSP_STATUS fields (after the TYPE byte), little-endian:
-#   intensity u16, ramp u32, hold u32, btn u8, armed u8, phase u8, tick u32
-_STATUS_STRUCT = struct.Struct("<HIIBBBI")
+_CONFIG = struct.Struct("<HII")          # i, r, h
+_STATUS = struct.Struct("<HIIBBI")       # i, r, h, btn, phase, tick
 _U16 = struct.Struct("<H")
 _U32 = struct.Struct("<I")
 
-# Largest body we will ever assemble/accept (payload + 2 CRC).  RSP_STATUS
-# is the biggest payload at 1 + 17 = 18 bytes; round up generously.
-MAX_BODY = 64
-MAX_WIRE = MAX_BODY + (MAX_BODY // 254) + 2 + 1   # COBS worst case + delimiter
+# Payload length by type, per direction (decoders only accept their inbound
+# set; an out-of-direction type is treated as unknown -> resync).
+CMD_LEN = {CMD_CONFIG: 10, CMD_TRIGGER: 0, CMD_QUERY: 0}
+RSP_LEN = {RSP_STATUS: _STATUS.size, EVT_PULSE_START: 4, EVT_PULSE_END: 4,
+           EVT_BUTTON: 2}
+
+# Field ranges, for validating a decoded STATUS (false-sync rejection).
+INTENSITY_MIN, INTENSITY_MAX = 1, 320
+TICKS_MIN, TICKS_MAX = 1, 10_000_000
 
 
-# --- CRC16-CCITT (poly 0x1021, init 0xFFFF, no final xor) ----------------
-def crc16_ccitt(data: bytes) -> int:
-    crc = 0xFFFF
-    for byte in data:
-        crc ^= byte << 8
-        for _ in range(8):
-            if crc & 0x8000:
-                crc = ((crc << 1) ^ 0x1021) & 0xFFFF
-            else:
-                crc = (crc << 1) & 0xFFFF
-    return crc
-
-
-# --- COBS ----------------------------------------------------------------
-def cobs_encode(data: bytes) -> bytes:
-    """Encode data so the result contains no 0x00 byte."""
-    out = bytearray()
-    code_idx = len(out)
-    out.append(0)            # placeholder for the first code byte
-    code = 1
-    for byte in data:
-        if byte != 0:
-            out.append(byte)
-            code += 1
-            if code == 0xFF:
-                out[code_idx] = code
-                code_idx = len(out)
-                out.append(0)
-                code = 1
-        else:
-            out[code_idx] = code
-            code_idx = len(out)
-            out.append(0)
-            code = 1
-    out[code_idx] = code
-    return bytes(out)
-
-
-def cobs_decode(data: bytes) -> bytes:
-    """Inverse of cobs_encode.  Raises ValueError on a malformed block.
-
-    A valid COBS block never contains 0x00, so its presence means the
-    delimiter was lost or the block is corrupt.
-    """
-    if 0 in data:
-        raise ValueError("0x00 inside COBS block")
-    out = bytearray()
-    i = 0
-    n = len(data)
-    while i < n:
-        code = data[i]
-        if code == 0:
-            raise ValueError("unexpected 0x00 in COBS block")
-        i += 1
-        end = i + code - 1
-        if end > n:
-            raise ValueError("COBS block overruns input")
-        out.extend(data[i:end])
-        i = end
-        if code != 0xFF and i < n:
-            out.append(0)
-    return bytes(out)
-
-
-# --- frame encode / decode ----------------------------------------------
+# --- frame encode --------------------------------------------------------
 def encode_frame(msg_type: int, payload: bytes = b"") -> bytes:
-    """Build a complete wire frame (COBS body + 0x00 delimiter)."""
-    body = bytes([msg_type]) + payload
-    crc = crc16_ccitt(body)
-    body += _U16.pack(crc)
-    return cobs_encode(body) + b"\x00"
+    return SYNC + bytes([msg_type]) + payload
 
 
-def decode_body(body: bytes) -> Tuple[int, bytes]:
-    """Given a COBS-decoded body (payload+crc), verify CRC and split.
-
-    Returns (msg_type, payload).  Raises ValueError on CRC mismatch or a
-    runt frame.
-    """
-    if len(body) < 3:
-        raise ValueError("frame too short")
-    payload, crc_bytes = body[:-2], body[-2:]
-    want = _U16.unpack(crc_bytes)[0]
-    got = crc16_ccitt(payload)
-    if want != got:
-        raise ValueError(f"CRC mismatch: want {want:#06x} got {got:#06x}")
-    return payload[0], payload[1:]
+def avoid_magic(ticks: int) -> int:
+    """Nudge a ramp/hold value so its low 16 bits can't equal the SYNC word,
+    guaranteeing a CONFIG payload never contains the magic.  Excludes only
+    the ~150 values per field whose low 16 bits == 0xADDE."""
+    if ticks & 0xFFFF == MAGIC16:
+        return ticks - 1 if ticks >= TICKS_MAX else ticks + 1
+    return ticks
 
 
-class StreamDecoder:
-    """Feed raw RX bytes; iterate complete, CRC-checked frames.
-
-    Frames are delimited by 0x00.  A block that fails to COBS-decode or
-    fails CRC is silently dropped (resync happens at the next 0x00).
-    """
-
-    def __init__(self) -> None:
-        self._buf = bytearray()
-
-    def feed(self, data: bytes) -> Iterator[Tuple[int, bytes]]:
-        for byte in data:
-            if byte == 0:
-                block = bytes(self._buf)
-                self._buf.clear()
-                if not block:
-                    continue
-                try:
-                    body = cobs_decode(block)
-                    yield decode_body(body)
-                except ValueError:
-                    continue   # drop and resync
-            else:
-                if len(self._buf) < MAX_WIRE:
-                    self._buf.append(byte)
-                else:
-                    # Runaway frame (lost a delimiter); reset to resync.
-                    self._buf.clear()
+def pack_config(intensity: int, ramp: int, hold: int) -> bytes:
+    return encode_frame(CMD_CONFIG, _CONFIG.pack(intensity, ramp, hold))
 
 
-# --- typed field (un)packers --------------------------------------------
-def pack_set_intensity(value: int) -> bytes:
-    return encode_frame(CMD_SET_INTENSITY, _U16.pack(value))
+def pack_status(intensity: int, ramp: int, hold: int, button_mask: int,
+                phase: str, tick: int) -> bytes:
+    phase_byte = PHASE_WAITING if phase == "W" else PHASE_TRIGGERED
+    return encode_frame(RSP_STATUS, _STATUS.pack(
+        intensity, ramp, hold, button_mask, phase_byte, tick))
 
 
-def pack_set_ramp(ticks: int) -> bytes:
-    return encode_frame(CMD_SET_RAMP, _U32.pack(ticks))
-
-
-def pack_set_hold(ticks: int) -> bytes:
-    return encode_frame(CMD_SET_HOLD, _U32.pack(ticks))
+def unpack_config(payload: bytes) -> Tuple[int, int, int]:
+    return _CONFIG.unpack(payload)
 
 
 def unpack_status(payload: bytes) -> dict:
-    i, r, h, btn, armed, phase, tick = _STATUS_STRUCT.unpack(payload)
+    i, r, h, btn, phase, tick = _STATUS.unpack(payload)
     return {
-        "intensity": i,
-        "ramp_ticks": r,
-        "hold_ticks": h,
+        "intensity": i, "ramp_ticks": r, "hold_ticks": h,
         "button_mask": btn,
-        "gpio_armed": bool(armed),
         "phase": "W" if phase == PHASE_WAITING else "T",
         "tick": tick,
     }
 
 
-def pack_status(intensity: int, ramp: int, hold: int, button_mask: int,
-                armed: bool, phase: str, tick: int) -> bytes:
-    phase_byte = PHASE_WAITING if phase == "W" else PHASE_TRIGGERED
-    return encode_frame(
-        RSP_STATUS,
-        _STATUS_STRUCT.pack(intensity, ramp, hold, button_mask,
-                            1 if armed else 0, phase_byte, tick),
-    )
+def status_in_range(fields: dict) -> bool:
+    """Sanity-check a decoded STATUS to reject a false sync (no CRC)."""
+    return (INTENSITY_MIN <= fields["intensity"] <= INTENSITY_MAX
+            and TICKS_MIN <= fields["ramp_ticks"] <= TICKS_MAX
+            and TICKS_MIN <= fields["hold_ticks"] <= TICKS_MAX
+            and fields["button_mask"] <= 0x0F
+            and fields["phase"] in ("W", "T"))
+
+
+# --- stream decode (Pi inbound = responses/events) ----------------------
+class StreamDecoder:
+    """Feed raw RX bytes; iterate complete frames.
+
+    Scans for the SYNC word, reads TYPE, then the type-implied payload
+    length.  An unrecognised TYPE (or a SYNC that turns out to be inside
+    data) costs one byte of resync.  No CRC — callers range-check STATUS.
+    """
+
+    def __init__(self, lengths: dict = None) -> None:
+        self._buf = bytearray()
+        self._len = RSP_LEN if lengths is None else lengths
+
+    def feed(self, data: bytes) -> Iterator[Tuple[int, bytes]]:
+        buf = self._buf
+        buf.extend(data)
+        while True:
+            j = buf.find(SYNC)
+            if j < 0:
+                # Keep only a possible partial SYNC (last byte).
+                if buf:
+                    del buf[:-1]
+                return
+            if j:
+                del buf[:j]                 # discard junk before SYNC
+            if len(buf) < 3:
+                return                       # need TYPE
+            mtype = buf[2]
+            plen = self._len.get(mtype)
+            if plen is None:
+                del buf[:1]                  # false SYNC; advance and rescan
+                continue
+            # A SYNC inside the would-be payload means this frame was
+            # truncated (dropped byte) — resync at that inner SYNC.  The
+            # window extends one byte past the payload so a SYNC whose DE is
+            # the last payload byte (AD just after) is still caught; a SYNC
+            # starting exactly at the payload end is the legit next frame.
+            inner = buf.find(SYNC, 3, 3 + plen + 1)
+            if inner != -1:
+                del buf[:inner]
+                continue
+            if len(buf) < 3 + plen:
+                return                       # need full payload
+            payload = bytes(buf[3:3 + plen])
+            del buf[:3 + plen]
+            yield mtype, payload

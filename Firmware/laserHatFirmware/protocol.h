@@ -5,64 +5,60 @@
 
 /*
  * LaserHat binary wire protocol — firmware (MCU) side.
+ * Mirror of Pi/protocol.py; keep them in sync.
  *
- * This header is the firmware mirror of Pi/protocol.py.  The two MUST
- * stay in sync: if you change a message type or field layout here, change
- * it there too.
+ * Frame: SYNC(2: DE AD) | TYPE(1) | payload (length implied by TYPE)
  *
- * Frame layout (both directions):
+ * Magic-word framing — scan for SYNC, read TYPE, read the fixed payload
+ * length TYPE implies.  No length field, no byte-stuffing, no CRC:
  *
- *   payload = TYPE(u8) || fields (little-endian, fixed width)
- *   body    = payload  || CRC16_CCITT(payload)   (CRC as 2 bytes, LE)
- *   wire    = COBS(body) || 0x00                  (0x00 is the delimiter)
- *
- * COBS (see cobs.h) guarantees the encoded bytes never contain 0x00, so
- * the delimiter unambiguously ends a frame and the decoder resyncs on it.
- * A frame whose CRC fails (or fails to COBS-decode) is dropped; the next
- * 0x00 starts a fresh frame.  See framing.h for encode/decode helpers.
+ *   - Every command is answered with RSP_STATUS ("status-as-ack"), so the
+ *     host confirms end-to-end that the MCU holds the values it sent.
+ *   - The MCU's only inbound payload is CMD_CONFIG (bounded i/r/h), and the
+ *     host guarantees a CONFIG payload never contains the SYNC bytes, so the
+ *     MCU resyncs exactly on the next SYNC without a CRC.
  */
 
-/* Host -> MCU (commands).  High bit clear. */
-#define CMD_SET_INTENSITY   0x01u   /* u16 */
-#define CMD_SET_RAMP        0x02u   /* u32 */
-#define CMD_SET_HOLD        0x03u   /* u32 */
-#define CMD_TRIGGER         0x04u   /* (no fields) */
-#define CMD_ARM             0x05u   /* (no fields) */
-#define CMD_QUERY           0x06u   /* (no fields) */
+/* SYNC bytes (both >= 0x99 so they can only collide with the low 16 bits of
+ * ramp/hold — which the host nudges away). */
+#define PROTO_SYNC0   0xDEu
+#define PROTO_SYNC1   0xADu
 
-/* MCU -> Host (responses + events).  High bit set. */
-#define RSP_ACK             0x81u   /* u8 cmd_type, u8 status */
-#define RSP_STATUS          0x82u   /* u16 i, u32 r, u32 h, u8 btn, u8 armed, u8 phase, u32 tick */
-#define EVT_PULSE_START     0x83u   /* u32 tick */
-#define EVT_PULSE_END       0x84u   /* u32 tick */
-#define EVT_BUTTON          0x85u   /* u8 mask, u8 edges */
+/* Host -> MCU (commands). */
+#define CMD_CONFIG    0x01u   /* i u16, r u32, h u32 */
+#define CMD_TRIGGER   0x02u   /* (no payload) */
+#define CMD_QUERY     0x03u   /* (no payload) */
 
-/* RSP_ACK status codes (second byte). */
-#define ACK_OK              0x00u
-#define ACK_RANGE           0x01u
-#define ACK_BUSY            0x02u
-#define ACK_UNKNOWN         0x03u
+/* MCU -> Host (responses + events). */
+#define RSP_STATUS        0x81u   /* i u16, r u32, h u32, btn u8, phase u8, tick u32 */
+#define EVT_PULSE_START   0x82u   /* tick u32 */
+#define EVT_PULSE_END     0x83u   /* tick u32 */
+#define EVT_BUTTON        0x84u   /* mask u8, edges u8 */
 
 /* Phase byte values in RSP_STATUS (ASCII 'W' / 'T'). */
-#define PHASE_WAITING       0x57u   /* 'W' */
-#define PHASE_TRIGGERED     0x54u   /* 'T' */
+#define PHASE_WAITING     0x57u
+#define PHASE_TRIGGERED   0x54u
+
+/* Inbound (command) payload lengths. */
+#define CMD_CONFIG_LEN    10u   /* i(2) + r(4) + h(4) */
 
 /*
- * RSP_STATUS field portion is 17 bytes, packed little-endian with NO
- * padding (matches Python struct "<HIIBBBI"):
+ * CMD_CONFIG payload, little-endian, no padding (Python struct "<HII"):
+ *   off 0 : u16 intensity
+ *   off 2 : u32 ramp_ticks
+ *   off 6 : u32 hold_ticks
+ *
+ * RSP_STATUS payload, little-endian (Python struct "<HIIBBI"), 16 bytes:
  *   off 0  : u16 intensity
  *   off 2  : u32 ramp_ticks
  *   off 6  : u32 hold_ticks
  *   off 10 : u8  button_mask
- *   off 11 : u8  armed (0/1)
- *   off 12 : u8  phase ('W'/'T')
- *   off 13 : u32 tick
- * The firmware writes these bytes by hand (see emit_status) rather than
- * memcpy'ing a struct, to avoid any compiler padding.
+ *   off 11 : u8  phase ('W'/'T')
+ *   off 12 : u32 tick
  */
-#define PROTO_STATUS_FIELD_LEN   17u
+#define PROTO_STATUS_LEN    16u
 
-/* Largest payload (TYPE + fields) we assemble or accept. */
-#define PROTO_MAX_PAYLOAD        24u
+/* Largest payload (inbound or outbound) we assemble or accept. */
+#define PROTO_MAX_PAYLOAD   16u
 
 #endif /* PROTOCOL_H */
