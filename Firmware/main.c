@@ -399,71 +399,46 @@ static void tx_frame(uint8_t type, const uint8_t *payload, size_t len)
     }
 }
 
-static inline void put_u16(uint8_t *p, uint16_t v)
-{
-    p[0] = (uint8_t)(v & 0xFFu);
-    p[1] = (uint8_t)(v >> 8);
-}
-
-static inline void put_u32(uint8_t *p, uint32_t v)
-{
-    p[0] = (uint8_t)(v & 0xFFu);
-    p[1] = (uint8_t)((v >> 8)  & 0xFFu);
-    p[2] = (uint8_t)((v >> 16) & 0xFFu);
-    p[3] = (uint8_t)((v >> 24) & 0xFFu);
-}
-
-static uint32_t get_u16(const uint8_t *p)
-{
-    return (uint32_t)p[0] | ((uint32_t)p[1] << 8);
-}
-
-static uint32_t get_u32(const uint8_t *p)
-{
-    return (uint32_t)p[0] | ((uint32_t)p[1] << 8)
-         | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
-}
-
 static void emit_status(void)
 {
-    /* RSP_STATUS layout matches PROTO_STATUS_LEN / Python "<HIIBBI".
-     * Written byte-by-byte (little-endian) to avoid any struct padding. */
-    uint8_t p[PROTO_STATUS_LEN];
-    put_u16(&p[0],  g_config_live.intensity);
-    put_u32(&p[2],  g_config_live.ramp_ticks);
-    put_u32(&p[6],  g_config_live.hold_ticks);
-    p[10] = g_btn_mask;
-    p[11] = (g_state.overall == OVERALL_WAITING) ? PHASE_WAITING
-                                                 : PHASE_TRIGGERED;
-    put_u32(&p[12], g_isr_ticks);
-    tx_frame(RSP_STATUS, p, sizeof p);
+    /* Fill the packed payload struct and ship its bytes verbatim — both
+     * ends are little-endian, so no manual byte packing is needed (the
+     * _Static_assert in protocol.h locks the layout to Python's struct). */
+    StatusPayload s = {
+        .intensity   = g_config_live.intensity,
+        .ramp_ticks  = g_config_live.ramp_ticks,
+        .hold_ticks  = g_config_live.hold_ticks,
+        .button_mask = g_btn_mask,
+        .phase = (g_state.overall == OVERALL_WAITING) ? PHASE_WAITING
+                                                      : PHASE_TRIGGERED,
+        .tick = g_isr_ticks,
+    };
+    tx_frame(RSP_STATUS, (const uint8_t *)&s, sizeof s);
 }
 
 static void emit_pulse_event(uint8_t type, uint32_t tick)
 {
-    uint8_t p[4];
-    put_u32(p, tick);
-    tx_frame(type, p, sizeof p);
+    /* Payload is a bare little-endian u32. */
+    tx_frame(type, (const uint8_t *)&tick, sizeof tick);
 }
 
 static void apply_config(const uint8_t *payload)
 {
-    /* CMD_CONFIG payload: i u16, r u32, h u32 (LE).  Apply only if every
-     * field is in range — config is atomic (all three or none).  Each store
-     * is a single aligned write (atomic on M0+); the ISR snapshots the struct
-     * at latch time, so no IRQ bracketing is needed. */
-    uint32_t i = get_u16(&payload[0]);
-    uint32_t r = get_u32(&payload[2]);
-    uint32_t h = get_u32(&payload[6]);
-    if (i < INTENSITY_MIN || i > INTENSITY_MAX ||
-        r < RAMP_TICKS_MIN || r > RAMP_TICKS_MAX ||
-        h < HOLD_TICKS_MIN || h > HOLD_TICKS_MAX) {
+    /* The decoder guarantees CMD_CONFIG_LEN bytes; read them through the
+     * packed struct (the compiler emits byte-wise access, safe on M0+).
+     * Apply only if every field is in range — config is atomic.  Each store
+     * is a single aligned write; the ISR snapshots the struct at latch time,
+     * so no IRQ bracketing is needed. */
+    const ConfigPayload *c = (const ConfigPayload *)payload;
+    if (c->intensity < INTENSITY_MIN || c->intensity > INTENSITY_MAX ||
+        c->ramp_ticks < RAMP_TICKS_MIN || c->ramp_ticks > RAMP_TICKS_MAX ||
+        c->hold_ticks < HOLD_TICKS_MIN || c->hold_ticks > HOLD_TICKS_MAX) {
         return;   /* out of range: leave config unchanged; the STATUS echo
                    * shows the host its CONFIG didn't take. */
     }
-    g_config_live.intensity  = (uint16_t)i;
-    g_config_live.ramp_ticks = r;
-    g_config_live.hold_ticks = h;
+    g_config_live.intensity  = c->intensity;
+    g_config_live.ramp_ticks = c->ramp_ticks;
+    g_config_live.hold_ticks = c->hold_ticks;
 }
 
 static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
