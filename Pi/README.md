@@ -4,8 +4,9 @@ Pi-side Python that talks to the LaserHAT. A **broker daemon owns the
 serial port** and every GUI is a client of it over a Unix socket, so the
 eink GUI and web GUI run at the same time.
 
-- `protocol.py` — the binary wire protocol (COBS + CRC16). Single
-  Python source of truth; mirror of `Firmware/laserHatFirmware/protocol.h`.
+- `protocol.py` — the binary wire protocol (magic-word framing, no CRC;
+  every command is answered with `RSP_STATUS`). Single Python source of
+  truth; mirror of `Firmware/laserHatFirmware/protocol.h`.
 - `laser_hat.py` — the binary UART transport (`LaserUART`) plus the
   shared `State` dataclass. Used **only by the broker** (it is the lone
   serial-port owner). Also a small CLI smoke tool for the raw link.
@@ -15,7 +16,8 @@ eink GUI and web GUI run at the same time.
   the broker broadcasts down (pub/sub).
 - `hat_client.py` — `HatClient`, the thin client GUIs use: connects to
   the broker, caches the latest broadcast `State`, fires a callback on
-  every update, and exposes `set_*` / `trigger` / `trigger_gpio` / `arm`.
+  every update, and exposes `set_*` / `trigger` / `trigger_gpio` (the
+  broker compiles per-knob `set_*` into one atomic `CMD_CONFIG`).
 - `eink_panel.py` — slim self-contained SSD1680 / GDEY0213B74 driver
   on `spidev` + `gpiozero` + Pillow.
 - `pi_trigger.py` — `PiTrigger` class + CLI. Drives Pi GPIO 24 high
@@ -30,7 +32,7 @@ eink GUI and web GUI run at the same time.
 
 ```
 Pi/
-  protocol.py            binary wire protocol (COBS + CRC16)
+  protocol.py            binary wire protocol (magic framing, no CRC)
   laser_hat.py           LaserUART transport + State + CLI smoke tool
   broker.py              UART-owning broker daemon (Unix socket, pub/sub)
   hat_client.py          HatClient — GUI-facing broker client

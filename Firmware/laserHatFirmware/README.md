@@ -109,11 +109,21 @@ those pins directly via the kernel's libgpiod interface — no external
 debug probe required.
 
 ```bash
+sudo systemctl stop laserhat-broker.service   # frees Pi GPIO 24 (= SWDIO)
 sudo apt install openocd
 make flash             # builds if needed, then programs and resets
 # `make load` and `make burn` are aliases for the same thing.
 make reset             # just reset the MCU, leave flash contents alone
+sudo systemctl start laserhat-broker.service
 ```
+
+> **Flash with the laser unplugged**, and **stop the broker first**. PA19
+> doubles as SWDIO *and* the Pi-GPIO trigger; the broker holds Pi GPIO 24
+> for the trigger pin, so OpenOCD can't claim SWDIO until it's stopped.
+> `make flash` power-cycles the MCU and halts the core during the boot
+> blink, so PA19 stays SWDIO and the firmware never runs to fire the laser
+> — but if anything attaches SWD to an already-running MCU, the SWD wiggling
+> on PA19 looks like trigger edges. Unplugging the laser makes that moot.
 
 `make flash` does not run an OpenOCD verify pass. The target-side
 CRC algorithm in `ti_mspm0.cfg` / OpenOCD 0.12.0+dev hangs the MCU
@@ -222,32 +232,39 @@ UART is on those pins.
 
 ### Quick UART smoke test
 
-The firmware speaks a **binary framed protocol** on UART0 (115200 8N1):
-each message is COBS-encoded over a CRC16 body, `0x00`-delimited. The
-message map is the single source of truth in `protocol.h` (mirrored in
-`Pi/protocol.py`); in short:
+The firmware speaks a **magic-word-framed binary protocol** on UART0
+(115200 8N1).  Each frame is `SYNC(DE AD) | TYPE | payload`, where the
+payload length is implied by the type — no length field, no byte-stuffing,
+**no CRC**.  The message map is the single source of truth in `protocol.h`
+(mirrored in `Pi/protocol.py`):
 
 ```
-Host -> MCU                            MCU -> Host
-  CMD_SET_INTENSITY  u16                 RSP_ACK     cmd, status
-  CMD_SET_RAMP       u32 (10 µs ticks)   RSP_STATUS  i,r,h,buttons,armed,phase,tick
-  CMD_SET_HOLD       u32 (10 µs ticks)   EVT_PULSE_START  tick
-  CMD_TRIGGER                            EVT_PULSE_END    tick
-  CMD_ARM                                EVT_BUTTON       mask, edges
+Host -> MCU                          MCU -> Host
+  CMD_CONFIG  i u16,                   RSP_STATUS  i,r,h,buttons,phase,tick
+              r u32 (10 µs ticks),     EVT_PULSE_START  tick
+              h u32 (10 µs ticks)      EVT_PULSE_END    tick
+  CMD_TRIGGER                          EVT_BUTTON       mask, edges
   CMD_QUERY
 ```
 
-Defaults at boot: `i=320 r=8000 h=10000`, PA19 unarmed. Each command is
-answered with `RSP_ACK` (`status = ACK_OK` or a reject code), except
-`CMD_QUERY`, which returns `RSP_STATUS`. A trigger ACKs immediately, then
-the MCU emits `EVT_PULSE_START` when the pulse begins and `EVT_PULSE_END`
-when it returns to idle. Button edges arrive unsolicited as `EVT_BUTTON`.
+Defaults at boot: `i=320 r=8000 h=10000`.  **Every command is answered with
+`RSP_STATUS`** (status-as-ack) — so the host confirms the resulting state
+end-to-end; that echo is the integrity check.  `CMD_CONFIG` sets all three
+stim parameters at once (atomic; out-of-range leaves the config unchanged,
+which the echo reveals).  A trigger also emits `EVT_PULSE_START` when the
+pulse begins and `EVT_PULSE_END` when it returns to idle; button edges
+arrive unsolicited as `EVT_BUTTON`.
 
-`CMD_ARM` is one-way: once armed, PA19 stays a GPIO trigger input until
-the MCU is reset. This keeps SWD reflashing reliable on a fresh boot —
-the firmware never reconfigures the SWDIO pin unless a client explicitly
-asks. The broker arms PA19 once (lazily) the first time a client uses the
-GPIO-trigger path, so users don't need to think about it.
+No CRC is needed: every command's `RSP_STATUS` echo verifies the values
+end-to-end, decoded `STATUS`/event fields are range-checked, and the host
+guarantees a `CMD_CONFIG` payload never contains the `SYNC` bytes (it nudges
+the ~150 ramp/hold values whose low 16 bits would equal `DE AD`), so the
+MCU's resync on the next `SYNC` is exact.
+
+**PA19** is the Pi-GPIO trigger input from boot — there is no arm command.
+The firmware claims it at the *end* of boot, after the ~4 s blink, so the
+blink is the SWD flashing window (see "Flashing" — flash with the laser
+unplugged, since SWD activity on PA19 looks like trigger edges).
 
 Because the protocol is binary you can't drive it from a terminal like
 `picocom`. Use the round-trip smoke tool — it reuses the Pi-side codec
@@ -261,7 +278,7 @@ python3 host_tools/smoke_test.py /dev/ttyAMA0
 sudo systemctl start laserhat-broker.service
 ```
 
-For ad-hoc pokes there's also `Pi/laser_hat.py query|set|trigger|watch`
+For ad-hoc pokes there's also `Pi/laser_hat.py query|trigger|config|watch`
 (same caveat — stop the broker first). Either way you must be in the
 `dialout` group:
 
