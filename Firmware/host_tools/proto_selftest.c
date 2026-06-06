@@ -64,6 +64,25 @@ int main(int argc, char **argv)
         }
         return 0;
     }
-    fprintf(stderr, "usage: %s encode|decode ...\n", argv[0]);
+    if (argc == 5 && strcmp(argv[1], "config") == 0) {
+        ConfigPayload c;
+        c.intensity  = (uint16_t)strtoul(argv[2], NULL, 10);
+        c.ramp_ticks = (uint32_t)strtoul(argv[3], NULL, 10);
+        c.hold_ticks = (uint32_t)strtoul(argv[4], NULL, 10);
+        print_hex((const uint8_t *)&c, sizeof c);
+        return 0;
+    }
+    if (argc == 8 && strcmp(argv[1], "status") == 0) {
+        StatusPayload s;
+        s.intensity   = (uint16_t)strtoul(argv[2], NULL, 10);
+        s.ramp_ticks  = (uint32_t)strtoul(argv[3], NULL, 10);
+        s.hold_ticks  = (uint32_t)strtoul(argv[4], NULL, 10);
+        s.button_mask = (uint8_t)strtoul(argv[5], NULL, 10);
+        s.phase       = (uint8_t)strtoul(argv[6], NULL, 10);
+        s.tick        = (uint32_t)strtoul(argv[7], NULL, 10);
+        print_hex((const uint8_t *)&s, sizeof s);
+        return 0;
+    }
+    fprintf(stderr, "usage: %s encode|decode|config|status ...\n", argv[0]);
     return 2;
 }

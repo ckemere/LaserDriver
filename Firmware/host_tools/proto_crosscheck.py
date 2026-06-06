@@ -64,10 +64,24 @@ def main():
                 print(f"DECODE MISMATCH type={mtype:#04x}\n  exp={exp}\n  got={dec}")
                 failures += 1
 
+    # Packed-struct layout must be byte-identical to the Python struct formats.
+    struct_cases = [
+        ("config " + c("config", "320", "8000", "10000"),
+         p._CONFIG.pack(320, 8000, 10000).hex()),
+        ("status " + c("status", "200", "8000", "10000", "10",
+                       str(p.PHASE_TRIGGERED), "123456"),
+         p._STATUS.pack(200, 8000, 10000, 10, p.PHASE_TRIGGERED, 123456).hex()),
+    ]
+    for label_got, want in struct_cases:
+        label, got = label_got.split(" ", 1)
+        if got != want:
+            print(f"STRUCT MISMATCH {label}\n  py={want}\n  c ={got}")
+            failures += 1
+
     if failures:
         print(f"\n{failures} mismatch(es)")
         return 1
-    print(f"OK: {len(CASES)} frames byte-identical C<->Python")
+    print(f"OK: {len(CASES)} frames + packed structs byte-identical C<->Python")
     return 0
 
 

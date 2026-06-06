@@ -42,23 +42,39 @@
 /* Inbound (command) payload lengths. */
 #define CMD_CONFIG_LEN    10u   /* i(2) + r(4) + h(4) */
 
-/*
- * CMD_CONFIG payload, little-endian, no padding (Python struct "<HII"):
- *   off 0 : u16 intensity
- *   off 2 : u32 ramp_ticks
- *   off 6 : u32 hold_ticks
- *
- * RSP_STATUS payload, little-endian (Python struct "<HIIBBI"), 16 bytes:
- *   off 0  : u16 intensity
- *   off 2  : u32 ramp_ticks
- *   off 6  : u32 hold_ticks
- *   off 10 : u8  button_mask
- *   off 11 : u8  phase ('W'/'T')
- *   off 12 : u32 tick
- */
 #define PROTO_STATUS_LEN    16u
 
 /* Largest payload (inbound or outbound) we assemble or accept. */
 #define PROTO_MAX_PAYLOAD   16u
+
+/*
+ * Payload structs.  Packed so the wire bytes are exactly the fields in
+ * order with no padding, and little-endian — which matches both ends (ARM
+ * Cortex-M0+ and the Pi host are LE) and Python's struct formats below.
+ * That lets the firmware fill/read a struct and memcpy/cast it to the wire
+ * instead of packing bytes by hand.  Reading a received buffer through a
+ * packed struct is safe on M0+ (which faults on unaligned access): the
+ * compiler emits byte-wise access for the misaligned members.
+ *
+ * The _Static_asserts lock these to the lengths above; keep them in sync
+ * with Pi/protocol.py (_CONFIG = "<HII", _STATUS = "<HIIBBI").
+ */
+typedef struct __attribute__((packed)) {
+    uint16_t intensity;
+    uint32_t ramp_ticks;
+    uint32_t hold_ticks;
+} ConfigPayload;
+
+typedef struct __attribute__((packed)) {
+    uint16_t intensity;
+    uint32_t ramp_ticks;
+    uint32_t hold_ticks;
+    uint8_t  button_mask;
+    uint8_t  phase;          /* PHASE_WAITING / PHASE_TRIGGERED */
+    uint32_t tick;
+} StatusPayload;
+
+_Static_assert(sizeof(ConfigPayload) == CMD_CONFIG_LEN, "ConfigPayload layout drift");
+_Static_assert(sizeof(StatusPayload) == PROTO_STATUS_LEN, "StatusPayload layout drift");
 
 #endif /* PROTOCOL_H */
