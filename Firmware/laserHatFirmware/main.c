@@ -8,7 +8,6 @@
 #include "uart.h"
 #include "protocol.h"
 #include "framing.h"
-#include "cobs.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -37,7 +36,7 @@
  * host is a broker that reads all typed frames and routes them by type, so
  * there's no per-source ACK gating to get wrong.
  *
- * Wire protocol is binary framed (COBS + CRC16); see protocol.h / framing.h
+ * Wire protocol is binary, magic-word framed; see protocol.h / framing.h
  * and the host mirror Pi/protocol.py.  The UART RX ISR still just pushes
  * bytes into a ring; the main loop feeds them to a frame decoder.
  *
@@ -166,13 +165,13 @@ typedef struct {
 } ButtonEvent;
 static ButtonEvent g_btn_event = { 0u, 0u, false };
 
-/* PA19 (SWDIO) stays in its boot-default SWDIO function until the host
- * sends `g\n` over UART, at which point the firmware reclaims it as a
- * GPIO-input trigger line.  This guarantees SWD reflashing always
- * works on a freshly-booted MCU; clients enable the GPIO-trigger path
- * explicitly when they want it.
- * Canonical rationale: board.h (PA19 block) and README.md (UART protocol). */
-static bool g_pi_trigger_armed = false;
+/* PA19 (SWDIO) stays in its boot-default SWDIO function through the boot
+ * blink, then the firmware claims it as the Pi-GPIO trigger input (see the
+ * end of main()).  The blink is the SWD window: a `make flash` power-cycles
+ * the MCU and OpenOCD halts the core during the blink, so PA19 stays SWDIO
+ * for flashing.  Flash with the laser unplugged — once PA19 is a live
+ * trigger, SWD activity on it would look like trigger edges.
+ * Canonical rationale: board.h (PA19 block) and README.md. */
 
 /* Set by TIMG6_IRQHandler at 1 kHz; cleared by main when it actually
  * runs housekeeping work.  TIMG0 ticks also wake main from WFI, but
@@ -370,19 +369,22 @@ static void poll_buttons(void)
 }
 
 /* -----------------------------------------------------------------------
- * UART protocol — binary framed (COBS + CRC16)
+ * UART protocol — magic-word framed binary (SYNC | TYPE | payload)
  *
  * Command frames (host -> MCU) are decoded here; response/event frames
  * (MCU -> host) are encoded and sent.  See protocol.h for the type/field
  * map and Pi/protocol.py for the host mirror.  The RX ISR pushes bytes
  * into a ring; this code feeds them to the frame decoder.
  *
- *   CMD_SET_INTENSITY u16   -> RSP_ACK
- *   CMD_SET_RAMP/HOLD u32   -> RSP_ACK
- *   CMD_TRIGGER             -> RSP_ACK, then EVT_PULSE_START/_END
- *   CMD_ARM                 -> RSP_ACK   (reclaim PA19 from SWDIO)
- *   CMD_QUERY               -> RSP_STATUS
- *   (async)                 -> EVT_BUTTON on any debounced button change
+ *   CMD_CONFIG  i,r,h  -> RSP_STATUS    (status-as-ack)
+ *   CMD_TRIGGER        -> RSP_STATUS, then EVT_PULSE_START/_END
+ *   CMD_QUERY          -> RSP_STATUS
+ *   (async)            -> EVT_BUTTON on any debounced button change
+ *
+ * Every command is answered with RSP_STATUS, so the host confirms the
+ * resulting state end-to-end — that echo is the integrity check; there is
+ * no CRC.  The host guarantees a CMD_CONFIG payload never contains the SYNC
+ * bytes, so the decoder's resync is exact.
  * ----------------------------------------------------------------------- */
 
 static FrameDecoder g_rx_decoder;
@@ -390,7 +392,7 @@ static FrameDecoder g_rx_decoder;
 /* Encode one frame and push it out the UART (blocking). */
 static void tx_frame(uint8_t type, const uint8_t *payload, size_t len)
 {
-    uint8_t wire[COBS_ENCODE_MAX(FRAME_MAX_BODY) + 1u];
+    uint8_t wire[3u + PROTO_MAX_PAYLOAD];
     size_t  n = frame_encode(type, payload, len, wire, sizeof wire);
     if (n != 0u) {
         laser_uart_tx_buf(wire, (uint32_t)n);
@@ -411,25 +413,29 @@ static inline void put_u32(uint8_t *p, uint32_t v)
     p[3] = (uint8_t)((v >> 24) & 0xFFu);
 }
 
-static void emit_ack(uint8_t cmd_type, uint8_t status)
+static uint32_t get_u16(const uint8_t *p)
 {
-    uint8_t payload[2] = { cmd_type, status };
-    tx_frame(RSP_ACK, payload, sizeof payload);
+    return (uint32_t)p[0] | ((uint32_t)p[1] << 8);
+}
+
+static uint32_t get_u32(const uint8_t *p)
+{
+    return (uint32_t)p[0] | ((uint32_t)p[1] << 8)
+         | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
 }
 
 static void emit_status(void)
 {
-    /* Field layout matches PROTO_STATUS_FIELD_LEN / Python "<HIIBBBI".
+    /* RSP_STATUS layout matches PROTO_STATUS_LEN / Python "<HIIBBI".
      * Written byte-by-byte (little-endian) to avoid any struct padding. */
-    uint8_t p[PROTO_STATUS_FIELD_LEN];
+    uint8_t p[PROTO_STATUS_LEN];
     put_u16(&p[0],  g_config_live.intensity);
     put_u32(&p[2],  g_config_live.ramp_ticks);
     put_u32(&p[6],  g_config_live.hold_ticks);
     p[10] = g_btn_mask;
-    p[11] = g_pi_trigger_armed ? 1u : 0u;
-    p[12] = (g_state.overall == OVERALL_WAITING) ? PHASE_WAITING
+    p[11] = (g_state.overall == OVERALL_WAITING) ? PHASE_WAITING
                                                  : PHASE_TRIGGERED;
-    put_u32(&p[13], g_isr_ticks);
+    put_u32(&p[12], g_isr_ticks);
     tx_frame(RSP_STATUS, p, sizeof p);
 }
 
@@ -440,74 +446,43 @@ static void emit_pulse_event(uint8_t type, uint32_t tick)
     tx_frame(type, p, sizeof p);
 }
 
-/* Decode a fixed-width little-endian field of the expected length. */
-static bool payload_u16(const uint8_t *p, size_t len, uint32_t *out)
+static void apply_config(const uint8_t *payload)
 {
-    if (len != 2u) return false;
-    *out = (uint32_t)p[0] | ((uint32_t)p[1] << 8);
-    return true;
-}
-
-static bool payload_u32(const uint8_t *p, size_t len, uint32_t *out)
-{
-    if (len != 4u) return false;
-    *out = (uint32_t)p[0] | ((uint32_t)p[1] << 8)
-         | ((uint32_t)p[2] << 16) | ((uint32_t)p[3] << 24);
-    return true;
+    /* CMD_CONFIG payload: i u16, r u32, h u32 (LE).  Apply only if every
+     * field is in range — config is atomic (all three or none).  Each store
+     * is a single aligned write (atomic on M0+); the ISR snapshots the struct
+     * at latch time, so no IRQ bracketing is needed. */
+    uint32_t i = get_u16(&payload[0]);
+    uint32_t r = get_u32(&payload[2]);
+    uint32_t h = get_u32(&payload[6]);
+    if (i < INTENSITY_MIN || i > INTENSITY_MAX ||
+        r < RAMP_TICKS_MIN || r > RAMP_TICKS_MAX ||
+        h < HOLD_TICKS_MIN || h > HOLD_TICKS_MAX) {
+        return;   /* out of range: leave config unchanged; the STATUS echo
+                   * shows the host its CONFIG didn't take. */
+    }
+    g_config_live.intensity  = (uint16_t)i;
+    g_config_live.ramp_ticks = r;
+    g_config_live.hold_ticks = h;
 }
 
 static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
 {
-    uint32_t arg = 0u;
-
     switch (type) {
-        case CMD_SET_INTENSITY:
-            if (!payload_u16(payload, len, &arg) ||
-                arg < INTENSITY_MIN || arg > INTENSITY_MAX) {
-                emit_ack(type, ACK_RANGE); return;
+        case CMD_CONFIG:
+            if (len == CMD_CONFIG_LEN) {
+                apply_config(payload);
             }
-            /* Single aligned store; atomic on Cortex-M0+.  The ISR snapshots
-             * config atomically at latch time, so no IRQ bracketing here. */
-            g_config_live.intensity = (uint16_t)arg;
-            emit_ack(type, ACK_OK);
-            break;
-
-        case CMD_SET_RAMP:
-            if (!payload_u32(payload, len, &arg) ||
-                arg < RAMP_TICKS_MIN || arg > RAMP_TICKS_MAX) {
-                emit_ack(type, ACK_RANGE); return;
-            }
-            g_config_live.ramp_ticks = arg;   /* single aligned store (see above) */
-            emit_ack(type, ACK_OK);
-            break;
-
-        case CMD_SET_HOLD:
-            if (!payload_u32(payload, len, &arg) ||
-                arg < HOLD_TICKS_MIN || arg > HOLD_TICKS_MAX) {
-                emit_ack(type, ACK_RANGE); return;
-            }
-            g_config_live.hold_ticks = arg;   /* single aligned store (see above) */
-            emit_ack(type, ACK_OK);
+            emit_status();      /* status-as-ack: echoes the resulting config */
             break;
 
         case CMD_TRIGGER:
-            if (g_state.overall != OVERALL_WAITING) {
-                emit_ack(type, ACK_BUSY);
-                return;
+            if (g_state.overall == OVERALL_WAITING) {
+                g_uart_trigger_pending = true;
             }
-            g_uart_trigger_pending = true;
-            emit_ack(type, ACK_OK);
-            /* EVT_PULSE_START / _END follow from the main loop. */
-            break;
-
-        case CMD_ARM:
-            /* Arm the Pi-GPIO (PA19) trigger.  No disarm — to put PA19 back
-             * as SWDIO, reset the MCU.  Idempotent: re-arming just re-runs
-             * the IOMUX write.
-             * Canonical rationale: board.h (PA19) / README.md. */
-            laser_gpio_arm_pi_trigger();
-            g_pi_trigger_armed = true;
-            emit_ack(type, ACK_OK);
+            /* EVT_PULSE_START / _END follow; the echoed phase tells the host
+             * whether the trigger took (W) or was busy (T). */
+            emit_status();
             break;
 
         case CMD_QUERY:
@@ -515,8 +490,7 @@ static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
             break;
 
         default:
-            emit_ack(type, ACK_UNKNOWN);
-            break;
+            break;              /* unknown type: ignore; resync handles it */
     }
 }
 
@@ -525,7 +499,7 @@ static void drain_uart(void)
     uint8_t b;
     while (laser_uart_rx_pop(&b)) {
         uint8_t type;
-        uint8_t payload[FRAME_MAX_BODY];
+        uint8_t payload[PROTO_MAX_PAYLOAD];
         size_t  len;
         if (frame_decoder_push(&g_rx_decoder, b, &type,
                                payload, sizeof payload, &len)) {
@@ -574,9 +548,10 @@ int main(void)
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
     }
 
-    /* PA19 (SWDIO) stays in its boot-default SWDIO function until the
-     * host sends `g\n` over UART.  Keeps SWD reflashing reliable on a
-     * freshly-booted MCU regardless of what the previous firmware did. */
+    /* The blink above is the SWD flashing window — PA19 is still SWDIO
+     * here.  We claim PA19 as the trigger input at the very end of init
+     * (just before the main loop) so OpenOCD has the whole blink + init to
+     * connect and halt. */
 
     laser_timera_init();
     laser_timerg_init_tick();
@@ -609,6 +584,11 @@ int main(void)
     NVIC_SetPriority(GPIOA_INT_IRQn, 1);
     NVIC_ClearPendingIRQ(GPIOA_INT_IRQn);
     NVIC_EnableIRQ(GPIOA_INT_IRQn);
+
+    /* Claim PA19 as the Pi-GPIO trigger input now that the SWD flashing
+     * window (boot blink + init) has passed.  PA19 has an internal pull-down,
+     * so a released line idles low and can't self-trigger. */
+    laser_gpio_arm_pi_trigger();
 
     while (1) {
         if (g_housekeeping_due) {

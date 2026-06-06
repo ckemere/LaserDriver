@@ -29,7 +29,7 @@ linker/                  mspm0g3507.{lds,cmd}
 main.c                   state machine, boot, IRQ handlers, frame dispatch
 gpio.c/h uart.c/h …      per-peripheral application modules
 protocol.h               binary wire protocol map (mirror of Pi/protocol.py)
-crc16/cobs/framing .c/h  binary framing codec (COBS + CRC16)
+framing.c/h              magic-word frame encode/decode
 board.h                  pin assignments
 ```
 
@@ -71,9 +71,7 @@ already in the repo under `sdk/` — no additional downloads needed.
 | `dac.c/h` | DAC0 + internal VREF (2.5 V) |
 | `uart.c/h` | UART0 at 115200 8N1, RX ring buffer + blocking TX (`_tx_buf`) |
 | `protocol.h` | Binary wire protocol map (message types + field layout); mirror of `Pi/protocol.py` |
-| `crc16.c/h` | CRC16-CCITT (bitwise) |
-| `cobs.c/h` | Consistent Overhead Byte Stuffing encode/decode |
-| `framing.c/h` | Frame assemble/decode (COBS + CRC16, 0x00-delimited) |
+| `framing.c/h` | Magic-word frame encode/decode (`SYNC \| TYPE \| payload`, no CRC) |
 | `main.c` | State machine, boot sequence, IRQ handlers, binary frame dispatch, `main` |
 
 Each peripheral module exposes an `_init()` (and where useful `_start()`)
@@ -154,8 +152,6 @@ Stage only:
 - `dac.c` / `.h`
 - `uart.c` / `.h`
 - `protocol.h`
-- `crc16.c` / `.h`
-- `cobs.c` / `.h`
 - `framing.c` / `.h`
 - `board.h`
 - `Makefile`, `Makefile.gcc`

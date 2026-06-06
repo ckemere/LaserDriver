@@ -1,37 +1,37 @@
 #include "framing.h"
-#include "cobs.h"
-#include "crc16.h"
 
 size_t frame_encode(uint8_t type, const uint8_t *payload, size_t payload_len,
                     uint8_t *out, size_t out_cap)
 {
-    uint8_t body[FRAME_MAX_BODY];
-    size_t  body_len = 0u;
-
-    if (1u + payload_len + 2u > FRAME_MAX_BODY) {
+    if (3u + payload_len > out_cap) {
         return 0u;
     }
-
-    body[body_len++] = type;
+    out[0] = PROTO_SYNC0;
+    out[1] = PROTO_SYNC1;
+    out[2] = type;
     for (size_t i = 0; i < payload_len; i++) {
-        body[body_len++] = payload[i];
+        out[3u + i] = payload[i];
     }
-    uint16_t crc = crc16_ccitt(body, body_len);
-    body[body_len++] = (uint8_t)(crc & 0xFFu);
-    body[body_len++] = (uint8_t)(crc >> 8);
+    return 3u + payload_len;
+}
 
-    /* COBS-encode the body into out, then append the 0x00 delimiter. */
-    size_t enc = cobs_encode(body, body_len, out, out_cap);
-    if (enc == 0u || enc + 1u > out_cap) {
-        return 0u;
+/* Inbound (command) payload length, or -1 for an unknown/out-of-direction
+ * type.  The MCU only ever decodes commands. */
+static int cmd_payload_len(uint8_t type)
+{
+    switch (type) {
+        case CMD_CONFIG:  return (int)CMD_CONFIG_LEN;
+        case CMD_TRIGGER: return 0;
+        case CMD_QUERY:   return 0;
+        default:          return -1;
     }
-    out[enc] = 0x00u;
-    return enc + 1u;
 }
 
 void frame_decoder_init(FrameDecoder *d)
 {
-    d->len = 0u;
+    d->state = FRAME_SYNC0;
+    d->plen  = 0u;
+    d->need  = 0u;
 }
 
 bool frame_decoder_push(FrameDecoder *d, uint8_t byte,
@@ -39,43 +39,63 @@ bool frame_decoder_push(FrameDecoder *d, uint8_t byte,
                         uint8_t *payload_out, size_t payload_cap,
                         size_t *payload_len_out)
 {
-    if (byte != 0x00u) {
-        if (d->len < FRAME_RX_BUF_SIZE) {
-            d->buf[d->len++] = byte;
-        } else {
-            d->len = 0u;        /* runaway frame; drop and resync */
+    switch (d->state) {
+        case FRAME_SYNC0:
+            if (byte == PROTO_SYNC0) {
+                d->state = FRAME_SYNC1;
+            }
+            return false;
+
+        case FRAME_SYNC1:
+            if (byte == PROTO_SYNC1) {
+                d->state = FRAME_TYPE;
+            } else if (byte != PROTO_SYNC0) {
+                d->state = FRAME_SYNC0;
+            }
+            /* byte == SYNC0: stay in SYNC1 (a run of SYNC0s). */
+            return false;
+
+        case FRAME_TYPE: {
+            int n = cmd_payload_len(byte);
+            if (n < 0) {
+                /* Unknown type: not a real frame here.  Let this byte still
+                 * be able to start the next SYNC. */
+                d->state = (byte == PROTO_SYNC0) ? FRAME_SYNC1 : FRAME_SYNC0;
+                return false;
+            }
+            d->type = byte;
+            if (n == 0) {
+                d->state = FRAME_SYNC0;
+                *type_out = byte;
+                *payload_len_out = 0u;
+                return true;
+            }
+            d->need = (uint8_t)n;
+            d->plen = 0u;
+            d->state = FRAME_PAYLOAD;
+            return false;
         }
-        return false;
-    }
 
-    /* Delimiter: try to decode whatever we've accumulated. */
-    size_t block_len = d->len;
-    d->len = 0u;
-    if (block_len == 0u) {
-        return false;           /* empty (e.g. back-to-back delimiters) */
-    }
+        case FRAME_PAYLOAD:
+            if (d->plen < PROTO_MAX_PAYLOAD) {
+                d->payload[d->plen] = byte;
+            }
+            d->plen++;
+            if (d->plen >= d->need) {
+                d->state = FRAME_SYNC0;
+                if (d->need <= payload_cap) {
+                    *type_out = d->type;
+                    for (uint8_t i = 0; i < d->need; i++) {
+                        payload_out[i] = d->payload[i];
+                    }
+                    *payload_len_out = d->need;
+                    return true;
+                }
+            }
+            return false;
 
-    uint8_t body[FRAME_MAX_BODY];
-    size_t  body_len = cobs_decode(d->buf, block_len, body, sizeof body);
-    if (body_len < 3u) {
-        return false;           /* malformed or runt */
+        default:
+            d->state = FRAME_SYNC0;
+            return false;
     }
-
-    size_t   data_len = body_len - 2u;
-    uint16_t want = (uint16_t)body[data_len] | ((uint16_t)body[data_len + 1u] << 8);
-    if (crc16_ccitt(body, data_len) != want) {
-        return false;           /* CRC mismatch; drop */
-    }
-
-    /* data = TYPE || payload */
-    *type_out = body[0];
-    size_t payload_len = data_len - 1u;
-    if (payload_len > payload_cap) {
-        return false;
-    }
-    for (size_t i = 0; i < payload_len; i++) {
-        payload_out[i] = body[1u + i];
-    }
-    *payload_len_out = payload_len;
-    return true;
 }
