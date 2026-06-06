@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Fake MSPM0 — a PTY that speaks the binary protocol, for off-hardware
-testing of broker.py / hat_client.py / web_app.py without a real board.
+"""Fake MSPM0 — a PTY that speaks the magic-framed protocol, for testing
+broker.py / hat_client.py / web_app.py off-hardware.
 
-Opens a pseudo-terminal, prints the slave device path on stdout (so a
-test harness or you can point the broker at it), and answers the wire
-protocol: replies to QUERY/SET/TRIGGER/ARM and, on a trigger, emits
+Opens a pseudo-terminal, prints the slave device path on stdout, and
+answers the wire protocol: every command (CONFIG / TRIGGER / QUERY) is
+answered with RSP_STATUS (status-as-ack), and a trigger also emits
 EVT_PULSE_START then EVT_PULSE_END after a short hold.
 
     python3 fake_mcu.py            # prints e.g. /dev/pts/7
@@ -29,13 +29,11 @@ PULSE_HOLD_S = 0.15
 class FakeMCU:
     def __init__(self, fd: int):
         self._fd = fd
-        self._dec = proto.StreamDecoder()
+        self._cmd = proto.StreamDecoder(proto.CMD_LEN)   # decode commands
         self._lock = threading.Lock()
         self._t0 = time.monotonic()
-        self.state = {
-            "intensity": 320, "ramp_ticks": 8000, "hold_ticks": 10000,
-            "button_mask": 0, "armed": 0, "phase": "W",
-        }
+        self.state = {"intensity": 320, "ramp_ticks": 8000, "hold_ticks": 10000,
+                      "button_mask": 0, "phase": "W"}
 
     def _tick(self) -> int:
         return int((time.monotonic() - self._t0) * 100_000) & 0xFFFFFFFF
@@ -46,14 +44,11 @@ class FakeMCU:
 
     def _send_status(self) -> None:
         s = self.state
-        self._send(proto.RSP_STATUS, proto._STATUS_STRUCT.pack(
+        self._send(proto.RSP_STATUS, proto._STATUS.pack(
             s["intensity"], s["ramp_ticks"], s["hold_ticks"],
-            s["button_mask"], s["armed"],
+            s["button_mask"],
             proto.PHASE_WAITING if s["phase"] == "W" else proto.PHASE_TRIGGERED,
             self._tick()))
-
-    def _ack(self, cmd_type: int, status: int) -> None:
-        self._send(proto.RSP_ACK, bytes([cmd_type, status]))
 
     def _do_pulse(self) -> None:
         self.state["phase"] = "T"
@@ -68,32 +63,17 @@ class FakeMCU:
         self._send(proto.EVT_BUTTON, bytes([mask, edges]))
 
     def handle(self, mtype: int, payload: bytes) -> None:
-        if mtype == proto.CMD_QUERY:
-            self._send_status()
-        elif mtype == proto.CMD_SET_INTENSITY and len(payload) == 2:
-            v = struct.unpack("<H", payload)[0]
-            if 1 <= v <= 320:
-                self.state["intensity"] = v
-                self._ack(mtype, proto.ACK_OK)
-            else:
-                self._ack(mtype, proto.ACK_RANGE)
-        elif mtype == proto.CMD_SET_RAMP and len(payload) == 4:
-            self.state["ramp_ticks"] = struct.unpack("<I", payload)[0]
-            self._ack(mtype, proto.ACK_OK)
-        elif mtype == proto.CMD_SET_HOLD and len(payload) == 4:
-            self.state["hold_ticks"] = struct.unpack("<I", payload)[0]
-            self._ack(mtype, proto.ACK_OK)
+        if mtype == proto.CMD_CONFIG and len(payload) == 10:
+            i, r, h = proto.unpack_config(payload)
+            if 1 <= i <= 320 and 1 <= r <= 10_000_000 and 1 <= h <= 10_000_000:
+                self.state.update(intensity=i, ramp_ticks=r, hold_ticks=h)
+            self._send_status()          # status-as-ack (echoes result)
         elif mtype == proto.CMD_TRIGGER:
             if self.state["phase"] == "W":
-                self._ack(mtype, proto.ACK_OK)
                 threading.Thread(target=self._do_pulse, daemon=True).start()
-            else:
-                self._ack(mtype, proto.ACK_BUSY)
-        elif mtype == proto.CMD_ARM:
-            self.state["armed"] = 1
-            self._ack(mtype, proto.ACK_OK)
-        else:
-            self._ack(mtype, proto.ACK_UNKNOWN)
+            self._send_status()
+        elif mtype == proto.CMD_QUERY:
+            self._send_status()
 
     def run(self) -> None:
         while True:
@@ -103,7 +83,7 @@ class FakeMCU:
                 return
             if not data:
                 return
-            for mtype, payload in self._dec.feed(data):
+            for mtype, payload in self._cmd.feed(data):
                 self.handle(mtype, payload)
 
 

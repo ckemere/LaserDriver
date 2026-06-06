@@ -30,7 +30,6 @@ class State:
     ramp_ticks: int         # 100 kHz ticks
     hold_ticks: int
     button_mask: int        # 4 bits, bit n = button n+1 pressed
-    gpio_armed: bool        # True if PA19 is acting as the Pi-GPIO trigger input
     phase: str              # 'W' (waiting) or 'T' (triggered)
     tick: int               # MSPM0 isr_ticks at the time of query
 
@@ -40,8 +39,7 @@ class State:
 
     @classmethod
     def from_status_payload(cls, payload: bytes) -> "State":
-        d = proto.unpack_status(payload)
-        return cls(**d)
+        return cls(**proto.unpack_status(payload))
 
 
 class LaserUART:
@@ -100,38 +98,33 @@ def _main() -> int:
     sub.add_parser("query")
     sub.add_parser("trigger")
     sub.add_parser("watch", help="print every frame until Ctrl-C")
-    sp = sub.add_parser("set")
-    sp.add_argument("knob", choices=["i", "r", "h"])
-    sp.add_argument("value", type=int)
+    sp = sub.add_parser("config", help="set intensity ramp hold at once")
+    sp.add_argument("intensity", type=int)
+    sp.add_argument("ramp", type=int)
+    sp.add_argument("hold", type=int)
 
     args = p.parse_args()
     uart = LaserUART(args.device, args.baud)
 
-    def wait_for(types, deadline=1.0):
+    def wait_status(deadline=1.0):
         end = time.monotonic() + deadline
         while time.monotonic() < end:
             for mtype, payload in uart.read_frames():
-                if mtype in types:
-                    return mtype, payload
+                if mtype == proto.RSP_STATUS:
+                    return State.from_status_payload(payload)
         return None
 
     if args.cmd == "query":
         uart.send(proto.CMD_QUERY)
-        got = wait_for({proto.RSP_STATUS})
-        print(State.from_status_payload(got[1]) if got else "no response")
+        print(wait_status() or "no response")
     elif args.cmd == "trigger":
         uart.send(proto.CMD_TRIGGER)
-        got = wait_for({proto.RSP_ACK})
-        print("OK" if got and got[1][1] == proto.ACK_OK else "ERR/no-response")
-    elif args.cmd == "set":
-        mtype, payload = {
-            "i": (proto.CMD_SET_INTENSITY, proto._U16.pack(args.value)),
-            "r": (proto.CMD_SET_RAMP,      proto._U32.pack(args.value)),
-            "h": (proto.CMD_SET_HOLD,      proto._U32.pack(args.value)),
-        }[args.knob]
-        uart.send(mtype, payload)
-        got = wait_for({proto.RSP_ACK})
-        print("OK" if got and got[1][1] == proto.ACK_OK else "ERR/no-response")
+        print(wait_status() or "no response")    # status echo is the ack
+    elif args.cmd == "config":
+        r = proto.avoid_magic(args.ramp)
+        h = proto.avoid_magic(args.hold)
+        uart.send(proto.CMD_CONFIG, proto._CONFIG.pack(args.intensity, r, h))
+        print(wait_status() or "no response")
     elif args.cmd == "watch":
         names = {v: k for k, v in vars(proto).items()
                  if k.isupper() and isinstance(v, int)}

@@ -30,7 +30,6 @@ def _state_from_msg(msg: dict) -> Optional[State]:
         ramp_ticks=msg["ramp_ticks"],
         hold_ticks=msg["hold_ticks"],
         button_mask=msg.get("button_mask", 0),
-        gpio_armed=msg.get("gpio_armed", False),
         phase=msg.get("phase", "W"),
         tick=msg.get("tick", 0),
     )
@@ -127,9 +126,6 @@ class HatClient:
 
     def trigger_gpio(self) -> bool:
         return self._command({"cmd": "trigger_gpio"}).get("ok", False)
-
-    def arm(self) -> bool:
-        return self._command({"cmd": "arm"}).get("ok", False)
 
     def request_query(self) -> None:
         self._command({"cmd": "query"})

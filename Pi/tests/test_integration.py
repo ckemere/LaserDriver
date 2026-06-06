@@ -76,12 +76,6 @@ def run() -> int:
         if not (got_start and got_end):
             failures.append(f"missing pulse events (start={got_start} end={got_end})")
 
-        # arm -> ACK ok, gpio_armed reflected.
-        if not client.arm():
-            failures.append("arm not acked ok")
-        if not _wait(lambda: getattr(client.get_state(), "gpio_armed", False)):
-            failures.append("arm did not reflect in state")
-
         client.close()
     finally:
         broker.terminate()
@@ -97,7 +91,7 @@ def run() -> int:
         for f in failures:
             print("FAIL:", f)
         return 1
-    print("integration OK: alive, set+mirror, range-reject, pulse events, arm")
+    print("integration OK: alive, set+mirror, range-reject, pulse events")
     return 0
 
 
