@@ -3,7 +3,7 @@
 
 The single owner of /dev/ttyS0.  Speaks the magic-framed binary protocol
 to the MCU (see protocol.py / laser_hat.py) and exposes a dependency-light
-Unix-domain socket to local clients (eink GUI, web GUI — see hat_client.py).
+Unix-domain socket to local clients (OLED GUI, web GUI — see hat_client.py).
 
 Model: pub/sub.
   * Clients PUBLISH commands up   (set / trigger / trigger_gpio / query).

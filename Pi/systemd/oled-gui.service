@@ -1,8 +1,8 @@
-# LaserHAT eink GUI — long-running daemon.
+# LaserHAT OLED GUI — long-running daemon (Adafruit 2.23" 128x32 bonnet).
 #
-#   sudo cp Pi/systemd/eink-gui.service /etc/systemd/system/
+#   sudo cp Pi/systemd/oled-gui.service /etc/systemd/system/
 #   sudo systemctl daemon-reload
-#   sudo systemctl enable --now eink-gui.service
+#   sudo systemctl enable --now oled-gui.service
 #
 # A broker client: connects to laserhat-broker.service over the Unix socket
 # and doesn't open the UART, so it runs alongside the web GUI. Edit User=,
@@ -10,7 +10,7 @@
 # Pi account isn't 'kemerelab' or the venv lives elsewhere.
 
 [Unit]
-Description=LaserHAT eink GUI (broker client + display)
+Description=LaserHAT OLED GUI (broker client + display)
 After=network-online.target laserhat-broker.service
 Wants=network-online.target
 Requires=laserhat-broker.service
@@ -21,7 +21,7 @@ User=kemerelab
 Group=kemerelab
 WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
 Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
-ExecStart=/home/kemerelab/.venvs/laserhat/bin/python eink_gui.py
+ExecStart=/home/kemerelab/.venvs/laserhat/bin/python oled_gui.py
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal

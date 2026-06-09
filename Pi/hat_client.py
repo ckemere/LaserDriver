@@ -40,7 +40,7 @@ class HatClient:
 
     on_update(msg: dict) is called from the reader thread for every
     broadcast — both {"type": "state", ...} and {"type": "event", ...}.
-    Keep the callback quick; offload heavy work (e.g. an eink repaint).
+    Keep the callback quick; offload heavy work (e.g. an OLED repaint).
     """
 
     def __init__(

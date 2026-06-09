@@ -1,35 +1,27 @@
 #!/usr/bin/env python3
-"""LaserHat eink GUI on the slim SSD1680 driver.
+"""LaserHat OLED GUI on the Adafruit 2.23" 128x32 bonnet (SSD1305).
 
-A broker client (hat_client.HatClient): it does NOT open the serial port,
-so it runs alongside the web GUI.  Button presses arrive as EVT_BUTTON
-broadcasts (the firmware reports debounced edges); state arrives as
-broadcast snapshots — no polling.  The UI state machine dispatches button
-edges, pushes config edits back through the broker, and repaints the
-panel with partial refresh for fast feedback.
+Replaces the old eink GUI: same broker-client design, same button state
+machine, just a smaller (128x32) display.  It is a broker client
+(hat_client.HatClient): it does NOT open the serial port, so it runs
+alongside the web GUI.  Button presses arrive as EVT_BUTTON broadcasts
+(the firmware reports debounced edges); state arrives as broadcast
+snapshots — no polling.  The UI dispatches button edges, pushes config
+edits back through the broker, and repaints the panel.
 
-Button mapping (per physical layout):
+The bonnet has no onboard buttons; the four buttons below are LaserHAT's
+own, reported by the MCU:
 
-       +--------+
-       |   B1   |  trigger pulse — firmware fires on release.
-       +--------+
-       |        |
-       |  EINK  |
-       |        |
-       +--------+
-       |   B2   |  cycle selected parameter
-       +--------+
-       +---+----+
-       | B3 | B4 |  decrement / increment selected parameter
-       +---+----+
+    B1  trigger pulse — firmware fires on release.
+    B2  cycle selected parameter (i -> r -> h)
+    B3  decrement selected parameter
+    B4  increment selected parameter
 
-Refresh strategy:
-- First paint after boot: full refresh (clears any leftover image).
-- Routine updates (button edits, phase change): partial (~300 ms).
-- Every Nth partial: full refresh, to clear ghosting (managed inside
-  EinkPanel.display()).
-- After button presses, wait SETTLE_GAP seconds of quiet before
-  pushing a frame, so rapid B4 presses coalesce to one update.
+The 128x32 panel is much smaller than the old eink, so the layout is
+compacted: a header line (phase chip + IP) over the three parameter
+rows, with the selected row marked by '>'.  The OLED repaints fully in a
+couple of milliseconds, so there is no partial-vs-full refresh logic —
+we still coalesce rapid presses with SETTLE_GAP to avoid visible churn.
 """
 
 from __future__ import annotations
@@ -40,19 +32,18 @@ import subprocess
 import sys
 import threading
 import time
-from typing import Optional
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import ImageDraw, ImageFont
 
-from eink_panel import EinkPanel
+from oled_panel import OledPanel
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
 from params import PARAMS
 
 
 # --------------------------------------------------------------- config
-POLL_INTERVAL = 0.05         # seconds between '?' polls
-SETTLE_GAP    = 0.30         # render after this much quiet time
+POLL_INTERVAL = 0.05         # seconds between state reads
+SETTLE_GAP    = 0.15         # render after this much quiet time
 IP_CHECK_GAP  = 30.0         # poll IP this often
 
 # Button bits in State.button_mask.
@@ -77,13 +68,13 @@ def load_font(size: int) -> ImageFont.ImageFont:
 
 # --------------------------------------------------------------- params
 # Step sizes and ranges come from params.PARAMS (shared with the web GUI).
-# Only the eink-specific value formatting lives here, keyed by knob name.
+# Only the display-specific value formatting lives here, keyed by knob name.
 def _ticks_to_ms_str(ticks: int) -> str:
-    return f"{ticks} ({ticks / 100:.1f} ms)"
+    return f"{ticks} ({ticks / 100:.1f}ms)"
 
 
 _FMT = {
-    "i": lambda v: f"{v} / 320",
+    "i": lambda v: f"{v}/320",
     "r": _ticks_to_ms_str,
     "h": _ticks_to_ms_str,
 }
@@ -118,7 +109,7 @@ def _set_for(client: HatClient, name: str):
 
 # --------------------------------------------------------------- render
 def render(
-    panel: EinkPanel,
+    panel: OledPanel,
     state: State,
     selected: int,
     ip: str,
@@ -126,49 +117,34 @@ def render(
     *,
     force_full: bool = False,
 ) -> None:
-    W, H = panel.size                  # (250, 122)
+    W, H = panel.size                  # (128, 32)
     img = panel.new_canvas()
     draw = ImageDraw.Draw(img)
 
-    font_big = load_font(18)
-    font_med = load_font(13)
-    font_sm  = load_font(10)
+    font = load_font(8)
 
-    BLACK = 0
-    WHITE = 1
+    ON  = 1     # lit pixel
+    OFF = 0     # dark
 
-    # Header
-    draw.text((50, 0), "LaserHAT", fill=BLACK, font=font_big)
-    phase_label = "WAIT" if state.phase == "W" else "TRIG"
-    # Invert phase chip on TRIG
+    # Header line: phase chip (left), IP (right-aligned).
+    phase_label = "TRIG" if state.phase == "T" else "WAIT"
     if state.phase == "T":
-        draw.rectangle((190, 0, W - 1, 20), fill=BLACK)
-        draw.text((196, 1), phase_label, fill=WHITE, font=font_med)
+        draw.rectangle((0, 0, 27, 8), fill=ON)         # inverted chip on TRIG
+        draw.text((2, 0), phase_label, fill=OFF, font=font)
     else:
-        draw.text((196, 1), phase_label, fill=BLACK, font=font_med)
+        draw.text((2, 0), phase_label, fill=ON, font=font)
 
-    # Button hints on the left edge
-    draw.text((0, 30), "B1\nTRIG", fill=BLACK, font=font_sm, spacing=0)
-    draw.text((0, 75), "B2\nSEL",  fill=BLACK, font=font_sm, spacing=0)
+    ip_w = draw.textlength(ip, font=font)
+    draw.text((max(30, W - ip_w), 0), ip, fill=ON, font=font)
 
-    # Parameter list
-    base_x = 38
-    base_y = 25
-    row_h  = 18
+    # Parameter rows — one per knob, selected row marked with '>'.
+    base_y = 8
+    row_h  = 8
     for idx, p in enumerate(PARAMS):
         y = base_y + idx * row_h
-        if idx == selected:
-            draw.text((base_x - 11, y - 1), ">", fill=BLACK, font=font_med)
-        draw.text((base_x, y), f"{p.name}:", fill=BLACK, font=font_med)
-        draw.text((base_x + 22, y), _FMT[p.name](_value_for(state, p.name)),
-                  fill=BLACK, font=font_med)
-
-    # Bottom legend + IP / hostname
-    draw.line((35, 95, W - 1, 95), fill=BLACK, width=1)
-    draw.text((38,  100), "B3:-",      fill=BLACK, font=font_med)
-    draw.text((90,  100), "B4:+",      fill=BLACK, font=font_med)
-    draw.text((150, 100), f"{ip}",     fill=BLACK, font=font_sm)
-    draw.text((150, 111), hostname,    fill=BLACK, font=font_sm)
+        prefix = ">" if idx == selected else " "
+        text = f"{prefix}{p.name}: {_FMT[p.name](_value_for(state, p.name))}"
+        draw.text((0, y), text, fill=ON, font=font)
 
     panel.display(img, force_full=force_full)
 
@@ -208,7 +184,7 @@ def main() -> int:
     client = HatClient(sock, on_update=on_update)
 
     print("opening display …", file=sys.stderr)
-    panel = EinkPanel(rotation=1)
+    panel = OledPanel()
 
     ip = primary_ip()
     hostname = socket.gethostname()

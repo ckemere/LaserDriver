@@ -4,7 +4,7 @@
 Tiny Flask app that exposes the LaserHat parameters and trigger button
 to a browser.  Talks to the broker daemon (broker.py) over its Unix
 socket via hat_client.HatClient — it does NOT open the serial port, so
-it can run at the same time as the eink GUI (both are broker clients).
+it can run at the same time as the OLED GUI (both are broker clients).
 
 Routes:
     GET  /                  the single page
