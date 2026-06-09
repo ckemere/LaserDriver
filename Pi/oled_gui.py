@@ -18,9 +18,10 @@ own, reported by the MCU:
     B4  increment selected parameter
 
 The 128x32 panel is much smaller than the old eink, so the layout is
-compacted: a header line (phase chip + IP) over the three parameter
-rows, with the selected row marked by '>'.  The OLED repaints fully in a
-couple of milliseconds, so there is no partial-vs-full refresh logic —
+compacted: a header line ("LaserHAT" branding + IP) over the three
+parameter rows, with the selected row marked by '>' and the WAIT/TRIG
+phase chip tucked into the bottom-right corner.  The OLED repaints fully
+in a couple of milliseconds, so there is no partial-vs-full refresh logic —
 we still coalesce rapid presses with SETTLE_GAP to avoid visible churn.
 """
 
@@ -126,16 +127,11 @@ def render(
     ON  = 1     # lit pixel
     OFF = 0     # dark
 
-    # Header line: phase chip (left), IP (right-aligned).
-    phase_label = "TRIG" if state.phase == "T" else "WAIT"
-    if state.phase == "T":
-        draw.rectangle((0, 0, 27, 8), fill=ON)         # inverted chip on TRIG
-        draw.text((2, 0), phase_label, fill=OFF, font=font)
-    else:
-        draw.text((2, 0), phase_label, fill=ON, font=font)
-
+    # Header line: "LaserHAT" branding (left), IP (right-aligned).
+    draw.text((0, 0), "LaserHAT", fill=ON, font=font)
+    brand_w = draw.textlength("LaserHAT", font=font)
     ip_w = draw.textlength(ip, font=font)
-    draw.text((max(30, W - ip_w), 0), ip, fill=ON, font=font)
+    draw.text((max(brand_w + 4, W - ip_w), 0), ip, fill=ON, font=font)
 
     # Parameter rows — one per knob, selected row marked with '>'.
     base_y = 8
@@ -145,6 +141,20 @@ def render(
         prefix = ">" if idx == selected else " "
         text = f"{prefix}{p.name}: {_FMT[p.name](_value_for(state, p.name))}"
         draw.text((0, y), text, fill=ON, font=font)
+
+    # Phase chip at bottom-right, painted over the tail of the last row.
+    # TRIG inverts (lit box, dark text); WAIT is plain lit text.  Only the
+    # last row's "(…ms)" tail is ever covered, and only for large values.
+    phase_label = "TRIG" if state.phase == "T" else "WAIT"
+    cw = int(draw.textlength(phase_label, font=font)) + 5
+    x0 = W - cw
+    y0 = base_y + (len(PARAMS) - 1) * row_h     # top of the last param row
+    draw.rectangle((x0 - 2, y0 - 1, W, H), fill=OFF)   # clear behind the chip
+    if state.phase == "T":
+        draw.rectangle((x0, y0, W - 1, H - 1), fill=ON)
+        draw.text((x0 + 3, y0), phase_label, fill=OFF, font=font)
+    else:
+        draw.text((x0 + 3, y0), phase_label, fill=ON, font=font)
 
     panel.display(img, force_full=force_full)
 
