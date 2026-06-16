@@ -32,6 +32,9 @@ class State:
     button_mask: int        # 4 bits, bit n = button n+1 pressed
     phase: str              # 'W' (waiting) or 'T' (triggered)
     tick: int               # MSPM0 isr_ticks at the time of query
+    mode: int = 0           # 0 = LASER, 1 = ESTIM
+    estim_dur_ticks: int = proto.ESTIM_TICKS_MIN   # 100 kHz ticks (10–10000 µs)
+    estim_ipi_ticks: int = proto.ESTIM_TICKS_MIN
 
     def button(self, n: int) -> bool:
         """True if button n (1..4) is pressed."""

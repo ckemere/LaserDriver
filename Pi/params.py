@@ -29,3 +29,11 @@ PARAMS: list[ParamSpec] = [
 ]
 
 PARAMS_BY_NAME: dict[str, ParamSpec] = {p.name: p for p in PARAMS}
+
+# EStim parameters (values in 100 kHz ticks; 1 tick = 10 µs, range 10–10000 µs)
+ESTIM_PARAMS: list[ParamSpec] = [
+    ParamSpec("ed", "pulse dur", step=10, minimum=1, maximum=1000),
+    ParamSpec("ei", "IPI",       step=10, minimum=1, maximum=1000),
+]
+
+ESTIM_PARAMS_BY_NAME: dict[str, ParamSpec] = {p.name: p for p in ESTIM_PARAMS}

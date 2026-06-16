@@ -37,12 +37,15 @@ MAGIC16 = SYNC[0] | (SYNC[1] << 8)
 
 # --- message types -------------------------------------------------------
 # Host -> MCU (commands), high bit clear.
-CMD_CONFIG   = 0x01    # i u16, r u32, h u32   (the only payload-bearing cmd)
-CMD_TRIGGER  = 0x02    # —
-CMD_QUERY    = 0x03    # —
+CMD_CONFIG        = 0x01    # i u16, r u32, h u32
+CMD_TRIGGER       = 0x02    # —
+CMD_QUERY         = 0x03    # —
+CMD_SET_MODE      = 0x04    # mode u8 (MODE_LASER / MODE_ESTIM)
+CMD_ESTIM_CONFIG  = 0x05    # pulse_dur_ticks u32, ipi_ticks u32
 
 # MCU -> Host (responses + events), high bit set.
-RSP_STATUS      = 0x81  # i u16, r u32, h u32, btn u8, phase u8, tick u32
+RSP_STATUS      = 0x81  # i u16, r u32, h u32, btn u8, phase u8, tick u32,
+                         # mode u8, estim_dur u32, estim_ipi u32
 EVT_PULSE_START = 0x82  # tick u32
 EVT_PULSE_END   = 0x83  # tick u32
 EVT_BUTTON      = 0x84  # mask u8, edges u8
@@ -51,20 +54,27 @@ EVT_BUTTON      = 0x84  # mask u8, edges u8
 PHASE_WAITING   = ord("W")
 PHASE_TRIGGERED = ord("T")
 
-_CONFIG = struct.Struct("<HII")          # i, r, h
-_STATUS = struct.Struct("<HIIBBI")       # i, r, h, btn, phase, tick
+# Mode byte values.
+MODE_LASER = 0x00
+MODE_ESTIM = 0x01
+
+_CONFIG       = struct.Struct("<HII")       # i, r, h
+_STATUS       = struct.Struct("<HIIBBIBII") # i, r, h, btn, phase, tick, mode, estim_dur, estim_ipi
+_ESTIM_CONFIG = struct.Struct("<II")        # pulse_dur_ticks, ipi_ticks
 _U16 = struct.Struct("<H")
 _U32 = struct.Struct("<I")
 
 # Payload length by type, per direction (decoders only accept their inbound
 # set; an out-of-direction type is treated as unknown -> resync).
-CMD_LEN = {CMD_CONFIG: 10, CMD_TRIGGER: 0, CMD_QUERY: 0}
+CMD_LEN = {CMD_CONFIG: 10, CMD_TRIGGER: 0, CMD_QUERY: 0,
+           CMD_SET_MODE: 1, CMD_ESTIM_CONFIG: 8}
 RSP_LEN = {RSP_STATUS: _STATUS.size, EVT_PULSE_START: 4, EVT_PULSE_END: 4,
            EVT_BUTTON: 2}
 
 # Field ranges, for validating a decoded STATUS (false-sync rejection).
 INTENSITY_MIN, INTENSITY_MAX = 1, 320
 TICKS_MIN, TICKS_MAX = 1, 10_000_000
+ESTIM_TICKS_MIN, ESTIM_TICKS_MAX = 1, 1000
 
 
 # --- frame encode --------------------------------------------------------
@@ -85,11 +95,21 @@ def pack_config(intensity: int, ramp: int, hold: int) -> bytes:
     return encode_frame(CMD_CONFIG, _CONFIG.pack(intensity, ramp, hold))
 
 
+def pack_set_mode(mode: int) -> bytes:
+    return encode_frame(CMD_SET_MODE, bytes([mode]))
+
+
+def pack_estim_config(dur_ticks: int, ipi_ticks: int) -> bytes:
+    return encode_frame(CMD_ESTIM_CONFIG, _ESTIM_CONFIG.pack(dur_ticks, ipi_ticks))
+
+
 def pack_status(intensity: int, ramp: int, hold: int, button_mask: int,
-                phase: str, tick: int) -> bytes:
+                phase: str, tick: int, mode: int = MODE_LASER,
+                estim_dur_ticks: int = 10, estim_ipi_ticks: int = 10) -> bytes:
     phase_byte = PHASE_WAITING if phase == "W" else PHASE_TRIGGERED
     return encode_frame(RSP_STATUS, _STATUS.pack(
-        intensity, ramp, hold, button_mask, phase_byte, tick))
+        intensity, ramp, hold, button_mask, phase_byte, tick,
+        mode, estim_dur_ticks, estim_ipi_ticks))
 
 
 def unpack_config(payload: bytes) -> Tuple[int, int, int]:
@@ -97,12 +117,15 @@ def unpack_config(payload: bytes) -> Tuple[int, int, int]:
 
 
 def unpack_status(payload: bytes) -> dict:
-    i, r, h, btn, phase, tick = _STATUS.unpack(payload)
+    i, r, h, btn, phase, tick, mode, estim_dur, estim_ipi = _STATUS.unpack(payload)
     return {
         "intensity": i, "ramp_ticks": r, "hold_ticks": h,
         "button_mask": btn,
         "phase": "W" if phase == PHASE_WAITING else "T",
         "tick": tick,
+        "mode": mode,
+        "estim_dur_ticks": estim_dur,
+        "estim_ipi_ticks": estim_ipi,
     }
 
 
@@ -112,7 +135,10 @@ def status_in_range(fields: dict) -> bool:
             and TICKS_MIN <= fields["ramp_ticks"] <= TICKS_MAX
             and TICKS_MIN <= fields["hold_ticks"] <= TICKS_MAX
             and fields["button_mask"] <= 0x0F
-            and fields["phase"] in ("W", "T"))
+            and fields["phase"] in ("W", "T")
+            and fields["mode"] in (MODE_LASER, MODE_ESTIM)
+            and ESTIM_TICKS_MIN <= fields["estim_dur_ticks"] <= ESTIM_TICKS_MAX
+            and ESTIM_TICKS_MIN <= fields["estim_ipi_ticks"] <= ESTIM_TICKS_MAX)
 
 
 # --- stream decode (Pi inbound = responses/events) ----------------------

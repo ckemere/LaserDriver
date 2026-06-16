@@ -30,7 +30,7 @@ from flask import Flask, jsonify, render_template, request
 
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
-from params import PARAMS_BY_NAME
+from params import ESTIM_PARAMS_BY_NAME, PARAMS_BY_NAME
 
 
 # --------------------------------------------------------------- helpers
@@ -56,12 +56,15 @@ def _state_dict(state: Optional[State]) -> dict:
         return {"ok": False, "error": "no_response"}
     return {
         "ok": True,
-        "intensity":  state.intensity,
-        "ramp_ticks": state.ramp_ticks,
-        "hold_ticks": state.hold_ticks,
-        "button_mask": state.button_mask,
-        "phase":       state.phase,      # "W" or "T"
-        "tick":        state.tick,
+        "intensity":       state.intensity,
+        "ramp_ticks":      state.ramp_ticks,
+        "hold_ticks":      state.hold_ticks,
+        "button_mask":     state.button_mask,
+        "phase":           state.phase,
+        "tick":            state.tick,
+        "mode":            state.mode,
+        "estim_dur_ticks": state.estim_dur_ticks,
+        "estim_ipi_ticks": state.estim_ipi_ticks,
     }
 
 
@@ -78,6 +81,7 @@ def create_app(client: HatClient) -> Flask:
             hostname=app.config["hostname"],
             ip=primary_ip(),
             params=PARAMS_BY_NAME,
+            estim_params=ESTIM_PARAMS_BY_NAME,
         )
 
     @app.route("/api/state")
@@ -93,9 +97,11 @@ def create_app(client: HatClient) -> Flask:
             return jsonify(ok=False, error="bad_value"), 400
 
         setter = {
-            "i": app.config["client"].set_intensity,
-            "r": app.config["client"].set_ramp,
-            "h": app.config["client"].set_hold,
+            "i":  app.config["client"].set_intensity,
+            "r":  app.config["client"].set_ramp,
+            "h":  app.config["client"].set_hold,
+            "ed": app.config["client"].set_estim_dur,
+            "ei": app.config["client"].set_estim_ipi,
         }.get(knob)
         if setter is None:
             return jsonify(ok=False, error="unknown_knob"), 400
@@ -119,6 +125,15 @@ def create_app(client: HatClient) -> Flask:
         arms PA19 once (lazily) — no per-trigger re-arm here."""
         ok = app.config["client"].trigger_gpio()
         return jsonify(ok=ok, path="gpio")
+
+    @app.route("/api/set_mode", methods=["POST"])
+    def api_set_mode():
+        body = request.get_json(silent=True) or {}
+        mode = body.get("mode")
+        if mode not in ("laser", "estim"):
+            return jsonify(ok=False, error="unknown_mode"), 400
+        ok = app.config["client"].set_mode(mode)
+        return jsonify(ok=ok, mode=mode)
 
     @app.route("/api/healthz")
     def api_healthz():

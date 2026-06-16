@@ -75,6 +75,15 @@
                 font-family: ui-monospace, monospace; font-size: 12px; color: var(--muted); }
     .btn-pill.lit { background: var(--accent); color: white; border-color: var(--accent); }
 
+    .mode-toggle { display: flex; gap: 6px; margin-bottom: 16px; }
+    .mode-btn { flex: 1; padding: 10px; font-size: 14px; font-weight: 700; letter-spacing: 0.05em;
+                border: 2px solid var(--border); border-radius: 8px; cursor: pointer;
+                background: var(--card); color: var(--muted); }
+    .mode-btn.active-laser { background: var(--accent); color: white; border-color: var(--accent); }
+    .mode-btn.active-estim { background: #1a6b8a; color: white; border-color: #1a6b8a; }
+    .mode-btn:hover:not(.active-laser):not(.active-estim) { background: var(--bg); }
+    [data-panel].hidden { display: none; }
+
     footer { color: var(--muted); font-size: 12px; margin-top: 20px; text-align: center; }
     .err { color: var(--accent); }
     code { font-family: ui-monospace, monospace; font-size: 13px; }
@@ -89,7 +98,12 @@
     </span>
   </header>
 
-  <div class="card">
+  <div class="mode-toggle">
+    <button class="mode-btn" id="mode-laser" onclick="setMode('laser')">LASER</button>
+    <button class="mode-btn" id="mode-estim" onclick="setMode('estim')">ESTIM</button>
+  </div>
+
+  <div class="card" data-panel="laser">
     <div class="row">
       <label>intensity</label>
       <button data-knob="i" data-dir="-1">−</button>
@@ -115,6 +129,30 @@
       <button data-knob="h" data-dir="+1">+</button>
       <span class="value" id="val-h">—</span>
       <span class="unit" id="unit-h">ticks</span>
+    </div>
+  </div>
+
+  <div class="card hidden" data-panel="estim">
+    <div style="font-size: 13px; color: var(--muted); margin-bottom: 10px;">
+      EStim — pair of pulses on STIM_MIRROR (PA13). Laser outputs and constant-current
+      driver are disabled in this mode.
+    </div>
+    <div class="row">
+      <label>pulse dur</label>
+      <button data-knob="ed" data-dir="-1">−</button>
+      <input class="step-input" data-knob="ed" id="step-ed" type="number" value="{{ estim_params['ed'].step }}" min="1" max="{{ estim_params['ed'].maximum }}">
+      <button data-knob="ed" data-dir="+1">+</button>
+      <span class="value" id="val-ed">—</span>
+      <span class="unit" id="unit-ed">µs</span>
+    </div>
+
+    <div class="row">
+      <label>IPI</label>
+      <button data-knob="ei" data-dir="-1">−</button>
+      <input class="step-input" data-knob="ei" id="step-ei" type="number" value="{{ estim_params['ei'].step }}" min="1" max="{{ estim_params['ei'].maximum }}">
+      <button data-knob="ei" data-dir="+1">+</button>
+      <span class="value" id="val-ei">—</span>
+      <span class="unit" id="unit-ei">µs</span>
     </div>
   </div>
 
@@ -151,10 +189,6 @@
 const $ = id => document.getElementById(id);
 const POLL_MS = 500;
 
-function fmtTicks(n) {
-  return `${n} (${(n/100).toFixed(1)} ms)`;
-}
-
 async function postSet(knob, value) {
   const resp = await fetch(`/api/set/${knob}`, {
     method: "POST",
@@ -170,6 +204,26 @@ async function postTrigger(path = "uart") {
   return resp.ok;
 }
 
+async function setMode(mode) {
+  const resp = await fetch("/api/set_mode", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ mode }),
+  });
+  if (!resp.ok) $("err").textContent = "mode switch failed";
+  refresh();
+}
+
+function applyMode(mode) {
+  // 0 = laser, 1 = estim
+  const isEstim = mode === 1;
+  document.querySelectorAll("[data-panel]").forEach(el => {
+    el.classList.toggle("hidden", el.dataset.panel === (isEstim ? "laser" : "estim"));
+  });
+  $("mode-laser").className = "mode-btn" + (isEstim ? "" : " active-laser");
+  $("mode-estim").className = "mode-btn" + (isEstim ? " active-estim" : "");
+}
+
 let lastState = null;
 
 async function refresh() {
@@ -181,11 +235,18 @@ async function refresh() {
       return;
     }
     $("err").textContent = "";
+
+    // Laser params
     $("val-i").textContent = s.intensity;
     $("val-r").textContent = s.ramp_ticks;
     $("unit-r").textContent = `ticks (${(s.ramp_ticks/100).toFixed(1)} ms)`;
     $("val-h").textContent = s.hold_ticks;
     $("unit-h").textContent = `ticks (${(s.hold_ticks/100).toFixed(1)} ms)`;
+
+    // EStim params (ticks → µs: 1 tick = 10 µs)
+    $("val-ed").textContent = s.estim_dur_ticks * 10;
+    $("val-ei").textContent = s.estim_ipi_ticks * 10;
+
     $("tick").textContent = s.tick;
 
     const phaseEl = $("phase");
@@ -199,6 +260,8 @@ async function refresh() {
       const lit = (s.button_mask & (1 << i)) !== 0;
       el.classList.toggle("lit", lit);
     }
+
+    applyMode(s.mode);
     lastState = s;
   } catch (e) {
     $("err").textContent = "fetch error: " + e;
@@ -212,9 +275,16 @@ document.querySelectorAll("button[data-knob]").forEach(btn => {
     const dir = parseInt(btn.dataset.dir, 10);
     const step = parseInt($("step-" + knob).value, 10) || 0;
     if (!step) return;
-    const current = { i: lastState.intensity,
-                      r: lastState.ramp_ticks,
-                      h: lastState.hold_ticks }[knob];
+    // For estim knobs the stored value is in ticks; val display is µs but we send ticks.
+    const currentMap = {
+      i: lastState.intensity,
+      r: lastState.ramp_ticks,
+      h: lastState.hold_ticks,
+      ed: lastState.estim_dur_ticks,
+      ei: lastState.estim_ipi_ticks,
+    };
+    const current = currentMap[knob];
+    if (current === undefined) return;
     const next = current + dir * step;
     const ok = await postSet(knob, next);
     if (!ok) $("err").textContent = "firmware rejected";

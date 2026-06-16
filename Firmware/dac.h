@@ -17,6 +17,7 @@
 
 void laser_dac_init(void);
 void laser_dac_enable(void);
+void laser_dac_disable(void);
 
 static inline void laser_dac_write12(uint16_t code)
 {
