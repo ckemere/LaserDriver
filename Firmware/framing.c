@@ -20,10 +20,12 @@ size_t frame_encode(uint8_t type, const uint8_t *payload, size_t payload_len,
 static int cmd_payload_len(uint8_t type)
 {
     switch (type) {
-        case CMD_CONFIG:  return (int)CMD_CONFIG_LEN;
-        case CMD_TRIGGER: return 0;
-        case CMD_QUERY:   return 0;
-        default:          return -1;
+        case CMD_CONFIG:       return (int)CMD_CONFIG_LEN;
+        case CMD_TRIGGER:      return 0;
+        case CMD_QUERY:        return 0;
+        case CMD_SET_MODE:     return (int)CMD_SET_MODE_LEN;
+        case CMD_ESTIM_CONFIG: return (int)CMD_ESTIM_CONFIG_LEN;
+        default:               return -1;
     }
 }
 

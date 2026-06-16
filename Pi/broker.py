@@ -52,7 +52,8 @@ DEFAULT_SOCKET = os.environ.get("LASERHAT_SOCK", "/run/laserhat/broker.sock")
 POLL_INTERVAL = 0.25                    # s between liveness CMD_QUERY polls
 REPLY_TIMEOUT = 0.5                     # s to wait for a STATUS echo
 LIVENESS_TIMEOUT = 1.5                  # s without a status -> mcu_alive False
-_KNOB_FIELD = {"i": "intensity", "r": "ramp_ticks", "h": "hold_ticks"}
+_KNOB_FIELD = {"i": "intensity", "r": "ramp_ticks", "h": "hold_ticks",
+               "ed": "estim_dur_ticks", "ei": "estim_ipi_ticks"}
 
 
 class Broker:
@@ -64,6 +65,8 @@ class Broker:
             "type": "state", "ok": False, "mcu_alive": False,
             "intensity": None, "ramp_ticks": None, "hold_ticks": None,
             "button_mask": 0, "phase": "W", "tick": 0,
+            "mode": proto.MODE_LASER,
+            "estim_dur_ticks": None, "estim_ipi_ticks": None,
         }
         self._state_lock = threading.Lock()
         self._last_status_at = 0.0
@@ -200,26 +203,49 @@ class Broker:
         field = _KNOB_FIELD.get(knob)
         if field is None:
             return False
+
+        if knob in ("ed", "ei"):
+            with self._state_lock:
+                dur = self._state["estim_dur_ticks"]
+                ipi = self._state["estim_ipi_ticks"]
+            if None in (dur, ipi):
+                return False
+            cfg = {"estim_dur_ticks": dur, "estim_ipi_ticks": ipi}
+            cfg[field] = value
+            try:
+                payload = proto._ESTIM_CONFIG.pack(
+                    cfg["estim_dur_ticks"], cfg["estim_ipi_ticks"])
+            except Exception:
+                return False
+            echo = self._command(proto.CMD_ESTIM_CONFIG, payload)
+            return bool(echo
+                        and echo.get("estim_dur_ticks") == cfg["estim_dur_ticks"]
+                        and echo.get("estim_ipi_ticks") == cfg["estim_ipi_ticks"])
+
         with self._state_lock:
             i = self._state["intensity"]
             r = self._state["ramp_ticks"]
             h = self._state["hold_ticks"]
         if None in (i, r, h):
-            return False                  # no baseline config yet
+            return False
         cfg = {"intensity": i, "ramp_ticks": r, "hold_ticks": h}
         cfg[field] = value
-        # Guarantee the CONFIG payload can't contain the SYNC bytes.
         r = proto.avoid_magic(cfg["ramp_ticks"])
         h = proto.avoid_magic(cfg["hold_ticks"])
         i = cfg["intensity"]
         try:
             payload = proto._CONFIG.pack(i, r, h)
-        except Exception:                 # out of struct range
+        except Exception:
             return False
         echo = self._command(proto.CMD_CONFIG, payload)
-        # Verify the MCU now holds what we sent (the status-as-ack check).
         return bool(echo and echo["intensity"] == i
                     and echo["ramp_ticks"] == r and echo["hold_ticks"] == h)
+
+    def set_mode(self, mode: int) -> bool:
+        if mode not in (proto.MODE_LASER, proto.MODE_ESTIM):
+            return False
+        echo = self._command(proto.CMD_SET_MODE, bytes([mode]))
+        return bool(echo and echo.get("mode") == mode)
 
     def trigger_uart(self) -> bool:
         return self._command(proto.CMD_TRIGGER) is not None
@@ -294,6 +320,12 @@ class _Handler(socketserver.StreamRequestHandler):
         if cmd == "query":
             broker._command(proto.CMD_QUERY)
             return {"type": "reply", "cmd": "query", "ok": True}
+        if cmd == "set_mode":
+            mode_str = msg.get("mode")
+            mode_val = {"laser": proto.MODE_LASER,
+                        "estim": proto.MODE_ESTIM}.get(mode_str, -1)
+            return {"type": "reply", "cmd": "set_mode",
+                    "ok": broker.set_mode(mode_val)}
         return {"type": "reply", "ok": False, "error": "unknown_cmd"}
 
 

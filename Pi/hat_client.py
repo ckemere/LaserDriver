@@ -32,6 +32,9 @@ def _state_from_msg(msg: dict) -> Optional[State]:
         button_mask=msg.get("button_mask", 0),
         phase=msg.get("phase", "W"),
         tick=msg.get("tick", 0),
+        mode=msg.get("mode", 0),
+        estim_dur_ticks=msg.get("estim_dur_ticks", 1),
+        estim_ipi_ticks=msg.get("estim_ipi_ticks", 1),
     )
 
 
@@ -120,6 +123,16 @@ class HatClient:
 
     def set_hold(self, ticks: int) -> bool:
         return self._command({"cmd": "set", "knob": "h", "value": ticks}).get("ok", False)
+
+    def set_mode(self, mode: str) -> bool:
+        """Switch between 'laser' and 'estim' mode."""
+        return self._command({"cmd": "set_mode", "mode": mode}).get("ok", False)
+
+    def set_estim_dur(self, ticks: int) -> bool:
+        return self._command({"cmd": "set", "knob": "ed", "value": ticks}).get("ok", False)
+
+    def set_estim_ipi(self, ticks: int) -> bool:
+        return self._command({"cmd": "set", "knob": "ei", "value": ticks}).get("ok", False)
 
     def trigger(self) -> bool:
         return self._command({"cmd": "trigger"}).get("ok", False)

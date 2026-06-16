@@ -82,3 +82,8 @@ void laser_dac_enable(void)
 {
     DAC0->CTL0 |= DAC12_CTL0_ENABLE_SET;
 }
+
+void laser_dac_disable(void)
+{
+    DAC0->CTL0 &= ~DAC12_CTL0_ENABLE_MASK;
+}

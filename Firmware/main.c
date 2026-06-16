@@ -78,6 +78,20 @@ static uint32_t    g_active_ticks_per_step;  /* derived at latch time */
 /* Boot-side init: applied once at the analog current limit. */
 #define DAC_SETPOINT            500u
 
+typedef struct {
+    uint32_t pulse_dur_ticks;
+    uint32_t ipi_ticks;
+} EstimConfig;
+
+static volatile EstimConfig g_estim_config_live = {
+    .pulse_dur_ticks = ESTIM_DUR_DEFAULT,
+    .ipi_ticks       = ESTIM_IPI_DEFAULT,
+};
+static EstimConfig g_estim_config_active;   /* ISR-only */
+
+static volatile uint8_t g_mode = MODE_LASER;
+static          uint8_t g_mode_active;      /* ISR-only, latched at trigger */
+
 /*
  * Button debounce: require the pin to be stable for this many polls
  * before accepting a state change.  Main loop polls at the
@@ -111,9 +125,18 @@ typedef enum {
     LASER_HOLD_HIGH,
 } LaserPhase;
 
+/* EStim pulse pair: PA13 HIGH for dur, LOW for ipi, HIGH for dur, then off. */
+typedef enum {
+    ESTIM_IDLE,
+    ESTIM_PULSE1,
+    ESTIM_INTERPULSE,
+    ESTIM_PULSE2,
+} EstimPhase;
+
 typedef struct {
     OverallPhase overall;
     LaserPhase   laser;
+    EstimPhase   estim;
     uint32_t     ramp_step;
     uint32_t     tick_count;
 } MachineState;
@@ -129,7 +152,11 @@ typedef enum {
 
 /* Pulse state — written only by TIMG0 ISR.  Main only reads .overall
  * (one word, atomic on M0+) for the ? response. */
-static volatile MachineState g_state = { OVERALL_WAITING, LASER_IDLE, 0u, 0u };
+static volatile MachineState g_state = {
+    .overall = OVERALL_WAITING,
+    .laser   = LASER_IDLE,
+    .estim   = ESTIM_IDLE,
+};
 static volatile uint32_t     g_isr_ticks = 0u;
 
 /* Trigger-source flags.  All bool reads/writes are atomic on M0+. */
@@ -205,6 +232,10 @@ static inline void latch_config_from_live(void)
     if (g_active_ticks_per_step == 0u) {
         g_active_ticks_per_step = 1u;
     }
+
+    g_estim_config_active.pulse_dur_ticks = g_estim_config_live.pulse_dur_ticks;
+    g_estim_config_active.ipi_ticks       = g_estim_config_live.ipi_ticks;
+    g_mode_active = g_mode;
 }
 
 static inline void state_machine_tick(void)
@@ -222,9 +253,13 @@ static inline void state_machine_tick(void)
             if (trigger) {
                 latch_config_from_live();
                 g_state.overall    = OVERALL_TRIGGERED;
-                g_state.laser      = LASER_RAMP_UP;
-                g_state.ramp_step  = 0u;
                 g_state.tick_count = 0u;
+                if (g_mode_active == MODE_ESTIM) {
+                    g_state.estim = ESTIM_PULSE1;
+                } else {
+                    g_state.laser     = LASER_RAMP_UP;
+                    g_state.ramp_step = 0u;
+                }
                 g_pulse_start_evt.tick    = g_isr_ticks;
                 g_pulse_start_evt.pending = true;
             }
@@ -232,33 +267,61 @@ static inline void state_machine_tick(void)
 
         case OVERALL_TRIGGERED:
             g_state.tick_count++;
-            switch (g_state.laser) {
-                case LASER_RAMP_UP:
-                    if (g_state.tick_count >= g_active_ticks_per_step) {
-                        g_state.tick_count = 0u;
-                        g_state.ramp_step++;
-                        if (g_state.ramp_step >= g_config_active.intensity) {
+            if (g_mode_active == MODE_ESTIM) {
+                switch (g_state.estim) {
+                    case ESTIM_PULSE1:
+                        if (g_state.tick_count >= g_estim_config_active.pulse_dur_ticks) {
                             g_state.tick_count = 0u;
-                            g_state.laser      = LASER_HOLD_HIGH;
+                            g_state.estim      = ESTIM_INTERPULSE;
                         }
-                    }
-                    break;
+                        break;
 
-                case LASER_HOLD_HIGH:
-                    if (g_state.tick_count >= g_config_active.hold_ticks) {
-                        /* End of hold: switch off and return to waiting.
-                         * No ramp-down / trailing-low phase. */
-                        g_state.tick_count = 0u;
-                        g_state.ramp_step  = 0u;
-                        g_state.laser      = LASER_IDLE;
-                        g_state.overall    = OVERALL_WAITING;
-                        g_pulse_end_evt.tick    = g_isr_ticks;
-                        g_pulse_end_evt.pending = true;
-                    }
-                    break;
+                    case ESTIM_INTERPULSE:
+                        if (g_state.tick_count >= g_estim_config_active.ipi_ticks) {
+                            g_state.tick_count = 0u;
+                            g_state.estim      = ESTIM_PULSE2;
+                        }
+                        break;
 
-                default:
-                    break;
+                    case ESTIM_PULSE2:
+                        if (g_state.tick_count >= g_estim_config_active.pulse_dur_ticks) {
+                            g_state.estim   = ESTIM_IDLE;
+                            g_state.overall = OVERALL_WAITING;
+                            g_pulse_end_evt.tick    = g_isr_ticks;
+                            g_pulse_end_evt.pending = true;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+            } else {
+                switch (g_state.laser) {
+                    case LASER_RAMP_UP:
+                        if (g_state.tick_count >= g_active_ticks_per_step) {
+                            g_state.tick_count = 0u;
+                            g_state.ramp_step++;
+                            if (g_state.ramp_step >= g_config_active.intensity) {
+                                g_state.tick_count = 0u;
+                                g_state.laser      = LASER_HOLD_HIGH;
+                            }
+                        }
+                        break;
+
+                    case LASER_HOLD_HIGH:
+                        if (g_state.tick_count >= g_config_active.hold_ticks) {
+                            g_state.tick_count = 0u;
+                            g_state.ramp_step  = 0u;
+                            g_state.laser      = LASER_IDLE;
+                            g_state.overall    = OVERALL_WAITING;
+                            g_pulse_end_evt.tick    = g_isr_ticks;
+                            g_pulse_end_evt.pending = true;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
             }
             break;
     }
@@ -269,10 +332,13 @@ static inline void set_output_from_state(void)
     /* Derive the desired output from the current state. */
     bool     pwm    = false;   /* true = PWM mux, false = GPIO-safe */
     uint16_t duty   = 0u;      /* only meaningful when pwm */
-    bool     mirror = false;   /* STIM_MIRROR LED on */
+    bool     mirror = false;   /* STIM_MIRROR (PA13) on */
 
     if (g_state.overall == OVERALL_WAITING) {
         /* defaults: gpio-safe, mirror off */
+    } else if (g_mode_active == MODE_ESTIM) {
+        /* EStim: PA13 tracks the pulse pair; laser pins always stay safe. */
+        mirror = (g_state.estim == ESTIM_PULSE1 || g_state.estim == ESTIM_PULSE2);
     } else {
         switch (g_state.laser) {
             case LASER_IDLE:
@@ -401,19 +467,30 @@ static void tx_frame(uint8_t type, const uint8_t *payload, size_t len)
 
 static void emit_status(void)
 {
-    /* Fill the packed payload struct and ship its bytes verbatim — both
-     * ends are little-endian, so no manual byte packing is needed (the
-     * _Static_assert in protocol.h locks the layout to Python's struct). */
     StatusPayload s = {
-        .intensity   = g_config_live.intensity,
-        .ramp_ticks  = g_config_live.ramp_ticks,
-        .hold_ticks  = g_config_live.hold_ticks,
-        .button_mask = g_btn_mask,
+        .intensity        = g_config_live.intensity,
+        .ramp_ticks       = g_config_live.ramp_ticks,
+        .hold_ticks       = g_config_live.hold_ticks,
+        .button_mask      = g_btn_mask,
         .phase = (g_state.overall == OVERALL_WAITING) ? PHASE_WAITING
                                                       : PHASE_TRIGGERED,
-        .tick = g_isr_ticks,
+        .tick             = g_isr_ticks,
+        .mode             = g_mode,
+        .estim_dur_ticks  = g_estim_config_live.pulse_dur_ticks,
+        .estim_ipi_ticks  = g_estim_config_live.ipi_ticks,
     };
     tx_frame(RSP_STATUS, (const uint8_t *)&s, sizeof s);
+}
+
+static void apply_estim_config(const uint8_t *payload)
+{
+    const EstimConfigPayload *c = (const EstimConfigPayload *)payload;
+    if (c->pulse_dur_ticks < ESTIM_DUR_MIN || c->pulse_dur_ticks > ESTIM_DUR_MAX ||
+        c->ipi_ticks < ESTIM_IPI_MIN || c->ipi_ticks > ESTIM_IPI_MAX) {
+        return;
+    }
+    g_estim_config_live.pulse_dur_ticks = c->pulse_dur_ticks;
+    g_estim_config_live.ipi_ticks       = c->ipi_ticks;
 }
 
 static void emit_pulse_event(uint8_t type, uint32_t tick)
@@ -448,15 +525,13 @@ static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
             if (len == CMD_CONFIG_LEN) {
                 apply_config(payload);
             }
-            emit_status();      /* status-as-ack: echoes the resulting config */
+            emit_status();
             break;
 
         case CMD_TRIGGER:
             if (g_state.overall == OVERALL_WAITING) {
                 g_uart_trigger_pending = true;
             }
-            /* EVT_PULSE_START / _END follow; the echoed phase tells the host
-             * whether the trigger took (W) or was busy (T). */
             emit_status();
             break;
 
@@ -464,8 +539,32 @@ static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
             emit_status();
             break;
 
+        case CMD_SET_MODE:
+            if (len == CMD_SET_MODE_LEN) {
+                uint8_t m = payload[0];
+                if (m == MODE_LASER || m == MODE_ESTIM) {
+                    g_mode = m;
+                    if (m == MODE_ESTIM) {
+                        laser_dac_disable();
+                        laser_pins_to_gpio_safe();
+                    } else {
+                        laser_dac_write12(DAC_SETPOINT);
+                        laser_dac_enable();
+                    }
+                }
+            }
+            emit_status();
+            break;
+
+        case CMD_ESTIM_CONFIG:
+            if (len == CMD_ESTIM_CONFIG_LEN) {
+                apply_estim_config(payload);
+            }
+            emit_status();
+            break;
+
         default:
-            break;              /* unknown type: ignore; resync handles it */
+            break;
     }
 }
 
