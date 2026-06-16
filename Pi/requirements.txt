@@ -4,11 +4,13 @@
 #   python3 -m venv ~/.venvs/laserhat
 #   ~/.venvs/laserhat/bin/pip install -r requirements.txt
 #
-# spidev + gpiozero handle the SSD1680 panel via the slim driver in
-# Pi/eink_panel.py.  Pillow is the rendering layer.  pyserial drives
-# UART comms with the MSPM0.
+# The OLED bonnet (Adafruit 4567, SSD1305 over I2C) is driven by
+# adafruit-blinka + adafruit-circuitpython-ssd1305; Pillow is the
+# rendering layer (Pi/oled_panel.py + oled_gui.py).  gpiozero drives the
+# GPIO trigger / power-enable; pyserial drives UART comms with the MSPM0.
 
-spidev>=3.6
+adafruit-blinka>=8.0
+adafruit-circuitpython-ssd1305>=1.3
 gpiozero>=2.0
 # lgpio is the gpiozero pin factory of choice on Bookworm/Pi 5.  Install
 # the apt package python3-lgpio, NOT via pip (the source build needs

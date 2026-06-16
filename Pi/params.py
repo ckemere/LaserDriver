@@ -1,10 +1,10 @@
 """Adjustable LaserHat parameters — single source of truth.
 
-Defines each knob's increment (step) size and range once, so the eink
-GUI (eink_gui.py) and the web GUI (web_app.py / templates/index.html)
+Defines each knob's increment (step) size and range once, so the OLED
+GUI (oled_gui.py) and the web GUI (web_app.py / templates/index.html)
 stay in sync instead of carrying their own copies.  Pure stdlib.
 
-Per-surface *display formatting* (e.g. the eink's "ms" suffix) is kept
+Per-surface *display formatting* (e.g. the OLED's "ms" suffix) is kept
 in the surface that renders it; only the numeric spec lives here.
 """
 
