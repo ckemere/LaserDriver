@@ -1,11 +1,18 @@
 # LaserHAT Pi-side
 
-Code that runs on the Raspberry Pi. A **broker daemon owns the serial
-port** (`/dev/ttyS0`) and the GUIs are clients of it over a Unix socket, so
-the OLED GUI and the web GUI run at the same time.  The OLED panel itself
+Code that runs on the Raspberry Pi (target: **Raspberry Pi 4**). A
+**broker daemon owns the serial port** (`/dev/ttyS0`) and the GUIs are
+clients of it over a Unix socket, so the OLED GUI and the web GUI run at
+the same time.  The OLED panel itself
 is owned by a small **compiled daemon** (`oledd.c`, in the style of
 [pioled-ip](https://github.com/ckemere/pioled-ip)) so the display works
 from first boot and needs no Python graphics stack.
+
+**Network triggers:** `brokerd/` is a C drop-in replacement for
+`broker.py` (same UART protocol and JSON socket) that adds a low-latency
+UDP trigger listener for the remote experiment machine; see
+[`brokerd/README.md`](brokerd/README.md). It is not packaged or enabled
+yet — `laserhat-broker.service` still runs `broker.py`.
 
 ```
                  /dev/ttyS0 (binary protocol)
@@ -48,12 +55,14 @@ addresses.
 | `protocol.py` | Binary wire protocol (magic framing, no CRC). Source of truth; mirror of `Firmware/protocol.h`. |
 | `laser_hat.py` | `LaserUART` transport + `State` dataclass. Used by the broker; also a raw-link CLI. |
 | `broker.py` | The daemon: owns `/dev/ttyS0` + the GPIO trigger, mirrors MCU state, serves clients (pub/sub). |
+| `brokerd/` | C drop-in replacement for `broker.py` plus the UDP trigger listener (not yet packaged). |
+| `udp_trigger.py` | Network trigger sender (library + latency CLI) for the experiment machine. |
 | `hat_client.py` | `HatClient` — what the GUIs use to talk to the broker (cached state + update callback). |
 | `params.py` | Shared knob step sizes / ranges (OLED + web read this). |
 | `oledd.c` | Compiled SSD1305 panel daemon: owns I2C + the display, draws the header (IPs + heartbeat), serves a tiny text protocol on a Unix socket. |
 | `oled_gui.py` | OLED GUI daemon (broker client; sends rows to `oledd`). |
 | `web_app.py` | Flask web GUI (broker client). |
-| `pi_trigger.py` | `PiTrigger` — drives GPIO 24 → MCU PA19 for the fast (~50–100 µs) trigger. Owned by the broker. |
+| `pi_trigger.py` | `PiTrigger` — gpiozero driver for GPIO 24 → MCU PA19, used by `broker.py` (brokerd drives the pin directly via `/dev/gpiomem`). |
 | `power_cycle.py` | Power-cycles the MCU for `make flash` (called by the firmware Makefile). |
 | `fake_mcu.py` | PTY that speaks the protocol, for off-hardware testing. |
 | `network/laserhat-eth0.nmconnection` | Static wired IP (192.168.17.10/24, no gateway). |
