@@ -97,9 +97,10 @@ extern uint32_t g_pulse_ns;
 /* ---- util (main.c) ---------------------------------------------------- */
 double now_mono(void);
 uint64_t ts_to_ns(const struct timespec *t);
-/* Split "HOST:PORT" (HOST may be empty or "*" for any). */
-bool split_hostport(const char *s, char *host, size_t hostcap, char *port,
-                    size_t portcap);
+/* Parse numeric "IPV4:PORT" (IPV4 may be empty or "*" for any).  No
+ * getaddrinfo: the packaged binary is static, where NSS lookups break. */
+struct sockaddr_in;
+bool parse_ipv4_port(const char *s, struct sockaddr_in *out);
 /* pthread_create with a small stack (all memory is mlock'ed). */
 int spawn_thread(pthread_t *t, void *(*fn)(void *), void *arg);
 

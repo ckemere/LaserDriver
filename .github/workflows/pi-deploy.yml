@@ -49,9 +49,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Build laserhat-brokerd (native, warnings fatal)
+        run: make -C Pi/brokerd
       - name: Install test dependencies
         run: pip install pyserial flask pytest
-      - name: Run Pi test suite (protocol codec, broker integration, web)
+      - name: Run Pi test suite (codec, both brokers' integration + web, UDP triggers)
         working-directory: Pi
         run: python -m pytest tests/ -q
       - name: C <-> Python protocol cross-check

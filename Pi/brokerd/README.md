@@ -23,12 +23,10 @@ predictably as it can.
 
 ## Build and run
 
-```bash
-make -C Pi/brokerd                       # -> Pi/brokerd/laserhat-brokerd
-```
-
-Not yet packaged: `laserhat-broker.service` still runs `broker.py`. The
-unit switches to `/usr/bin/laserhat-brokerd` once `build-deb.sh` builds it.
+`Pi/packaging/build-deb.sh` cross-compiles it statically to
+`/usr/bin/laserhat-brokerd`, and `laserhat-broker.service` runs it with
+`--udp 192.168.17.10:17017 --rt-prio 80 --cpu 3`. CI also builds it
+natively with `-Werror` (`make -C Pi/brokerd`) before running the tests.
 
 Options (`--help`):
 
@@ -39,12 +37,12 @@ Options (`--help`):
 | `--gpio gpiomem\|sim\|none` | `gpiomem` | `sim` = pretend (tests); `none` = no trigger line |
 | `--gpio-pin N` | 24 | BCM pin wired to PA19 |
 | `--pulse-us N` | 20 | trigger line high time. The MCU latches the edge, so this is not a timing parameter |
-| `--udp HOST:PORT` | off | enable the UDP trigger listener |
+| `--udp IPV4:PORT` | off | enable the UDP trigger listener. Binds even if the address isn't up yet (`IP_FREEBIND`) |
 | `--udp-allow IP` | any | accept triggers only from this IPv4 source |
 | `--rt-prio N` | 0 | SCHED_FIFO priority for the trigger thread (also `mlockall`s) |
 | `--cpu N` | — | pin the trigger thread to CPU N |
 | `--spin` | off | busy-poll the socket (see tuning) |
-| `--control-tcp HOST:PORT` | off | also serve the JSON protocol over TCP (for remote parameter changes) |
+| `--control-tcp IPV4:PORT` | off | also serve the JSON protocol over TCP (for remote parameter changes) |
 
 ## UDP trigger protocol
 
@@ -109,8 +107,10 @@ with a scope on the network trigger source and GPIO 24.
 4. **Fix the CPU clock:** `echo performance | sudo tee
    /sys/devices/system/cpu/cpu*/cpufreq/scaling_governor`.
 5. **Use a direct cable or a dedicated switch.** Don't share the link with bulk
-   traffic. The static wired IP from the deploy branch
-   (`192.168.17.10`) is the natural `LASERHAT_UDP` bind address.
+   traffic. The unit binds the static wired address (`192.168.17.10`), which
+   ordinary wifi clients can't reach. Linux still accepts packets for that
+   address on any interface, so for a hard guarantee add
+   `--udp-allow <rig IP>`.
 6. **Optional: `--spin`.** Busy-polling removes the scheduler wake-up entirely but uses 100%
    of the isolated core. With `--rt-prio` it also runs into the kernel's
    real-time throttling (by default, real-time tasks are limited to 95% of each second), so either set

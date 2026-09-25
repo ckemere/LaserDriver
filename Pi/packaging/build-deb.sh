@@ -9,7 +9,10 @@
 # Produces laserhat_<version>_<arch>.deb in the current directory:
 #
 #   /usr/bin/laserhat-oledd                          compiled SSD1305 daemon
-#   /usr/lib/laserhat/                               Python app (broker, GUIs)
+#   /usr/bin/laserhat-brokerd                        compiled broker (UART, GPIO,
+#                                                    UDP triggers)
+#   /usr/lib/laserhat/                               Python app (GUIs; broker.py
+#                                                    kept as a fallback)
 #   /usr/lib/systemd/system/laserhat-*.service, oled-gui.service
 #   /etc/NetworkManager/system-connections/laserhat-eth0.nmconnection
 #   /etc/modules-load.d/laserhat.conf                (i2c-dev)
@@ -44,6 +47,12 @@ mkdir -p "$PKG/usr/bin"
 "$CC" -O2 -Wall -Wextra -Werror -static -o "$PKG/usr/bin/laserhat-oledd" \
     "$PI_DIR/oledd.c"
 
+# --- compiled broker ----------------------------------------------------------
+# Static, like oledd, so the binary doesn't depend on the target's glibc.
+"$CC" -O2 -Wall -Wextra -Werror -static -std=c11 -D_GNU_SOURCE -pthread \
+    -I"$PI_DIR/../Firmware" -o "$PKG/usr/bin/laserhat-brokerd" \
+    "$PI_DIR"/brokerd/*.c -lm
+
 # --- Python application -----------------------------------------------------
 mkdir -p "$PKG/usr/lib/laserhat/templates"
 install -m 644 "$PI_DIR"/*.py "$PKG/usr/lib/laserhat/"
@@ -77,7 +86,8 @@ Depends: python3, python3-serial, python3-flask, python3-gpiozero, python3-lgpio
 Section: electronics
 Priority: optional
 Description: LaserHAT laser-diode driver control stack
- Broker daemon for the MSPM0-based LaserHAT (owns the UART), an OLED
+ Broker daemon for the MSPM0-based LaserHAT (owns the UART and the
+ trigger GPIO; low-latency UDP trigger listener), an OLED
  status/param GUI on the Adafruit SSD1305 bonnet driven by a compiled
  panel daemon, and a Flask web GUI.  Configures the wired interface
  with a static address (192.168.17.10/24, no gateway).

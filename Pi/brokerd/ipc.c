@@ -16,7 +16,6 @@
 #include "brokerd.h"
 
 #include <errno.h>
-#include <netdb.h>
 #include <netinet/in.h>
 #include <netinet/tcp.h>
 #include <stdio.h>
@@ -334,28 +333,21 @@ int ipc_listen_unix(const char *path)
 
 int ipc_listen_tcp(const char *hostport)
 {
-    char host[128], port[16];
-    if (!split_hostport(hostport, host, sizeof host, port, sizeof port)) {
-        fprintf(stderr, "brokerd: bad HOST:PORT '%s'\n", hostport);
+    struct sockaddr_in sa;
+    if (!parse_ipv4_port(hostport, &sa)) {
+        fprintf(stderr, "brokerd: bad IPV4:PORT '%s'\n", hostport);
         return -1;
     }
-    struct addrinfo hints = { .ai_family = AF_INET, .ai_socktype = SOCK_STREAM,
-                              .ai_flags = AI_PASSIVE }, *ai;
-    int rc = getaddrinfo(host[0] ? host : NULL, port, &hints, &ai);
-    if (rc != 0) {
-        fprintf(stderr, "brokerd: %s: %s\n", hostport, gai_strerror(rc));
-        return -1;
-    }
-    int fd = socket(ai->ai_family, ai->ai_socktype, 0);
+    int fd = socket(AF_INET, SOCK_STREAM, 0);
     int one = 1;
     if (fd >= 0) {
         setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof one);
     }
-    if (fd < 0 || bind(fd, ai->ai_addr, ai->ai_addrlen) < 0 || listen(fd, 16) < 0) {
+    if (fd < 0 || bind(fd, (struct sockaddr *)&sa, sizeof sa) < 0
+            || listen(fd, 16) < 0) {
         fprintf(stderr, "brokerd: tcp %s: %s\n", hostport, strerror(errno));
         if (fd >= 0) close(fd);
-        fd = -1;
+        return -1;
     }
-    freeaddrinfo(ai);
     return fd;
 }

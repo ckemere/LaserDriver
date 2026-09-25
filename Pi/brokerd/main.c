@@ -9,7 +9,9 @@
 #include "brokerd.h"
 #include "udp_trigger.h"
 
+#include <arpa/inet.h>
 #include <getopt.h>
+#include <netinet/in.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,24 +35,33 @@ uint64_t ts_to_ns(const struct timespec *t)
     return (uint64_t)t->tv_sec * 1000000000ull + (uint64_t)t->tv_nsec;
 }
 
-bool split_hostport(const char *s, char *host, size_t hostcap, char *port,
-                    size_t portcap)
+bool parse_ipv4_port(const char *s, struct sockaddr_in *out)
 {
     const char *colon = strrchr(s, ':');
-    if (colon == NULL || colon[1] == '\0') {
+    if (colon == NULL) {
         return false;
     }
+    char *end;
+    long port = strtol(colon + 1, &end, 10);
+    if (colon[1] == '\0' || *end != '\0' || port < 0 || port > 65535) {
+        return false;
+    }
+    char host[64];
     size_t hl = (size_t)(colon - s);
-    if (hl >= hostcap || strlen(colon + 1) >= portcap) {
+    if (hl >= sizeof host) {
         return false;
     }
     memcpy(host, s, hl);
     host[hl] = '\0';
-    if (strcmp(host, "*") == 0) {
-        host[0] = '\0';
+
+    memset(out, 0, sizeof *out);
+    out->sin_family = AF_INET;
+    out->sin_port = htons((uint16_t)port);
+    if (hl == 0 || strcmp(host, "*") == 0) {
+        out->sin_addr.s_addr = htonl(INADDR_ANY);
+        return true;
     }
-    strcpy(port, colon + 1);
-    return true;
+    return inet_pton(AF_INET, host, &out->sin_addr) == 1;
 }
 
 int spawn_thread(pthread_t *t, void *(*fn)(void *), void *arg)

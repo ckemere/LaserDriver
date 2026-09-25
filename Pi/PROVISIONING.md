@@ -36,7 +36,7 @@ Undo: `sudo apt purge laserhat`.
 | Unit | Starts at | Runs as | Groups | Why |
 |---|---|---|---|---|
 | `laserhat-oledd` | **sysinit.target** | laserhat | i2c, gpio | The display is the boot indicator: `DefaultDependencies=no`, ordered only after `local-fs.target` + `systemd-modules-load.service`, so hostname/IPs/heartbeat appear seconds after the kernel starts. The daemon retries `/dev/i2c-1` for ~30 s, so racing the module load/udev is harmless. |
-| `laserhat-broker` | multi-user | laserhat | dialout, gpio | Sole owner of `/dev/ttyS0` (MCU link) and the GPIO trigger; serves clients on `/run/laserhat/broker.sock` |
+| `laserhat-broker` | multi-user | laserhat | dialout, gpio | `/usr/bin/laserhat-brokerd`. Sole owner of `/dev/ttyS0` (MCU link) and the GPIO trigger (`/dev/gpiomem`); serves clients on `/run/laserhat/broker.sock`; UDP triggers on `192.168.17.10:17017` (trigger thread SCHED_FIFO 80 on CPU 3 via `LimitRTPRIO`/`LimitMEMLOCK`) |
 | `oled-gui` | multi-user | laserhat | — | Broker client; sends body rows to oledd over `/run/laserhat-oled/oled.sock`; before it connects, oledd shows the boot screen (hostname + `E:`/`W:` addresses) |
 | `laserhat-web` | multi-user | laserhat | — | Flask on `0.0.0.0:8080` — reachable on both the static wired address and wifi |
 
@@ -48,6 +48,9 @@ Undo any single unit: `sudo systemctl disable --now <unit>`.
   via a NetworkManager keyfile.  The wired port is a lab point-to-point
   link to the recording rig; wifi keeps DHCP and the default
   route/internet.  IPv6 disabled on the wired profile.
+- **UDP 17017, bound to the wired address:** the network trigger port
+  (protocol in `brokerd/README.md`). Ordinary wifi clients can't reach
+  it; add `--udp-allow <rig IP>` to the unit to accept only the rig.
 - The OLED header alternates `LASERHAT` tag / `E:<wired>` / `W:<wifi>`
   every 3 s (`WAITING` until an interface has an address); the web page
   header and `/api/net` report both.

@@ -8,11 +8,12 @@ is owned by a small **compiled daemon** (`oledd.c`, in the style of
 [pioled-ip](https://github.com/ckemere/pioled-ip)) so the display works
 from first boot and needs no Python graphics stack.
 
-**Network triggers:** `brokerd/` is a C drop-in replacement for
-`broker.py` (same UART protocol and JSON socket) that adds a low-latency
-UDP trigger listener for the remote experiment machine; see
-[`brokerd/README.md`](brokerd/README.md). It is not packaged or enabled
-yet — `laserhat-broker.service` still runs `broker.py`.
+**Network triggers:** the broker is `laserhat-brokerd` (`brokerd/`, C), a
+drop-in replacement for `broker.py` (same UART protocol and JSON socket)
+that adds a low-latency UDP trigger listener on the wired port
+(`192.168.17.10:17017`) for the remote experiment machine; see
+[`brokerd/README.md`](brokerd/README.md). `broker.py` is still shipped as
+a fallback.
 
 ```
                  /dev/ttyS0 (binary protocol)
@@ -54,8 +55,8 @@ addresses.
 |---|---|
 | `protocol.py` | Binary wire protocol (magic framing, no CRC). Source of truth; mirror of `Firmware/protocol.h`. |
 | `laser_hat.py` | `LaserUART` transport + `State` dataclass. Used by the broker; also a raw-link CLI. |
-| `broker.py` | The daemon: owns `/dev/ttyS0` + the GPIO trigger, mirrors MCU state, serves clients (pub/sub). |
-| `brokerd/` | C drop-in replacement for `broker.py` plus the UDP trigger listener (not yet packaged). |
+| `brokerd/` | **The daemon (C):** owns `/dev/ttyS0` + the GPIO trigger, mirrors MCU state, serves clients (pub/sub), UDP trigger listener. |
+| `broker.py` | Python original of the daemon (no UDP triggers); shipped as a fallback. |
 | `udp_trigger.py` | Network trigger sender (library + latency CLI) for the experiment machine. |
 | `hat_client.py` | `HatClient` — what the GUIs use to talk to the broker (cached state + update callback). |
 | `params.py` | Shared knob step sizes / ranges (OLED + web read this). |
@@ -74,7 +75,7 @@ addresses.
 | Unit | Runs | Notes |
 |---|---|---|
 | `laserhat-oledd.service` | `oledd` (C) | Owns the panel; starts at boot with no dependencies, shows hostname + IPs immediately. |
-| `laserhat-broker.service` | `broker.py` | Owns the UART; `RuntimeDirectory=laserhat` creates `/run/laserhat`. |
+| `laserhat-broker.service` | `laserhat-brokerd` (C) | Owns the UART + trigger GPIO; UDP triggers on `192.168.17.10:17017`; `RuntimeDirectory=laserhat` creates `/run/laserhat`. |
 | `oled-gui.service` | `oled_gui.py` | Broker client; sends body rows to `oledd`. |
 | `laserhat-web.service` | `web_app.py` | Broker client; serves `http://192.168.17.10:8080/` (and the wifi address). |
 

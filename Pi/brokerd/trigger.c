@@ -13,7 +13,6 @@
 
 #include <arpa/inet.h>
 #include <errno.h>
-#include <netdb.h>
 #include <netinet/in.h>
 #include <sched.h>
 #include <stdatomic.h>
@@ -232,29 +231,28 @@ int trigger_start(const TriggerCfg *cfg)
         g_have_allow = true;
     }
 
-    char host[128], port[16];
-    if (!split_hostport(cfg->bind, host, sizeof host, port, sizeof port)) {
-        fprintf(stderr, "brokerd: bad --udp HOST:PORT '%s'\n", cfg->bind);
+    struct sockaddr_in sa;
+    if (!parse_ipv4_port(cfg->bind, &sa)) {
+        fprintf(stderr, "brokerd: bad --udp IPV4:PORT '%s'\n", cfg->bind);
         return -1;
     }
-    struct addrinfo hints = { .ai_family = AF_INET, .ai_socktype = SOCK_DGRAM,
-                              .ai_flags = AI_PASSIVE }, *ai;
-    int rc = getaddrinfo(host[0] ? host : NULL, port, &hints, &ai);
-    if (rc != 0) {
-        fprintf(stderr, "brokerd: %s: %s\n", cfg->bind, gai_strerror(rc));
-        return -1;
+    g_sock = socket(AF_INET, SOCK_DGRAM, 0);
+    int one = 1;
+#ifdef IP_FREEBIND
+    /* Bind the wired address even while eth0 is down (no cable yet):
+     * otherwise the broker, and the GUIs that Require= it, would
+     * crash-loop until the link comes up. */
+    if (g_sock >= 0) {
+        setsockopt(g_sock, IPPROTO_IP, IP_FREEBIND, &one, sizeof one);
     }
-    g_sock = socket(ai->ai_family, ai->ai_socktype, 0);
-    if (g_sock < 0 || bind(g_sock, ai->ai_addr, ai->ai_addrlen) < 0) {
+#endif
+    if (g_sock < 0 || bind(g_sock, (struct sockaddr *)&sa, sizeof sa) < 0) {
         fprintf(stderr, "brokerd: udp %s: %s\n", cfg->bind, strerror(errno));
-        freeaddrinfo(ai);
         if (g_sock >= 0) close(g_sock);
         g_sock = -1;
         return -1;
     }
-    freeaddrinfo(ai);
 
-    int one = 1;
 #ifdef SO_TIMESTAMPNS
     setsockopt(g_sock, SOL_SOCKET, SO_TIMESTAMPNS, &one, sizeof one);
 #else
