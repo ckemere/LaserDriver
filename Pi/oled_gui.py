@@ -232,15 +232,19 @@ def main() -> int:
     print(f"connecting to oledd at {oled_sock} …", file=sys.stderr)
     panel = OledClient(oled_sock)
 
-    deadline = time.monotonic() + 5.0
-    state = None
-    while state is None and time.monotonic() < deadline:
-        state = client.get_state()
+    # Wait for the MCU indefinitely rather than exiting: a blank board (or
+    # one mid-flash) would otherwise crash-loop this unit, and a unit caught
+    # between restarts isn't brought back by laserhat-flash.  oledd keeps
+    # showing its boot screen meanwhile.
+    warn_at = time.monotonic() + 5.0
+    state = client.get_state()
+    while state is None:
+        if warn_at and time.monotonic() >= warn_at:
+            print("waiting for the MCU (is it flashed and powered? "
+                  "sudo laserhat-flash)", file=sys.stderr)
+            warn_at = 0.0
         time.sleep(0.05)
-    if state is None:
-        print("ERROR: no response from MCU; is it flashed and powered?",
-              file=sys.stderr)
-        return 1
+        state = client.get_state()
 
     with ui_lock:
         selected = ui["selected"]

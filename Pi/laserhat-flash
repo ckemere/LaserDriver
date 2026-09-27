@@ -13,7 +13,7 @@
 #   2. power-cycle the MCU (power_cycle.py) so PA19 comes up as SWDIO;
 #      the firmware keeps it that way for its ~4 s boot blink
 #   3. OpenOCD: halt inside that window, erase + write, reset run
-#   4. restart whichever services were running
+#   4. restart the broker + GUIs (every one that is enabled or was running)
 #
 # Flash with the laser unplugged: SWD traffic on PA19 looks like trigger
 # edges to firmware that has already claimed it.  A blank MCU is inert.
@@ -55,26 +55,26 @@ if [ "$ASSUME_YES" -ne 1 ]; then
     esac
 fi
 
-# --- 1. stop the broker + GUIs; remember which were running ---------------
-WAS_ACTIVE=""
+# --- 1. stop the broker + GUIs; bring back every enabled one after --------
+# "Enabled", not "active": with a blank MCU a GUI can be between restarts
+# (activating), and it must still come back once the board is flashed.
+RESTART=""
 for u in $UNITS; do
-    if systemctl is-active --quiet "$u"; then
-        WAS_ACTIVE="$WAS_ACTIVE $u"
+    if systemctl is-enabled --quiet "$u" || systemctl is-active --quiet "$u"; then
+        RESTART="$RESTART $u"
     fi
 done
 restore() {
-    if [ -n "$WAS_ACTIVE" ]; then
-        echo "restarting:$WAS_ACTIVE"
+    if [ -n "$RESTART" ]; then
+        echo "restarting:$RESTART"
         # shellcheck disable=SC2086
-        systemctl start $WAS_ACTIVE || true
+        systemctl restart $RESTART || true
     fi
 }
 trap restore EXIT
-if [ -n "$WAS_ACTIVE" ]; then
-    echo "stopping:$WAS_ACTIVE"
-    # shellcheck disable=SC2086
-    systemctl stop $WAS_ACTIVE
-fi
+echo "stopping: $UNITS"
+# shellcheck disable=SC2086
+systemctl stop $UNITS
 
 # --- 2. power-cycle into the SWD window -----------------------------------
 python3 "$LIB_DIR/power_cycle.py"
