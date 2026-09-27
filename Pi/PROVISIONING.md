@@ -15,13 +15,18 @@ Undo notes are included for every change.
 | Path | What | Why |
 |---|---|---|
 | `/usr/bin/laserhat-oledd` | Static C daemon owning the SSD1305 OLED | No Python graphics stack; works from early boot; see `oledd.c` |
-| `/usr/lib/laserhat/*.py` (+`templates/`) | broker, OLED GUI, web GUI, protocol | Single install location, no venv, imports via `WorkingDirectory` |
+| `/usr/bin/laserhat-brokerd` | Static C broker: UART, trigger GPIO, UDP triggers | Real-time trigger path; see `brokerd/README.md` |
+| `/usr/bin/laserhat-flash` | Programs the MCU over SWD (manual, `sudo`) | Boards arrive blank; see §9 |
+| `/usr/lib/laserhat/firmware/` | `laserhat-mcu.elf`/`.hex`, `pi-swd.cfg`, `VERSION` | MCU firmware built by CI from the same commit as the broker (shared `protocol.h`) |
+| `/usr/lib/laserhat/*.py` (+`templates/`) | OLED GUI, web GUI, protocol, `broker.py` fallback | Single install location, no venv, imports via `WorkingDirectory` |
 | `/usr/lib/systemd/system/laserhat-*.service`, `oled-gui.service` | Service units | `/usr/lib` (not `/lib`) because `/lib` is a merged-usr **symlink**; a package extracting a real `/lib` directory over it destroys the dynamic-loader path and bricks the OS. The injector refuses any package shipping top-level `/lib`, `/bin` or `/sbin`. |
 | `/etc/NetworkManager/system-connections/laserhat-eth0.nmconnection` | Static wired IP (see §3) | conffile, mode 0600 (NetworkManager refuses looser modes) |
 | `/etc/modules-load.d/laserhat.conf` | Loads `i2c-dev` at boot | The OLED daemon needs `/dev/i2c-1` without waiting for anything to modprobe it |
 
 Declared dependencies (from apt, no pip): `python3`, `python3-serial`,
-`python3-flask`, `python3-gpiozero`, `python3-lgpio`.
+`python3-flask`, `python3-gpiozero`, `python3-lgpio`, `openocd` (for
+`laserhat-flash`; the golden-image build fails if this OS release's
+openocd lacks `target/ti_mspm0.cfg`).
 
 **postinst** creates the `laserhat` system user (all four daemons share
 it so their Unix sockets in `/run/laserhat*` need no cross-user
@@ -129,3 +134,21 @@ The firstboot unit is removed from them.
 If the display stays on the boot screen: `journalctl -u laserhat-broker
 -u oled-gui -n 30` — almost always the MCU link (HAT unpowered, not
 flashed, or UART config reverted).
+
+## 9. MCU firmware (manual, once per board)
+
+New boards arrive with a blank MCU, and nothing flashes automatically.
+With the **laser unplugged**:
+
+```bash
+sudo laserhat-flash
+```
+
+The command stops the broker and GUIs, which frees GPIO 24 (the SWD data
+line and also the trigger line). It then power-cycles the MCU into its boot
+window, writes `/usr/lib/laserhat/firmware/laserhat-mcu.elf` with OpenOCD,
+and restarts the services. A successful flash ends with the ~4 s boot blink on
+STIM_MIRROR, and the OLED/web then show the MCU as alive.
+`cat /usr/lib/laserhat/firmware/VERSION` shows which release the firmware
+came from. Re-run the command after installing a new package version to keep
+the firmware and broker matched.

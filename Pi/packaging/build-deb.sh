@@ -11,15 +11,19 @@
 #   /usr/bin/laserhat-oledd                          compiled SSD1305 daemon
 #   /usr/bin/laserhat-brokerd                        compiled broker (UART, GPIO,
 #                                                    UDP triggers)
+#   /usr/bin/laserhat-flash                          flash the MCU (manual; sudo)
 #   /usr/lib/laserhat/                               Python app (GUIs; broker.py
 #                                                    kept as a fallback)
+#   /usr/lib/laserhat/firmware/                      MCU firmware built from the
+#                                                    same commit + OpenOCD config
 #   /usr/lib/systemd/system/laserhat-*.service, oled-gui.service
 #   /etc/NetworkManager/system-connections/laserhat-eth0.nmconnection
 #   /etc/modules-load.d/laserhat.conf                (i2c-dev)
 #
 # Python dependencies are declared as package Depends and come from apt —
 # no pip, no venv.  The postinst creates the 'laserhat' system user and
-# enables the services.
+# enables the services.  Building needs arm-none-eabi-gcc
+# (gcc-arm-none-eabi) for the MCU firmware as well as the target C compiler.
 
 set -euo pipefail
 
@@ -38,9 +42,13 @@ case "$ARCH" in
     *)           die "arch must be arm64, armhf, or native" ;;
 esac
 
+command -v arm-none-eabi-gcc >/dev/null || \
+    die "arm-none-eabi-gcc not found (apt install gcc-arm-none-eabi)"
+
 PKG=$(mktemp -d)
+FW_BUILD=$(mktemp -d)
 chmod 755 "$PKG"        # mktemp makes 0700; don't ship that as the root dir
-trap 'rm -rf "$PKG"' EXIT
+trap 'rm -rf "$PKG" "$FW_BUILD"' EXIT
 
 # --- compiled OLED daemon ---------------------------------------------------
 mkdir -p "$PKG/usr/bin"
@@ -52,6 +60,17 @@ mkdir -p "$PKG/usr/bin"
 "$CC" -O2 -Wall -Wextra -Werror -static -std=c11 -D_GNU_SOURCE -pthread \
     -I"$PI_DIR/../Firmware" -o "$PKG/usr/bin/laserhat-brokerd" \
     "$PI_DIR"/brokerd/*.c -lm
+
+# --- MCU firmware + flashing tool --------------------------------------------
+# Built from the same commit as the broker, so both sides share protocol.h.
+# Flashing is manual (sudo laserhat-flash); nothing flashes at boot.
+make -C "$PI_DIR/../Firmware" -f Makefile.gcc BUILD_DIR="$FW_BUILD" all
+mkdir -p "$PKG/usr/lib/laserhat/firmware"
+install -m 644 "$FW_BUILD/main.elf" "$PKG/usr/lib/laserhat/firmware/laserhat-mcu.elf"
+install -m 644 "$FW_BUILD/main.hex" "$PKG/usr/lib/laserhat/firmware/laserhat-mcu.hex"
+install -m 644 "$PI_DIR/../Firmware/openocd/pi-swd.cfg" "$PKG/usr/lib/laserhat/firmware/"
+echo "$VERSION" > "$PKG/usr/lib/laserhat/firmware/VERSION"
+install -m 755 "$PI_DIR/laserhat-flash" "$PKG/usr/bin/laserhat-flash"
 
 # --- Python application -----------------------------------------------------
 mkdir -p "$PKG/usr/lib/laserhat/templates"
@@ -82,7 +101,7 @@ Package: laserhat
 Version: $VERSION
 Architecture: $DEB_ARCH
 Maintainer: Caleb Kemere <caleb.kemere@rice.edu>
-Depends: python3, python3-serial, python3-flask, python3-gpiozero, python3-lgpio
+Depends: python3, python3-serial, python3-flask, python3-gpiozero, python3-lgpio, openocd
 Section: electronics
 Priority: optional
 Description: LaserHAT laser-diode driver control stack
@@ -90,7 +109,8 @@ Description: LaserHAT laser-diode driver control stack
  trigger GPIO; low-latency UDP trigger listener), an OLED
  status/param GUI on the Adafruit SSD1305 bonnet driven by a compiled
  panel daemon, and a Flask web GUI.  Configures the wired interface
- with a static address (192.168.17.10/24, no gateway).
+ with a static address (192.168.17.10/24, no gateway).  Includes the
+ matching MCU firmware; program a board with 'sudo laserhat-flash'.
 EOF
 
 cat > "$PKG/DEBIAN/conffiles" <<EOF

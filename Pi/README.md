@@ -64,10 +64,11 @@ addresses.
 | `oled_gui.py` | OLED GUI daemon (broker client; sends rows to `oledd`). |
 | `web_app.py` | Flask web GUI (broker client). |
 | `pi_trigger.py` | `PiTrigger` — gpiozero driver for GPIO 24 → MCU PA19, used by `broker.py` (brokerd drives the pin directly via `/dev/gpiomem`). |
-| `power_cycle.py` | Power-cycles the MCU for `make flash` (called by the firmware Makefile). |
+| `laserhat-flash` | Flashes the packaged MCU firmware over SWD (`sudo`; manual). |
+| `power_cycle.py` | Power-cycles the MCU for flashing (called by `laserhat-flash` and the firmware Makefile). |
 | `fake_mcu.py` | PTY that speaks the protocol, for off-hardware testing. |
 | `network/laserhat-eth0.nmconnection` | Static wired IP (192.168.17.10/24, no gateway). |
-| `packaging/build-deb.sh` | Builds `laserhat_<ver>_<arch>.deb` (cross-compiles `oledd`). |
+| `packaging/build-deb.sh` | Builds `laserhat_<ver>_<arch>.deb` (cross-compiles `oledd` and `brokerd`, builds the MCU firmware). |
 | `packaging/inject-laserhat.sh` | Bakes the package into a flashed SD card / .img. |
 
 ## Services (`systemd/`)
@@ -126,8 +127,19 @@ debs, the inject script, and the golden images.
 
 ## Operating
 
-**After flashing new firmware**, restart the stack so it reconnects to
-the freshly-booted MCU:
+**New board: flash the MCU first.** Boards arrive blank. The package
+ships the firmware built from the same commit as the broker, and nothing
+flashes it automatically. With the **laser unplugged**:
+
+```bash
+sudo laserhat-flash        # stops/restarts the broker + GUIs around the flash
+```
+
+Re-run it after upgrading the package so the firmware and broker stay
+matched (`/usr/lib/laserhat/firmware/VERSION`). Developers flashing their own
+build can use `sudo laserhat-flash path/to/main.elf`, or `make flash` from
+`Firmware/`. After a `make flash`, restart the stack yourself so it
+reconnects to the freshly booted MCU:
 
 ```bash
 sudo systemctl restart laserhat-broker.service oled-gui.service laserhat-web.service

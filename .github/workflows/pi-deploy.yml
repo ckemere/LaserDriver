@@ -75,8 +75,8 @@ jobs:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0       # git describe needs tags for the version
-      - name: Install cross-compiler
-        run: sudo apt-get update && sudo apt-get install -y ${{ matrix.pkg }}
+      - name: Install cross-compilers (Pi target + MCU firmware)
+        run: sudo apt-get update && sudo apt-get install -y ${{ matrix.pkg }} gcc-arm-none-eabi
       - name: Build package
         run: |
           Pi/packaging/build-deb.sh ${{ matrix.arch }} ${{ matrix.cc }}
@@ -184,6 +184,13 @@ jobs:
             set -e
             apt-get update
             DEBIAN_FRONTEND=noninteractive apt-get install -y /var/cache/laserhat/*.deb
+            # laserhat-flash needs the MSPM0 target script from the
+            # openocd of this OS release; fail rather than ship an image
+            # that cannot program a new board.
+            test -f /usr/share/openocd/scripts/target/ti_mspm0.cfg || {
+              echo "openocd here lacks target/ti_mspm0.cfg: laserhat-flash would fail" >&2
+              exit 1
+            }
             apt-get clean
             rm -rf /var/cache/laserhat
             systemctl disable laserhat-firstboot.service || true
