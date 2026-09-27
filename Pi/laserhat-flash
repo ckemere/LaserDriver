@@ -1,0 +1,93 @@
+#!/bin/sh
+#
+# laserhat-flash — program the LaserHAT MCU (MSPM0) with the firmware
+# shipped in the laserhat package, over SWD bit-banged from Pi GPIO.
+#
+#   sudo laserhat-flash            # flash the packaged firmware
+#   sudo laserhat-flash -y         # don't ask for confirmation
+#   sudo laserhat-flash FILE.elf   # flash a different image
+#
+# Sequence (same as `make flash` in Firmware/):
+#   1. stop the broker (it holds GPIO 24 = SWDIO as the trigger output)
+#      and the GUIs that depend on it
+#   2. power-cycle the MCU (power_cycle.py) so PA19 comes up as SWDIO;
+#      the firmware keeps it that way for its ~4 s boot blink
+#   3. OpenOCD: halt inside that window, erase + write, reset run
+#   4. restart the broker + GUIs (every one that is enabled or was running)
+#
+# Flash with the laser unplugged: SWD traffic on PA19 looks like trigger
+# edges to firmware that has already claimed it.  A blank MCU is inert.
+#
+# Success looks like the ~4 s STIM_MIRROR boot blink after the write.
+
+set -eu
+
+FW_DIR=/usr/lib/laserhat/firmware
+LIB_DIR=/usr/lib/laserhat
+UNITS="laserhat-broker.service oled-gui.service laserhat-web.service"
+
+die() { echo "laserhat-flash: $*" >&2; exit 1; }
+
+ASSUME_YES=0
+ELF=$FW_DIR/laserhat-mcu.elf
+for arg in "$@"; do
+    case "$arg" in
+        -y|--yes)  ASSUME_YES=1 ;;
+        -h|--help) sed -n '2,22p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -*)        die "unknown option $arg" ;;
+        *)         ELF=$arg ;;
+    esac
+done
+
+[ "$(id -u)" -eq 0 ] || die "run with sudo (stops services, drives GPIO)"
+[ -f "$ELF" ] || die "firmware image $ELF not found"
+command -v openocd >/dev/null || die "openocd not installed (sudo apt install openocd)"
+
+echo "Firmware: $ELF"
+[ -f "$FW_DIR/VERSION" ] && [ "$ELF" = "$FW_DIR/laserhat-mcu.elf" ] && \
+    echo "Version:  $(cat "$FW_DIR/VERSION")"
+if [ "$ASSUME_YES" -ne 1 ]; then
+    printf 'Unplug the laser before flashing.  Continue? [y/N] '
+    read -r answer
+    case "$answer" in
+        y|Y|yes|YES) ;;
+        *) echo "aborted"; exit 1 ;;
+    esac
+fi
+
+# --- 1. stop the broker + GUIs; bring back every enabled one after --------
+# "Enabled", not "active": with a blank MCU a GUI can be between restarts
+# (activating), and it must still come back once the board is flashed.
+RESTART=""
+for u in $UNITS; do
+    if systemctl is-enabled --quiet "$u" || systemctl is-active --quiet "$u"; then
+        RESTART="$RESTART $u"
+    fi
+done
+restore() {
+    if [ -n "$RESTART" ]; then
+        echo "restarting:$RESTART"
+        # shellcheck disable=SC2086
+        systemctl restart $RESTART || true
+    fi
+}
+trap restore EXIT
+echo "stopping: $UNITS"
+# shellcheck disable=SC2086
+systemctl stop $UNITS
+
+# --- 2. power-cycle into the SWD window -----------------------------------
+python3 "$LIB_DIR/power_cycle.py"
+
+# --- 3. write ---------------------------------------------------------------
+# No verify step: OpenOCD's target-side CRC hangs this MCU (see
+# Firmware/Makefile.gcc); the write itself is reliable.
+openocd -f "$FW_DIR/pi-swd.cfg" \
+    -f target/ti_mspm0.cfg \
+    -c "init" \
+    -c "halt" \
+    -c "flash write_image erase $ELF" \
+    -c "reset run" \
+    -c "shutdown"
+
+echo "flashed; watch for the ~4 s boot blink on STIM_MIRROR"

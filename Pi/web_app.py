@@ -22,7 +22,6 @@ from __future__ import annotations
 
 import os
 import socket
-import subprocess
 import sys
 from typing import Optional
 
@@ -34,21 +33,43 @@ from params import ESTIM_PARAMS_BY_NAME, PARAMS_BY_NAME
 
 
 # --------------------------------------------------------------- helpers
-def primary_ip() -> str:
-    try:
-        out = subprocess.check_output(["hostname", "-I"], text=True).split()
-        if out:
-            return out[0]
-    except (FileNotFoundError, subprocess.CalledProcessError):
-        pass
+def _if_ipv4(name: str) -> Optional[str]:
+    """IPv4 address of one interface via SIOCGIFADDR (stdlib only)."""
+    import fcntl
+    import struct
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     try:
-        s.connect(("8.8.8.8", 80))
-        return s.getsockname()[0]
+        packed = fcntl.ioctl(
+            s.fileno(), 0x8915,  # SIOCGIFADDR
+            struct.pack("256s", name.encode()[:15]))
+        return socket.inet_ntoa(packed[20:24])
     except OSError:
-        return "?.?.?.?"
+        return None
     finally:
         s.close()
+
+
+def interface_ips() -> dict:
+    """{'wired': ip-or-None, 'wifi': ip-or-None} — first eth*/en* and wl*
+    interface with an IPv4 address.  Mirrors oledd's header logic."""
+    ips = {"wired": None, "wifi": None}
+    try:
+        names = [n for _, n in socket.if_nameindex()]
+    except OSError:
+        names = []
+    for name in names:
+        kind = ("wired" if name.startswith(("eth", "en")) else
+                "wifi" if name.startswith("wl") else None)
+        if kind and ips[kind] is None:
+            ips[kind] = _if_ipv4(name)
+    return ips
+
+
+def net_line() -> str:
+    """'wired 192.168.17.10 · wifi waiting' — for the page header."""
+    ips = interface_ips()
+    return (f"wired {ips['wired'] or 'waiting'} · "
+            f"wifi {ips['wifi'] or 'waiting'}")
 
 
 def _state_dict(state: Optional[State]) -> dict:
@@ -79,10 +100,14 @@ def create_app(client: HatClient) -> Flask:
         return render_template(
             "index.html",
             hostname=app.config["hostname"],
-            ip=primary_ip(),
+            ip=net_line(),
             params=PARAMS_BY_NAME,
             estim_params=ESTIM_PARAMS_BY_NAME,
         )
+
+    @app.route("/api/net")
+    def api_net():
+        return jsonify(interface_ips())
 
     @app.route("/api/state")
     def api_state():
@@ -150,7 +175,10 @@ def main() -> int:
     print(f"connecting to broker at {sock} …", file=sys.stderr)
     client = HatClient(sock)
 
-    print(f"serving on {host}:{port} (http://{primary_ip()}:{port}/)",
+    ips = interface_ips()
+    urls = " ".join(f"http://{ip}:{port}/"
+                    for ip in (ips["wired"], ips["wifi"]) if ip)
+    print(f"serving on {host}:{port} ({urls or 'no addresses yet'})",
           file=sys.stderr)
 
     app = create_app(client)

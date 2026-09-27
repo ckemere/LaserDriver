@@ -1,35 +1,46 @@
-# LaserHAT broker — the single owner of /dev/ttyS0.
+# LaserHAT broker — the single owner of /dev/ttyS0 and the trigger GPIO.
 #
-# Speaks the binary protocol to the MCU and serves the eink GUI and web
-# GUI over a Unix-domain socket at /run/laserhat/broker.sock.  Both GUIs
-# are clients of this daemon, so they no longer conflict over the UART —
-# run them together.
+# Runs laserhat-brokerd (Pi/brokerd/, C): speaks the binary protocol to the
+# MCU, serves the OLED GUI and web GUI over a Unix-domain socket at
+# /run/laserhat/broker.sock, and turns UDP trigger datagrams from the
+# experiment machine into GPIO 24 -> MCU PA19 edges (Pi/brokerd/README.md).
 #
-# Install:
-#   sudo cp Pi/systemd/laserhat-broker.service /etc/systemd/system/
-#   sudo systemctl daemon-reload
-#   sudo systemctl enable --now laserhat-broker.service
+# Installed by the laserhat package to /usr/bin; the 'laserhat' system user
+# is created in the package postinst.
 #
-# Edit User=, Group=, WorkingDirectory=, and the ExecStart= python prefix
-# if your Pi account isn't 'kemerelab' or the venv lives elsewhere.
+# The UDP listener binds only the static wired address (192.168.17.10, see
+# network/laserhat-eth0.nmconnection), so ordinary wifi clients can't reach
+# it.  (Linux accepts a packet for that address on any interface, so a host
+# that deliberately routes 192.168.17.10 via the Pi's wifi address could;
+# add --udp-allow <rig IP> to accept triggers from the recording rig only.)
+# It binds even while the cable is unplugged (IP_FREEBIND).  The trigger
+# thread runs SCHED_FIFO 80 pinned to CPU 3.
+#
+# Fallback to the Python broker (no UDP triggers): swap the ExecStart=
+# lines.
 
 [Unit]
-Description=LaserHAT broker (owns /dev/ttyS0, serves GUIs over a Unix socket)
+Description=LaserHAT broker (owns /dev/ttyS0 + trigger GPIO, serves GUIs, UDP triggers)
 After=dev-ttyS0.device
 Wants=dev-ttyS0.device
 
 [Service]
 Type=simple
-User=kemerelab
-Group=kemerelab
-# Serial port access; gpiozero needs the gpio group for the PA19 trigger pin.
+User=laserhat
+Group=laserhat
+# Serial port access; /dev/gpiomem needs the gpio group.
 SupplementaryGroups=dialout gpio
-WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
-# systemd creates /run/laserhat (0750, owned by User) and exports it.
+WorkingDirectory=/usr/lib/laserhat
+# systemd creates /run/laserhat (0755, owned by User) and exports it.
 RuntimeDirectory=laserhat
-RuntimeDirectoryMode=0750
+RuntimeDirectoryMode=0755
 Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
-ExecStart=/home/kemerelab/.venvs/laserhat/bin/python broker.py
+Environment=LASERHAT_UDP=192.168.17.10:17017
+# Let the unprivileged trigger thread go SCHED_FIFO and lock its memory.
+LimitRTPRIO=80
+LimitMEMLOCK=infinity
+ExecStart=/usr/bin/laserhat-brokerd --udp ${LASERHAT_UDP} --rt-prio 80 --cpu 3
+#ExecStart=/usr/bin/python3 broker.py
 Restart=on-failure
 RestartSec=3
 StandardOutput=journal

@@ -1,27 +1,27 @@
-# LaserHAT OLED GUI — long-running daemon (Adafruit 2.23" 128x32 bonnet).
+# LaserHAT OLED GUI — broker client that drives the panel through the
+# compiled oledd daemon (laserhat-oledd.service).
 #
-#   sudo cp Pi/systemd/oled-gui.service /etc/systemd/system/
-#   sudo systemctl daemon-reload
-#   sudo systemctl enable --now oled-gui.service
+# Connects to laserhat-broker.service over /run/laserhat/broker.sock and
+# to laserhat-oledd over /run/laserhat-oled/oled.sock.  It opens neither
+# the UART nor the I2C bus itself, so it runs alongside the web GUI.
 #
-# A broker client: connects to laserhat-broker.service over the Unix socket
-# and doesn't open the UART, so it runs alongside the web GUI. Edit User=,
-# Group=, WorkingDirectory=, and the ExecStart= python prefix below if your
-# Pi account isn't 'kemerelab' or the venv lives elsewhere.
+# Installed by the laserhat package to /usr/lib/laserhat; stdlib-only
+# Python, no pip packages.
 
 [Unit]
-Description=LaserHAT OLED GUI (broker client + display)
-After=network-online.target laserhat-broker.service
-Wants=network-online.target
+Description=LaserHAT OLED GUI (broker client)
+After=laserhat-broker.service laserhat-oledd.service
+Wants=laserhat-oledd.service
 Requires=laserhat-broker.service
 
 [Service]
 Type=simple
-User=kemerelab
-Group=kemerelab
-WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
+User=laserhat
+Group=laserhat
+WorkingDirectory=/usr/lib/laserhat
 Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
-ExecStart=/home/kemerelab/.venvs/laserhat/bin/python oled_gui.py
+Environment=LASERHAT_OLED_SOCK=/run/laserhat-oled/oled.sock
+ExecStart=/usr/bin/python3 oled_gui.py
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal

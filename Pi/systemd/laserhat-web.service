@@ -1,32 +1,27 @@
 # LaserHAT web GUI (Flask) — long-running daemon.
 #
 # A broker client: it connects to laserhat-broker.service over the Unix
-# socket, so it no longer needs exclusive UART access and can run at the
-# same time as eink-gui.service.
+# socket, so it needs no UART access and runs at the same time as the
+# OLED GUI.  Binds 0.0.0.0:8080 — reachable on both the static wired
+# address (192.168.17.10) and whatever address wifi obtains.
 #
-#   sudo cp Pi/systemd/laserhat-web.service /etc/systemd/system/
-#   sudo systemctl daemon-reload
-#   sudo systemctl enable --now laserhat-web.service
-#
-# Then browse to http://<pi>:8080/ from any device on the LAN.
-#
-# Edit User=, Group=, paths and ExecStart= if your Pi account isn't
-# 'kemerelab' or the venv lives somewhere other than ~/.venvs/laserhat.
+# Installed by the laserhat package to /usr/lib/laserhat; Flask comes
+# from apt (python3-flask) — no venv, no pip.
 
 [Unit]
 Description=LaserHAT web GUI (Flask)
-After=network-online.target laserhat-broker.service
-Wants=network-online.target
+After=network.target laserhat-broker.service
 Requires=laserhat-broker.service
 
 [Service]
 Type=simple
-User=kemerelab
-Group=kemerelab
-WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
+User=laserhat
+Group=laserhat
+WorkingDirectory=/usr/lib/laserhat
 Environment=PORT=8080
+Environment=HOST=0.0.0.0
 Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
-ExecStart=/home/kemerelab/.venvs/laserhat/bin/python web_app.py
+ExecStart=/usr/bin/python3 web_app.py
 Restart=on-failure
 RestartSec=5
 StandardOutput=journal

@@ -5,14 +5,22 @@ Broker-client design: does NOT open the serial port, runs alongside the
 web GUI.  Button presses arrive as EVT_BUTTON broadcasts; state arrives
 as broadcast snapshots — no polling.
 
+The panel itself is owned by the compiled oledd daemon (oledd.c), which
+this process talks to over a Unix socket with a tiny line protocol
+(TAG / ROW / CHIP / FLUSH — see oledd.c).  oledd draws the header's
+alternating E:/W: IP display and the heartbeat dot on its own, so this
+GUI only composes the mode tag and the three body rows.  No Pillow, no
+adafruit-blinka — stdlib only.
+
 Button mapping (LaserHAT hardware buttons, reported by MCU):
     B1  trigger pulse — firmware fires on release.
     B2  cycle selected row (laser: i→r→h→[mode]; estim: dur→IPI→[mode])
     B3  decrement selected value  (on [mode] row: no-op on −)
     B4  increment selected value  (on [mode] row: toggle LASER↔ESTIM)
 
-Display layout (128×32, font 8px → 4 rows):
-    Row 0  header: "LaserHAT[L|E]"  +  IP (right-aligned if it fits)
+Display layout (oledd cells: 21 columns × 4 rows):
+    Row 0  header, owned by oledd: alternates LASERHAT[L|E] tag /
+           E:<wired IP> / W:<wifi IP or WAITING>, heartbeat dot at right
     Row 1  ┐
     Row 2  ├  3-row scrolling window over the selectable items
     Row 3  ┘  phase chip (WAIT/TRIG) pinned to bottom-right corner
@@ -26,14 +34,10 @@ from __future__ import annotations
 
 import os
 import socket
-import subprocess
 import sys
 import threading
 import time
 
-from PIL import ImageDraw, ImageFont
-
-from oled_panel import OledPanel
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
 from params import ESTIM_PARAMS, PARAMS
@@ -42,7 +46,8 @@ from params import ESTIM_PARAMS, PARAMS
 # --------------------------------------------------------------- config
 POLL_INTERVAL = 0.05         # seconds between state reads
 SETTLE_GAP    = 0.15         # render after this much quiet time
-IP_CHECK_GAP  = 30.0         # poll IP this often
+
+DEFAULT_OLED_SOCKET = "/run/laserhat-oled/oled.sock"
 
 # Button bits in State.button_mask / EVT_BUTTON edges.
 B1, B2, B3, B4 = 0b0001, 0b0010, 0b0100, 0b1000
@@ -50,20 +55,63 @@ B1, B2, B3, B4 = 0b0001, 0b0010, 0b0100, 0b1000
 # Sentinel object for the mode-toggle row in the selection cycle.
 _MODE_ITEM = object()
 
-FONT_CANDIDATES = [
-    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
-    "/usr/share/fonts/truetype/dejavu/DejaVuSansMono.ttf",
-    "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
-]
 
+# --------------------------------------------------------------- oledd client
 
-def load_font(size: int) -> ImageFont.ImageFont:
-    for path in FONT_CANDIDATES:
-        try:
-            return ImageFont.truetype(path, size=size)
-        except (OSError, IOError):
-            continue
-    return ImageFont.load_default()
+class OledClient:
+    """Line-protocol client of the oledd panel daemon.
+
+    Reconnects lazily: if oledd restarts, the next frame re-establishes
+    the connection and repaints, so neither daemon depends on start
+    order.
+    """
+
+    def __init__(self, path: str = DEFAULT_OLED_SOCKET):
+        self._path = path
+        self._sock: socket.socket | None = None
+
+    def _connect(self) -> None:
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        s.settimeout(1.0)
+        s.connect(self._path)
+        self._sock = s
+
+    def send_frame(self, tag: str, rows: list[str],
+                   chip: str | None, chip_inverted: bool) -> bool:
+        lines = [f"TAG {tag}"]
+        for i in range(3):
+            lines.append(f"ROW {i + 1} {rows[i] if i < len(rows) else ''}")
+        if chip:
+            lines.append(f"CHIP {chip} {1 if chip_inverted else 0}")
+        else:
+            lines.append("CHIP OFF")
+        lines.append("FLUSH")
+        payload = ("\n".join(lines) + "\n").encode("ascii", "replace")
+
+        for attempt in (0, 1):
+            try:
+                if self._sock is None:
+                    self._connect()
+                self._sock.sendall(payload)
+                return True
+            except OSError:
+                if self._sock is not None:
+                    try:
+                        self._sock.close()
+                    except OSError:
+                        pass
+                    self._sock = None
+                if attempt:
+                    return False
+        return False
+
+    def close(self) -> None:
+        if self._sock is not None:
+            try:
+                self._sock.close()
+            except OSError:
+                pass
+            self._sock = None
 
 
 # --------------------------------------------------------------- item helpers
@@ -104,50 +152,12 @@ _FMT = {
 }
 
 
-# --------------------------------------------------------------- helpers
-
-def primary_ip() -> str:
-    try:
-        out = subprocess.check_output(["hostname", "-I"], text=True).split()
-        if out:
-            return out[0]
-    except (FileNotFoundError, subprocess.CalledProcessError):
-        pass
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    try:
-        s.connect(("8.8.8.8", 80))
-        return s.getsockname()[0]
-    except OSError:
-        return "?.?.?.?"
-    finally:
-        s.close()
-
-
 # --------------------------------------------------------------- render
 
-def render(
-    panel: OledPanel,
-    state: State,
-    selected: int,
-    ip: str,
-    hostname: str,
-    *,
-    force_full: bool = False,
-) -> None:
-    W, H = panel.size           # (128, 32)
-    img = panel.new_canvas()
-    draw = ImageDraw.Draw(img)
-    font = load_font(8)
-    ON, OFF = 1, 0
-
-    # Header: brand with mode tag [L]/[E], IP right-aligned if it fits.
+def compose(state: State, selected: int) -> tuple[str, list[str], str, bool]:
+    """Build (tag, rows, chip_label, chip_inverted) for the oledd frame."""
     mode_tag = "E" if state.mode == 1 else "L"
-    brand = f"LaserHAT[{mode_tag}]"
-    draw.text((0, 0), brand, fill=ON, font=font)
-    brand_w = draw.textlength(brand, font=font)
-    ip_w = draw.textlength(ip, font=font)
-    if brand_w + 4 + ip_w <= W:
-        draw.text((W - ip_w, 0), ip, fill=ON, font=font)
+    tag = f"LASERHAT[{mode_tag}]"
 
     # 3-row scrolling window over selectable items.
     items = _items_for(state)
@@ -155,36 +165,32 @@ def render(
     win_start = max(0, min(selected, len(items) - n_vis))
     visible = items[win_start:win_start + n_vis]
 
-    base_y, row_h = 8, 8
+    rows = []
     for row_i, item in enumerate(visible):
         abs_i = win_start + row_i
         prefix = ">" if abs_i == selected else " "
         if item is _MODE_ITEM:
             mode_str = "ESTIM" if state.mode == 1 else "LASER"
-            text = f"{prefix}[mode:{mode_str}]"
+            rows.append(f"{prefix}[mode:{mode_str}]")
         else:
-            text = f"{prefix}{item.name}:{_FMT[item.name](_value_for(state, item.name))}"
-        draw.text((0, base_y + row_i * row_h), text, fill=ON, font=font)
+            rows.append(
+                f"{prefix}{item.name}:{_FMT[item.name](_value_for(state, item.name))}")
 
-    # Phase chip pinned to bottom-right, drawn over the tail of the last row.
-    phase_label = "TRIG" if state.phase == "T" else "WAIT"
-    cw = int(draw.textlength(phase_label, font=font)) + 5
-    x0 = W - cw
-    y0 = base_y + (n_vis - 1) * row_h
-    draw.rectangle((x0 - 2, y0 - 1, W, H), fill=OFF)
-    if state.phase == "T":
-        draw.rectangle((x0, y0, W - 1, H - 1), fill=ON)
-        draw.text((x0 + 3, y0), phase_label, fill=OFF, font=font)
-    else:
-        draw.text((x0 + 3, y0), phase_label, fill=ON, font=font)
+    chip = "TRIG" if state.phase == "T" else "WAIT"
+    return tag, rows, chip, state.phase == "T"
 
-    panel.display(img, force_full=force_full)
+
+def render(panel: OledClient, state: State, selected: int) -> None:
+    tag, rows, chip, inverted = compose(state, selected)
+    if not panel.send_frame(tag, rows, chip, inverted):
+        print("WARNING: oledd not reachable; will retry", file=sys.stderr)
 
 
 # --------------------------------------------------------------- main loop
 
 def main() -> int:
     sock = os.environ.get("LASERHAT_SOCK", DEFAULT_SOCKET)
+    oled_sock = os.environ.get("LASERHAT_OLED_SOCK", DEFAULT_OLED_SOCKET)
 
     ui = {"selected": 0, "last_press": 0.0}
     ui_lock = threading.Lock()
@@ -223,33 +229,32 @@ def main() -> int:
     print(f"connecting to broker at {sock} …", file=sys.stderr)
     client = HatClient(sock, on_update=on_update)
 
-    print("opening display …", file=sys.stderr)
-    panel = OledPanel()
+    print(f"connecting to oledd at {oled_sock} …", file=sys.stderr)
+    panel = OledClient(oled_sock)
 
-    ip = primary_ip()
-    hostname = socket.gethostname()
-    print(f"IP {ip}  hostname {hostname}", file=sys.stderr)
-
-    deadline = time.monotonic() + 5.0
-    state = None
-    while state is None and time.monotonic() < deadline:
-        state = client.get_state()
+    # Wait for the MCU indefinitely rather than exiting: a blank board (or
+    # one mid-flash) would otherwise crash-loop this unit, and a unit caught
+    # between restarts isn't brought back by laserhat-flash.  oledd keeps
+    # showing its boot screen meanwhile.
+    warn_at = time.monotonic() + 5.0
+    state = client.get_state()
+    while state is None:
+        if warn_at and time.monotonic() >= warn_at:
+            print("waiting for the MCU (is it flashed and powered? "
+                  "sudo laserhat-flash)", file=sys.stderr)
+            warn_at = 0.0
         time.sleep(0.05)
-    if state is None:
-        print("ERROR: no response from MCU; is it flashed and powered?",
-              file=sys.stderr)
-        return 1
+        state = client.get_state()
 
     with ui_lock:
         selected = ui["selected"]
-    render(panel, state, selected, ip, hostname, force_full=True)
+    render(panel, state, selected)
 
     last_painted_key = (
         state.intensity, state.ramp_ticks, state.hold_ticks,
-        state.phase, selected, ip,
+        state.phase, selected,
         state.mode, state.estim_dur_ticks, state.estim_ipi_ticks,
     )
-    last_ip_check = time.monotonic()
 
     while True:
         now = time.monotonic()
@@ -272,17 +277,13 @@ def main() -> int:
             time.sleep(POLL_INTERVAL)
             continue
 
-        if now - last_ip_check >= IP_CHECK_GAP:
-            last_ip_check = now
-            ip = primary_ip()
-
         key = (
             state.intensity, state.ramp_ticks, state.hold_ticks,
-            state.phase, selected, ip,
+            state.phase, selected,
             state.mode, state.estim_dur_ticks, state.estim_ipi_ticks,
         )
         if key != last_painted_key and (now - last_press_at) >= SETTLE_GAP:
-            render(panel, state, selected, ip, hostname)
+            render(panel, state, selected)
             last_painted_key = key
 
         time.sleep(POLL_INTERVAL)

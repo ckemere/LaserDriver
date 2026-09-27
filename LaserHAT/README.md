@@ -1,9 +1,9 @@
 # LaserDriver Pi HAT
 
 A Raspberry Pi HAT for driving laser diodes in neuroscience experiments.
-The board sits on top of a Pi, receives trigger pulses from experiment software
-running on the Pi, and produces precisely timed laser pulses with
-software-programmable intensity.
+The board sits on top of a Pi, receives trigger pulses that the Pi relays
+from experiment software on the network, and produces precisely timed laser
+pulses with software-programmable intensity.
 
 ---
 
@@ -17,13 +17,19 @@ are faster but require dedicated single-board computers or FPGAs.
 
 This board solves the problem with a two-layer approach:
 
-1. **The Raspberry Pi** runs experiment software (Python / Bonsai), handles
-   high-level logic, and asserts a single GPIO edge when a pulse should start.
-2. **The MSPM0G3507 MCU** on the HAT responds to that edge in hardware,
+1. **A remote experiment machine** (Python / Bonsai / Open Ephys, …) runs
+   the high-level logic and decides when a pulse should start. It sends a
+   UDP trigger datagram to the Pi.
+2. **The Raspberry Pi** runs the broker (`Pi/brokerd/`), whose real-time
+   trigger thread turns each datagram into a single GPIO edge as fast as
+   possible and ACKs it. The Pi also hosts the OLED and web GUIs for
+   setting parameters.
+3. **The MSPM0G3507 MCU** on the HAT responds to that edge in hardware,
    generates the PWM waveform with sub-microsecond jitter, and controls the
    laser driver directly.
 
-The Pi handles "what and when" at the millisecond timescale.  
+The remote machine handles "what and when."
+The Pi gets the trigger from the network to the HAT with minimal, measured latency.
 The MCU handles "how precisely" at the microsecond timescale.
 
 ---
@@ -32,6 +38,7 @@ The MCU handles "how precisely" at the microsecond timescale.
 
 | Item | Value |
 |---|---|
+| Target Pi | Raspberry Pi 4 |
 | Form factor | Raspberry Pi HAT (65 × 56.5 mm) |
 | Connector | 40-pin PinSocket on B.Cu (female, mates with Pi's male header) |
 | MCU | TI MSPM0G3507RGZR (48 MHz ARM Cortex-M0+) |

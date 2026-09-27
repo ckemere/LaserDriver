@@ -27,8 +27,11 @@ CASES = [
     (p.CMD_QUERY, b""),
     (p.CMD_CONFIG, p._CONFIG.pack(320, 8000, 10000)),
     (p.CMD_CONFIG, p._CONFIG.pack(1, 1, 10_000_000)),
+    (p.CMD_SET_MODE, bytes([p.MODE_ESTIM])),
+    (p.CMD_ESTIM_CONFIG, p._ESTIM_CONFIG.pack(500, 2000)),
     (p.RSP_STATUS, p._STATUS.pack(200, 8000, 10000, 0b1010,
-                                  p.PHASE_TRIGGERED, 123456)),
+                                  p.PHASE_TRIGGERED, 123456,
+                                  p.MODE_ESTIM, 500, 2000)),
     (p.EVT_PULSE_START, p._U32.pack(0xDEADBEEF)),
     (p.EVT_BUTTON, bytes([0b0101, 0b0100])),
 ]
@@ -69,8 +72,12 @@ def main():
         ("config " + c("config", "320", "8000", "10000"),
          p._CONFIG.pack(320, 8000, 10000).hex()),
         ("status " + c("status", "200", "8000", "10000", "10",
-                       str(p.PHASE_TRIGGERED), "123456"),
-         p._STATUS.pack(200, 8000, 10000, 10, p.PHASE_TRIGGERED, 123456).hex()),
+                       str(p.PHASE_TRIGGERED), "123456",
+                       str(p.MODE_ESTIM), "500", "2000"),
+         p._STATUS.pack(200, 8000, 10000, 10, p.PHASE_TRIGGERED, 123456,
+                        p.MODE_ESTIM, 500, 2000).hex()),
+        ("estim " + c("estim", "500", "2000"),
+         p._ESTIM_CONFIG.pack(500, 2000).hex()),
     ]
     for label_got, want in struct_cases:
         label, got = label_got.split(" ", 1)

@@ -15,8 +15,11 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 PI = os.path.join(HERE, "..")
 sys.path.insert(0, PI)
 
+sys.path.insert(0, HERE)
+
 import hat_client  # noqa: E402
 import web_app     # noqa: E402
+from test_integration import build_brokerd, c_broker, python_broker  # noqa: E402
 
 
 def _wait(pred, timeout=5.0):
@@ -28,14 +31,13 @@ def _wait(pred, timeout=5.0):
     return False
 
 
-def run() -> int:
+def run(broker_cmd=python_broker) -> int:
     py = sys.executable
     sock = f"/tmp/lh_web_{os.getpid()}.sock"
     fake = subprocess.Popen([py, os.path.join(PI, "fake_mcu.py")],
                             stdout=subprocess.PIPE, text=True)
     slave = fake.stdout.readline().strip()
-    broker = subprocess.Popen([py, os.path.join(PI, "broker.py"),
-                               "--device", slave, "--no-gpio", "--socket", sock])
+    broker = subprocess.Popen(broker_cmd(slave, sock))
     failures = []
     try:
         assert _wait(lambda: os.path.exists(sock)), "no broker socket"
@@ -63,9 +65,8 @@ def run() -> int:
         if not r.get("ok"):
             failures.append(f"trigger failed: {r}")
 
-        # GPIO trigger has no real pin under --no-gpio, so expect ok False
-        # (broker returns False when PiTrigger is absent) — just confirm the
-        # route doesn't 500.
+        # No real pin off-hardware (broker.py: --no-gpio -> ok False;
+        # brokerd: --gpio sim -> ok True) — just confirm the route doesn't 500.
         resp = c.post("/api/trigger_gpio")
         if resp.status_code != 200:
             failures.append(f"trigger_gpio status {resp.status_code}")
@@ -91,5 +92,15 @@ def test_web():
     assert run() == 0
 
 
+def test_web_brokerd():
+    import pytest
+    if not build_brokerd():
+        pytest.skip("can't build laserhat-brokerd here")
+    assert run(c_broker) == 0
+
+
 if __name__ == "__main__":
-    raise SystemExit(run())
+    rc = run()
+    if build_brokerd():
+        rc |= run(c_broker)
+    raise SystemExit(rc)
