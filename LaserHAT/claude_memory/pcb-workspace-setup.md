@@ -8,7 +8,7 @@ metadata:
   modified: 2026-09-28T21:43:50.119Z
 ---
 
-The user keeps several copies of this repo on the machine. Work only inside the checkout the session was started in. That was `.../temp/LaserDriver-PCBWorking` until 2026-09-28; the user then planned to move it to a new directory. Do the work on the feature branch `pcb-rev2`, and commit only when the user asks.
+The user keeps several copies of this repo on the machine. Work only inside the checkout the session was started in. Since 2026-09-28 that is `~/Code/LabTools/SmallProjects/LaserDriver` (earlier: `.../temp/LaserDriver-PCBWorking`). Do the work on the feature branch `pcb-rev2`, and commit only when the user asks.
 
 **Tooling:**
 - **Python:** run it with `micromamba run -n kicad`. That env has kiutils 1.4.8, but no pcbnew.

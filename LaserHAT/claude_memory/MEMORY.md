@@ -3,3 +3,5 @@
 - [HAT board status](hat-manual-routing-handoff.md) — HAT is hand-routed & committed; NEVER run build_hat_pcb.sh; check .lck files; stable UUIDs
 - [User preferences](laserhat-user-preferences.md) — user hand-routes; Claude optimises pins, checks, tidies; minimal silk; verify with DRC
 - [Next tasks](laserhat-next-tasks.md) — restore e-stim fault detector; SMA-vs-BNC to make the e-stim board single-sided
+- [Fault-detector / SMA handoff](laserhat-fault-detector-handoff.md) — session paused 2026-09-28 mid-task; plan, numbers and the one file changed
+- [No local testing](no-local-testing.md) — build/test via GitHub CI only; never locally or with Docker
