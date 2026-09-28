@@ -41,7 +41,7 @@ The MCU handles "how precisely" at the microsecond timescale.
 | Target Pi | Raspberry Pi 4 |
 | Form factor | Raspberry Pi HAT (65 × 56.5 mm) |
 | Connector | 40-pin PinSocket on B.Cu (female, mates with Pi's male header) |
-| MCU | TI MSPM0G3507RGZR (48 MHz ARM Cortex-M0+) |
+| MCU | TI MSPM0G3507SRHBR (U7, VQFN-32, ARM Cortex-M0+) |
 | Laser supply | MT3608 boost converter — 5 V → ~12 V |
 | UART bridge | CH340N USB-to-UART (USB-C receptacle) |
 | Debug port | 5-pin SWD header (NRST / SWCLK / SWDIO / 3V3 / GND) |
@@ -79,9 +79,10 @@ Raspberry Pi 5 V (Pin 2/4)
 ```
 
 The MCU is **not** powered directly from the always-on 3.3 V rail.  Instead,
-a P-channel MOSFET controlled by **GPIO17** acts as a software power switch.
-This allows the Pi to hard-reset the MCU by toggling GPIO17 low, which is
-useful during firmware development and for fault recovery.
+a P-channel MOSFET controlled by **GPIO23** (`MCU_POWER_EN`) acts as a
+software power switch. This allows the Pi to hard-reset the MCU by toggling
+GPIO23 low. `Pi/power_cycle.py` does this before every flash
+(`laserhat-flash`, `make flash`), and it is also useful for fault recovery.
 
 ### MT3608 boost converter
 
@@ -137,24 +138,30 @@ op-amp closes the loop by adjusting gate drive on Q_main.
 
 ## MSPM0G3507 Controller
 
-The MSPM0G3507RGZR is a 48 MHz Cortex-M0+ with hardware timers, a 12-bit
-DAC, and SWD debug — all necessary for this application.
+The MSPM0G3507SRHBR (U7, VQFN-32) is a Cortex-M0+ with hardware timers, a
+12-bit DAC, and SWD debug — all necessary for this application. (The 48-pin
+IC1 footprint on the sheet is not populated.)
 
 ### GPIO assignments
 
-| MSPM0 pin | Signal | Direction | Description |
+Pins used by the firmware (`Firmware/board.h`; the full pin-by-pin map,
+including unused pins, is in `gpio_design.md` §2):
+
+| MSPM0 pin | Net | Direction | Description |
 |---|---|---|---|
-| PA8 | `PWM_LASER` | output | TIMA0_CCP0 — laser PWM |
-| PA22 | `PWM_DUMMY` | output | TIMA0_CCP0_CMPL — complementary |
-| PA12 | `VREF` | output | DAC0_OUT — laser current setpoint |
-| PB21 | `TRIGGER` | input | Trigger from Pi GPIO26 |
-| PA10 | `UART_TX` | output | UART to CH340N / Pi GPIO14 |
-| PA11 | `UART_RX` | input | UART from CH340N / Pi GPIO15 |
-| PA19 | `SWCLK` | input | SWD clock |
-| PA20 | `SWDIO` | bidirectional | SWD data |
-| NRST | `NRST` | input | Reset (from SWD header) |
-| VDD/VDDA | `VCC_3V3_MCU` | power | Switched 3.3 V from Pi |
-| VSS/VSSA | `GND` | power | Ground |
+| PA21 | `PWM_LASER` | output | TIMA0_CCP0 — laser PWM |
+| PA22 | `PWM_DUMMY` | output | TIMA0_CCP0_CMPL — hardware complement of PA21 |
+| PA15 | `MSPM0_DAC` | output | DAC0_OUT — laser current setpoint |
+| PA14 | `STIM_TRIGGER` | input | BNC trigger, rising edge (internal pull-down) |
+| PA19 | `MSPM0_SWDIO` | bidirectional → input | SWD data during the ~4 s boot blink, then the **Pi trigger input** (← Pi GPIO 24, rising edge, pull-down) |
+| PA20 | `MSPM0_SWCLK` | input | SWD clock (← Pi GPIO 25) |
+| PA13 | `STIM_MIRROR` | output | Stimulus mirror / boot-blink indicator; EStim output |
+| PA3–PA6 | `BUTTON1`–`BUTTON4` | input | Front-panel buttons (active-high, pull-down) |
+| PA10 | `MCU_UART_TX` | output | UART0 TX → Pi GPIO15 / CH340N |
+| PA11 | `MCU_UART_RX` | input | UART0 RX ← Pi GPIO14 / CH340N |
+| NRST | `MSPM0_NRST` | input | Reset (← Pi GPIO 18 and the SWD header) |
+| VDD | `MSPM0_3V3` | power | Switched 3.3 V from Pi (GPIO23 P-MOSFET) |
+| VSS / EPAD | `GND` | power | Ground |
 
 ### Decoupling
 
@@ -188,8 +195,9 @@ Solder bridges **SB1 and SB2 are removed** (open, factory default).
 The Pi communicates with the MSPM0 directly over its own UART
 (GPIO14 = TX, GPIO15 = RX).  The CH340N is powered down (no USB cable
 connected).  The MCU receives experiment parameters (pulse width,
-intensity, timing mode) from Pi userspace at startup, then operates
-autonomously from the TRIGGER edge.
+intensity, timing mode) from Pi userspace, then fires autonomously on a
+trigger edge: Pi GPIO 24 → PA19 (network triggers relayed by the broker),
+the BNC input on PA14, or button 1.
 
 ### Mode 2 — Standalone / development (USB-C active)
 
@@ -222,14 +230,22 @@ unpowered, drawing no current from the Pi's 5 V rail.
 
 ## Raspberry Pi GPIO Usage
 
+Pins the Pi software drives (the full header map from the schematic,
+including the legacy eink SPI wiring the software no longer uses, is in
+`gpio_design.md` §1):
+
 | Pi GPIO | Pin | Function |
 |---|---|---|
-| GPIO17 | Pin 11 | MCU power switch (P-MOSFET gate) |
-| GPIO14 (TXD) | Pin 8 | UART TX → MCU RX |
-| GPIO15 (RXD) | Pin 10 | UART RX ← MCU TX |
-| GPIO26 | Pin 37 | TRIGGER → MCU PB21 |
+| GPIO14 (TXD) | Pin 8 | UART TX → MCU RX (PA11) — `/dev/ttyS0`, owned by the broker |
+| GPIO15 (RXD) | Pin 10 | UART RX ← MCU TX (PA10) |
+| GPIO18 | Pin 12 | MCU NRST (flashing) |
+| GPIO23 | Pin 16 | MCU power switch (`MCU_POWER_EN`, P-MOSFET gate) |
+| GPIO24 | Pin 18 | **Trigger** → MCU PA19 (driven by the broker); SWDIO while flashing |
+| GPIO25 | Pin 22 | SWCLK → MCU PA20 (flashing) |
+| GPIO0 / GPIO1 | Pin 27 / 28 | HAT ID EEPROM (I²C) |
+| GPIO2 / GPIO3, GPIO4 | Pin 3 / 5, 7 | Adafruit OLED bonnet (I²C, reset) — not used by the HAT itself |
 | 5 V | Pin 2/4 | Laser supply rail (MT3608 input) |
-| 3.3 V | Pin 1/17 | MCU power (via GPIO17 P-MOSFET switch) |
+| 3.3 V | Pin 1/17 | MCU power (via the GPIO23 P-MOSFET switch) |
 
 ---
 
@@ -244,7 +260,8 @@ unpowered, drawing no current from the Pi's 5 V rail.
 | `PWM_LASER` | Laser PWM (MCU → driver Q_main gate) |
 | `PWM_DUMMY` | Complementary dummy-load PWM |
 | `VREF` | DAC output — laser current setpoint |
-| `TRIGGER` | Pi GPIO26 → MCU input |
+| `STIM_TRIGGER` | BNC trigger → MCU PA14 |
+| `MSPM0_SWDIO` | Pi GPIO24 ↔ MCU PA19: SWD data, then the Pi trigger line |
 | `UART_TX/RX` | MCU ↔ CH340N or Pi UART |
 | `SWCLK/SWDIO` | SWD debug bus |
 
