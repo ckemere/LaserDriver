@@ -61,10 +61,25 @@ OPENOCD_INTERFACE  ?= openocd/pi-swd.cfg
 OPENOCD_TARGET     ?= target/ti_mspm0.cfg
 # Override on Pi 5: make flash OPENOCD_GPIOCHIP=4
 OPENOCD_GPIOCHIP   ?= 0
+# Pi GPIOs for SWD, reset and MCU power enable differ between HAT revisions:
+#   Rev 1: SWCLK 25, SWDIO 24, NRST 18, POWER_EN 23 (default)
+#   Rev 2: SWCLK 24, SWDIO 25, NRST 23, POWER_EN 18   ->  make flash HAT_REV=2
+HAT_REV            ?= 1
+ifeq ($(HAT_REV),2)
+OPENOCD_SWCLK      ?= 24
+OPENOCD_SWDIO      ?= 25
+OPENOCD_SRST       ?= 23
+PI_POWER_PIN       ?= 18
+else
+OPENOCD_SWCLK      ?= 25
+OPENOCD_SWDIO      ?= 24
+OPENOCD_SRST       ?= 18
+PI_POWER_PIN       ?= 23
+endif
 OPENOCD_GPIO_ARGS  := \
-    -c "adapter gpio swclk -chip $(OPENOCD_GPIOCHIP) 25" \
-    -c "adapter gpio swdio -chip $(OPENOCD_GPIOCHIP) 24" \
-    -c "adapter gpio srst  -chip $(OPENOCD_GPIOCHIP) 18"
+    -c "adapter gpio swclk -chip $(OPENOCD_GPIOCHIP) $(OPENOCD_SWCLK)" \
+    -c "adapter gpio swdio -chip $(OPENOCD_GPIOCHIP) $(OPENOCD_SWDIO)" \
+    -c "adapter gpio srst  -chip $(OPENOCD_GPIOCHIP) $(OPENOCD_SRST)"
 
 # ============================================================
 
@@ -121,11 +136,12 @@ flash load burn: $(TARGET_ELF) power_cycle
 	    -c "reset run" \
 	    -c "shutdown"
 
-# Pulse Pi GPIO 23 (MCU_POWER_EN) LOW for 300 ms then HIGH.  Requires
+# Pulse the MCU_POWER_EN GPIO LOW for 300 ms then HIGH.  Requires
 # the Pi-side venv with gpiozero (see Pi/README.md).
 .PHONY: power_cycle
 power_cycle:
-	@if [ -x $(HOME)/.venvs/laserhat/bin/python ]; then \
+	@export LASERHAT_POWER_PIN=$(PI_POWER_PIN) LASERHAT_NRST_PIN=$(OPENOCD_SRST); \
+	if [ -x $(HOME)/.venvs/laserhat/bin/python ]; then \
 	    $(HOME)/.venvs/laserhat/bin/python ../Pi/power_cycle.py ; \
 	else \
 	    python3 ../Pi/power_cycle.py ; \

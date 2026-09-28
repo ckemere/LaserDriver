@@ -1,0 +1,1265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>/Users/ckemere/Code/LabTools/SmallProjects/kbest/estim_module/estim_module.kicad_sch</source>
+    <date>2026-09-26T18:05:17-0500</date>
+    <tool>Eeschema 9.0.8</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>kbest e-stim module for LaserHAT Rev 2</title>
+        <company>Kemere lab (kbest)</company>
+        <rev>M1</rev>
+        <date>2026-09-26</date>
+        <source>estim_module.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="C1">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1525</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1525"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>27ed0f38-8ecf-47b4-8d5c-2a2ce55b7af4</tstamps>
+    </comp>
+    <comp ref="C2">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1525</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1525"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a90543db-6157-4611-aa18-d1d2dd1f9e45</tstamps>
+    </comp>
+    <comp ref="C3">
+      <value>4.7u</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C69335</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C69335"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1c1f767a-758c-430b-8ae3-9326aae463da</tstamps>
+    </comp>
+    <comp ref="C4">
+      <value>1u 50V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C559769</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C559769"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8405325e-c519-4364-a84f-280aec18333a</tstamps>
+    </comp>
+    <comp ref="C5">
+      <value>1u 50V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C559769</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C559769"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>97453dde-5c87-45b7-971a-3c4916b22795</tstamps>
+    </comp>
+    <comp ref="C6">
+      <value>1u 50V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C559769</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C559769"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ef636319-32b2-4516-8beb-da0e7a78af9e</tstamps>
+    </comp>
+    <comp ref="C7">
+      <value>1u 50V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C559769</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C559769"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>856dc073-5de5-4332-a185-4fee1ee12357</tstamps>
+    </comp>
+    <comp ref="C8">
+      <value>1u 50V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C559769</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C559769"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>48f6778c-51a6-4157-9a0e-be670795d456</tstamps>
+    </comp>
+    <comp ref="C9">
+      <value>10n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C15195</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C15195"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>73a23178-f8a2-48e6-bd48-a0e7055a476a</tstamps>
+    </comp>
+    <comp ref="C10">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1525</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1525"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>263a3a0d-ec09-4288-8e27-01170e41163d</tstamps>
+    </comp>
+    <comp ref="C11">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d3178e71-7b10-4cf0-848e-180315b95fbf</tstamps>
+    </comp>
+    <comp ref="C12">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>489ebb6b-231f-4824-9ac2-6e3f1cef93cc</tstamps>
+    </comp>
+    <comp ref="C13">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1525</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1525"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f5547cfe-0ebe-4f55-9f73-6f39242dbfe8</tstamps>
+    </comp>
+    <comp ref="C14">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1525</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1525"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fe3cb146-97f5-457a-a3c5-b55d780705cd</tstamps>
+    </comp>
+    <comp ref="C15">
+      <value>100p</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1546</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1546"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d74b3885-6276-43a0-a643-3e1d3a79dc30</tstamps>
+    </comp>
+    <comp ref="C16">
+      <value>1u 50V</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C726584</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C726584"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ff3c4d18-6a8f-4026-a6bd-d70ef84c7cb4</tstamps>
+    </comp>
+    <comp ref="C17">
+      <value>2.2n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C106861</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C106861"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8012ab44-c65f-465d-b01a-3ed77e33daae</tstamps>
+    </comp>
+    <comp ref="D1">
+      <value>BZT52C4V7S</value>
+      <footprint>Diode_SMD:D_SOD-323</footprint>
+      <fields>
+        <field name="LCSC">C19077439</field>
+        <field name="Footprint">Diode_SMD:D_SOD-323</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="D_Zener" description=""/>
+      <property name="LCSC" value="C19077439"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9cc43904-97a3-490a-b36f-777da0f96c92</tstamps>
+    </comp>
+    <comp ref="D2">
+      <value>BAT54C</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C37704</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="BAT54C" description=""/>
+      <property name="LCSC" value="C37704"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a50e5b9c-38af-47d2-a198-0e2fe6ed0ae0</tstamps>
+    </comp>
+    <comp ref="J1">
+      <value>ELECTRODE E1/E2</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal</footprint>
+      <fields>
+        <field name="Footprint">Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="Conn_01x02" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c9b1c19a-78a2-4b3e-b998-6572eb92844a</tstamps>
+    </comp>
+    <comp ref="J8">
+      <value>J8 power/timing (underside)</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical</footprint>
+      <fields>
+        <field name="Footprint">Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="Conn_01x05" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9afa14c4-7253-4fb0-96b0-a639570af7fc</tstamps>
+    </comp>
+    <comp ref="J9">
+      <value>J9 analog/SPI (underside)</value>
+      <footprint>Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical</footprint>
+      <fields>
+        <field name="Footprint">Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="Conn_01x05" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b3d98175-60e0-41e5-b520-c4ee449cf0a2</tstamps>
+    </comp>
+    <comp ref="PS1">
+      <value>A0515S-1WR3</value>
+      <footprint>estim:DCDC_SIP6_A0515S</footprint>
+      <fields>
+        <field name="Footprint">estim:DCDC_SIP6_A0515S</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="A0515S" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="dnp"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>af50dd04-e118-4152-b413-741c93ee7a61</tstamps>
+    </comp>
+    <comp ref="R1">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25741"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cce9bcbd-8e72-41ad-9ab5-e9de0c37d963</tstamps>
+    </comp>
+    <comp ref="R2">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25741"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>35d14c2f-ad27-4924-ad3f-57c0c7d025d9</tstamps>
+    </comp>
+    <comp ref="R3">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25741"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d669aa17-e862-4aab-9a23-587f7ed29c81</tstamps>
+    </comp>
+    <comp ref="R4">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25741"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ec135c90-aec9-4e31-aa30-64cd0809a80f</tstamps>
+    </comp>
+    <comp ref="R5">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25741"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>92bab060-0cad-4aea-a617-6852a48f4808</tstamps>
+    </comp>
+    <comp ref="R6">
+      <value>1.5k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22843</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C22843"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1a7539dd-565f-410e-b833-7fc5cdeb72a5</tstamps>
+    </comp>
+    <comp ref="R7">
+      <value>1.5k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22843</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C22843"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1060ce5d-f272-4375-a800-c279617444d1</tstamps>
+    </comp>
+    <comp ref="R8">
+      <value>15.0k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C326733</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C326733"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>426ed84d-12ae-4682-8a17-71d03973b8ec</tstamps>
+    </comp>
+    <comp ref="R9">
+      <value>10.0k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C95204</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C95204"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a35f25ae-5d96-4ef1-a03d-0be5cc5be899</tstamps>
+    </comp>
+    <comp ref="R10">
+      <value>10.0k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C95204</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C95204"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a480769c-eeb2-42ab-bdd0-78861d1e71f8</tstamps>
+    </comp>
+    <comp ref="R11">
+      <value>10.0k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C95204</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C95204"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>960b0fbd-79fc-4c5b-b868-7e8fb341dd32</tstamps>
+    </comp>
+    <comp ref="R12">
+      <value>1k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C11702</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C11702"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5846b9fb-1116-4a3c-a298-16e4fd2848c8</tstamps>
+    </comp>
+    <comp ref="R13">
+      <value>47</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C137973</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C137973"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5489a675-9c53-491e-b2e2-10f664ab2fcd</tstamps>
+    </comp>
+    <comp ref="R14">
+      <value>2.00k 0.1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C328425</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C328425"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4d49b7ab-51e9-4f9b-8fbe-d6203b57c64a</tstamps>
+    </comp>
+    <comp ref="R15">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25741"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fcb4a80d-c6e7-4f85-9902-b3e279410138</tstamps>
+    </comp>
+    <comp ref="R19">
+      <value>4.7k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25900</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25900"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d1f421b5-4d51-4de6-be4d-bf60e72f50ce</tstamps>
+    </comp>
+    <comp ref="TP1">
+      <value>ISENSE</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.0mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.0mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="TestPoint" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>74df696d-6eb5-4caa-ae78-fa1f8682fa9a</tstamps>
+    </comp>
+    <comp ref="TP2">
+      <value>GND_ISO</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.0mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.0mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="TestPoint" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7dec846f-8aa8-46ba-a3de-ff4c0643e872</tstamps>
+    </comp>
+    <comp ref="U1">
+      <value>ISO7761FDBQR</value>
+      <footprint>Package_SO:SSOP-16_3.9x4.9mm_P0.635mm</footprint>
+      <fields>
+        <field name="LCSC">C2877505</field>
+        <field name="Footprint">Package_SO:SSOP-16_3.9x4.9mm_P0.635mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="ISO7761" description=""/>
+      <property name="LCSC" value="C2877505"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b9efe607-2fc0-45a7-9217-d32b588c663d</tstamps>
+    </comp>
+    <comp ref="U2">
+      <value>TLV76050DBZR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C2867465</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="TLV760" description=""/>
+      <property name="LCSC" value="C2867465"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f4ba1351-9363-4c85-ae0b-fe23a06d1df9</tstamps>
+    </comp>
+    <comp ref="U3">
+      <value>TL431 (2.5V)</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C181103</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="TL431_SOT23" description=""/>
+      <property name="LCSC" value="C181103"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f2c2b80e-5c02-46ca-9f11-aa9425980438</tstamps>
+    </comp>
+    <comp ref="U4">
+      <value>MCP4921-E/MS</value>
+      <footprint>Package_SO:MSOP-8_3x3mm_P0.65mm</footprint>
+      <fields>
+        <field name="LCSC">C185506</field>
+        <field name="Footprint">Package_SO:MSOP-8_3x3mm_P0.65mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="MCP4921" description=""/>
+      <property name="LCSC" value="C185506"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8a990b50-de64-41f5-bc7c-955cdb6b8169</tstamps>
+    </comp>
+    <comp ref="U5">
+      <value>OPA2192IDGKR</value>
+      <footprint>Package_SO:VSSOP-8_3x3mm_P0.65mm</footprint>
+      <fields>
+        <field name="LCSC">C2876419</field>
+        <field name="Footprint">Package_SO:VSSOP-8_3x3mm_P0.65mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="OPA2192" description=""/>
+      <property name="LCSC" value="C2876419"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d93c901e-1773-4762-8aa1-43fc9e21f4bc f7189653-a0ee-49ff-a841-1d7fa90fce2f a1b75673-16d6-49b6-a8e0-7ab2ed848148</tstamps>
+    </comp>
+    <comp ref="U6">
+      <value>74HC4053PW</value>
+      <footprint>Package_SO:TSSOP-16_4.4x5mm_P0.65mm</footprint>
+      <fields>
+        <field name="LCSC">C5648</field>
+        <field name="Footprint">Package_SO:TSSOP-16_4.4x5mm_P0.65mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="74HC4053" description=""/>
+      <property name="LCSC" value="C5648"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9a2b5b2d-804e-4df3-83db-029248eb02a4</tstamps>
+    </comp>
+    <comp ref="U7">
+      <value>DG419DY</value>
+      <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
+      <fields>
+        <field name="LCSC">C6581</field>
+        <field name="Footprint">Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="DG419" description=""/>
+      <property name="LCSC" value="C6581"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>85c76987-2ca4-44e3-8cdb-e10dff00defa</tstamps>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="estim" part="74HC4053">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">74HC4053</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="2Y1" type="passive"/>
+        <pin num="2" name="2Y0" type="passive"/>
+        <pin num="3" name="3Y1" type="passive"/>
+        <pin num="4" name="3Z" type="passive"/>
+        <pin num="5" name="3Y0" type="passive"/>
+        <pin num="6" name="~{E}" type="input"/>
+        <pin num="7" name="VEE" type="power_in"/>
+        <pin num="8" name="GND" type="power_in"/>
+        <pin num="9" name="S3" type="input"/>
+        <pin num="10" name="S2" type="input"/>
+        <pin num="11" name="S1" type="input"/>
+        <pin num="12" name="1Y0" type="passive"/>
+        <pin num="13" name="1Y1" type="passive"/>
+        <pin num="14" name="1Z" type="passive"/>
+        <pin num="15" name="2Z" type="passive"/>
+        <pin num="16" name="VCC" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="A0515S">
+      <fields>
+        <field name="Reference">PS</field>
+        <field name="Value">A0515S</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="+VIN" type="power_in"/>
+        <pin num="2" name="-VIN" type="power_in"/>
+        <pin num="4" name="-VO" type="power_out"/>
+        <pin num="5" name="COM" type="power_out"/>
+        <pin num="6" name="+VO" type="power_out"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="BAT54C">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">BAT54C</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="A1" type="passive"/>
+        <pin num="2" name="A2" type="passive"/>
+        <pin num="3" name="K" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="C">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="Conn_01x02">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x02</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="Conn_01x05">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x05</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+        <pin num="5" name="Pin_5" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="DG419">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">DG419</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="D" type="passive"/>
+        <pin num="2" name="S1" type="passive"/>
+        <pin num="3" name="GND" type="power_in"/>
+        <pin num="4" name="V+" type="power_in"/>
+        <pin num="5" name="VL" type="power_in"/>
+        <pin num="6" name="IN" type="input"/>
+        <pin num="7" name="V-" type="power_in"/>
+        <pin num="8" name="S2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="D_Zener">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D_Zener</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="ISO7761">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">ISO7761</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="VCC1" type="power_in"/>
+        <pin num="2" name="INA" type="input"/>
+        <pin num="3" name="INB" type="input"/>
+        <pin num="4" name="INC" type="input"/>
+        <pin num="5" name="IND" type="input"/>
+        <pin num="6" name="INE" type="input"/>
+        <pin num="7" name="OUTF" type="output"/>
+        <pin num="8" name="GND1" type="power_in"/>
+        <pin num="9" name="GND2" type="power_in"/>
+        <pin num="10" name="INF" type="input"/>
+        <pin num="11" name="OUTE" type="output"/>
+        <pin num="12" name="OUTD" type="output"/>
+        <pin num="13" name="OUTC" type="output"/>
+        <pin num="14" name="OUTB" type="output"/>
+        <pin num="15" name="OUTA" type="output"/>
+        <pin num="16" name="VCC2" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="MCP4921">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">MCP4921</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="VDD" type="power_in"/>
+        <pin num="2" name="~{CS}" type="input"/>
+        <pin num="3" name="SCK" type="input"/>
+        <pin num="4" name="SDI" type="input"/>
+        <pin num="5" name="~{LDAC}" type="input"/>
+        <pin num="6" name="VREF" type="input"/>
+        <pin num="7" name="VSS" type="power_in"/>
+        <pin num="8" name="VOUT" type="output"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="OPA2192">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">OPA2192</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="output"/>
+        <pin num="2" name="-" type="input"/>
+        <pin num="3" name="+" type="input"/>
+        <pin num="4" name="V-" type="power_in"/>
+        <pin num="5" name="+" type="input"/>
+        <pin num="6" name="-" type="input"/>
+        <pin num="7" name="" type="output"/>
+        <pin num="8" name="V+" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="R">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="TL431_SOT23">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">TL431_SOT23</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="REF" type="input"/>
+        <pin num="2" name="K" type="passive"/>
+        <pin num="3" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="TLV760">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">TLV760</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="OUT" type="power_out"/>
+        <pin num="2" name="IN" type="power_in"/>
+        <pin num="3" name="GND" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="estim" part="TestPoint">
+      <fields>
+        <field name="Reference">TP</field>
+        <field name="Value">TestPoint</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="estim">
+      <uri>/Users/ckemere/Code/LabTools/SmallProjects/kbest/estim_module/estim.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="+3V3_H" class="Power">
+      <node ref="C1" pin="1" pintype="passive"/>
+      <node ref="J9" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="R3" pin="1" pintype="passive"/>
+      <node ref="U1" pin="1" pinfunction="VCC1" pintype="power_in"/>
+    </net>
+    <net code="2" name="+5V_H" class="Power">
+      <node ref="C3" pin="1" pintype="passive"/>
+      <node ref="J8" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="PS1" pin="1" pinfunction="+VIN" pintype="power_in"/>
+    </net>
+    <net code="3" name="+5V_ISO" class="Power">
+      <node ref="C10" pin="1" pintype="passive"/>
+      <node ref="C13" pin="1" pintype="passive"/>
+      <node ref="C2" pin="1" pintype="passive"/>
+      <node ref="C7" pin="1" pintype="passive"/>
+      <node ref="R19" pin="1" pintype="passive"/>
+      <node ref="R7" pin="1" pintype="passive"/>
+      <node ref="U1" pin="16" pinfunction="VCC2" pintype="power_in"/>
+      <node ref="U2" pin="1" pinfunction="OUT" pintype="power_out"/>
+      <node ref="U4" pin="1" pinfunction="VDD" pintype="power_in"/>
+      <node ref="U6" pin="16" pinfunction="VCC" pintype="power_in"/>
+      <node ref="U7" pin="5" pinfunction="VL" pintype="power_in"/>
+    </net>
+    <net code="4" name="+V_STIM" class="Power">
+      <node ref="C11" pin="1" pintype="passive"/>
+      <node ref="C4" pin="1" pintype="passive"/>
+      <node ref="C6" pin="1" pintype="passive"/>
+      <node ref="PS1" pin="6" pinfunction="+VO" pintype="power_out"/>
+      <node ref="U2" pin="2" pinfunction="IN" pintype="power_in"/>
+      <node ref="U5" pin="8" pinfunction="V+" pintype="power_in"/>
+      <node ref="U7" pin="4" pinfunction="V+" pintype="power_in"/>
+    </net>
+    <net code="5" name="-5V_ISO" class="Power">
+      <node ref="C14" pin="2" pintype="passive"/>
+      <node ref="C8" pin="2" pintype="passive"/>
+      <node ref="D1" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R6" pin="1" pintype="passive"/>
+      <node ref="U6" pin="7" pinfunction="VEE" pintype="power_in"/>
+    </net>
+    <net code="6" name="-V_STIM" class="Power">
+      <node ref="C12" pin="2" pintype="passive"/>
+      <node ref="C5" pin="2" pintype="passive"/>
+      <node ref="PS1" pin="4" pinfunction="-VO" pintype="power_out"/>
+      <node ref="R6" pin="2" pintype="passive"/>
+      <node ref="U5" pin="4" pinfunction="V-" pintype="power_in"/>
+      <node ref="U7" pin="7" pinfunction="V-" pintype="power_in"/>
+    </net>
+    <net code="7" name="/CATH_H" class="Default">
+      <node ref="J8" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="R2" pin="1" pintype="passive"/>
+      <node ref="U1" pin="5" pinfunction="IND" pintype="input"/>
+    </net>
+    <net code="8" name="/CS_H" class="Default">
+      <node ref="J9" pin="3" pinfunction="Pin_3" pintype="passive"/>
+      <node ref="R3" pin="2" pintype="passive"/>
+      <node ref="U1" pin="3" pinfunction="INB" pintype="input"/>
+    </net>
+    <net code="9" name="/EN_H" class="Default">
+      <node ref="J8" pin="3" pinfunction="Pin_3" pintype="passive"/>
+      <node ref="R1" pin="1" pintype="passive"/>
+      <node ref="U1" pin="6" pinfunction="INE" pintype="input"/>
+    </net>
+    <net code="10" name="/FAULT_H" class="Default">
+      <node ref="J8" pin="5" pinfunction="Pin_5" pintype="passive"/>
+      <node ref="U1" pin="7" pinfunction="OUTF" pintype="output"/>
+    </net>
+    <net code="11" name="/HOLD" class="Default">
+      <node ref="C17" pin="1" pintype="passive"/>
+      <node ref="D2" pin="3" pinfunction="K" pintype="passive"/>
+      <node ref="R15" pin="1" pintype="passive"/>
+      <node ref="U7" pin="6" pinfunction="IN" pintype="input"/>
+    </net>
+    <net code="12" name="/MOSI_H" class="Default">
+      <node ref="J9" pin="5" pinfunction="Pin_5" pintype="passive"/>
+      <node ref="R5" pin="1" pintype="passive"/>
+      <node ref="U1" pin="2" pinfunction="INA" pintype="input"/>
+    </net>
+    <net code="13" name="/SCK_H" class="Default">
+      <node ref="J9" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="R4" pin="1" pintype="passive"/>
+      <node ref="U1" pin="4" pinfunction="INC" pintype="input"/>
+    </net>
+    <net code="14" name="/SW_P" class="Default">
+      <node ref="U6" pin="1" pinfunction="2Y1" pintype="passive"/>
+      <node ref="U6" pin="14" pinfunction="1Z" pintype="passive"/>
+    </net>
+    <net code="15" name="CATH" class="Default">
+      <node ref="D2" pin="2" pinfunction="A2" pintype="passive"/>
+      <node ref="U1" pin="12" pinfunction="OUTD" pintype="output"/>
+      <node ref="U6" pin="11" pinfunction="S1" pintype="input"/>
+    </net>
+    <net code="16" name="CS_n" class="Default">
+      <node ref="U1" pin="14" pinfunction="OUTB" pintype="output"/>
+      <node ref="U4" pin="2" pinfunction="~{CS}" pintype="input"/>
+    </net>
+    <net code="17" name="E1" class="Default">
+      <node ref="C16" pin="1" pintype="passive"/>
+      <node ref="R13" pin="2" pintype="passive"/>
+      <node ref="U7" pin="1" pinfunction="D" pintype="passive"/>
+    </net>
+    <net code="18" name="EN" class="Default">
+      <node ref="D2" pin="1" pinfunction="A1" pintype="passive"/>
+      <node ref="U1" pin="11" pinfunction="OUTE" pintype="output"/>
+      <node ref="U6" pin="10" pinfunction="S2" pintype="input"/>
+    </net>
+    <net code="19" name="FAULT_n" class="Default">
+      <node ref="R19" pin="2" pintype="passive"/>
+      <node ref="U1" pin="10" pinfunction="INF" pintype="input"/>
+    </net>
+    <net code="20" name="GND_H" class="Power">
+      <node ref="C1" pin="2" pintype="passive"/>
+      <node ref="C3" pin="2" pintype="passive"/>
+      <node ref="J8" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J9" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="PS1" pin="2" pinfunction="-VIN" pintype="power_in"/>
+      <node ref="R1" pin="2" pintype="passive"/>
+      <node ref="R2" pin="2" pintype="passive"/>
+      <node ref="R4" pin="2" pintype="passive"/>
+      <node ref="R5" pin="2" pintype="passive"/>
+      <node ref="U1" pin="8" pinfunction="GND1" pintype="power_in"/>
+    </net>
+    <net code="21" name="GND_ISO" class="Power">
+      <node ref="C10" pin="2" pintype="passive"/>
+      <node ref="C11" pin="2" pintype="passive"/>
+      <node ref="C12" pin="1" pintype="passive"/>
+      <node ref="C13" pin="2" pintype="passive"/>
+      <node ref="C14" pin="1" pintype="passive"/>
+      <node ref="C15" pin="2" pintype="passive"/>
+      <node ref="C17" pin="2" pintype="passive"/>
+      <node ref="C2" pin="2" pintype="passive"/>
+      <node ref="C4" pin="2" pintype="passive"/>
+      <node ref="C5" pin="1" pintype="passive"/>
+      <node ref="C6" pin="2" pintype="passive"/>
+      <node ref="C7" pin="2" pintype="passive"/>
+      <node ref="C8" pin="1" pintype="passive"/>
+      <node ref="C9" pin="2" pintype="passive"/>
+      <node ref="D1" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="PS1" pin="5" pinfunction="COM" pintype="power_out"/>
+      <node ref="R14" pin="2" pintype="passive"/>
+      <node ref="R15" pin="2" pintype="passive"/>
+      <node ref="R9" pin="2" pintype="passive"/>
+      <node ref="TP2" pin="1" pintype="passive"/>
+      <node ref="U1" pin="9" pinfunction="GND2" pintype="power_in"/>
+      <node ref="U2" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U3" pin="3" pinfunction="A" pintype="passive"/>
+      <node ref="U4" pin="5" pinfunction="~{LDAC}" pintype="input"/>
+      <node ref="U4" pin="7" pinfunction="VSS" pintype="power_in"/>
+      <node ref="U5" pin="5" pinfunction="+" pintype="input"/>
+      <node ref="U6" pin="2" pinfunction="2Y0" pintype="passive"/>
+      <node ref="U6" pin="3" pinfunction="3Y1" pintype="passive"/>
+      <node ref="U6" pin="4" pinfunction="3Z" pintype="passive"/>
+      <node ref="U6" pin="5" pinfunction="3Y0" pintype="passive"/>
+      <node ref="U6" pin="6" pinfunction="~{E}" pintype="input"/>
+      <node ref="U6" pin="8" pinfunction="GND" pintype="power_in"/>
+      <node ref="U6" pin="9" pinfunction="S3" pintype="input"/>
+      <node ref="U7" pin="3" pinfunction="GND" pintype="power_in"/>
+    </net>
+    <net code="22" name="ISENSE" class="Default">
+      <node ref="J1" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="R14" pin="1" pintype="passive"/>
+      <node ref="TP1" pin="1" pintype="passive"/>
+      <node ref="U5" pin="2" pinfunction="-" pintype="input"/>
+      <node ref="U7" pin="2" pinfunction="S1" pintype="passive"/>
+    </net>
+    <net code="23" name="MOSI" class="Default">
+      <node ref="U1" pin="15" pinfunction="OUTA" pintype="output"/>
+      <node ref="U4" pin="4" pinfunction="SDI" pintype="input"/>
+    </net>
+    <net code="24" name="Net-(J1-Pin_1)" class="Default">
+      <node ref="C16" pin="2" pintype="passive"/>
+      <node ref="J1" pin="1" pinfunction="Pin_1" pintype="passive"/>
+    </net>
+    <net code="25" name="Net-(R13-Pad1)" class="Default">
+      <node ref="R13" pin="1" pintype="passive"/>
+      <node ref="U5" pin="1" pintype="output"/>
+    </net>
+    <net code="26" name="Net-(U3-K)" class="Default">
+      <node ref="R7" pin="2" pintype="passive"/>
+      <node ref="R8" pin="1" pintype="passive"/>
+      <node ref="U3" pin="1" pinfunction="REF" pintype="input"/>
+      <node ref="U3" pin="2" pinfunction="K" pintype="passive"/>
+    </net>
+    <net code="27" name="Net-(U4-VOUT)" class="Default">
+      <node ref="R10" pin="1" pintype="passive"/>
+      <node ref="U4" pin="8" pinfunction="VOUT" pintype="output"/>
+      <node ref="U6" pin="12" pinfunction="1Y0" pintype="passive"/>
+    </net>
+    <net code="28" name="Net-(U4-VREF)" class="Default">
+      <node ref="C9" pin="1" pintype="passive"/>
+      <node ref="R8" pin="2" pintype="passive"/>
+      <node ref="R9" pin="1" pintype="passive"/>
+      <node ref="U4" pin="6" pinfunction="VREF" pintype="input"/>
+    </net>
+    <net code="29" name="Net-(U5A-+)" class="Default">
+      <node ref="C15" pin="1" pintype="passive"/>
+      <node ref="R12" pin="2" pintype="passive"/>
+      <node ref="U5" pin="3" pinfunction="+" pintype="input"/>
+    </net>
+    <net code="30" name="Net-(U5B--)" class="Default">
+      <node ref="R10" pin="2" pintype="passive"/>
+      <node ref="R11" pin="1" pintype="passive"/>
+      <node ref="U5" pin="6" pinfunction="-" pintype="input"/>
+    </net>
+    <net code="31" name="Net-(U6-1Y1)" class="Default">
+      <node ref="R11" pin="2" pintype="passive"/>
+      <node ref="U5" pin="7" pintype="output"/>
+      <node ref="U6" pin="13" pinfunction="1Y1" pintype="passive"/>
+    </net>
+    <net code="32" name="SCK" class="Default">
+      <node ref="U1" pin="13" pinfunction="OUTC" pintype="output"/>
+      <node ref="U4" pin="3" pinfunction="SCK" pintype="input"/>
+    </net>
+    <net code="33" name="V_IN" class="Default">
+      <node ref="R12" pin="1" pintype="passive"/>
+      <node ref="U6" pin="15" pinfunction="2Z" pintype="passive"/>
+    </net>
+    <net code="34" name="unconnected-(U7-S2-Pad8)" class="Default">
+      <node ref="U7" pin="8" pinfunction="S2" pintype="passive+no_connect"/>
+    </net>
+  </nets>
+</export>

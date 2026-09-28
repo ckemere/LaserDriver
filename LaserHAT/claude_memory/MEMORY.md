@@ -1,0 +1,5 @@
+- [PCB workspace setup](pcb-workspace-setup.md) — work only in the launched checkout on branch pcb-rev2; micromamba "kicad" env, /Applications KiCad paths
+- [LaserHAT Rev 2 goals](laserhat-rev2-goals.md) — fix issue #3 (keep OLED bonnet); split the analog stage onto laser/estim daughterboards
+- [HAT board status](hat-manual-routing-handoff.md) — HAT is hand-routed & committed; NEVER run build_hat_pcb.sh; check .lck files; stable UUIDs
+- [User preferences](laserhat-user-preferences.md) — user hand-routes; Claude optimises pins, checks, tidies; minimal silk; verify with DRC
+- [Next tasks](laserhat-next-tasks.md) — restore e-stim fault detector; SMA-vs-BNC to make the e-stim board single-sided

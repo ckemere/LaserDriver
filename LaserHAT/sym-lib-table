@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "LaserHAT")(type "KiCad")(uri "${KIPRJMOD}/LaserHAT.kicad_sym")(options "")(descr "LaserHAT project symbols"))
+)

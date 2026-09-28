@@ -1,0 +1,394 @@
+{
+ "C25741": {
+  "mpn": "0402WGF1003TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "lcsc_stock": 5264000,
+  "desc": "100k\u03a9 \u00b11% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25741",
+  "price": 0.0025,
+  "jlc_stock": 9787352,
+  "jlc_type": "base",
+  "refs": [
+   "R1",
+   "R2",
+   "R3",
+   "R4",
+   "R5",
+   "R15"
+  ],
+  "value": "100k"
+ },
+ "C2877505": {
+  "mpn": "ISO7761FDBQR",
+  "brand": "TI",
+  "package": "SSOP-16-150mil",
+  "lcsc_stock": 1018,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/55c26f9418afef880ba595496e438c03.pdf?productCode=C2877505",
+  "price": 2.5788,
+  "jlc_stock": 1018,
+  "jlc_type": "expand",
+  "refs": [
+   "U1"
+  ],
+  "value": "ISO7761FDBQR"
+ },
+ "C1525": {
+  "mpn": "CL05B104KO5NNNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0402",
+  "lcsc_stock": 4414600,
+  "desc": "100nF \u00b110% 16V Ceramic Capacitor X7R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C1525",
+  "price": 0.0045,
+  "jlc_stock": 24628676,
+  "jlc_type": "base",
+  "refs": [
+   "C1",
+   "C2",
+   "C10",
+   "C13",
+   "C14"
+  ],
+  "value": "100n"
+ },
+ "C69335": {
+  "mpn": "CL10A475KA8NQNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0603",
+  "lcsc_stock": 1532890,
+  "desc": "4.7uF \u00b110% 25V Ceramic Capacitor X5R 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/61ea68bfd9114bb188d3b5500037ea97.pdf?productCode=C69335",
+  "price": 0.0541,
+  "jlc_stock": 1675563,
+  "jlc_type": "expand",
+  "refs": [
+   "C3"
+  ],
+  "value": "4.7u"
+ },
+ "C559769": {
+  "mpn": "CC0603KRX7R9BB105",
+  "brand": "YAGEO",
+  "package": "0603",
+  "lcsc_stock": 726560,
+  "desc": "1uF \u00b110% 50V Ceramic Capacitor X7R 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23ccee80ee542e7cf156a772bb589942.pdf?productCode=C559769",
+  "price": 0.0745,
+  "jlc_stock": 793121,
+  "jlc_type": "expand",
+  "refs": [
+   "C4",
+   "C5",
+   "C6",
+   "C7",
+   "C8"
+  ],
+  "value": "1u 50V"
+ },
+ "C2867465": {
+  "mpn": "TLV76050DBZR",
+  "brand": "TI",
+  "package": "SOT-23",
+  "lcsc_stock": 19745,
+  "desc": "Linear Voltage Regulator IC Positive Fixed 1 Output 100mA SOT-23",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/b92fd1784c17d709a1873f757313cfc5.pdf?productCode=C2867465",
+  "price": 0.1398,
+  "jlc_stock": 19837,
+  "jlc_type": "expand",
+  "refs": [
+   "U2"
+  ],
+  "value": "TLV76050DBZR"
+ },
+ "C22843": {
+  "mpn": "0603WAF1501T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 4122400,
+  "desc": "1.5k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C22843",
+  "price": 0.002,
+  "jlc_stock": 5088947,
+  "jlc_type": "base",
+  "refs": [
+   "R6",
+   "R7"
+  ],
+  "value": "1.5k"
+ },
+ "C19077439": {
+  "mpn": "BZT52C4V7S",
+  "brand": "R+O",
+  "package": "SOD-323",
+  "lcsc_stock": 336000,
+  "desc": "Zener Diode Independent 4.7V 200mW Surface Mount SOD-323",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/da7020b76914ad0b2f5b3664460f5791.pdf?productCode=C19077439",
+  "price": 0.0193,
+  "jlc_stock": 337746,
+  "jlc_type": "expand",
+  "refs": [
+   "D1"
+  ],
+  "value": "BZT52C4V7S"
+ },
+ "C181103": {
+  "mpn": "TL431",
+  "brand": "Guangdong Hottech",
+  "package": "SOT-23",
+  "lcsc_stock": 526290,
+  "desc": "Shunt Voltage Reference IC Adjustable 2.5V~36V \u00b11% 150mA SOT-23",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/1e6ea3033f00a2587ceadb069b3b60fc.pdf?productCode=C181103",
+  "price": 0.061,
+  "jlc_stock": 543777,
+  "jlc_type": "expand",
+  "refs": [
+   "U3"
+  ],
+  "value": "TL431 (2.5V)"
+ },
+ "C326733": {
+  "mpn": "RT0603BRD0715KL",
+  "brand": "YAGEO",
+  "package": "0603",
+  "lcsc_stock": 54440,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/46d7760c582640714d605308a25a220a.pdf?productCode=C326733",
+  "price": 0.0351,
+  "jlc_stock": 78788,
+  "jlc_type": "expand",
+  "refs": [
+   "R8"
+  ],
+  "value": "15.0k 0.1%"
+ },
+ "C95204": {
+  "mpn": "RT0603BRD0710KL",
+  "brand": "YAGEO",
+  "package": "0603",
+  "lcsc_stock": 447620,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/46d7760c582640714d605308a25a220a.pdf?productCode=C95204",
+  "price": 0.0331,
+  "jlc_stock": 1752958,
+  "jlc_type": "expand",
+  "refs": [
+   "R9",
+   "R10",
+   "R11"
+  ],
+  "value": "10.0k 0.1%"
+ },
+ "C15195": {
+  "mpn": "CL05B103KB5NNNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0402",
+  "lcsc_stock": 1597600,
+  "desc": "10nF \u00b110% 50V Ceramic Capacitor X7R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15195",
+  "price": 0.005,
+  "jlc_stock": 4457339,
+  "jlc_type": "base",
+  "refs": [
+   "C9"
+  ],
+  "value": "10n"
+ },
+ "C185506": {
+  "mpn": "MCP4921-E/MS",
+  "brand": "MICROCHIP",
+  "package": "MSOP-8",
+  "lcsc_stock": 397,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/64969760d21cdf88c2f76dfb000ecd45.pdf?productCode=C185506",
+  "price": 3.0016,
+  "jlc_stock": 397,
+  "jlc_type": "expand",
+  "refs": [
+   "U4"
+  ],
+  "value": "MCP4921-E/MS"
+ },
+ "C2876419": {
+  "mpn": "OPA2192IDGKR",
+  "brand": "TI",
+  "package": "VSSOP-8",
+  "lcsc_stock": 27478,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/5c194d8677e112950897e01027e40aa9.pdf?productCode=C2876419",
+  "price": 2.4832,
+  "jlc_stock": 27478,
+  "jlc_type": "expand",
+  "refs": [
+   "U5"
+  ],
+  "value": "OPA2192IDGKR"
+ },
+ "C14663": {
+  "mpn": "CC0603KRX7R9BB104",
+  "brand": "YAGEO",
+  "package": "0603",
+  "lcsc_stock": 7783100,
+  "desc": "100nF \u00b110% 50V Ceramic Capacitor X7R 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23ccee80ee542e7cf156a772bb589942.pdf?productCode=C14663",
+  "price": 0.0124,
+  "jlc_stock": 51400702,
+  "jlc_type": "base",
+  "refs": [
+   "C11",
+   "C12"
+  ],
+  "value": "100n"
+ },
+ "C5648": {
+  "mpn": "74HC4053PW,118",
+  "brand": "Nexperia",
+  "package": "TSSOP-16",
+  "lcsc_stock": 16380,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/176a996d087210c9e4d002f82a5fe329.pdf?productCode=C5648",
+  "price": 0.2325,
+  "jlc_stock": 16382,
+  "jlc_type": "expand",
+  "refs": [
+   "U6"
+  ],
+  "value": "74HC4053PW"
+ },
+ "C11702": {
+  "mpn": "0402WGF1001TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "lcsc_stock": 471500,
+  "desc": "1k\u03a9 \u00b11% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C11702",
+  "price": 0.0019,
+  "jlc_stock": 8634907,
+  "jlc_type": "base",
+  "refs": [
+   "R12"
+  ],
+  "value": "1k"
+ },
+ "C1546": {
+  "mpn": "0402CG101J500NT",
+  "brand": "FH",
+  "package": "0402",
+  "lcsc_stock": 1847400,
+  "desc": "100pF \u00b15% 50V Ceramic Capacitor C0G 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/09fe2daf22580a99fa7fea93ccb20fb7.pdf?productCode=C1546",
+  "price": 0.0042,
+  "jlc_stock": 3473680,
+  "jlc_type": "base",
+  "refs": [
+   "C15"
+  ],
+  "value": "100p"
+ },
+ "C137973": {
+  "mpn": "RC0402FR-0747RL",
+  "brand": "YAGEO",
+  "package": "0402",
+  "lcsc_stock": 1811100,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/b426be3ce22c6de3e0c3a2248e49159e.pdf?productCode=C137973",
+  "price": 0.0029,
+  "jlc_stock": 1926300,
+  "jlc_type": "expand",
+  "refs": [
+   "R13"
+  ],
+  "value": "47"
+ },
+ "C328425": {
+  "mpn": "PTFR0603B2K00P9",
+  "brand": "RESI",
+  "package": "0603",
+  "lcsc_stock": 281540,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/19fb9d121ec124c867093c26b2505da9.pdf?productCode=C328425",
+  "price": 0.0428,
+  "jlc_stock": 281546,
+  "jlc_type": "expand",
+  "refs": [
+   "R14"
+  ],
+  "value": "2.00k 0.1%"
+ },
+ "C726584": {
+  "mpn": "AC0805KKX7R9BB105",
+  "brand": "YAGEO",
+  "package": "0805",
+  "lcsc_stock": 1983100,
+  "desc": "1uF \u00b110% 50V Ceramic Capacitor X7R 0805 AEC-Q200",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/e147909414eb3b900a42b90481dc8914.pdf?productCode=C726584",
+  "price": 0.0674,
+  "jlc_stock": 1987465,
+  "jlc_type": "expand",
+  "refs": [
+   "C16"
+  ],
+  "value": "1u 50V"
+ },
+ "C37704": {
+  "mpn": "BAT54C,215",
+  "brand": "Nexperia",
+  "package": "SOT-23",
+  "lcsc_stock": 352150,
+  "desc": "Diode Array 1 Pair Common Cathode 30V 200mA Surface Mount SOT-23",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/753e903e66757b8dda706efd5e61ce1e.pdf?productCode=C37704",
+  "price": 0.018,
+  "jlc_stock": 373098,
+  "jlc_type": "expand",
+  "refs": [
+   "D2"
+  ],
+  "value": "BAT54C"
+ },
+ "C106861": {
+  "mpn": "CC0402KRX7R9BB222",
+  "brand": "YAGEO",
+  "package": "0402",
+  "lcsc_stock": 1573300,
+  "desc": "2.2nF \u00b110% 50V Ceramic Capacitor X7R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23ccee80ee542e7cf156a772bb589942.pdf?productCode=C106861",
+  "price": 0.0023,
+  "jlc_stock": 1636046,
+  "jlc_type": "expand",
+  "refs": [
+   "C17"
+  ],
+  "value": "2.2n"
+ },
+ "C6581": {
+  "mpn": "DG419DY-T1-E3",
+  "brand": "VISHAY",
+  "package": "SOIC-8",
+  "lcsc_stock": 845,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/f1528dc32df34dc880d26d52f5c1d07a.pdf?productCode=C6581",
+  "price": 1.8748,
+  "jlc_stock": 1119,
+  "jlc_type": "expand",
+  "refs": [
+   "U7"
+  ],
+  "value": "DG419DY"
+ },
+ "C25900": {
+  "mpn": "0402WGF4701TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "lcsc_stock": 11350800,
+  "desc": "4.7k\u03a9 \u00b11% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900",
+  "price": 0.0027,
+  "jlc_stock": 16215761,
+  "jlc_type": "base",
+  "refs": [
+   "R19"
+  ],
+  "value": "4.7k"
+ }
+}

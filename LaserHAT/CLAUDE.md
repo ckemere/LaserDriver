@@ -1,5 +1,76 @@
 # LaserHAT Schematic Design Rules
 
+## Rev 2 workflow (supersedes the generator below)
+
+The schematics were hand-edited in KiCad after Rev 1, so `generate_schematics.py`,
+`fix_labels.py` and `merge_template.py` are stale — do not run them.  Rev 2 is produced by
+re-runnable scripts in `tools/` that start from the Rev 1 files in git (`a722d88`) and apply
+minimal edits (see `REV2_NOTES.md`):
+
+- `tools/rev2_migrate.py`, `tools/make_laser_daughter.py` — schematic edits.  They write back
+  with `tools/sexpr_patch.py`, which splices only changed items into the original text:
+  kiutils 1.4.8 cannot round-trip KiCad 9's `(hide yes)` and would un-hide every field.
+  Symbols they add get **stable UUIDs** (`schlib.add_symbol`: uuid5 of sheet/ref/unit), so
+  re-running them never makes KiCad's "Update PCB from Schematic" replace footprints.
+- Use KiCad's bundled Python (`pcbnew`) for PCB scripts:
+  `/Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/Current/bin/python3`;
+  kicad-cli is `/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli` (not on PATH).
+  In that Python, defer every `board.Remove()` to the end, compare items by `m_Uuid` (not `is`),
+  and copy `VECTOR2I`s before editing (`GetStart()` returns a live reference).
+- Use the `kicad` micromamba env for everything else.
+
+### The HAT PCB is hand-placed and hand-routed (2026-09-28)
+
+- **Never run `tools/build_hat_pcb.sh` on `LaserDriver.kicad_pcb`** — it rebuilds from Rev 1 and
+  overwrites the hand layout.  (The laser/e-stim daughterboards still use their build scripts.)
+- Check for KiCad lock files (`~LaserDriver.kicad_pcb.lck`, `~LaserDriver.kicad_sch.lck`) before
+  writing the board **or regenerating schematics**; eeschema/pcbnew keep in-memory copies.
+- Net changes: re-run `rev2_migrate.py`, then either the user presses F8 in pcbnew, or
+  `tools/pcb_sync.py board net --keep-tracks` (keeps placement and copper).
+- Clean-up helpers (all transactional, clearance-checked): `tools/track_tidy.py` (header
+  midlines, via/pad jags, tiny segments), `tools/silk_declutter.py`, `tools/gnd_islands.py`
+  (read-only check), `tools/fill_zones.py` (refill before DRC).  DRC must run on a board next to
+  `LaserDriver.kicad_pro` (project rules: clearance 0.15, hole clearance 0.25).
+- Fab outputs: `tools/jlc_fab.py LaserHAT` (LCSC numbers in `tools/lcsc_parts.py`).
+- Backups of each stage are in `stash/`.
+
+### Rev 2 MCU pin map (U7 MSPM0G3507 RHB, rot −90; authoritative copy: `rev2_migrate.py` PIN_MAP)
+
+| Pin | Port | Net | Function |
+|---|---|---|---|
+| 1, 2 | PA0, PA1 | I2C_SDA, I2C_SCL | I2C0 → Pi GPIO2/3 (OLED bonnet). Only fail-safe OD pins: keep here |
+| 3 | NRST | GPIO23 net | reset ← Pi GPIO23 (J1.16), R3 47k / C3 10n, JP4 RTS_NRST |
+| 6 / 32 | PA2 / VCORE | ROSC / VCORE | R4 100k 0.1 % / C4 |
+| 7, 8, 9 | PA3–PA5 | — | spare |
+| 10 | PA6 | DB_GPIO | J8.5 FAULT_n → **TIMA0_FAULT0** (hardware PWM kill) |
+| 11 | PA7 | DB_PWM_A | J8.3 EN, **TIMA0_CCP1** |
+| 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | **UART1** TX/RX ↔ Pi GPIO15/14 |
+| 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 ↔ CH340N (BSL) — fixed |
+| 16 | PA12 | DB_PWM_B | J8.4 CATH, **TIMA0_CCP3** (independent channel, not a complement) |
+| 17 / 18 / 20 | PA13 / PA14 / PA16 | BUTTON4 / 2 / 3 | SW7 wheel roll / push / roll |
+| 19 | PA15 | DB_DAC | J9.3 DAC0 (e-stim CS_n) — fixed |
+| 21 | PA17 | DB_ADC_A | J9.4 ADC1.2 (e-stim bit-banged SCK) |
+| 22 | PA18 | BSL_INVOKE | SW6 (active **high**) — fixed |
+| 23, 24 | PA19, PA20 | SWDIO, SWCLK | ← Pi GPIO25 / GPIO24 (swapped vs Rev 1) — fixed MCU side |
+| 25 | PA21 | BUTTON1 | SW8 BACK |
+| 26 | PA22 | DB_ADC_B | J9.5 ADC1.8 (e-stim bit-banged MOSI) |
+| 27 | PA23 | BUTTON5 | SW9 FIRE |
+| 28 | PA24 | LED_MCU | D7 |
+| 29 / 30 / 31 | PA25 / PA26 / PA27 | MCU_STIM_OUT / MCU_STIM_IN / PI_TRIGGER | U8 → J7 (TIMG12) / J6 → U8 (TIMG8 capture) / ← Pi GPIO26 (TIMG7) |
+
+- Buttons SW7/SW8/SW9 are **active low** (commons on GND, internal pull-ups); SW6 stays active high.
+- PWM_A/B and FAULT must stay on one TIMA timer (shared timebase + hardware fault kill).
+- Pi header vs Rev 1: SWD swapped (GPIO24 = SWCLK, GPIO25 = SWDIO); NRST ↔ MCU_POWER_EN swapped
+  (GPIO23 = NRST, GPIO18 = MCU_POWER_EN); trigger is GPIO26 → PA27.  Flash Rev 2 with
+  `make flash HAT_REV=2` (Firmware/Makefile.gcc; `Pi/power_cycle.py` reads LASERHAT_*_PIN).
+- OLED bonnet (Adafruit 4567) runs only on 3.3 V and ties header pins 1/17 together itself.
+- J8/J9 pinout is frozen (module contract, `estim_interface/`); notices to the e-stim module team go
+  in `estim_interface/QUESTIONS.md` (latest: NOTICE 10).
+
+The rules below (passives, stubs, UUID preservation, spacing) still apply to new edits.
+
+---
+
 This file governs how `generate_schematics.py` produces KiCad schematics.  
 Follow these rules exactly when modifying or extending the generator.
 

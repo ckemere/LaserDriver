@@ -1,0 +1,49 @@
+{
+  "order": [
+    "/SW",
+    "+12V",
+    "Net-(J2-LD_Cathode)",
+    "+5V",
+    "Net-(U2-FB)",
+    "DB_PWM_A",
+    "DB_PWM_B",
+    "Net-(Q2-G)",
+    "/IREF",
+    "DB_DAC",
+    "/DUMMY_BOT",
+    "/LaserDrive",
+    "/DUMMY_TOP",
+    "/DUMMY_MID",
+    "/IDrive",
+    "LASER_V",
+    "Net-(J2-PD_Cathode)",
+    "Net-(J2-PD_Anode)",
+    "DB_ADC_A",
+    "DB_ADC_B"
+  ],
+  "widths": {
+    "/SW": 1.0,
+    "+5V": 0.8,
+    "+12V": 0.8,
+    "LASER_V": 0.8,
+    "Net-(J2-LD_Cathode)": 0.5,
+    "/LaserDrive": 0.5,
+    "/DUMMY_TOP": 0.6,
+    "/DUMMY_MID": 0.6,
+    "/DUMMY_BOT": 0.5,
+    "/IDrive": 0.6,
+    "Net-(Q2-G)": 0.3
+  },
+  "default_width": 0.25,
+  "skip": [
+    "GND"
+  ],
+  "bottom_cost": 3.0,
+  "via_cost": 40,
+  "turn_cost": 4,
+  "pad_widths": {
+    "U3.5": 0.3,
+    "C12.1": 0.3,
+    "U3.4": 0.25
+  }
+}

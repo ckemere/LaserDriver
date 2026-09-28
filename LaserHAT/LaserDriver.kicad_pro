@@ -621,7 +621,7 @@
     "classes": [
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.15,
         "diff_pair_gap": 0.25,
         "diff_pair_via_gap": 0.25,
         "diff_pair_width": 0.2,
@@ -632,26 +632,43 @@
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 2147483647,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
-        "track_width": 0.2,
-        "via_diameter": 0.8,
-        "via_drill": 0.4,
+        "track_width": 0.15,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
         "wire_width": 6
       },
       {
         "bus_width": 12,
-        "clearance": 0.2,
+        "clearance": 0.15,
         "diff_pair_gap": 0.25,
         "diff_pair_width": 0.2,
         "line_style": 0,
         "microvia_diameter": 0.3,
         "microvia_drill": 0.1,
-        "name": "Laser_Power",
+        "name": "Power",
         "pcb_color": "rgba(0, 0, 0, 0.000)",
         "priority": 0,
         "schematic_color": "rgba(0, 0, 0, 0.000)",
         "track_width": 0.3,
-        "via_diameter": 1.0,
-        "via_drill": 0.5,
+        "via_diameter": 0.6,
+        "via_drill": 0.3,
+        "wire_width": 6
+      },
+      {
+        "bus_width": 12,
+        "clearance": 0.15,
+        "diff_pair_gap": 0.25,
+        "diff_pair_width": 0.2,
+        "line_style": 0,
+        "microvia_diameter": 0.3,
+        "microvia_drill": 0.1,
+        "name": "Power_5V",
+        "pcb_color": "rgba(0, 0, 0, 0.000)",
+        "priority": 0,
+        "schematic_color": "rgba(0, 0, 0, 0.000)",
+        "track_width": 0.4,
+        "via_diameter": 0.8,
+        "via_drill": 0.4,
         "wire_width": 6
       }
     ],
@@ -662,28 +679,32 @@
     "netclass_assignments": null,
     "netclass_patterns": [
       {
-        "netclass": "Laser_Power",
-        "pattern": "LASER_V"
-      },
-      {
-        "netclass": "Laser_Power",
+        "netclass": "Power_5V",
         "pattern": "+5V"
       },
       {
-        "netclass": "Laser_Power",
+        "netclass": "Power_5V",
+        "pattern": "/USB-C UART/VBUS"
+      },
+      {
+        "netclass": "Power",
         "pattern": "RPi +3V3"
       },
       {
-        "netclass": "Laser_Power",
-        "pattern": "+12V"
-      },
-      {
-        "netclass": "Laser_Power",
+        "netclass": "Power",
         "pattern": "+3V3"
       },
       {
-        "netclass": "Laser_Power",
+        "netclass": "Power",
         "pattern": "MSPM0_3V3"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "GND"
+      },
+      {
+        "netclass": "Power_5V",
+        "pattern": "/USB-C UART/VBUS_SW"
       }
     ]
   },
@@ -937,10 +958,6 @@
       "Root"
     ],
     [
-      "11c06e2d-6407-45f2-b4d2-d4ff2b6ad98c",
-      "EInk Display"
-    ],
-    [
       "212bfd25-f831-4b85-926b-000000000004",
       "USB-C UART"
     ],
@@ -949,8 +966,8 @@
       "MSPM0 Controller"
     ],
     [
-      "212bfd25-f831-4b85-926b-000000000002",
-      "Laser Driver Circuit"
+      "7a1c0d2e-5b4f-4c8e-9d3a-2e6f1b0a9c01",
+      "BNC + Daughterboard I/O"
     ]
   ],
   "text_variables": {}

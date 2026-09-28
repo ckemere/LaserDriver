@@ -34,14 +34,17 @@ Manual use:
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 import subprocess
 import sys
 import time
 
 
-POWER_PIN = 23   # MCU_POWER_EN -> P-MOSFET gate
-NRST_PIN  = 18   # MSPM0 NRST
+# Rev 1 HAT wiring by default.  The Rev 2 HAT swaps them (power 18, NRST 23);
+# `make flash HAT_REV=2` sets these environment variables.
+POWER_PIN = int(os.environ.get("LASERHAT_POWER_PIN", 23))   # MCU_POWER_EN -> load-switch enable
+NRST_PIN  = int(os.environ.get("LASERHAT_NRST_PIN", 18))    # MSPM0 NRST
 # Pins to park (mode + drive state) so they can't phantom-power the MSP
 # through its IO ESD diodes during the brief power-off window.
 QUIET_PINS = [14, 24, 25]   # UART TX, SWDIO, SWCLK
