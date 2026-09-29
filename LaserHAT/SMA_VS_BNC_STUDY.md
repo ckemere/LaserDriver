@@ -1,5 +1,10 @@
 # SMA instead of BNC on the HAT: would it let the e-stim module go single-sided?
 
+> **Superseded 2026-09-28 (later the same day).** The BNCs stay. The e-stim module grows *south* instead, over the
+> Pi's port edge: outline 26.5 × 36.5 mm (y 76–112.5), which routes single-sided on 4 layers (see
+> `EStimDaughter/DESIGN_NOTES.md`, rev M3). The SMA schematic change (commit b6c5e68) was reverted. The numbers below
+> are kept for the record.
+
 Study only (2026-09-28). Nothing on either board was changed for it. All coordinates are HAT board coordinates (mm, y down).
 
 ## 1. The question

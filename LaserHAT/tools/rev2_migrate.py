@@ -43,7 +43,7 @@ IO_FILE = "bnc_daughter_io.kicad_sch"
 FP_R = "Resistor_SMD:R_0402_1005Metric"
 FP_C = "Capacitor_SMD:C_0402_1005Metric"
 FP_LED = "Diode_SMD:D_0603_1608Metric"
-FP_BNC = "Footprints:SMA_Amphenol_901-143_Horizontal"   # 2026-09-28: right-angle SMA jacks (were 031-5540/5539 BNC dual footprint)
+FP_BNC = "Footprints:BNC_Amphenol_031-5540_031-5539_Dual"   # 031-5540/5431 right angle, or 031-5539 vertical
 FP_SOCKET = "Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical"
 FP_SJ = "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
 
@@ -292,7 +292,7 @@ def build_io(template):
     kw = dict(project="LaserDriver", sheet_path=IO_PATH)
 
     # BNC trigger input: series R + pull-down into a 5 V-tolerant Schmitt buffer
-    j6 = add_symbol(s, "Connector:Conn_Coaxial", "J6", "SMA TRIGGER IN", 45.72, 60.96,
+    j6 = add_symbol(s, "Connector:Conn_Coaxial", "J6", "BNC TRIGGER IN", 45.72, 60.96,
                     footprint=FP_BNC, mirror="y", **kw)
     j6.dnp = True                   # shipped loose, soldered by hand
     stub_label(s, j6, "1", "BNC_IN", kind="local")
@@ -316,7 +316,7 @@ def build_io(template):
     r25 = add_symbol(s, "Device:R", "R25", "33", 157.48, 101.6, angle=90, footprint=FP_R, **kw)
     stub_label(s, r25, "2", "BUF_OUT", kind="local")
     stub_label(s, r25, "1", "BNC_OUT", kind="local")
-    j7 = add_symbol(s, "Connector:Conn_Coaxial", "J7", "SMA STIM OUT", 185.42, 101.6,
+    j7 = add_symbol(s, "Connector:Conn_Coaxial", "J7", "BNC STIM OUT", 185.42, 101.6,
                     footprint=FP_BNC, **kw)
     j7.dnp = True
     stub_label(s, j7, "1", "BNC_OUT", kind="local")
