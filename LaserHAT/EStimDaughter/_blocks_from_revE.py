@@ -106,12 +106,44 @@ PWR("U7.4"); PWR("U7.5"); PWR("U7.3"); PWR("U7.7")
 sh.text("HOLD low (no EN/CATH for ~200 us): S1-D closed, E1 shorted to E2.", 99 * u, 123 * u)
 sh.text("HOLD high: open (tOFF ~60 ns). 20 ohm on, 60 pC injection, reset every cycle.", 99 * u, 125 * u)
 
-# =========================================================================== 6. module-ready flag
-sh.box(140 * u, 60 * u, 176 * u, 80 * u, "6. FAULT_n = MODULE READY")
-put("R19", 150, 68.5)
+# =========================================================================== 6. fault detector
+sh.box(140 * u, 60 * u, 196 * u, 104 * u, "6. FAULT DETECTOR  (LM393 window on E1 -> FAULT_n; low also = isolated side unpowered)")
+put("R20", 146.5, 70, rot=90)
+put("R22", 150, 68.5)
+put("R21", 150, 71.5)
+put("C18", 153, 71.5)
+LBL("R20.1", length=2.54)
+PWR("R22.1"); PWR("R21.2"); PWR("C18.2")
+W("R20.2", pt(155, 70))                           # E1_LS
+sh.wired |= {("R22", "2"), ("R21", "1"), ("C18", "1")}
+put("R23", 146.5, 83, rot=90)
+put("R25", 150, 81.5)
+put("R24", 150, 84.5)
+PWR("R23.1"); PWR("R25.1"); PWR("R24.2")
+W("R23.2", pt(157, 83), pt(157, 78), pt(159, 78)) # TH_P
+sh.wired |= {("R25", "2"), ("R24", "1")}
+put("R26", 146.5, 96, rot=270)
+put("R28", 150, 94.5)
+put("R27", 150, 97.5)
+PWR("R26.2"); PWR("R28.1"); PWR("R27.2")
+W("R26.1", pt(158, 96), pt(158, 93), pt(159, 93)) # TH_N
+sh.wired |= {("R28", "2"), ("R27", "1")}
+put("U8", 162, 79, unit=1)
+put("U8", 162, 92, unit=2)
+sh.wired |= {("U8", "3"), ("U8", "6")}
+W(pt(155, 70), pt(155, 91), pt(159, 91))          # E1_LS to both comparators
+W(pt(155, 80), "U8.2")
+sh.wired.add(("U8", "5"))
+W("U8.1", pt(168, 79), pt(168, 92))
+W("U8.7", pt(168, 92))
+put("R19", 171, 83.5)
 PWR("R19.1")
-W("R19.2", pt(160, 70))
-LBL(None, "FAULT_n", at=pt(160, 70), direction=(1, 0))
-sh.text("R19 pulls FAULT_n high once +5V_ISO is up; unpowered, the ISO7761F", 141 * u, 75 * u)
-sh.text("fails safe low = 'module not ready' at the HAT (TIMA0_FAULT0).", 141 * u, 77 * u)
-sh.text("The LM393 compliance window of rev E was dropped in M1 for board space.", 141 * u, 79 * u)
+W(pt(168, 85), pt(176, 85))                       # FAULT_n (open collectors, R19 pull-up) -> U1 INF
+sh.wired.add(("R19", "2"))
+LBL(None, "FAULT_n", at=pt(176, 85), direction=(1, 0))
+put("U8", 172, 68, unit=3); put("C19", 176, 68)
+for s_ in ("U8.8", "U8.4", "C19.1", "C19.2"):
+    PWR(s_)
+sh.text("E1_LS = 0.0767*E1 + 1.42 V; TH_P/TH_N track the rails: trips at |E1| > 0.915*V (13.9 V at +/-15 V).", 141 * u, 99 * u)
+sh.text("FAULT_n low while E1 is past the trip point (a few us before U5A saturates; open electrode: within ~5 us of EN)", 141 * u, 101 * u)
+sh.text("and while +5V_ISO is down (R19 unpowered).  The HAT latches it on TIMA0_FAULT0 and forces EN/CATH low.", 141 * u, 103 * u)

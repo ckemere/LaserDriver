@@ -10,7 +10,7 @@
 |---|---|---|---|---|---|---|
 | `LaserHAT` | 65 × 57 mm | 2 | Top only | 44 / 29 | 15 | Pi header J1 (Samtec HLE-120-02-xxx-DV-BE), 2 module sockets, BACK button. BNCs J6/J7 are **DNP**: Amphenol 031-5540 / 031-5431 right-angle, or the vertical 031-5539 (dual footprint). |
 | `LaserDaughter` | 26.5 × 23.5 mm | 2 | Top only | 23 / 20 | 13 | J1/J3 pin headers (underside), J5 RED shunt header |
-| `EStimDaughter` | 26.5 × 23.5 mm | 4 | Top + Bottom | 42 / 25 | 17 | J8/J9 pin headers (underside), J1 electrode header; PS1 DC-DC is DNP |
+| `EStimDaughter` | 26.5 × 36.5 mm (rev M3: 12.5 mm south overhang) | 4 | Top only | 54 / 29 | 21 | J8/J9 pin headers (underside), J1 electrode header; PS1 DC-DC is DNP |
 
 The three boards share no extended parts, so across the whole order there are about 45 unique extended parts (the HAT's USB power switch added two). Basic parts carry no per-part fee.
 
@@ -24,7 +24,7 @@ The three boards share no extended parts, so across the whole order there are ab
 **Recommendation: three separate designs in one order (one shipment). Don't combine them into a mixed panel.**
 
 Reasons:
-1. **A mixed panel inherits the most expensive specs.** The e-stim module needs 4 layers and double-sided assembly. As one panel, the HAT area (about 3× the other two combined) would be built as 4-layer too. Ordered separately:
+1. **A mixed panel inherits the most expensive specs.** The e-stim module needs 4 layers (single-sided assembly since rev M3). As one panel, the HAT area (about 3× the other two combined) would be built as 4-layer too. Ordered separately:
    - the HAT and laser module are 2-layer boards under 100 × 100 mm, JLC's cheapest PCB tier;
    - the e-stim module is a small 4-layer board.
 
@@ -34,7 +34,7 @@ Reasons:
 4. **Assembly tier.** Parts on both sides push an order to JLC's Standard PCBA tier; check the current terms.
    - The laser module is single-sided, so it can use Economic.
    - The HAT is single-sided too: R8/R10, the USB-C CC resistors, moved to the top.
-   - The e-stim module is double-sided by necessity.
+   - The e-stim module is single-sided since rev M3 (all SMD on the top; only the headers and the DNP DC-DC are hand-fitted).
 
 **When panelizing does make sense:** at larger quantities, panelize each design with itself (for example, the two 26.5 × 23.5 mm modules in 2 × 2 or 3 × 3 panels). JLC can do this for you ("panel by JLCPCB"), or KiKit can.
 

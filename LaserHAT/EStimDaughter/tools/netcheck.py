@@ -1,9 +1,10 @@
 """
 Connectivity check: the schematic's exported netlist must partition the component pins exactly as sch_parts.PARTS says.
-Run:  micromamba run -n kicad python tools/netcheck.py   (exports the netlist with kicad-cli first)
+Run:  python tools/netcheck.py   (exports the netlist with kicad-cli first: $KICAD_CLI, PATH, or the macOS bundle)
 Exit code 0 = identical connectivity.
 """
 import os
+import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -13,7 +14,7 @@ ROOT = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, ROOT)
 from sch_parts import PARTS  # noqa: E402
 
-KICAD_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+KICAD_CLI = os.environ.get("KICAD_CLI") or shutil.which("kicad-cli") or "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
 
 
 def expected():

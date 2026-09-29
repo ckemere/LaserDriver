@@ -148,15 +148,16 @@ So a blue diode at full current is fine for this protocol. Revisit Q2's heat-sin
 
 ## E-stim module (`EStimDaughter/`)
 
-This is the isolated biphasic constant-current stimulator (rev M1). It was designed in a separate session against `estim_interface/ESTIM_MODULE_SPEC.md` and imported from `kbest/estim_module` at kbest commit `9200766`. The project was renamed `estim_module` → `EStimDaughter`, and the script paths and schematic instance names were updated to match. `EStimDaughter/README.md` is the full description; `DESIGN_NOTES.md` covers its history.
+This is the isolated biphasic constant-current stimulator (rev M3). It was designed in a separate session against `estim_interface/ESTIM_MODULE_SPEC.md` and imported from `kbest/estim_module` at kbest commit `9200766`. The project was renamed `estim_module` → `EStimDaughter`, and the script paths and schematic instance names were updated to match. `EStimDaughter/README.md` is the full description; `DESIGN_NOTES.md` covers its history.
 
 **Circuit summary**
 - **Control.** A digital-only barrier: an ISO7761F carries EN, CATH, CS_n, SCK and MOSI across, and FAULT_n back.
 - **Set-point.** An MCP4921 DAC with a TL431-derived 1.000 V reference produces +VSET. An OPA2192 inverter makes −VSET.
 - **Waveform.** A 74HC4053 selects ±VSET (CATH) or 0 (EN) into a floating-load V→I stage: I = V / 2.00 kΩ, 0–500 µA.
 - **Electrode path.** The electrode is behind a 1 µF DC block. A DG419 shorts it ~200 µs after each pulse pair.
+- **Fault detector (M2, 2026-09-28).** An LM393 window on the electrode-side voltage (trip at |E1| > 0.915 × rail) pulls FAULT_n low a few µs before the output stage runs out of compliance, or within ~4 µs of EN on an open electrode; the HAT's latched TIMA0_FAULT0 then kills EN/CATH. Same line still reads low while the isolated side is unpowered. See `EStimDaughter/DESIGN_NOTES.md` and HAT NOTICE 11.
 - **Power.** The isolated ±15 V comes from a DNP SIP DC-DC (or battery packs).
-- **Board.** 4 layers, parts on both sides, with a 2 mm isolation gap.
+- **Board (M3, 2026-09-28).** 26.5 × 36.5 mm — the module extends 12.5 mm past the HAT's south edge over the Pi's port edge (NOTICE 12; the HAT's keep-out marker still needs extending to y 112.5). 4 layers, all parts on the top (single-sided assembly), 2 mm isolation gap. On the original 23.5 mm outline the fault-detector version would not route; see `SMA_VS_BNC_STUDY.md` for the options that were considered.
 
 **Import checks (2026-09-26)**
 - ERC: 0 violations. DRC: 0 errors, 0 unconnected.
@@ -173,8 +174,8 @@ This is the isolated biphasic constant-current stimulator (rev M1). It was desig
   - SHORT keeps the electrode reset.
 
 **Open items**
-- **Electrode header vs. BACK button.** The electrode header J1 sits at x 110.7–116.8 and overhangs the south edge by ~9 mm. That is directly above the HAT's BACK button (SW8, x 106.7–116.3), inside the thumb zone the spec later reserved; the spec recommends x ≈ 117–127.5.
-- **The module's own open items:** fab files, J1 enclosure clearance, cable capacitance, U5A DC drift for fast trains, PS1 sourcing.
+- ~~Electrode header vs. BACK button~~ — resolved in M3: J1 is on the module's new south edge at y ≈ 111, 12.5 mm beyond the HAT and the BACK button.
+- **The module's own open items:** enclosure clearance for the 12.5 mm overhang and J1, cable capacitance, U5A DC drift for fast trains, PS1 sourcing.
 
 ## Impact on firmware and Pi software
 
@@ -194,12 +195,18 @@ This is the isolated biphasic constant-current stimulator (rev M1). It was desig
 ## Rebuilding
 
 ```sh
-micromamba run -n kicad python tools/rev2_migrate.py        # HAT schematics
-micromamba run -n kicad python tools/make_laser_daughter.py # module schematic
-sh tools/build_hat_pcb.sh --route                            # HAT PCB (~20 min)
-sh tools/build_daughter_pcb.sh --route                       # module PCB (a few min)
-$KICAD_PY tools/jlc_fab.py                                  # JLC Gerbers/BOM/CPL/renders -> fab/ (see fab/README.md)
+python tools/rev2_migrate.py                # HAT schematics (kiutils)
+python tools/make_laser_daughter.py         # laser module schematic
+sh tools/build_hat_pcb.sh --route           # HAT PCB (~20 min) - DO NOT run on the hand-routed LaserDriver.kicad_pcb
+sh tools/build_daughter_pcb.sh --route      # laser module PCB (a few min)
+$KICAD_PY tools/jlc_fab.py                  # JLC Gerbers/BOM/CPL/renders -> fab/ (see fab/README.md)
+# e-stim module: EStimDaughter/gen_schematic.py, tools/netcheck.py, then tools/route_pcb.py (see its DESIGN_NOTES.md)
 ```
+
+On macOS the scripts were run with the `kicad` micromamba env (kiutils) and KiCad's bundled Python for `pcbnew`; on
+Ubuntu (2026-09-28 onwards) one venv with the system `pcbnew` does both, `kicad-cli` is on PATH, and the e-stim tools
+take `FREEROUTING` / `KICAD_CLI` / `KICAD_FOOTPRINTS` from the environment. The `/Applications/...` paths in the HAT
+tools (`build_*_pcb.sh`, `jlc_fab.py`, `silk_declutter.py`, `pcb_sync.py`, `schlib.py`) are still the macOS ones.
 
 The PCB flow runs in this order:
 

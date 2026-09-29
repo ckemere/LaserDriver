@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="E">
   <design>
-    <source>/Users/ckemere/Code/LabTools/SmallProjects/kbest/estim_module/estim_module.kicad_sch</source>
-    <date>2026-09-26T20:42:19-0500</date>
-    <tool>Eeschema 9.0.8</tool>
+    <source>/home/claude-agent/Code/LaserDriver/LaserHAT/EStimDaughter/EStimDaughter.kicad_sch</source>
+    <date>2026-09-28T17:54:50-0500</date>
+    <tool>Eeschema 9.0.8+dfsg-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
         <title>kbest e-stim module for LaserHAT Rev 2</title>
         <company>Kemere lab (kbest)</company>
-        <rev>M1</rev>
-        <date>2026-09-26</date>
-        <source>estim_module.kicad_sch</source>
+        <rev>M2</rev>
+        <date>2026-09-28</date>
+        <source>EStimDaughter.kicad_sch</source>
         <comment number="1" value=""/>
         <comment number="2" value=""/>
         <comment number="3" value=""/>
@@ -36,9 +36,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>27ed0f38-8ecf-47b4-8d5c-2a2ce55b7af4</tstamps>
+      <tstamps>3469cc5a-8a9d-47f9-b1c4-9aa533c9d587</tstamps>
     </comp>
     <comp ref="C2">
       <value>100n</value>
@@ -52,9 +52,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a90543db-6157-4611-aa18-d1d2dd1f9e45</tstamps>
+      <tstamps>38ab1ae0-88e5-490f-a80d-feddbedb9f42</tstamps>
     </comp>
     <comp ref="C3">
       <value>4.7u</value>
@@ -68,9 +68,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C69335"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>1c1f767a-758c-430b-8ae3-9326aae463da</tstamps>
+      <tstamps>0627c84b-9b38-464b-b056-bca01b120741</tstamps>
     </comp>
     <comp ref="C4">
       <value>1u 50V</value>
@@ -84,9 +84,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C559769"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>8405325e-c519-4364-a84f-280aec18333a</tstamps>
+      <tstamps>2f0126c7-0100-477a-9462-6526bce635be</tstamps>
     </comp>
     <comp ref="C5">
       <value>1u 50V</value>
@@ -100,9 +100,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C559769"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>97453dde-5c87-45b7-971a-3c4916b22795</tstamps>
+      <tstamps>d69d435b-d231-440f-bffe-d2a58e569042</tstamps>
     </comp>
     <comp ref="C6">
       <value>1u 50V</value>
@@ -116,9 +116,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C559769"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>ef636319-32b2-4516-8beb-da0e7a78af9e</tstamps>
+      <tstamps>2132ed07-8990-407a-8707-27b9953ebe10</tstamps>
     </comp>
     <comp ref="C7">
       <value>1u 50V</value>
@@ -132,9 +132,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C559769"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>856dc073-5de5-4332-a185-4fee1ee12357</tstamps>
+      <tstamps>49ad0d71-7726-4106-ad14-ba9a4de62f5e</tstamps>
     </comp>
     <comp ref="C8">
       <value>1u 50V</value>
@@ -148,9 +148,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C559769"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>48f6778c-51a6-4157-9a0e-be670795d456</tstamps>
+      <tstamps>8967dc2e-6a92-440e-8469-14aa7daee3b7</tstamps>
     </comp>
     <comp ref="C9">
       <value>10n</value>
@@ -164,9 +164,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C15195"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>73a23178-f8a2-48e6-bd48-a0e7055a476a</tstamps>
+      <tstamps>c220de34-aaa5-497c-8952-e568b8e3f749</tstamps>
     </comp>
     <comp ref="C10">
       <value>100n</value>
@@ -180,9 +180,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>263a3a0d-ec09-4288-8e27-01170e41163d</tstamps>
+      <tstamps>ebc43399-d69e-4110-91b3-d7edc04600a7</tstamps>
     </comp>
     <comp ref="C11">
       <value>100n</value>
@@ -196,9 +196,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C14663"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>d3178e71-7b10-4cf0-848e-180315b95fbf</tstamps>
+      <tstamps>4b7b568d-dd6e-41b7-9f3c-ad74ba464917</tstamps>
     </comp>
     <comp ref="C12">
       <value>100n</value>
@@ -212,9 +212,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C14663"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>489ebb6b-231f-4824-9ac2-6e3f1cef93cc</tstamps>
+      <tstamps>b80104d9-e7d6-4707-99c3-83c4829f9a0f</tstamps>
     </comp>
     <comp ref="C13">
       <value>100n</value>
@@ -228,9 +228,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>f5547cfe-0ebe-4f55-9f73-6f39242dbfe8</tstamps>
+      <tstamps>bcebc1d9-f2b0-4d6b-b66d-55140429eda9</tstamps>
     </comp>
     <comp ref="C14">
       <value>100n</value>
@@ -244,9 +244,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C1525"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>fe3cb146-97f5-457a-a3c5-b55d780705cd</tstamps>
+      <tstamps>1393100a-7488-4d19-8da6-f9c74d868bb0</tstamps>
     </comp>
     <comp ref="C15">
       <value>100p</value>
@@ -260,9 +260,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C1546"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>d74b3885-6276-43a0-a643-3e1d3a79dc30</tstamps>
+      <tstamps>c656740e-79a3-4222-826d-a57856b6c8ef</tstamps>
     </comp>
     <comp ref="C16">
       <value>1u 50V</value>
@@ -276,9 +276,9 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C726584"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>ff3c4d18-6a8f-4026-a6bd-d70ef84c7cb4</tstamps>
+      <tstamps>ac4b3296-cd2b-4654-b535-b2143f10edc5</tstamps>
     </comp>
     <comp ref="C17">
       <value>2.2n</value>
@@ -292,9 +292,41 @@
       <libsource lib="estim" part="C" description=""/>
       <property name="LCSC" value="C106861"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>8012ab44-c65f-465d-b01a-3ed77e33daae</tstamps>
+      <tstamps>a81aeb88-98c1-455e-8827-d8c5bbf32d28</tstamps>
+    </comp>
+    <comp ref="C18">
+      <value>100p</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1546</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1546"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>87f449bb-cb99-4ea9-aa01-031483c5601c</tstamps>
+    </comp>
+    <comp ref="C19">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C1525</field>
+        <field name="Footprint">Capacitor_SMD:C_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="C" description=""/>
+      <property name="LCSC" value="C1525"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>80f85f1c-282d-41ed-9483-6ed5832c085d</tstamps>
     </comp>
     <comp ref="D1">
       <value>BZT52C4V7S</value>
@@ -308,9 +340,9 @@
       <libsource lib="estim" part="D_Zener" description=""/>
       <property name="LCSC" value="C19077439"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>9cc43904-97a3-490a-b36f-777da0f96c92</tstamps>
+      <tstamps>3694de66-5f9e-4da8-96d4-3e3fa25d7ec7</tstamps>
     </comp>
     <comp ref="D2">
       <value>BAT54C</value>
@@ -324,9 +356,9 @@
       <libsource lib="estim" part="BAT54C" description=""/>
       <property name="LCSC" value="C37704"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a50e5b9c-38af-47d2-a198-0e2fe6ed0ae0</tstamps>
+      <tstamps>1813340f-0471-437e-b1f8-a17485c758a6</tstamps>
     </comp>
     <comp ref="J1">
       <value>ELECTRODE E1/E2</value>
@@ -338,9 +370,9 @@
       </fields>
       <libsource lib="estim" part="Conn_01x02" description=""/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>c9b1c19a-78a2-4b3e-b998-6572eb92844a</tstamps>
+      <tstamps>82c1c6da-1450-4d05-a82a-21fd86c1717d</tstamps>
     </comp>
     <comp ref="J8">
       <value>J8 power/timing (underside)</value>
@@ -352,9 +384,9 @@
       </fields>
       <libsource lib="estim" part="Conn_01x05" description=""/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>9afa14c4-7253-4fb0-96b0-a639570af7fc</tstamps>
+      <tstamps>11ed9b8f-0e7e-4542-9295-1616738029ff</tstamps>
     </comp>
     <comp ref="J9">
       <value>J9 analog/SPI (underside)</value>
@@ -366,9 +398,9 @@
       </fields>
       <libsource lib="estim" part="Conn_01x05" description=""/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>b3d98175-60e0-41e5-b520-c4ee449cf0a2</tstamps>
+      <tstamps>49ae73fb-26ed-4295-97c6-fe301e32c99f</tstamps>
     </comp>
     <comp ref="PS1">
       <value>A0515S-1WR3</value>
@@ -380,10 +412,10 @@
       </fields>
       <libsource lib="estim" part="A0515S" description=""/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <property name="dnp"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>af50dd04-e118-4152-b413-741c93ee7a61</tstamps>
+      <tstamps>725ad965-d2d3-49fe-adea-8957260c643d</tstamps>
     </comp>
     <comp ref="R1">
       <value>100k</value>
@@ -397,9 +429,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>cce9bcbd-8e72-41ad-9ab5-e9de0c37d963</tstamps>
+      <tstamps>0b6cc37e-6571-4c6b-8588-a9f5838e623d</tstamps>
     </comp>
     <comp ref="R2">
       <value>100k</value>
@@ -413,9 +445,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>35d14c2f-ad27-4924-ad3f-57c0c7d025d9</tstamps>
+      <tstamps>cbe33391-94b1-410f-b834-bcc2c6a5c87b</tstamps>
     </comp>
     <comp ref="R3">
       <value>100k</value>
@@ -429,9 +461,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>d669aa17-e862-4aab-9a23-587f7ed29c81</tstamps>
+      <tstamps>49f32cae-327d-461c-a2a2-c14ad271cd53</tstamps>
     </comp>
     <comp ref="R4">
       <value>100k</value>
@@ -445,9 +477,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>ec135c90-aec9-4e31-aa30-64cd0809a80f</tstamps>
+      <tstamps>3567b584-d73e-4dd6-b677-964d626172ab</tstamps>
     </comp>
     <comp ref="R5">
       <value>100k</value>
@@ -461,9 +493,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>92bab060-0cad-4aea-a617-6852a48f4808</tstamps>
+      <tstamps>0f553a43-1f31-4c0b-a3d3-d5654cd5be39</tstamps>
     </comp>
     <comp ref="R6">
       <value>1.5k</value>
@@ -477,9 +509,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C22843"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>1a7539dd-565f-410e-b833-7fc5cdeb72a5</tstamps>
+      <tstamps>894486ff-7b97-4a6b-98d8-682e423766bd</tstamps>
     </comp>
     <comp ref="R7">
       <value>1.5k</value>
@@ -493,9 +525,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C22843"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>1060ce5d-f272-4375-a800-c279617444d1</tstamps>
+      <tstamps>4e407c46-50ac-4fe2-9bd4-2835104645a8</tstamps>
     </comp>
     <comp ref="R8">
       <value>15.0k 0.1%</value>
@@ -509,9 +541,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C326733"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>426ed84d-12ae-4682-8a17-71d03973b8ec</tstamps>
+      <tstamps>119d7d86-22c9-4cb2-9c39-775aad0e07f7</tstamps>
     </comp>
     <comp ref="R9">
       <value>10.0k 0.1%</value>
@@ -525,9 +557,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C95204"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a35f25ae-5d96-4ef1-a03d-0be5cc5be899</tstamps>
+      <tstamps>0dbbaded-48e3-45a5-9c95-b73c134e9c3e</tstamps>
     </comp>
     <comp ref="R10">
       <value>10.0k 0.1%</value>
@@ -541,9 +573,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C95204"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a480769c-eeb2-42ab-bdd0-78861d1e71f8</tstamps>
+      <tstamps>36331d4a-7b27-4b3e-8191-5ba8ac03c2dd</tstamps>
     </comp>
     <comp ref="R11">
       <value>10.0k 0.1%</value>
@@ -557,9 +589,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C95204"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>960b0fbd-79fc-4c5b-b868-7e8fb341dd32</tstamps>
+      <tstamps>53f9d4c0-60f6-41cc-ba69-a8828da05e03</tstamps>
     </comp>
     <comp ref="R12">
       <value>1k</value>
@@ -573,9 +605,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C11702"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>5846b9fb-1116-4a3c-a298-16e4fd2848c8</tstamps>
+      <tstamps>f94bca20-67fb-4676-934f-01820c39a90b</tstamps>
     </comp>
     <comp ref="R13">
       <value>47</value>
@@ -589,9 +621,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C137973"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>5489a675-9c53-491e-b2e2-10f664ab2fcd</tstamps>
+      <tstamps>be381fc3-7437-4e9b-a96d-e110998afe88</tstamps>
     </comp>
     <comp ref="R14">
       <value>2.00k 0.1%</value>
@@ -605,9 +637,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C328425"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>4d49b7ab-51e9-4f9b-8fbe-d6203b57c64a</tstamps>
+      <tstamps>b93fcfeb-0d1f-496a-aa26-87b1947a6a10</tstamps>
     </comp>
     <comp ref="R15">
       <value>100k</value>
@@ -621,9 +653,9 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C25741"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>fcb4a80d-c6e7-4f85-9902-b3e279410138</tstamps>
+      <tstamps>fe2db00c-4222-409b-b948-f3921ac453d6</tstamps>
     </comp>
     <comp ref="R19">
       <value>4.7k</value>
@@ -637,9 +669,153 @@
       <libsource lib="estim" part="R" description=""/>
       <property name="LCSC" value="C25900"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>d1f421b5-4d51-4de6-be4d-bf60e72f50ce</tstamps>
+      <tstamps>ed0f2750-3008-44de-924e-addfc279eb02</tstamps>
+    </comp>
+    <comp ref="R20">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25741</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25741"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>25002b0e-6f2a-4fd8-96ba-e49a1cbe60b1</tstamps>
+    </comp>
+    <comp ref="R21">
+      <value>12k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25752</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25752"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6031cf95-6e16-41eb-bb92-a2832b6f7155</tstamps>
+    </comp>
+    <comp ref="R22">
+      <value>27k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C22369538</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C22369538"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a02dfb29-a537-41e8-8fcb-0ec25660c267</tstamps>
+    </comp>
+    <comp ref="R23">
+      <value>110k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C2909311</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C2909311"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c03c603a-ba88-4035-ac67-f01adcfc3cfe</tstamps>
+    </comp>
+    <comp ref="R24">
+      <value>12k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25752</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25752"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>71688b12-101d-40e7-ab1b-95eae036e0c2</tstamps>
+    </comp>
+    <comp ref="R25">
+      <value>27k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C22369538</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C22369538"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>67fd1c54-2c88-4211-b793-59172009e4e9</tstamps>
+    </comp>
+    <comp ref="R26">
+      <value>110k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C2909311</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C2909311"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>af69b023-5c39-43ff-8771-d91e91118026</tstamps>
+    </comp>
+    <comp ref="R27">
+      <value>12k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C25752</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C25752"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e74cd087-0172-446a-8287-ea9dee4c97a2</tstamps>
+    </comp>
+    <comp ref="R28">
+      <value>27k</value>
+      <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
+      <fields>
+        <field name="LCSC">C22369538</field>
+        <field name="Footprint">Resistor_SMD:R_0402_1005Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="R" description=""/>
+      <property name="LCSC" value="C22369538"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f7d4cac7-9605-402e-b0cd-1ca34f3dd899</tstamps>
     </comp>
     <comp ref="TP1">
       <value>ISENSE</value>
@@ -651,10 +827,10 @@
       </fields>
       <libsource lib="estim" part="TestPoint" description=""/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>74df696d-6eb5-4caa-ae78-fa1f8682fa9a</tstamps>
+      <tstamps>4e0f38da-39da-4991-a2d3-c000e6d29b0a</tstamps>
     </comp>
     <comp ref="TP2">
       <value>GND_ISO</value>
@@ -666,10 +842,10 @@
       </fields>
       <libsource lib="estim" part="TestPoint" description=""/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7dec846f-8aa8-46ba-a3de-ff4c0643e872</tstamps>
+      <tstamps>e78e7194-4741-47b3-a75b-8769cfd9c3cb</tstamps>
     </comp>
     <comp ref="U1">
       <value>ISO7761FDBQR</value>
@@ -683,9 +859,9 @@
       <libsource lib="estim" part="ISO7761" description=""/>
       <property name="LCSC" value="C2877505"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>b9efe607-2fc0-45a7-9217-d32b588c663d</tstamps>
+      <tstamps>666c09e1-ce33-4364-baa5-eb8b84924fcb</tstamps>
     </comp>
     <comp ref="U2">
       <value>TLV76050DBZR</value>
@@ -699,9 +875,9 @@
       <libsource lib="estim" part="TLV760" description=""/>
       <property name="LCSC" value="C2867465"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>f4ba1351-9363-4c85-ae0b-fe23a06d1df9</tstamps>
+      <tstamps>c05f0e8d-3a0d-4488-8729-eb5d340824ae</tstamps>
     </comp>
     <comp ref="U3">
       <value>TL431 (2.5V)</value>
@@ -715,9 +891,9 @@
       <libsource lib="estim" part="TL431_SOT23" description=""/>
       <property name="LCSC" value="C181103"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>f2c2b80e-5c02-46ca-9f11-aa9425980438</tstamps>
+      <tstamps>a70391b4-951b-49e5-8550-c7b028f90201</tstamps>
     </comp>
     <comp ref="U4">
       <value>MCP4921-E/MS</value>
@@ -731,9 +907,9 @@
       <libsource lib="estim" part="MCP4921" description=""/>
       <property name="LCSC" value="C185506"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>8a990b50-de64-41f5-bc7c-955cdb6b8169</tstamps>
+      <tstamps>12cade94-4866-4aa0-954b-225d2c523c26</tstamps>
     </comp>
     <comp ref="U5">
       <value>OPA2192IDGKR</value>
@@ -747,9 +923,9 @@
       <libsource lib="estim" part="OPA2192" description=""/>
       <property name="LCSC" value="C2876419"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>d93c901e-1773-4762-8aa1-43fc9e21f4bc f7189653-a0ee-49ff-a841-1d7fa90fce2f a1b75673-16d6-49b6-a8e0-7ab2ed848148</tstamps>
+      <tstamps>9a0f3ad3-a379-4e57-b5eb-696339c86d92 54e14084-b25b-466e-b783-fede72a7dfe3 15d0508e-39b6-4c5d-b1b8-a9232f323d79</tstamps>
     </comp>
     <comp ref="U6">
       <value>74HC4053PW</value>
@@ -763,9 +939,9 @@
       <libsource lib="estim" part="74HC4053" description=""/>
       <property name="LCSC" value="C5648"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>9a2b5b2d-804e-4df3-83db-029248eb02a4</tstamps>
+      <tstamps>8c97faf8-f163-4187-a74c-5b3a58942e50</tstamps>
     </comp>
     <comp ref="U7">
       <value>DG419DY</value>
@@ -779,9 +955,25 @@
       <libsource lib="estim" part="DG419" description=""/>
       <property name="LCSC" value="C6581"/>
       <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="estim_module.kicad_sch"/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>85c76987-2ca4-44e3-8cdb-e10dff00defa</tstamps>
+      <tstamps>00344a75-475e-464b-bf7d-3c75b02533ad</tstamps>
+    </comp>
+    <comp ref="U8">
+      <value>LM393DGKR</value>
+      <footprint>Package_SO:VSSOP-8_3x3mm_P0.65mm</footprint>
+      <fields>
+        <field name="LCSC">C34440</field>
+        <field name="Footprint">Package_SO:VSSOP-8_3x3mm_P0.65mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="estim" part="LM393" description=""/>
+      <property name="LCSC" value="C34440"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a8226584-48b6-4a76-aaae-e46dd9f85ed3 4965de32-cf8f-4bb7-9109-58ea397f4866 3b4d5749-9a7d-49c4-a7b8-39093bc4cbd4</tstamps>
     </comp>
   </components>
   <libparts>
@@ -943,6 +1135,25 @@
         <pin num="16" name="VCC2" type="power_in"/>
       </pins>
     </libpart>
+    <libpart lib="estim" part="LM393">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">LM393</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="open_collector"/>
+        <pin num="2" name="-" type="input"/>
+        <pin num="3" name="+" type="input"/>
+        <pin num="4" name="V-" type="power_in"/>
+        <pin num="5" name="+" type="input"/>
+        <pin num="6" name="-" type="input"/>
+        <pin num="7" name="" type="open_collector"/>
+        <pin num="8" name="V+" type="power_in"/>
+      </pins>
+    </libpart>
     <libpart lib="estim" part="MCP4921">
       <fields>
         <field name="Reference">U</field>
@@ -1037,7 +1248,7 @@
   </libparts>
   <libraries>
     <library logical="estim">
-      <uri>/Users/ckemere/Code/LabTools/SmallProjects/kbest/estim_module/estim.kicad_sym</uri>
+      <uri>/home/claude-agent/Code/LaserDriver/LaserHAT/EStimDaughter/estim.kicad_sym</uri>
     </library>
   </libraries>
   <nets>
@@ -1055,21 +1266,27 @@
     <net code="3" name="+5V_ISO" class="Power">
       <node ref="C10" pin="1" pintype="passive"/>
       <node ref="C13" pin="1" pintype="passive"/>
+      <node ref="C19" pin="1" pintype="passive"/>
       <node ref="C2" pin="1" pintype="passive"/>
       <node ref="C7" pin="1" pintype="passive"/>
       <node ref="R19" pin="1" pintype="passive"/>
+      <node ref="R22" pin="1" pintype="passive"/>
+      <node ref="R25" pin="1" pintype="passive"/>
+      <node ref="R28" pin="1" pintype="passive"/>
       <node ref="R7" pin="1" pintype="passive"/>
       <node ref="U1" pin="16" pinfunction="VCC2" pintype="power_in"/>
       <node ref="U2" pin="1" pinfunction="OUT" pintype="power_out"/>
       <node ref="U4" pin="1" pinfunction="VDD" pintype="power_in"/>
       <node ref="U6" pin="16" pinfunction="VCC" pintype="power_in"/>
       <node ref="U7" pin="5" pinfunction="VL" pintype="power_in"/>
+      <node ref="U8" pin="8" pinfunction="V+" pintype="power_in"/>
     </net>
     <net code="4" name="+V_STIM" class="Power">
       <node ref="C11" pin="1" pintype="passive"/>
       <node ref="C4" pin="1" pintype="passive"/>
       <node ref="C6" pin="1" pintype="passive"/>
       <node ref="PS1" pin="6" pinfunction="+VO" pintype="power_out"/>
+      <node ref="R23" pin="1" pintype="passive"/>
       <node ref="U2" pin="2" pinfunction="IN" pintype="power_in"/>
       <node ref="U5" pin="8" pinfunction="V+" pintype="power_in"/>
       <node ref="U7" pin="4" pinfunction="V+" pintype="power_in"/>
@@ -1085,6 +1302,7 @@
       <node ref="C12" pin="2" pintype="passive"/>
       <node ref="C5" pin="2" pintype="passive"/>
       <node ref="PS1" pin="4" pinfunction="-VO" pintype="power_out"/>
+      <node ref="R26" pin="2" pintype="passive"/>
       <node ref="R6" pin="2" pintype="passive"/>
       <node ref="U5" pin="4" pinfunction="V-" pintype="power_in"/>
       <node ref="U7" pin="7" pinfunction="V-" pintype="power_in"/>
@@ -1140,6 +1358,7 @@
     <net code="17" name="E1" class="Default">
       <node ref="C16" pin="1" pintype="passive"/>
       <node ref="R13" pin="2" pintype="passive"/>
+      <node ref="R20" pin="1" pintype="passive"/>
       <node ref="U7" pin="1" pinfunction="D" pintype="passive"/>
     </net>
     <net code="18" name="EN" class="Default">
@@ -1150,6 +1369,8 @@
     <net code="19" name="FAULT_n" class="Default">
       <node ref="R19" pin="2" pintype="passive"/>
       <node ref="U1" pin="10" pinfunction="INF" pintype="input"/>
+      <node ref="U8" pin="1" pintype="open_collector"/>
+      <node ref="U8" pin="7" pintype="open_collector"/>
     </net>
     <net code="20" name="GND_H" class="Power">
       <node ref="C1" pin="2" pintype="passive"/>
@@ -1171,6 +1392,8 @@
       <node ref="C14" pin="1" pintype="passive"/>
       <node ref="C15" pin="2" pintype="passive"/>
       <node ref="C17" pin="2" pintype="passive"/>
+      <node ref="C18" pin="2" pintype="passive"/>
+      <node ref="C19" pin="2" pintype="passive"/>
       <node ref="C2" pin="2" pintype="passive"/>
       <node ref="C4" pin="2" pintype="passive"/>
       <node ref="C5" pin="1" pintype="passive"/>
@@ -1182,6 +1405,9 @@
       <node ref="PS1" pin="5" pinfunction="COM" pintype="power_out"/>
       <node ref="R14" pin="2" pintype="passive"/>
       <node ref="R15" pin="2" pintype="passive"/>
+      <node ref="R21" pin="2" pintype="passive"/>
+      <node ref="R24" pin="2" pintype="passive"/>
+      <node ref="R27" pin="2" pintype="passive"/>
       <node ref="R9" pin="2" pintype="passive"/>
       <node ref="TP2" pin="1" pintype="passive"/>
       <node ref="U1" pin="9" pinfunction="GND2" pintype="power_in"/>
@@ -1198,6 +1424,7 @@
       <node ref="U6" pin="8" pinfunction="GND" pintype="power_in"/>
       <node ref="U6" pin="9" pinfunction="S3" pintype="input"/>
       <node ref="U7" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U8" pin="4" pinfunction="V-" pintype="power_in"/>
     </net>
     <net code="22" name="ISENSE" class="Default">
       <node ref="J1" pin="2" pinfunction="Pin_2" pintype="passive"/>
@@ -1250,15 +1477,35 @@
       <node ref="U5" pin="7" pintype="output"/>
       <node ref="U6" pin="13" pinfunction="1Y1" pintype="passive"/>
     </net>
-    <net code="32" name="SCK" class="Default">
+    <net code="32" name="Net-(U8A-+)" class="Default">
+      <node ref="R23" pin="2" pintype="passive"/>
+      <node ref="R24" pin="1" pintype="passive"/>
+      <node ref="R25" pin="2" pintype="passive"/>
+      <node ref="U8" pin="3" pinfunction="+" pintype="input"/>
+    </net>
+    <net code="33" name="Net-(U8A--)" class="Default">
+      <node ref="C18" pin="1" pintype="passive"/>
+      <node ref="R20" pin="2" pintype="passive"/>
+      <node ref="R21" pin="1" pintype="passive"/>
+      <node ref="R22" pin="2" pintype="passive"/>
+      <node ref="U8" pin="2" pinfunction="-" pintype="input"/>
+      <node ref="U8" pin="5" pinfunction="+" pintype="input"/>
+    </net>
+    <net code="34" name="Net-(U8B--)" class="Default">
+      <node ref="R26" pin="1" pintype="passive"/>
+      <node ref="R27" pin="1" pintype="passive"/>
+      <node ref="R28" pin="2" pintype="passive"/>
+      <node ref="U8" pin="6" pinfunction="-" pintype="input"/>
+    </net>
+    <net code="35" name="SCK" class="Default">
       <node ref="U1" pin="13" pinfunction="OUTC" pintype="output"/>
       <node ref="U4" pin="3" pinfunction="SCK" pintype="input"/>
     </net>
-    <net code="33" name="V_IN" class="Default">
+    <net code="36" name="V_IN" class="Default">
       <node ref="R12" pin="1" pintype="passive"/>
       <node ref="U6" pin="15" pinfunction="2Z" pintype="passive"/>
     </net>
-    <net code="34" name="unconnected-(U7-S2-Pad8)" class="Default">
+    <net code="37" name="unconnected-(U7-S2-Pad8)" class="Default">
       <node ref="U7" pin="8" pinfunction="S2" pintype="passive+no_connect"/>
     </net>
   </nets>

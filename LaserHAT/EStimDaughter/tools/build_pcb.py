@@ -1,15 +1,19 @@
 """
-Build EStimDaughter.kicad_pcb (LaserHAT e-stim module, rev M1) from the schematic netlist, in HAT board coordinates.
-    /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/3.9/bin/python3 tools/build_pcb.py
+Build EStimDaughter.kicad_pcb (LaserHAT e-stim module, rev M3) from the schematic netlist, in HAT board coordinates.
+    python tools/build_pcb.py        (a Python that imports pcbnew: KiCad's bundled one on macOS, ~/.venvs/kicad on Ubuntu)
+KICAD_CLI / KICAD_FOOTPRINTS override the kicad-cli binary and the standard footprint directory (defaults: PATH, then
+the macOS bundle; /usr/share/kicad/footprints on Linux).
 
-Outline x 101-127.5, y 76-99.5 (ESTIM_MODULE_SPEC.md).  J8/J9 male headers on the underside at the HAT socket pads.
-4 layers: F.Cu / In1.Cu (split ground planes GND_H | GND_ISO) / In2.Cu / B.Cu.  A 2 mm copper-free barrier on every layer
-separates the HAT domain (north strip over J8 + east column over J9) from the isolated domain; only PS1 (A0515S, west
-edge) and U1 (ISO7761F, south end of the J9 column) cross it.  Anchored parts are placed by hand (ANCHORS); the rest are
-placed greedily next to the pads they connect to, top side preferred, bottom side when the top is full nearby.
+Outline x 101-127.5, y 76-112.5 (ESTIM_MODULE_SPEC.md; rev M3 extends 12.5 mm south over the Pi's port edge).  J8/J9 male
+headers on the underside at the HAT socket pads.  4 layers: F.Cu / In1.Cu (split ground planes GND_H | GND_ISO) / In2.Cu /
+B.Cu.  A 2 mm copper-free barrier on every layer separates the HAT domain (north strip over J8 + east column over J9, ending
+at y 100) from the isolated domain; only PS1 (A0515S, west edge) and U1 (ISO7761F, south end of the J9 column) cross it.
+Anchored parts are placed by hand (ANCHORS); the rest are placed greedily next to the pads they connect to.  SINGLE_SIDED
+puts every SMD on the top (JLC economic assembly); the headers stay on the underside.
 """
 import math
 import os
+import shutil
 import subprocess
 import xml.etree.ElementTree as ET
 
@@ -17,19 +21,22 @@ import pcbnew
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
-KICAD_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
-FPD = "/Applications/KiCad/KiCad.app/Contents/SharedSupport/footprints"
+KICAD_CLI = os.environ.get("KICAD_CLI") or shutil.which("kicad-cli") or "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+FPD = os.environ.get("KICAD_FOOTPRINTS") or next(
+    (d for d in ("/usr/share/kicad/footprints", "/Applications/KiCad/KiCad.app/Contents/SharedSupport/footprints")
+     if os.path.isdir(d)), "/usr/share/kicad/footprints")
 COPPER = int(os.environ.get("COPPER", "4"))          # 4: F / In1 split planes / In2 / B;  2: F / B with split pours
 PCB = os.path.join(ROOT, "EStimDaughter.kicad_pcb" if COPPER == 4 else "EStimDaughter_2L.kicad_pcb")
 
-X0, X1, Y0, Y1 = 101.0, 127.5, 76.0, 99.5
+X0, X1, Y0, Y1 = 101.0, 127.5, 76.0, 112.5
+SINGLE_SIDED = True           # all SMD on F.Cu (M3); False = the M1/M2 double-sided placement rules
 J8_PIN1, J9_PIN1 = (109.0, 78.5), (125.5, 82.0)
 # barrier centre line and width (copper keepout on all layers)
-BARRIER = [(X0 - 1, 83.58), (108.0, 83.58), (108.0, 81.6), (122.0, 81.6), (122.0, Y1 + 1)]
+BARRIER = [(X0 - 1, 83.58), (108.0, 83.58), (108.0, 81.6), (122.0, 81.6), (122.0, 101.2), (X1 + 1, 101.2)]
 BARRIER_W = 2.0
 # domains as unions of rectangles (x0, x1, y0, y1); a part's courtyard must lie inside one rectangle of its domain
-HAT = [(X0, 107.0, Y0, 82.58), (X0, X1, Y0, 80.6), (123.0, X1, Y0, Y1)]
-ISO = [(X0, 121.0, 84.58, Y1), (109.0, 121.0, 82.6, Y1)]
+HAT = [(X0, 107.0, Y0, 82.58), (X0, X1, Y0, 80.6), (123.0, X1, Y0, 100.2)]
+ISO = [(X0, 121.0, 84.58, Y1), (109.0, 121.0, 82.6, Y1), (X0, X1, 102.2, Y1)]
 HAT_NETS = {"GND_H", "+5V_H", "+3V3_H", "EN_H", "CATH_H", "CS_H", "SCK_H", "MOSI_H", "FAULT_H"}
 POWER_NETS = {"GND_H", "GND_ISO", "+5V_H", "+3V3_H", "+5V_ISO", "-5V_ISO", "+V_STIM", "-V_STIM"}
 EDGE = 0.35
@@ -41,35 +48,35 @@ ANCHORS = {
     "J8": (J8_PIN1[0], J8_PIN1[1], None, "B"),
     "J9": (J9_PIN1[0], J9_PIN1[1], None, "B"),
     "U1": (122.0, 96.3, 180, "F"),        # side 1 (pins 1-8, HAT) east, side 2 west; straddles the barrier
-    "J1": (115.0, 98.0, 270, "F"),        # right-angle 1x2: pads 1.5 mm in from the south edge, plastic body overhangs it
+    "J1": (115.0, 111.0, 270, "F"),       # right-angle 1x2: pads 1.5 mm in from the south edge, plastic body overhangs it
     # top: set-point chain and output amplifier
-    "U6": (113.0, 86.2, 0, "F"),          # 4053: control/signal pins 9-16 face east (U4, U1)
+    "U6": (114.0, 86.2, 0, "F"),          # 4053 (DHVQFN): control/signal pins 9-16 face east (U4, U1)
     "U4": (118.7, 86.5, 90, "F"),         # DAC: SPI pins face south (U1), VOUT/VREF north
     "U5": (113.0, 91.7, 0, "F"),          # OPA2192: A side (OUT/IN-/IN+) west, B side east
-    # bottom: SHORT switch under J1, fault comparator under U6, reference under U4, power under PS1
-    "U7": (113.2, 94.3, 0, "B"),         # DG419 SHORT switch under J1
+    # M3 single-sided: SHORT switch between the output stage and J1, LDO under the DC-DC body, comparator in the SE corner
+    "U7": (113.5, 102.5, 0, "F"),         # DG419 between the output stage and J1
     # HAT-side pull resistors in the empty NE corner (north of J9, east of J8) so the J9 column stays free for tracks
-    "R1": (122.2, 78.2, 90, "F"), "R2": (123.4, 78.2, 90, "F"),
-    # J9 pulls on the bottom, below the J9 socket and under U1's HAT-side pins
-    "R3": (123.7, 95.4, 90, "B"), "R4": (124.9, 95.4, 90, "B"), "R5": (126.1, 95.4, 90, "B"),
-    "U3": (118.8, 85.5, 0, "B"),
-    "U2": (105.35, 92.8, 0, "B"),
+    "R1": (122.2, 78.2, 90, "F"), "R2": (123.4, 78.2, 90, "F"), "C3": (125.0, 78.5, 90, "F"),
+    "U3": (110.0, 86.5, 0, "F"),          # TL431 reference between PS1 and U6
+    "U2": (104.5, 99.5, 0, "F"),          # +5V LDO below the DC-DC body, at its output pins
+    "U8": (123.5, 106.5, 90, "F"),        # LM393 fault detector in the SE corner (isolated below the HAT column)
+    "D2": (118.9, 101.6, 90, "F"),        # BAT54C between U1's EN/CATH pins and U7
 }
 HEADER_DIR = {"J8": (1, 0), "J9": (0, 1)}
 TOP_ONLY = set()
-BOTTOM_ONLY = {"TP1", "TP2", "C3", "C4", "C5", "C6", "C7", "C8", "R6", "D1", "D2"}
+BOTTOM_ONLY = set() if SINGLE_SIDED else {"TP1", "TP2", "C3", "C4", "C5", "C6", "C7", "C8", "R6", "D1", "D2"}
 TOP_PASSIVES = {"R10", "R11"}
 SIDE_PENALTY = 1.2            # mm: cost of putting a passive on the other side from the parts it connects to
 # decoupling: target the IC supply pin
 DECOUPLE = {"C1": ("U1", "1"), "C2": ("U1", "16"), "C3": ("PS1", "1"), "C4": ("PS1", "6"), "C5": ("PS1", "4"),
             "C11": ("U5", "8"), "C12": ("U5", "4"), "C13": ("U6", "16"), "C14": ("U6", "7"), "C10": ("U4", "1"),
 "C6": ("U2", "2"), "C7": ("U2", "1")}
-ORDER = ["D2", "D1",
-         "C3", "C4", "C5", "C6", "C7", "R6", "C8",
-         "R12", "C15", "R13", "R14", "C16", "R10", "R11", "C11", "C12", "C13", "C14",
-         "R15", "C17",
+ORDER = ["R15", "C17",                                   # hold timer next to the anchored D2
+         "R12", "C15", "R13", "R14", "C16", "R10", "R11",   # signal path around U5 / U6 before anything else takes the room
+         "R21", "R22", "C18", "R20", "R23", "R24", "R25", "R26", "R27", "R28", "C19", "R19",   # monitor block around U8
+         "D1", "C3", "C4", "C5", "C6", "C7", "R6", "C8",
+         "C11", "C12", "C13", "C14",
          "U3", "R7", "R8", "R9", "C9", "C10",
-         "R19",
          "C2", "C1", "R1", "R2", "R3", "R4", "R5", "TP1", "TP2"]
 
 
@@ -222,7 +229,7 @@ class Placer:
     def greedy(self, ref):
         t = self.target(ref) or ((X0 + X1) / 2, (Y0 + Y1) / 2)
         pref = "F" if ref in TOP_PASSIVES else self.pref_side(ref)
-        sides = ["B"] if ref in BOTTOM_ONLY else ["F"] if ref in TOP_ONLY else ["F", "B"]
+        sides = ["F"] if SINGLE_SIDED else ["B"] if ref in BOTTOM_ONLY else ["F"] if ref in TOP_ONLY else ["F", "B"]
         best = None
         step = 0.1
         for ring in range(0, 140):

@@ -16,6 +16,7 @@ Parts without an LCSC number, and DNP / BOM-excluded parts, are left out of the 
 import csv
 import io
 import os
+import shutil
 import subprocess
 import sys
 import zipfile
@@ -27,7 +28,7 @@ ROOT = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, HERE)
 import lcsc_parts  # noqa: E402
 
-KICAD_CLI = "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+KICAD_CLI = os.environ.get("KICAD_CLI") or shutil.which("kicad-cli") or "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
 TO = pcbnew.ToMM
 
 

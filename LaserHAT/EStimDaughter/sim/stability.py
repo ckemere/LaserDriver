@@ -16,7 +16,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
-from spice import VALUES, RAIL, ELECTRODE, include_models, rails, output_stage, tian_loop_gain, phase_margin
+from spice import VALUES, RAIL, ELECTRODE, include_models, rails, output_stage, monitor, tian_loop_gain, phase_margin
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 
@@ -27,6 +27,9 @@ def loop(cable_c, Rs, Cdl, V=RAIL, v=VALUES):
         "VVIN V_IN 0 0",
         output_stage(v, cable_c=cable_c, loop_break=True),
         f"CDG_D E1 0 {v['COFF_DG419']}", f"CDG_S ISENSE 0 {v['COFF_DG419']}",
+        # the compliance window's divider on E1 (100k + 100p || 8.3k), ground-referenced: its +5 V bias would inject
+        # DC into the broken loop and upset the AC operating point; the small-signal load is the same
+        monitor(v, comparator=False, ref="0"),
         # C16 blocks DC, so U5A has no DC feedback while the SHORT is open.  On the board the DG419 closes between
         # pulses and sets the operating point; here a 1 GH inductor E1-ISENSE does that at DC and vanishes at AC.
         "LDC E1 ISENSE 1e9",

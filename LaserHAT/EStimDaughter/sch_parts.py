@@ -80,7 +80,8 @@ PARTS = [
     R("R10", "10.0k 0.1%", "VSET_P", "U5B_IN", fp=R0603, lcsc="C95204"),
     R("R11", "10.0k 0.1%", "U5B_IN", "VSET_N", fp=R0603, lcsc="C95204"),
     # ---------------------------------------------------------------- U6: 74HC4053 (S1 = CATH picks -/+VSET, S2 = EN picks that or 0)
-    dict(ref="U6", sym="74HC4053", value="74HC4053PW", fp="Package_SO:TSSOP-16_4.4x5mm_P0.65mm", lcsc="C5648",
+    # M3: DHVQFN-16 (2.5 x 3.5 mm) instead of TSSOP-16, same pinout; the centre pad is not a supply pin (float or VCC) and is left open
+    dict(ref="U6", sym="74HC4053", value="74HC4053BQ", fp="Package_DFN_QFN:DHVQFN-16-1EP_2.5x3.5mm_P0.5mm_EP1x2mm", lcsc="C547007",
          nets={"12": "VSET_P", "13": "VSET_N", "14": "SW_P", "2": "GND_ISO", "1": "SW_P", "15": "V_IN", "5": "GND_ISO",
                "3": "GND_ISO", "4": "GND_ISO", "11": "CATH", "10": "EN", "9": "GND_ISO", "6": "GND_ISO", "8": "GND_ISO",
                "7": "-5V_ISO", "16": "+5V_ISO"}),
@@ -100,10 +101,26 @@ PARTS = [
     dict(ref="D2", sym="BAT54C", value="BAT54C", fp=SOT23, lcsc="C37704", nets={"1": "EN", "2": "CATH", "3": "HOLD"}),
     R("R15", "100k", "HOLD", "GND_ISO", lcsc=L100k),
     C("C17", "2.2n", "HOLD", "GND_ISO", lcsc=L2n2),
-    dict(ref="U7", sym="DG419", value="DG419DY", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", lcsc="C6581",
+    # M3: DG419B in MSOP-8 (15 ohm, 38 pC injection, 12 pF off-capacitance) instead of the DG419DY SOIC-8 (20 ohm, 60 pC, 8 pF)
+    dict(ref="U7", sym="DG419", value="DG419BDQ", fp="Package_SO:MSOP-8_3x3mm_P0.65mm", lcsc="C2673354",
          nets={"1": "E1", "2": "ISENSE", "3": "GND_ISO", "4": "+V_STIM", "5": "+5V_ISO", "6": "HOLD", "7": "-V_STIM", "8": None}),
-    # ---------------------------------------------------------------- FAULT_n = "isolated side up" (compliance comparator dropped for space, M1)
+    # ---------------------------------------------------------------- fault detector: LM393 window on E1 -> FAULT_n (open collector into U1 INF)
+    # E1_LS = 0.0767*E1 + 1.42 V against TH_P (from +V) and TH_N (from -V): FAULT_n low while |E1| > ~0.915*V, i.e.
+    # just before U5A saturates (compliance / open electrode).  Unpowered isolated side: R19 unpowered -> FAULT_n low.
     R("R19", "4.7k", "+5V_ISO", "FAULT_n", lcsc=L4k7),
+    R("R20", "100k", "E1", "E1_LS", lcsc=L100k),
+    R("R21", "12k", "E1_LS", "GND_ISO", lcsc=L12k),
+    R("R22", "27k", "+5V_ISO", "E1_LS", lcsc=L27k),
+    C("C18", "100p", "E1_LS", "GND_ISO", lcsc=L100p),
+    R("R23", "110k", "+V_STIM", "TH_P", lcsc=L110k),
+    R("R24", "12k", "TH_P", "GND_ISO", lcsc=L12k),
+    R("R25", "27k", "+5V_ISO", "TH_P", lcsc=L27k),
+    R("R26", "110k", "TH_N", "-V_STIM", lcsc=L110k),
+    R("R27", "12k", "TH_N", "GND_ISO", lcsc=L12k),
+    R("R28", "27k", "+5V_ISO", "TH_N", lcsc=L27k),
+    dict(ref="U8", sym="LM393", value="LM393DGKR", fp=VSSOP8, lcsc="C34440",
+         nets={"3": "TH_P", "2": "E1_LS", "1": "FAULT_n", "5": "E1_LS", "6": "TH_N", "7": "FAULT_n", "8": "+5V_ISO", "4": "GND_ISO"}),
+    C("C19", "100n", "+5V_ISO", "GND_ISO", lcsc=L100n),
 ]
 
 BY_REF = {p["ref"]: p for p in PARTS}

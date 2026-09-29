@@ -25,12 +25,12 @@ All coordinates are in **mm, KiCad board coordinates of the HAT**: x to the righ
 
 | Item | Value |
 |---|---|
-| Module outline (max) | **x 101.0 – 127.5, y 76.0 – 99.5** (26.5 × 23.5 mm), rectangle |
+| Module outline (max) | **x 101.0 – 127.5, y 76.0 – 112.5** (26.5 × 36.5 mm), rectangle. Changed 2026-09-28 (NOTICE 12): the module may extend **12.5 mm south past the HAT's edge (y = 100)**, over the Pi's port edge. The original 26.5 × 23.5 mm outline (y 76.0 – 99.5) is still valid for modules that don't need the room (the laser module keeps it). |
 | North (y < 76) | Adafruit 128×32 OLED bonnet (covers HAT y 44–74.7). Do not extend north of y = 76. |
 | East (x > 127.5) | BNC J6 (TRIG IN) starts at x ≈ 128. It is either right-angle (031-5540, ~13 mm tall, y ≈ 86–100, barrel out past the edge) or vertical (031-5539, ~14.5 mm tall, y ≈ 80–96). Do not extend east. |
-| South (y > 99.5) | HAT bottom edge at y = 100. Cables may exit here. |
+| South (y > 99.5) | HAT bottom edge at y = 100; the module may overhang it to y = 112.5. Below the overhang, ≈ 24 mm under the module's surface, are the plugs of the Pi's USB-C power (x ≈ 103–112) and micro-HDMI0 (x ≈ 122–131) cables (overmoulds ≤ 9 mm above the Pi). Nothing may hang below the HAT plane there. Cables may exit south. |
 | West (x < 101) | HAT left edge at x = 100. It is now a straight edge; the display flex-cable slot was removed on 2026-09-27. Cables or switches may exit here. |
-| Accessible edges | **West and south edges only**, but see the HAT's UI thumb-access zones below. Put the electrode connector, any switches and the compliance/range selectors there. |
+| Accessible edges | **West and south edges only** (the south edge is now 12.5 mm beyond the HAT and clear of the BACK-button thumb zone), but see the HAT's UI thumb-access zones below. Put the electrode connector, any switches and the compliance/range selectors there. |
 | **HAT UI thumb zones (keep clear)** | Updated 2026-09-26. The HAT's UI moved to edge-operated parts at HAT level, **below** your module: a **thumbwheel on the west edge, y ≈ 80–95**, with the wheel sticking out ~6 mm past x = 100; a **BACK button on the south edge, x ≈ 107–116**, with its plunger ~1.3 mm past y = 100. Don't hang connectors, cables or switches over the HAT edge in those two spans. **Best electrode-connector spots: south edge x ≈ 117–127.5, or west edge y ≈ 95–99.5.** (The FIRE button is on the HAT's east edge, x ≈ 160–164, y ≈ 86–92, outside your outline.) |
 
 **Stack height.** The HAT has **female 1×5 sockets** (KiCad `Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical`, 8.5 mm body). The module has **male 1×5 pin headers on its underside** (`Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical`, placed on B.Cu, 2.5 mm plastic). So the module's bottom surface sits **≈ 11 mm above the HAT top surface**.
@@ -54,9 +54,9 @@ Pitch 2.54 mm, round THT pads.
 |---|---|---|---|
 | 1 | (109.00, 78.50) | **GND** | HAT ground (= Pi ground, = USB ground) |
 | 2 | (111.54, 78.50) | **+5V** | Pi 5 V rail (Pi supply or HAT USB-C through an ideal diode) |
-| 3 | (114.08, 78.50) | **PWM_A** | PA21, TIMA0_CCP0 |
-| 4 | (116.62, 78.50) | **PWM_B** | PA22, TIMA0_CCP0_CMPL (hardware complement of PWM_A, dead-band capable) |
-| 5 | (119.16, 78.50) | **GPIO** | PA26, general GPIO; also TIMA0_FAULT0 input (hardware PWM kill) |
+| 3 | (114.08, 78.50) | **PWM_A** | PA7, TIMA0_CCP1 |
+| 4 | (116.62, 78.50) | **PWM_B** | PA12, TIMA0_CCP3 (an independent channel on the same timer as PWM_A; the laser module's firmware runs it as the complement of PWM_A, e-stim mode drives it independently) |
+| 5 | (119.16, 78.50) | **GPIO** | PA6, general GPIO; also TIMA0_FAULT0 input (hardware PWM kill, latched, forces PWM_A and PWM_B low) |
 
 **J9 — "analog" (column, pins run +y):**
 
@@ -66,9 +66,11 @@ Pitch 2.54 mm, round THT pads.
 | 2 | (125.50, 84.54) | **+3V3** | MCU's switched 3.3 V rail (MSPM0_3V3). Off when the Pi powers the MCU down (GPIO23). |
 | 3 | (125.50, 87.08) | **DAC** | PA15, DAC0_OUT, 12-bit, 0 – 3.3 V (VDD reference), unbuffered-ish; treat as ≥ 10 kΩ load |
 | 4 | (125.50, 89.62) | **ADC_A** | PA17, ADC1 ch 2, 12-bit, 0 – 3.3 V |
-| 5 | (125.50, 92.16) | **ADC_B** | PA16, ADC1 ch 1, 12-bit, 0 – 3.3 V |
+| 5 | (125.50, 92.16) | **ADC_B** | PA22, ADC1 ch 8, 12-bit, 0 – 3.3 V |
 
 The L arrangement keys the module: it can only be plugged in one way. Pin 1 of each connector is the GND end.
+
+MCU pin numbers were last changed by HAT NOTICE 10 (2026-09-28, `QUESTIONS.md`); the pad positions and net functions are unchanged since the spec was frozen. `../REV2_NOTES.md` has the full MCU pin map.
 
 ## 4. Electrical budget and levels
 
@@ -87,11 +89,13 @@ This is a suggestion; the firmware is flexible, so tell us what you need.
 | Channel | Suggested e-stim use |
 |---|---|
 | DAC (PA15) | Stimulus current amplitude setpoint (to a V-to-I / Howland stage, via the isolation barrier if needed) |
-| PWM_A (PA21) | Phase 1 (e.g. cathodic) enable |
-| PWM_B (PA22) | Phase 2 (anodic) enable. Normally the complement of PWM_A; the firmware can instead run independent, non-overlapping phases with dead time. |
-| GPIO (PA26) | Output-stage enable / electrode shorting (charge balance) switch; or, as an input, a FAULT from the module (compliance limit, over-current) that hardware-kills the PWM via TIMA0_FAULT0 |
+| PWM_A (PA7) | Phase 1 (e.g. cathodic) enable |
+| PWM_B (PA12) | Phase 2 (anodic) enable. Normally the complement of PWM_A; the firmware can instead run independent, non-overlapping phases with dead time. |
+| GPIO (PA6) | Output-stage enable / electrode shorting (charge balance) switch; or, as an input, a FAULT from the module (compliance limit, over-current) that hardware-kills the PWM via TIMA0_FAULT0 |
 | ADC_A (PA17) | Delivered-current monitor (sense-resistor voltage) |
-| ADC_B (PA16) | Compliance-voltage monitor. The laser module uses ADC_B for its compliance rail, so the GUI already shows it. |
+| ADC_B (PA22) | Compliance-voltage monitor. The laser module uses ADC_B for its compliance rail, so the GUI already shows it. |
+
+What the e-stim module actually does with these lines (Q1–Q4 in `QUESTIONS.md`): DAC/ADC_A/ADC_B carry bit-banged SPI (CS_n / SCK / MOSI) to an isolated DAC, PWM_A = EN, PWM_B = CATH, and GPIO = FAULT_n from the module's LM393 compliance window (rev M2).
 
 Existing firmware already has an "EStim mode" (paired monophasic pulses on the STIM_MIRROR BNC). PWM_A/B-driven biphasic output on the module is the natural extension.
 

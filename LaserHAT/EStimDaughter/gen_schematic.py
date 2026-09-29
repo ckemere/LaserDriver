@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Generates EStimDaughter.kicad_sch (kbest e-stim module for the LaserHAT, rev M1) from sch_parts.py and sch_symbols.py.
-Blocks 3-6 are the kbest rev E set-point / output stage / SHORT / compliance-monitor drawings (renumbered, see
+Generates EStimDaughter.kicad_sch (kbest e-stim module for the LaserHAT, rev M3) from sch_parts.py and sch_symbols.py.
+Blocks 3-6 are the kbest rev E set-point / output stage / SHORT / fault-detector drawings (renumbered, see
 _blocks_from_revE.py); blocks 1-2 and the SHORT hold timer are new.  Then: tools/netcheck.py and ERC.
-    micromamba run -n kicad python gen_schematic.py
+    python gen_schematic.py
 """
 from sch_engine import Sheet
 from sch_parts import BY_REF
@@ -81,7 +81,7 @@ PWR("D1.1"); PWR("C8.1")
 W(pt(108, 40.5), pt(112, 40.5), pt(112, 42))
 PWR(None, "-5V_ISO", at=pt(112, 42), up=(0, 1))
 FLAG(pt(110, 40.5), up=(0, -1))
-sh.text("C3 at PS1 pins 1-2, C4/C5 at pins 4-6. PS1 needs >= 10 % load per rail (~3.4 mA): U1, U2, U4, U5, U6, R7, D1 draw ~8 mA.",
+sh.text("C3 at PS1 pins 1-2, C4/C5 at pins 4-6. PS1 needs >= 10 % load per rail (~3.4 mA): U1, U2, U4, U5, U6, U8, R7, D1 draw ~9 mA.",
         65 * u, 47 * u)
 
 exec(open(__file__.replace("gen_schematic.py", "_blocks_from_revE.py")).read())
@@ -109,5 +109,5 @@ missing, unplaced, overlaps = sh.finish()
 print("missing pins:", missing)
 print("unplaced:", unplaced)
 print("overlapping wires:", overlaps)
-n = sh.write("EStimDaughter.kicad_sch", "kbest e-stim module for LaserHAT Rev 2", "M1", "2026-09-26")
+n = sh.write("EStimDaughter.kicad_sch", "kbest e-stim module for LaserHAT Rev 2", "M3", "2026-09-28")
 print("wrote EStimDaughter.kicad_sch", n, "bytes")

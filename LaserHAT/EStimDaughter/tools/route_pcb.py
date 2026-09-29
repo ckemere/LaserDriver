@@ -1,11 +1,16 @@
 """
 Place (build_pcb.py), add the split ground planes, autoroute with Freerouting, pour, tidy silkscreen, run DRC.
-    /Applications/KiCad/KiCad.app/Contents/Frameworks/Python.framework/Versions/3.9/bin/python3 tools/route_pcb.py
+    python tools/route_pcb.py        (a Python that imports pcbnew; SEEDS=0,1,... selects the placement variants)
 In1.Cu is a plane layer: GND_H under the HAT domain, GND_ISO under the isolated domain, nothing in the barrier.
-Freerouting (/Applications/freerouting.app) routes F.Cu, In2.Cu and B.Cu and drops ground vias onto the planes.
+Freerouting routes F.Cu, In2.Cu and B.Cu and drops ground vias onto the planes.  The Freerouting command comes from
+$FREEROUTING (whitespace-split, e.g. "java -jar ~/Tools/freerouting-2.4.1.jar"); the default is the macOS app.
+Its "Auto-routing stage completed (N unrouted ...)" line is read from the process output, or from $FREEROUTING_LOG /
+the usual log file when the build only logs to a file.
 """
+import glob
 import os
 import re
+import shlex
 import shutil
 import subprocess
 import sys
@@ -17,7 +22,27 @@ ROOT = os.path.abspath(os.path.join(HERE, ".."))
 sys.path.insert(0, HERE)
 import build_pcb as B  # noqa: E402
 
-FREEROUTING = "/Applications/freerouting.app/Contents/MacOS/freerouting"
+FREEROUTING = [os.path.expanduser(a) for a in
+               shlex.split(os.environ.get("FREEROUTING") or "/Applications/freerouting.app/Contents/MacOS/freerouting")]
+FR_ARGS = ["-mp", "100", "-mt", "1", "--gui.enabled=false", "--router.automatic_neckdown=false"]
+FR_LOGS = [os.environ.get("FREEROUTING_LOG"), "~/Library/Logs/freerouting/freerouting.log",
+           "~/.freerouting/logs/freerouting.log", "~/.local/share/freerouting/logs/freerouting.log"]
+
+
+def freeroute(dsn, ses):
+    """run Freerouting on dsn -> ses; return the unrouted count of its last auto-routing stage"""
+    p = subprocess.run(FREEROUTING + ["-de", dsn, "-do", ses] + FR_ARGS, check=True, capture_output=True, text=True,
+                       timeout=1800)
+    texts = [p.stdout + p.stderr]
+    for lg in FR_LOGS:
+        if lg and os.path.exists(os.path.expanduser(lg)):
+            texts.append(open(os.path.expanduser(lg)).read())
+    texts += [open(f).read() for f in glob.glob(os.path.expanduser("~/.freerouting/**/*.log"), recursive=True)]
+    for txt in texts:
+        done = [l for l in txt.splitlines() if "Auto-routing stage completed" in l]
+        if done:
+            return int(re.search(r"\((\d+) unrouted", done[-1]).group(1))
+    raise RuntimeError("Freerouting finished without an 'Auto-routing stage completed' line (set FREEROUTING_LOG?)")
 KICAD_CLI = B.KICAD_CLI
 PCB = B.PCB
 RT = os.path.join(ROOT, "route" if B.COPPER == 4 else "route_2L")
@@ -25,10 +50,10 @@ mm = pcbnew.FromMM
 MIN_W = 0.15
 GNDS = ("GND_H", "GND_ISO")
 H = B.BARRIER_W / 2
-HAT_POLY = [(B.X0, B.Y0), (B.X1, B.Y0), (B.X1, B.Y1), (122.0 + H, B.Y1), (122.0 + H, 81.6 - H),
+HAT_POLY = [(B.X0, B.Y0), (B.X1, B.Y0), (B.X1, 101.2 - H), (122.0 + H, 101.2 - H), (122.0 + H, 81.6 - H),
             (108.0 - H, 81.6 - H), (108.0 - H, 83.58 - H), (B.X0, 83.58 - H)]
 ISO_POLY = [(B.X0, 83.58 + H), (108.0 + H, 83.58 + H), (108.0 + H, 81.6 + H), (122.0 - H, 81.6 + H),
-            (122.0 - H, B.Y1), (B.X0, B.Y1)]
+            (122.0 - H, 101.2 + H), (B.X1, 101.2 + H), (B.X1, B.Y1), (B.X0, B.Y1)]
 LAYERS = (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.B_Cu)
 
 
@@ -244,11 +269,7 @@ def complete(board, passes=2):
         board = pcbnew.LoadBoard(path)
         B.setup_rules(board)
         assert pcbnew.ExportSpecctraDSN(board, dsn)
-        subprocess.run([FREEROUTING, "-de", dsn, "-do", ses, "-mp", "100", "-mt", "1", "--gui.enabled=false",
-                        "--router.automatic_neckdown=false"], check=True, capture_output=True, timeout=1800)
-        log = open(os.path.expanduser("~/Library/Logs/freerouting/freerouting.log")).read().splitlines()
-        last = [l for l in log if "Auto-routing stage completed" in l][-1]
-        unrouted = int(re.search(r"\((\d+) unrouted", last).group(1))
+        unrouted = freeroute(dsn, ses)
         assert pcbnew.ImportSpecctraSES(board, ses)
         for t in board.GetTracks():
             if t.GetClass() in ("PCB_TRACK", "PCB_ARC") and t.GetWidth() < mm(MIN_W):
@@ -268,11 +289,7 @@ def autoroute(placed_path, attempts=6):
         B.setup_rules(board)
         ses = os.path.join(RT, f"try{attempt}.ses")
         assert pcbnew.ExportSpecctraDSN(board, dsn)
-        subprocess.run([FREEROUTING, "-de", dsn, "-do", ses, "-mp", "100", "-mt", "1", "--gui.enabled=false",
-                        "--router.automatic_neckdown=false"], check=True, capture_output=True, timeout=1800)
-        log = open(os.path.expanduser("~/Library/Logs/freerouting/freerouting.log")).read().splitlines()
-        last = [l for l in log if "Auto-routing stage completed" in l][-1]
-        unrouted = int(re.search(r"\((\d+) unrouted", last).group(1))
+        unrouted = freeroute(dsn, ses)
         txt = open(ses).read()
         narrow = sum(1 for w in re.findall(r"\(path \S+ (\d+)", txt) if int(w) < MIN_W * 1e4)
         vias = txt.count("(via ")
@@ -378,11 +395,7 @@ def route_once(placed_path, tag):
     B.setup_rules(board)
     dsn, ses = os.path.join(RT, f"{tag}.dsn"), os.path.join(RT, f"{tag}.ses")
     assert pcbnew.ExportSpecctraDSN(board, dsn)
-    subprocess.run([FREEROUTING, "-de", dsn, "-do", ses, "-mp", "100", "-mt", "1", "--gui.enabled=false",
-                    "--router.automatic_neckdown=false"], check=True, capture_output=True, timeout=1800)
-    log = open(os.path.expanduser("~/Library/Logs/freerouting/freerouting.log")).read().splitlines()
-    last = [l for l in log if "Auto-routing stage completed" in l][-1]
-    return int(re.search(r"\((\d+) unrouted", last).group(1)), ses
+    return freeroute(dsn, ses), ses
 
 
 def leftover(board, rounds=3):
@@ -451,6 +464,8 @@ def finish(placed, ses):
     for t in board.GetTracks():
         if t.GetClass() in ("PCB_TRACK", "PCB_ARC") and t.GetWidth() < mm(MIN_W):
             t.SetWidth(mm(MIN_W))
+    if int(os.environ.get("COMPLETE_PASSES", "0")):   # opt-in: Freerouting re-fed the routed board rips up more than it finishes
+        board = complete(board, passes=int(os.environ["COMPLETE_PASSES"]))
     pours(board)
     print("stitching vias:", stitch(board))
     print("ground fix-up vias:", ground_fixup(board))

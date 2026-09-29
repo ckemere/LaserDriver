@@ -175,3 +175,27 @@ The HAT's MCU pins moved again for routing. This supersedes the "Now" column of 
 | MOSI (J9.5) | PA21 | PA22 |
 
 Behaviour is unchanged: two independent TIMA0 channels (CCP1 = EN, CCP3 = CATH) on one timebase, and a latched active-low fault forcing both low.
+
+### HAT NOTICE 11 — e-stim module rev M2: FAULT_n is now a real fault detector (2026-09-28)
+Status: INFO (module → HAT; no answer needed unless the firmware notes below are a problem)
+
+The module's LM393 compliance window (dropped in M1 for board space) is back in rev M2. **J8/J9 pinout, outline and the start-up behaviour of FAULT_n are unchanged.** What changes is what FAULT_n means during a train:
+
+- **Low = fault**: the electrode-side voltage E1 has left the window |E1| ≤ 0.915 × V (13.9 V at ±15 V, 11.1 V at ±12 V, 16.6 V at ±18 V; the thresholds track the module's rails), i.e. the output amplifier is about to run out of compliance, or the electrode is open. It is still low while the isolated side is unpowered (module not ready, Q4).
+- **Timing** (simulated, `EStimDaughter/sim/fault.py`): FAULT_n goes low 7–12 µs before the electrode current starts to collapse and stays low for the rest of that phase; at the very edge of the window the pulse can be as short as ~0.2–3 µs. An open electrode pulls it low ~4 µs after EN rises and holds it for ~350 µs. Driver: LM393 open collector with a 4.7 k pull-up to the module's +5 V, through the ISO7761F reverse channel (≈ 15 ns propagation).
+- **Firmware, please**: keep TIMA0_FAULT0 **latched** (as agreed in Q4) and give its input **no glitch filter, or ≤ 1 µs**, so the short pulses at the window edge are caught. On a fault, EN and CATH are killed by hardware; abort the rest of the train, report it to the Pi (with the pulse index if you have it), and clear the latch only before the next train. A fault on the very first pulse of a train is the signature of an open or disconnected electrode.
+- BOM: 57 lines (was 45); the board stays 26.5 × 23.5 mm, 4 layers, parts on both sides.
+
+### HAT NOTICE 12 — module outline may extend 12.5 mm south over the Pi's port edge (2026-09-28)
+Status: INFO
+
+The e-stim module could not be routed single-sided (or, with the fault detector, reliably double-sided) inside
+26.5 × 23.5 mm, and the alternatives (SMA jacks instead of the BNCs, a wider module) were rejected. Decision: the
+module outline becomes **x 101.0–127.5, y 76.0–112.5 (26.5 × 36.5 mm)**, i.e. the same width, extending 12.5 mm past
+the HAT's south edge over the Pi's USB-C / micro-HDMI edge. Nothing else changes: J8/J9, the BNCs, the laser module
+(which keeps the 23.5 mm outline) and the MCU pins are as before. The HAT-side keep-out marker (`DAUGHTERBOARD` rule
+area and the Dwgs.User outline) will be extended to y 112.5 by the user.
+
+Module side (rev M3): single-sided, all SMD on the top; the HAT domain stays in the NW corner (J8) and the east column
+(J9) down to y 100, with a 2 mm barrier; the SE corner below y 102 and everything south of y 84.6 is isolated. J1
+(electrode) moves to the new south edge at y ≈ 111, x 113–116, out of the BACK-button thumb zone.

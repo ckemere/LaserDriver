@@ -23,3 +23,6 @@ LaserHAT/fab/*/gerbers/
 **/~*.lck
 **/_autosave-*
 **/#auto_saved_files#
+
+# e-stim autorouter intermediates (placed boards, .dsn/.ses, DRC reports)
+LaserHAT/EStimDaughter/route/

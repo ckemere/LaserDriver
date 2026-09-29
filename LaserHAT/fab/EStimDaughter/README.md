@@ -1,8 +1,8 @@
 # EStimDaughter — JLCPCB order files
 
-- Board: 26.6 × 23.6 mm, **4 layers**, 1.6 mm FR-4
+- Board: 26.6 × 36.6 mm, **4 layers**, 1.6 mm FR-4
 - PCB quote: upload `EStimDaughter_gerbers.zip`
-- Assembly: `EStimDaughter_BOM.csv` + `EStimDaughter_CPL.csv`. 42 placements, 25 unique parts, sides: **Top + Bottom**
+- Assembly: `EStimDaughter_BOM.csv` + `EStimDaughter_CPL.csv`. 54 placements, 29 unique parts, sides: **Top**
 - Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.
 
 ## Hand-fitted (not in BOM/CPL)

@@ -6,10 +6,13 @@ Modelled parts
   U4       MCP4921        ideal voltage source VSET_P = code/4096 * VREF (its output buffer is not modelled)
   U3 etc.  TL431 + R8/R9  folded into VREF = 1.000 V
   U6       74HC4053       voltage-controlled switches, R_on = RON_4053, driven by EN / CATH (5 V logic)
-  U7       DG419          behavioural: throw 1 (D=E1 to S1=ISENSE) closed while IN (= HOLD) is below 1.6 V;
-                          20 ohm on, 8 pF off-capacitance per side, charge injection via 2 pF from a +/-15 V
-                          internal gate node into each terminal (~60 pC per side per edge, datasheet typ.)
+  U7       DG419B         behavioural: throw 1 (D=E1 to S1=ISENSE) closed while IN (= HOLD) is below 1.6 V;
+                          15 ohm on, 12 pF off-capacitance per side, charge injection via 1.3 pF from a +/-15 V
+                          internal gate node into each terminal (~38 pC per side per edge, DG419B datasheet typ.)
   D2       BAT54C         diode model (Schottky), EN and CATH OR'ed onto HOLD; R15 100k + C17 2.2n
+  U8       LM393          TI PSpice macro-model (models/LM393_LM2903B.lib, subckt LM2903B: IN+ IN- Vcc GND OUT), the
+                          compliance window: E1 -> R20/R21/R22 (+C18) = E1_LS; TH_P / TH_N from +/-V; both open
+                          collectors wired-OR onto FAULT_n with R19 4.7k to +5V_ISO, loaded by the ISO7761F input
   PS1      +/-V rails     ideal sources (A0515S / RB-0515D nominal +/-15 V, or battery packs up to +/-18 V)
   electrode               Randles cell: Rs + (Cdl || Rct), between J1.1 (E1_OUT) and J1.2 (ISENSE)
 
@@ -39,8 +42,14 @@ VALUES = dict(
     R14=2.00e3,          # R_SENSE, ISENSE -> GND_ISO (0.1 %)
     C16=1e-6,            # DC block E1 -> J1.1 (E1_OUT)
     R15=100e3, C17=2.2e-9,   # SHORT hold timer
-    RON_DG419=20.0, COFF_DG419=8e-12, CINJ_DG419=2e-12, VTH_DG419=1.6,
+    RON_DG419=15.0, COFF_DG419=12e-12, CINJ_DG419=1.3e-12, VTH_DG419=1.6,   # DG419B (M3): 15 ohm, 12 pF, 38 pC per edge
     V_LOGIC=5.0,         # ISO7761F side 2 / +5V_ISO
+    # compliance window (U8 LM393): E1_LS = E1*R21||R22/(R20+R21||R22) + 5*R20||R21/(R22+R20||R21) = 0.0767*E1 + 1.42 V
+    R20=100e3, R21=12e3, R22=27e3, C18=100e-12,     # E1 -> E1_LS, E1_LS -> GND_ISO, +5V_ISO -> E1_LS, E1_LS -> GND_ISO
+    R23=110e3, R24=12e3, R25=27e3,                  # +V_STIM -> TH_P, TH_P -> GND_ISO, +5V_ISO -> TH_P
+    R26=110e3, R27=12e3, R28=27e3,                  # TH_N -> -V_STIM, TH_N -> GND_ISO, +5V_ISO -> TH_N
+    R19=4.7e3,           # FAULT_n pull-up to +5V_ISO
+    I_IH_ISO=10e-6,      # ISO7761F input high current (datasheet max), sunk from FAULT_n while it is high
 )
 RAIL = 15.0              # PS1 nominal; use 16.8 for two 4S Li-ion packs
 
@@ -53,8 +62,22 @@ Rct  N1 E2  {Rct}
 """
 
 
-def include_models():
-    return f".include {os.path.join(MODELS, 'OPAx192.lib')}"
+def include_models(lm393=False):
+    libs = ["OPAx192.lib"] + (["LM393_LM2903B.lib"] if lm393 else [])
+    return "\n".join(f".include {os.path.join(MODELS, lib)}" for lib in libs)
+
+
+def window_thresholds(V, v=VALUES):
+    """analytic trip points of the compliance window at rail +/-V: (E1_high, E1_low, a, b, TH_P, TH_N) with
+    E1_LS = a*E1 + b.  FAULT_n goes low while E1 > E1_high or E1 < E1_low."""
+    v5 = v["V_LOGIC"]
+    g = 1 / v["R20"] + 1 / v["R21"] + 1 / v["R22"]
+    a, b = (1 / v["R20"]) / g, (v5 / v["R22"]) / g
+    gp = 1 / v["R23"] + 1 / v["R24"] + 1 / v["R25"]
+    thp = (V / v["R23"] + v5 / v["R25"]) / gp
+    gn = 1 / v["R26"] + 1 / v["R27"] + 1 / v["R28"]
+    thn = (-V / v["R26"] + v5 / v["R28"]) / gn
+    return (thp - b) / a, (thn - b) / a, a, b, thp, thn
 
 
 def i_full_scale(v=VALUES):
@@ -148,6 +171,23 @@ CINJ_S DGG ISENSE {v['CINJ_DG419']}
 """
 
 
+def monitor(v=VALUES, comparator=True, ref="V5ISO"):
+    """U8 LM393 compliance window on E1 (op-amp side of C16) -> FAULT_n, with R19 pull-up and the ISO7761F input load.
+    comparator=False keeps only the E1 divider (R20/R21/R22 + C18): the part of the monitor that loads the output
+    stage, for sims that don't look at FAULT_n (the LM2903B macro-model is slow).  ref="0" returns R22 to ground
+    instead of +5V_ISO: the same small-signal load without the DC injection (for the AC loop-gain deck)."""
+    lines = ["* U8 compliance window: E1_LS = a*E1 + b",
+             f"R20 E1 E1_LS {v['R20']}", f"R21 E1_LS 0 {v['R21']}", f"R22 {ref} E1_LS {v['R22']}", f"C18 E1_LS 0 {v['C18']}"]
+    if comparator:
+        lines += [f"R23 VP TH_P {v['R23']}", f"R24 TH_P 0 {v['R24']}", f"R25 V5ISO TH_P {v['R25']}",
+                  f"R26 TH_N VN {v['R26']}", f"R27 TH_N 0 {v['R27']}", f"R28 V5ISO TH_N {v['R28']}",
+                  "XU8A TH_P E1_LS V5ISO 0 FAULT_N LM2903B",
+                  "XU8B E1_LS TH_N V5ISO 0 FAULT_N LM2903B",
+                  f"R19 V5ISO FAULT_N {v['R19']}",
+                  f"BISO FAULT_N 0 I={v['I_IH_ISO']}*min(1, max(0, V(FAULT_N)/0.5))"]
+    return "\n".join(lines) + "\n"
+
+
 def control(pairs, pw, gap, period, t0=10e-6, lead=5e-6, tr=5e-9, v=VALUES):
     """EN / CATH logic waveforms for `pairs` cathodic-first biphasic pairs (firmware contract):
     CATH rises `lead` before EN; EN high for pw; gap (CATH falls mid-gap); EN high for pw."""
@@ -163,13 +203,16 @@ def control(pairs, pw, gap, period, t0=10e-6, lead=5e-6, tr=5e-9, v=VALUES):
 
 
 def module_deck(code, pairs, pw, gap, period, V=RAIL, Rs=10e3, Cdl=2.2e-9, Rct=2e6, cable_c=0.0,
-                short=True, t0=10e-6, v=VALUES):
-    """complete transient deck body (no analysis line) for the final module driving one electrode"""
+                short=True, t0=10e-6, v=VALUES, fault="load"):
+    """complete transient deck body (no analysis line) for the final module driving one electrode.
+    fault: "full" = U8 comparators + FAULT_n; "load" = only the monitor's E1 divider (default); None = no monitor."""
     return "\n".join([
         f"* e-stim module M1: code {code}, {pairs} pair(s), pw {pw * 1e6:g} us, gap {gap * 1e6:g} us, rails +/-{V} V",
-        include_models(), ELECTRODE, rails(V), setpoint(code, v), switch_4053(v), output_stage(v, cable_c),
+        include_models(lm393=fault == "full"), ELECTRODE, rails(V), setpoint(code, v), switch_4053(v),
+        output_stage(v, cable_c),
         f"XEL E1_OUT ISENSE ELECTRODE params: Rs={Rs} Cdl={Cdl} Rct={Rct}",
-        short_switch(v, short), control(pairs, pw, gap, period, t0, v=v),
+        short_switch(v, short), monitor(v, comparator=fault == "full") if fault else "",
+        control(pairs, pw, gap, period, t0, v=v),
     ])
 
 
@@ -212,11 +255,11 @@ ROBUST_OPTS = [".options method=gear",
                ".options method=trap trtol=1"]
 
 
-def run_robust(netlist, vectors, tstop, attempt_timeout=900, **kw):
+def run_robust(netlist, vectors, tstop, attempt_timeout=900, opts=None, **kw):
     """switching transients can stall ngspice ('timestep too small'); try solver options in turn.
     The deck must contain the placeholder line '{OPTS}'."""
     last = "no attempt"
-    for o in ROBUST_OPTS:
+    for o in (ROBUST_OPTS if opts is None else opts):
         try:
             r = run(netlist.replace("{OPTS}", o), vectors, timeout=attempt_timeout, **kw)
         except (RuntimeError, subprocess.TimeoutExpired) as e:
