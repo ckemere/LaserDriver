@@ -1,7 +1,7 @@
 # kbest e-stim module for LaserHAT Rev 2 — rev M4
 
 Plug-in isolated biphasic constant-current stimulator. Interface is frozen by
-`LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md`; HAT-side questions Q1–Q4 in `QUESTIONS.md` are all answered.
+`LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md` (§7 is the agreed contract).
 The circuit is kbest rev E (`../biphasic_stim/DESIGN_NOTES.md`) with the changes below.
 
 ## Interface (HAT coordinates, top view)
@@ -18,7 +18,7 @@ The circuit is kbest rev E (`../biphasic_stim/DESIGN_NOTES.md`) with the changes
 | J9.4 "ADC_A" | PA17 GPIO, open-drain | **SCL** (M4; was SCK) |
 | J9.5 "ADC_B" | PA22 GPIO, open-drain | **SDA** (M4; was MOSI) |
 
-(MCU pins as of HAT NOTICE 10, 2026-09-28: PA21/PA22/PA26/PA16 were the pre-remap pins. J9.3–5 meanings per NOTICE 13.)
+(MCU pins as of the HAT's 2026-09-28 routing: PA21/PA22/PA26/PA16 were the pre-remap pins. J9.3–5 meanings per spec §7.)
 
 Defaults while the MCU pins are Hi-Z:
 - pull-downs on EN, CATH and RELEASE;
@@ -38,7 +38,7 @@ So an unconfigured or unpowered HAT means zero current, and the electrode shorte
   5. EN high for t_pw.
   6. EN low; RELEASE low ~200 µs later for ≥ 200 µs (electrode reset), then as the experiment wants.
 - **SHORT.** Driven by RELEASE through the ISO7741F: low = E1 shorted to E2. The M1–M3 hold timer (D2, R15, C17) is gone.
-- **FAULT_n.** Low while the isolated side is unpowered (treat low at start-up as "module not ready", HAT Q4), and low while the electrode voltage E1 is outside the LM393 window (|E1| > ~0.915 × V: compliance limit reached, or an open electrode). The HAT latches it on TIMA0_FAULT0, which forces EN and CATH low; firmware clears it between trains (Q4).
+- **FAULT_n.** Low while the isolated side is unpowered (treat low at start-up as "module not ready"), and low while the electrode voltage E1 is outside the LM393 window (|E1| > ~0.915 × V: compliance limit reached, or an open electrode). The HAT latches it on TIMA0_FAULT0, which forces EN and CATH low; firmware clears it between trains (Q4).
 
 ## PS1 (isolated ±15 V) is DNP: converter or batteries
 - PS1 is not fitted by JLC. It is excluded from the BOM and placement files and flagged DNP in the schematic and on the board.
@@ -103,7 +103,7 @@ Result: seed 0 of `tools/route_pcb.py` plus small fix-ups (two dangling stubs fr
 - The divider's load on E1 (100 k) changes nothing measurable in the other sims: phase margin 70.8° / 48.5° (was 70.7° / 48.4°), set-point −0.35 %, compliance 221 / 21.4 µs, train +0.8 / +1.5 mV.
 - ngspice note: the LM2903B macro-model integrates in ~2 s per pair with `method=gear` and a 50 ns step; with a 20 ns step or the default trap method it can crawl for minutes once U5A saturates.
 
-**Firmware consequences** (HAT NOTICE 11 in `../estim_interface/QUESTIONS.md`): keep TIMA0_FAULT0 latched with a short (≤ 1 µs) or no glitch filter, clear it only between trains, and report the fault to the Pi with the train aborted. Start-up behaviour is unchanged (low = not ready until +5V_ISO is up).
+**Firmware consequences** (spec §7): keep TIMA0_FAULT0 latched with a short (≤ 1 µs) or no glitch filter, clear it only between trains, and report the fault to the Pi with the train aborted. Start-up behaviour is unchanged (low = not ready until +5V_ISO is up).
 
 ## Changes from M3 (M4, 2026-09-29): I²C DAC, dedicated RELEASE line
 
@@ -112,7 +112,7 @@ Result: seed 0 of `tools/route_pcb.py` plus small fix-ups (two dangling stubs fr
 | ISO7761F → **ISO7741F** (3 forward + 1 reverse) + **ISO1640** bidirectional I²C isolator (SOIC-8) | Seven signals across the barrier: EN, CATH, RELEASE, SDA, SCL forward, FAULT_n back. |
 | MCP4921 (SPI) + TL431 / R7 / R8 / R9 / C9 reference → **DAC60501Z** (I²C, internal 2.5 V reference ÷ 2 = 0–1.25 V, ±0.1 %), R14 2.00 k → **2.49 k 0.1 %** | I²C needs two lines, SPI three: the third J9 line becomes RELEASE with no connector change. The internal reference is at least as accurate as the TL431 divider and saves 5 parts. Full scale stays ~500 µA. |
 | Hold timer (D2 BAT54C, R15, C17) removed; DG419B IN driven by RELEASE | The HAT decides when the electrode is shorted: precise release before the pulse, reset after the pair, and the option to leave the electrode open while recording (no 15 Ω loop in the tissue). Fail-safe unchanged: RELEASE pulled low + isolator default low = shorted. |
-| J9.3/4/5 = RELEASE / SCL / SDA (were CS_n / SCK / MOSI); R3 becomes the RELEASE pull-down, R4/R5 removed; R7/R8 and R9/R15 are the I²C pull-ups (4.7 k) | NOTICE 13. |
+| J9.3/4/5 = RELEASE / SCL / SDA (were CS_n / SCK / MOSI); R3 becomes the RELEASE pull-down, R4/R5 removed; R7/R8 and R9/R15 are the I²C pull-ups (4.7 k) | Spec §7. |
 
 Board: rebuilt on the M3 outline with U9 straddling the barrier below U1 (the HAT column now ends at y 106, barrier at y 106–108) — **placed only, not routed**; the user routes it by hand.
 

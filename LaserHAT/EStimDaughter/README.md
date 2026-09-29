@@ -2,7 +2,7 @@
 
 Isolated, charge-balanced, biphasic constant-current stimulator on a plug-in daughter board for the LaserHAT Rev 2
 (Raspberry Pi HAT with an MSPM0G3507). It is one of the HAT's two daughter boards; the other is the laser-diode module.
-Interface per `LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md`.
+Interface per `LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md` (§7 = the agreed contract). Layout hand-off: `LAYOUT_HANDOFF.md`.
 
 > Imported into `LaserHAT/EStimDaughter/` from `kbest/estim_module` (kbest commit `9200766`). It was renamed to match `LaserDaughter/`, with the project files and script paths updated. The kbest repo remains the history: `DESIGN_NOTES.md`'s references to `../biphasic_stim` (rev E, the circuit this module derives from) point there.
 
@@ -60,7 +60,7 @@ Status (rev M4, 2026-09-29): schematic complete and verified (ERC 0, netlist = `
 | J9.4 "ADC_A" | PA17 as GPIO (open-drain) | **SCL** (bit-banged I²C) |
 | J9.5 "ADC_B" | PA22 as GPIO (open-drain) | **SDA** |
 
-MCU pins per `../REV2_NOTES.md` (HAT NOTICE 10 in `../estim_interface/QUESTIONS.md`); the J8/J9 pad positions are frozen, the J9.3–5 meanings changed in rev M4 (NOTICE 13; M1–M3 carried CS_n / SCK / MOSI for an SPI DAC).
+MCU pins per `../REV2_NOTES.md`; the J8/J9 pad positions are frozen, the J9.3–5 meanings changed in rev M4 (`../estim_interface/ESTIM_MODULE_SPEC.md` §7; M1–M3 carried CS_n / SCK / MOSI for an SPI DAC).
 
 ### Firmware contract
 - **Amplitude.** Bit-banged I²C (any clock up to 400 kHz; both lines open-drain with 4.7 k pull-ups on both sides of the isolator) to the DAC60501Z at address **0x48**, between trains. After the isolated side powers up (250 µs POR): write the GAIN register **0x04 = 0x0100** (REF-DIV = 1, BUFF-GAIN = 0 → 0–1.25 V full scale; the power-on default is ×2 gain, which would give 4× the intended current), then per amplitude the DAC register **0x08 = code << 4** (12-bit code left-aligned in 16 bits). Frame: address byte 0x90, command byte, data MSB, data LSB. The Z variant powers up at zero code.

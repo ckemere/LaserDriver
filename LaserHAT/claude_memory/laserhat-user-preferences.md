@@ -8,7 +8,7 @@ metadata:
   modified: 2026-09-28T21:43:58.914Z
 ---
 
-Preferences shown during the Rev 2 HAT work (2026-09-25 to 2026-09-28):
+Preferences shown during the Rev 2 HAT work (2026-09-25 to 2026-09-29):
 
 - **Routing:**
   - The user routes critical boards by hand. They rejected the freerouting result ("I can do better").
@@ -26,6 +26,11 @@ Preferences shown during the Rev 2 HAT work (2026-09-25 to 2026-09-28):
   - When the user asks for a change, make it; don't only describe it.
 - **Parts:** good Mouser US availability and a good KiCad footprint. The user has stock of Amphenol 031-5539 BNCs. They like solder jumpers for configuration options.
 - **Safety:** the hardware TIMA fault kill for the stim output is valued ("nice, easy to route"). Keep PWM_A/B + FAULT on one TIMA timer.
+- **E-stim (2026-09-29):** batteries, not the DC-DC converter; the real concern is µV-level noise coupled into the
+  recording, not patient safety; likes explicit control lines over on-module timers (dedicated RELEASE line); prefers
+  to route the module by hand and to coordinate a second Claude session via direct messages + git rather than a
+  question log (the old `QUESTIONS.md` "contaminated the reasoning" and was removed).
+- **Autorouting:** when Freerouting can't finish, stop iterating seeds — the user would rather place and route by hand.
 
 **Why:** stated or demonstrated repeatedly. The user was frustrated when requested schematic changes weren't actually applied, and when an F8 update moved parts.
 

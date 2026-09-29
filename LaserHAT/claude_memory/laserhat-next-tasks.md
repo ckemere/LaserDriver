@@ -1,29 +1,20 @@
 ---
 name: laserhat-next-tasks
-description: "Next LaserHAT tasks as of 2026-09-28 — bring back the e-stim module's fault-detector circuit, and test whether SMA instead of BNC on the HAT lets the e-stim daughterboard become single-sided assembly"
+description: "Next LaserHAT tasks as of 2026-09-29: hand-route the rev M4 e-stim board, extend the HAT's module keep-out to y 112.5, decide the battery connector, regenerate fab outputs after routing"
 metadata:
-  node_type: memory
   type: project
-  originSessionId: 1e5b4086-f717-4b1c-9f99-2a4cfed7a528
-  modified: 2026-09-28T21:44:06.107Z
 ---
 
-Planned next (the user, 2026-09-28):
+1. **Route `EStimDaughter/EStimDaughter.kicad_pcb` by hand** (the user, possibly with a second Claude session working
+   from `EStimDaughter/LAYOUT_HANDOFF.md`). Then DRC with the project rules, `tools/netcheck.py`, `tools/jlc_fab.py`.
+2. **HAT:** extend the `DAUGHTERBOARD` keep-out and the Dwgs.User outline marker on `LaserDriver.kicad_pcb` to
+   y 112.5 (user's edit — scripted edits of the hand-routed HAT are refused). Optionally the BNC courtyard margin,
+   via jags and angled pad entries listed in [[hat-manual-routing-handoff]].
+3. **Battery packs:** decide on a keyed JST-PH 3-pin connector (+V / 0V / −V) beside PS1, reverse-polarity Schottkys,
+   and a switch; 4S Li-ion is the target (5S exceeds the OPA2192's ±18 V).
+4. **Firmware** for e-stim mode per spec §7: bit-banged I²C on PA17/PA22, RELEASE on PA15, latched TIMA0 fault.
 
-1. **Bring back the e-stim module's fault detector.**
-   - `LaserHAT/EStimDaughter` dropped its LM393 compliance/over-current window (U8, 9 R, 2 C) on 2026-09-26 because it wouldn't route. See `EStimDaughter/DESIGN_NOTES.md`.
-   - FAULT_n now only means "isolated side powered", via R19 4.7k and ISO7761F reverse channel → J8.5.
-   - The HAT side is ready: J8.5 → PA6 = TIMA0_FAULT0, a latched hardware kill of PWM_A (PA7, CCP1) and PWM_B (PA12, CCP3).
-   - The e-stim docs still say PA26 for FAULT: out of date.
-2. **SMA vs BNC experiment.**
-   - The e-stim module outline is capped at x = 127.5 because HAT BNC J6 (TRIG IN) starts at x ≈ 128. See `estim_interface/ESTIM_MODULE_SPEC.md`.
-   - The module is 26.5 × 23.5 mm, 4 layers, double-sided (15 SMT top, 27 bottom). Its README says single-sided needs about 1.7× the usable top area.
-   - Question: would smaller SMA jacks on the HAT (J6/J7) free enough room to enlarge the module to single-sided assembly?
+**Why:** the M4 design is final on paper; the layout and the firmware are what remains before ordering.
+**How to apply:** the HAT is hand-routed — never `tools/build_hat_pcb.sh`; check `.lck` files before writing boards.
 
-**Why:** single-sided assembly is cheaper at JLC (Economic tier). Restoring on-board compliance/open-electrode detection is a safety improvement.
-
-**How to apply:**
-- Any HAT outline or connector change must respect the hand layout (see [[hat-manual-routing-handoff]]).
-- Any J8/J9 contract change goes to `estim_interface/QUESTIONS.md` as a NOTICE.
-
-Related: [[laserhat-rev2-goals]], [[laserhat-user-preferences]].
+Related: [[estim-module-status]], [[laserhat-user-preferences]].

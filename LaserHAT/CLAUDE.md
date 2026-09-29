@@ -64,8 +64,8 @@ minimal edits (see `REV2_NOTES.md`):
   (GPIO23 = NRST, GPIO18 = MCU_POWER_EN); trigger is GPIO26 → PA27.  Flash Rev 2 with
   `make flash HAT_REV=2` (Firmware/Makefile.gcc; `Pi/power_cycle.py` reads LASERHAT_*_PIN).
 - OLED bonnet (Adafruit 4567) runs only on 3.3 V and ties header pins 1/17 together itself.
-- J8/J9 pinout is frozen (module contract, `estim_interface/`); notices to the e-stim module team go
-  in `estim_interface/QUESTIONS.md` (latest: NOTICE 10).
+- J8/J9 pad positions are frozen (module contract: `estim_interface/ESTIM_MODULE_SPEC.md`, §7 = what was agreed
+  with the e-stim module, §8 = how the HAT and module sessions coordinate). The old `QUESTIONS.md` log is gone.
 
 The rules below (passives, stubs, UUID preservation, spacing) still apply to new edits.
 

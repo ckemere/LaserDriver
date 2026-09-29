@@ -1,10 +1,10 @@
 """
 kbest e-stim module (LaserHAT Rev 2 plug-in), rev M1: single source of truth for symbol, value, footprint, LCSC and
 pin -> net.  Circuit = kbest rev E output stage, powered from the HAT's +5 V through an isolated +/-15 V DC-DC,
-controlled over the J8/J9 headers (ESTIM_MODULE_SPEC.md + QUESTIONS.md Q1-Q4):
+controlled over the J8/J9 headers (ESTIM_MODULE_SPEC.md, section 7 = the agreed contract):
   J8: 1 GND_H, 2 +5V_H, 3 PWM_A = EN, 4 PWM_B = CATH, 5 GPIO = FAULT_n (module -> HAT, TIMA0_FAULT0)
   J9: 1 GND_H, 2 +3V3_H, 3 "DAC" = RELEASE (SHORT switch open while high), 4 "ADC_A" = SCL, 5 "ADC_B" = SDA
-      (bit-banged I2C to the DAC60501, rev M4 - NOTICE 13; M1-M3 carried bit-banged SPI to an MCP4921 here)
+      (bit-banged I2C to the DAC60501, rev M4; M1-M3 carried bit-banged SPI to an MCP4921 here)
 """
 
 R0402, R0603, R0805 = "Resistor_SMD:R_0402_1005Metric", "Resistor_SMD:R_0603_1608Metric", "Resistor_SMD:R_0805_2012Metric"

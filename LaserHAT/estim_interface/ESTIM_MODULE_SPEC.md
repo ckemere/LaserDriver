@@ -5,9 +5,9 @@ This file is the contract between the **LaserHAT Rev 2 base board** (Raspberry P
 - **Laser-diode module:** already designed; see `../LaserDaughter/`.
 - **Isolated constant-current electrical-stimulation module:** what you are designing.
 
-If anything here is unclear or you need a change on the HAT side, ask in `QUESTIONS.md` in this folder (protocol at the bottom). The HAT designer's session watches that file.
+Questions and changes are coordinated between the HAT session and the module session directly (§8). The former `QUESTIONS.md` log (Q1–Q4, NOTICES 1–13, 2026-09-26 to 29) was retired on 2026-09-29; everything still binding from it is in §7.
 
-Status: HAT Rev 2 schematic is final and the PCB is in final routing (2026-09-26). The pinout below is frozen unless we agree otherwise in `QUESTIONS.md`.
+Status: the HAT Rev 2 board is hand-routed and committed (2026-09-28). The pad positions below are frozen; the e-stim meaning of J9.3–5 is per §7 (rev M4).
 
 ---
 
@@ -70,7 +70,7 @@ Pitch 2.54 mm, round THT pads.
 
 The L arrangement keys the module: it can only be plugged in one way. Pin 1 of each connector is the GND end.
 
-MCU pin numbers were last changed by HAT NOTICE 10 (2026-09-28, `QUESTIONS.md`); the pad positions and net functions are unchanged since the spec was frozen. `../REV2_NOTES.md` has the full MCU pin map.
+MCU pin numbers were last changed on 2026-09-28 (HAT routing); the pad positions are unchanged since the spec was frozen. `../REV2_NOTES.md` has the full MCU pin map.
 
 ## 4. Electrical budget and levels
 
@@ -95,7 +95,7 @@ This is a suggestion; the firmware is flexible, so tell us what you need.
 | ADC_A (PA17) | Delivered-current monitor (sense-resistor voltage) |
 | ADC_B (PA22) | Compliance-voltage monitor. The laser module uses ADC_B for its compliance rail, so the GUI already shows it. |
 
-What the e-stim module actually does with these lines (Q1–Q4 and NOTICE 13 in `QUESTIONS.md`): DAC = RELEASE (SHORT-switch control), ADC_A / ADC_B = SCL / SDA of a bit-banged I²C bus to an isolated DAC (rev M4; M1–M3 used SPI CS_n / SCK / MOSI on the three), PWM_A = EN, PWM_B = CATH, and GPIO = FAULT_n from the module's LM393 compliance window.
+What the e-stim module actually does with these lines (rev M4, §7): DAC = RELEASE (SHORT-switch control), ADC_A / ADC_B = SCL / SDA of a bit-banged I²C bus to an isolated DAC (M1–M3 used SPI CS_n / SCK / MOSI on the three), PWM_A = EN, PWM_B = CATH, and GPIO = FAULT_n from the module's LM393 compliance window.
 
 Existing firmware already has an "EStim mode" (paired monophasic pulses on the STIM_MIRROR BNC). PWM_A/B-driven biphasic output on the module is the natural extension.
 
@@ -108,10 +108,30 @@ Existing firmware already has an "EStim mode" (paired monophasic pulses on the S
 
 ---
 
-## Communication protocol
+## 7. Agreed contract with the e-stim module (rev M4, 2026-09-29)
 
-Use `QUESTIONS.md` in this folder:
+Everything below was negotiated between the two sessions in 2026-09-26 … 29 and is the binding state. The HAT's copper is unchanged by it.
 
-1. Append a question at the end as `### Q<n> — <short title>` followed by `Status: OPEN` and your question text.
-2. The HAT session sees the change, relays the question to the user, and writes an answer under it (`**A:** …`), changing the status to `ANSWERED`. If it needs the user's decision, the status becomes `WAITING-ON-USER`.
-3. Don't edit existing answers. Add a follow-up question instead.
+| Line | HAT pin | Module meaning | Notes |
+|---|---|---|---|
+| J8.3 PWM_A | PA7 = TIMA0_CCP1 | **EN** — current flows while high | independent channel; edge precision ~0.1 µs |
+| J8.4 PWM_B | PA12 = TIMA0_CCP3 | **CATH** — 1 = cathodic, 0 = anodic | changes only while EN is low; leads EN by ≥ 1 µs |
+| J8.5 GPIO | PA6 = TIMA0_FAULT0, active low, **latched**, forces CCP1 and CCP3 low | **FAULT_n** — low = compliance / open-electrode fault, or isolated side unpowered | at start-up low means "module not ready": wait for high (≤ ~100 ms) before arming; clear only between trains; report faults to the Pi; keep the input glitch filter ≤ 1 µs (pulses at the window edge can be ~1 µs) |
+| J9.3 "DAC" | PA15, push-pull GPIO | **RELEASE** — high = electrode SHORT switch open | high ≥ 1 µs before the first EN of a pair; low ~200 µs after the pair for ≥ 200 µs (electrode reset, also re-centres the output amplifier — do it at least every ~0.3 s during a train); also drop it in the fault handler |
+| J9.4 "ADC_A" | PA17, open-drain GPIO | **SCL** | bit-banged I²C ≤ 400 kHz, between trains only; pull-ups on the module |
+| J9.5 "ADC_B" | PA22, open-drain GPIO | **SDA** | " |
+| J9.2 +3V3 | MSPM0_3V3 (off when the Pi powers the MCU down) | isolator input side | while the MCU pins are Hi-Z the module's pulls give EN = CATH = RELEASE = low: zero current, electrode shorted |
+
+DAC (DAC60501Z, I²C address 0x48, frame 0x90 · command · MSB · LSB): after the isolated side is up (FAULT_n high + 250 µs) write GAIN register 0x04 = 0x0100 once (REF-DIV = 1, BUFF-GAIN = 0 → 0–1.25 V full scale; the power-on default is ×2 gain = 4× the intended current), then DAC register 0x08 = code << 4. I = code / 4096 × 1.25 V / 2.49 kΩ (0.123 µA/LSB, 502 µA full scale). The DAC powers up at zero code; its ACK doubles as "isolated side alive". Pulse pair: RELEASE high → CATH high → EN high t_pw → EN low, CATH low in the gap → EN high t_pw → EN low → RELEASE low ~200 µs later.
+
+Module outline: x 101.0–127.5, y 76.0–112.5 (26.5 × 36.5 mm, 12.5 mm past the HAT's south edge over the Pi's port edge; the HAT's `DAUGHTERBOARD` keep-out / Dwgs.User marker still ends at y 99.5 and should be extended by the HAT owner). Everything else (BNCs, laser module, MCU pin map) is as in §1–6.
+
+## 8. Coordination
+
+There are usually two Claude Code sessions: one owning the HAT (`LaserHAT/`, session name `laserhat-87` on the Ubuntu machine as of 2026-09-29) and one owning the module layout. They coordinate by:
+
+1. **Direct messages** between sessions (Claude Code's session messaging; both must be running with Remote Control enabled) for quick questions.
+2. **Git** for anything that must survive: decisions go into this spec (§7), `EStimDaughter/DESIGN_NOTES.md` and `EStimDaughter/LAYOUT_HANDOFF.md`; a session that changes the contract edits §7 in the same commit.
+3. **`LaserHAT/claude_memory/`** for session context (install per its README).
+
+Don't edit the other session's board file (`LaserDriver.kicad_pcb` is the HAT's, `EStimDaughter/EStimDaughter.kicad_pcb` the module's); ask.

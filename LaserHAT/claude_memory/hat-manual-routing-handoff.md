@@ -29,6 +29,8 @@ The pin map, header-pin swaps and button polarity live in `LaserHAT/CLAUDE.md` (
 - Refill zones before DRC, and run DRC next to `LaserDriver.kicad_pro`.
 - Take a `stash/` backup before any scripted board edit.
 
+Still to do on the HAT (2026-09-29): extend the `DAUGHTERBOARD` keep-out and the Dwgs.User module-outline marker to y 112.5 (the e-stim module now overhangs the south edge).
+
 Open, optional:
 - The BNC courtyard margin (0.54 → 0.25 mm in `make_bnc_fp.py`).
 - 6 via jags crowded by neighbours.
