@@ -1,25 +1,19 @@
 # =========================================================================== 3. set-point
-sh.box(8 * u, 60 * u, 95 * u, 104 * u, "3. SET-POINT  (TL431 -> /2.5 -> MCP4921 VREF = 1.0 V -> VSET_P; U5B inverts -> VSET_N; 74HC4053 -> V_IN)")
-put("R7", 14, 70)
-put("U3", 14, 75.5)
-PWR("R7.1")
-W("R7.2", "U3.2")
-W("U3.1", pt(12, 72.5), pt(14, 72.5))
-PWR("U3.3")
-put("R8", 21.5, 70, rot=90)
-put("R9", 24, 71.5)
-put("C9", 27, 71.5)
-W("R7.2", pt(17, 71.5), pt(17, 70), "R8.1")      # VREF_2V5
-PWR("R9.2"); PWR("C9.2")
+sh.box(8 * u, 60 * u, 95 * u, 104 * u, "3. SET-POINT  (DAC60501 I2C, internal 2.5 V ref / 2 -> 0..1.25 V = VSET_P; U5B inverts -> VSET_N; 74HC4053 -> V_IN)")
 put("U4", 38, 72)
-W("R8.2", "U4.6")                                # VREF_DAC = 1.0 V (passes R6.1, C13.1)
-sh.wired |= {("R9", "1"), ("C9", "1")}
-for pin in ("2", "3", "4"):
-    LBL(f"U4.{pin}", length=2.54)
-W("U4.5", pt(33, 74), pt(33, 75))
-PWR(None, "GND_ISO", at=pt(33, 75), up=(0, 1))
-PWR("U4.1"); PWR("U4.7")
-W("U4.8", pt(59, 72))                            # VSET_P
+W("U4.6", pt(31, 70), pt(31, 66)); LBL(None, "SCL", at=pt(31, 66), direction=(0, -1))
+W("U4.8", pt(32.5, 71), pt(32.5, 66)); LBL(None, "SDA", at=pt(32.5, 66), direction=(0, -1))
+W("U4.5", pt(29, 72), pt(29, 64), pt(38, 64), pt(38, 66.5))   # SPI2C high = I2C mode, tied to the VDD stub end
+PWR("U4.1")                                                   # +5V_ISO at (38, 66)
+W("U4.7", pt(31, 73), pt(31, 77)); PWR(None, "GND_ISO", at=pt(31, 77), up=(0, 1))   # A0 = AGND -> address 0x48
+PWR("U4.4")
+W("U4.2", pt(59, 72))                            # VSET_P
+put("C9", 46, 76)
+W("U4.10", pt(46, 73), "C9.1")                   # VREFIO (2.5 V reference out) decoupled by C9
+PWR("C9.2")
+# isolated-side I2C pull-ups
+put("R9", 24, 69); PWR("R9.1"); LBL("R9.2", length=2.54)
+put("R15", 28, 69); PWR("R15.1"); LBL("R15.2", length=2.54)
 # inverter U5B
 put("U5", 67, 80, unit=2)
 put("R10", 60.5, 81, rot=90)
@@ -58,8 +52,8 @@ for i, c in enumerate(("C10", "C13")):
     PWR(f"{c}.1"); PWR(f"{c}.2")
 put("C14", 24, 90, rot=180)
 PWR("C14.1"); PWR("C14.2")
-sh.text("Decoupling at: C10 U4, C13/C14 U6.  MCP4921: set BUF = 1 (VREF input buffered), gain 1x.", 10 * u, 97 * u)
-sh.text("VSET_P = 0..1 V.  4053: S1 = CATH picks -VSET / +VSET, S2 = EN picks that or 0 V -> V_IN.  EN low (isolator fail-safe) = zero current.",
+sh.text("Decoupling at: C10 U4 VDD, C9 U4 VREFIO, C13/C14 U6.  DAC60501Z: I2C address 0x48; write GAIN (0x04) = 0x0100 first, then DAC (0x08) = code << 4.", 10 * u, 97 * u)
+sh.text("VSET_P = 0..1.25 V.  4053: S1 = CATH picks -VSET / +VSET, S2 = EN picks that or 0 V -> V_IN.  EN low (isolator fail-safe) = zero current.",
         10 * u, 101 * u)
 sh.text("Firmware: set CATH before raising EN, hold it until EN falls.  Switch 3 unused (tied to GND).", 10 * u, 103 * u)
 
@@ -92,19 +86,19 @@ PWR("U5.8"); PWR("U5.4")
 put("C11", 108, 68)
 put("C12", 112, 68, rot=180)
 PWR("C11.1"); PWR("C11.2"); PWR("C12.1"); PWR("C12.2")
-sh.text("R_SENSE = R14 = 2.00 k 0.1 %: I = V_IN / 2 k, 500 uA full scale (0.12 uA/LSB).", 99 * u, 97 * u)
+sh.text("R_SENSE = R14 = 2.49 k 0.1 %: I = V_IN / 2.49 k, 502 uA full scale (0.123 uA/LSB).", 99 * u, 97 * u)
 sh.text("C16: 1 uF DC block. Cable: twisted pair, shield to E2, < 500 pF E1-to-GND.", 99 * u, 99 * u)
 
 # =========================================================================== 5. SHORT switch
-sh.box(98 * u, 102 * u, 137 * u, 126 * u, "5. SHORT  (DG419 across E1-E2)")
+sh.box(98 * u, 102 * u, 137 * u, 126 * u, "5. SHORT  (DG419B across E1-E2, driven by RELEASE from the HAT)")
 put("U7", 118, 113, ref_at=(0, -8.89), val_at=(0, 8.89))
 LBL("U7.1", length=2.54)
 LBL("U7.2", length=2.54)
 sh.NC("U7.8")
-NET("U7.6", "HOLD", length=2.54)
+LBL("U7.6", length=2.54)
 PWR("U7.4"); PWR("U7.5"); PWR("U7.3"); PWR("U7.7")
-sh.text("HOLD low (no EN/CATH for ~200 us): S1-D closed, E1 shorted to E2.", 99 * u, 123 * u)
-sh.text("HOLD high: open (tOFF ~60 ns). 20 ohm on, 60 pC injection, reset every cycle.", 99 * u, 125 * u)
+sh.text("RELEASE low (idle, HAT unpowered or faulted): S1-D closed, E1 shorted to E2.", 99 * u, 123 * u)
+sh.text("RELEASE high: open (tOFF ~50 ns). 15 ohm on, 38 pC injection.  Firmware: RELEASE >= 1 us before EN.", 99 * u, 125 * u)
 
 # =========================================================================== 6. fault detector
 sh.box(140 * u, 60 * u, 196 * u, 104 * u, "6. FAULT DETECTOR  (LM393 window on E1 -> FAULT_n; low also = isolated side unpowered)")

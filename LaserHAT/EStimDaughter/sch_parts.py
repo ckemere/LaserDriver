@@ -3,7 +3,8 @@ kbest e-stim module (LaserHAT Rev 2 plug-in), rev M1: single source of truth for
 pin -> net.  Circuit = kbest rev E output stage, powered from the HAT's +5 V through an isolated +/-15 V DC-DC,
 controlled over the J8/J9 headers (ESTIM_MODULE_SPEC.md + QUESTIONS.md Q1-Q4):
   J8: 1 GND_H, 2 +5V_H, 3 PWM_A = EN, 4 PWM_B = CATH, 5 GPIO = FAULT_n (module -> HAT, TIMA0_FAULT0)
-  J9: 1 GND_H, 2 +3V3_H, 3 "DAC" = CS_n, 4 "ADC_A" = SCK, 5 "ADC_B" = MOSI   (bit-banged SPI to the MCP4921)
+  J9: 1 GND_H, 2 +3V3_H, 3 "DAC" = RELEASE (SHORT switch open while high), 4 "ADC_A" = SCL, 5 "ADC_B" = SDA
+      (bit-banged I2C to the DAC60501, rev M4 - NOTICE 13; M1-M3 carried bit-banged SPI to an MCP4921 here)
 """
 
 R0402, R0603, R0805 = "Resistor_SMD:R_0402_1005Metric", "Resistor_SMD:R_0603_1608Metric", "Resistor_SMD:R_0805_2012Metric"
@@ -33,20 +34,28 @@ PARTS = [
     # ---------------------------------------------------------------- HAT side (non-isolated)
     dict(ref="J8", sym="Conn_01x05", value="J8 power/timing (underside)", fp=HDR5, lcsc="",
          nets={"1": "GND_H", "2": "+5V_H", "3": "EN_H", "4": "CATH_H", "5": "FAULT_H"}),
-    dict(ref="J9", sym="Conn_01x05", value="J9 analog/SPI (underside)", fp=HDR5, lcsc="",
-         nets={"1": "GND_H", "2": "+3V3_H", "3": "CS_H", "4": "SCK_H", "5": "MOSI_H"}),
-    # safe defaults while the MCU pins are Hi-Z (Q1/Q3): EN/CATH/SCK/MOSI pulled low, CS_n pulled high
+    dict(ref="J9", sym="Conn_01x05", value="J9 I2C/release (underside)", fp=HDR5, lcsc="",
+         nets={"1": "GND_H", "2": "+3V3_H", "3": "RELEASE_H", "4": "SCL_H", "5": "SDA_H"}),
+    # safe defaults while the MCU pins are Hi-Z (Q1/Q3): EN/CATH/RELEASE pulled low (zero current, electrode shorted)
     R("R1", "100k", "EN_H", "GND_H", lcsc=L100k),
     R("R2", "100k", "CATH_H", "GND_H", lcsc=L100k),
-    R("R3", "100k", "+3V3_H", "CS_H", lcsc=L100k),
-    R("R4", "100k", "SCK_H", "GND_H", lcsc=L100k),
-    R("R5", "100k", "MOSI_H", "GND_H", lcsc=L100k),
-    dict(ref="U1", sym="ISO7761", value="ISO7761FDBQR", fp="Package_SO:SSOP-16_3.9x4.9mm_P0.635mm", lcsc="C2877505",
-         # channels assigned for layout (A MOSI, B CS, C SCK, D CATH, E EN); any forward channel will do
-         nets={"1": "+3V3_H", "2": "MOSI_H", "3": "CS_H", "4": "SCK_H", "5": "CATH_H", "6": "EN_H", "7": "FAULT_H", "8": "GND_H",
-               "9": "GND_ISO", "10": "FAULT_n", "11": "EN", "12": "CATH", "13": "SCK", "14": "CS_n", "15": "MOSI", "16": "+5V_ISO"}),
+    R("R3", "100k", "RELEASE_H", "GND_H", lcsc=L100k),
+    # I2C pull-ups, HAT side (ISO1640 side 1 draws <= 3.5 mA: >= 1 k) and isolated side
+    R("R7", "4.7k", "+3V3_H", "SDA_H", lcsc=L4k7),
+    R("R8", "4.7k", "+3V3_H", "SCL_H", lcsc=L4k7),
+    # U1: 3 forward (EN, CATH, RELEASE) + 1 reverse (FAULT_n), fail-safe low; EN1/EN2 output enables tied high
+    dict(ref="U1", sym="ISO7741", value="ISO7741FDBQR", fp="Package_SO:SSOP-16_3.9x4.9mm_P0.635mm", lcsc="C2872241",
+         nets={"1": "+3V3_H", "2": "GND_H", "3": "EN_H", "4": "CATH_H", "5": "RELEASE_H", "6": "FAULT_H", "7": "+3V3_H", "8": "GND_H",
+               "9": "GND_ISO", "10": "+5V_ISO", "11": "FAULT_n", "12": "RELEASE", "13": "CATH", "14": "EN", "15": "GND_ISO", "16": "+5V_ISO"}),
     C("C1", "100n", "+3V3_H", "GND_H", lcsc=L100n),
     C("C2", "100n", "+5V_ISO", "GND_ISO", lcsc=L100n),
+    # U9: bidirectional I2C isolator (SDA, SCL) to the DAC
+    dict(ref="U9", sym="ISO1640", value="ISO1640BDR", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", lcsc="C5122339",
+         nets={"1": "GND_H", "2": "SDA_H", "3": "SCL_H", "4": "+3V3_H", "5": "+5V_ISO", "6": "SCL", "7": "SDA", "8": "GND_ISO"}),
+    C("C17", "100n", "+3V3_H", "GND_H", lcsc=L100n),
+    C("C20", "100n", "+5V_ISO", "GND_ISO", lcsc=L100n),
+    R("R9", "4.7k", "+5V_ISO", "SDA", lcsc=L4k7),
+    R("R15", "4.7k", "+5V_ISO", "SCL", lcsc=L4k7),
     # ---------------------------------------------------------------- isolated +/-15 V, +5 V, -5 V
     # DNP: fitted by hand - A0515S-1WR3 (Mornsun), RECOM RB-0515D/HP (verified pin-compatible) or the YLPTEC clone (LCSC C5369388), in a SIP
     # socket or soldered; or leave empty and feed pins 6 / 5 / 4 = +V / 0V / -V from two battery packs (<= +/-18 V).
@@ -62,15 +71,13 @@ PARTS = [
     R("R6", "1.5k", "-5V_ISO", "-V_STIM", fp=R0603, lcsc="C22843"),
     dict(ref="D1", sym="D_Zener", value="BZT52C4V7S", fp=SOD323, lcsc="C19077439", nets={"1": "GND_ISO", "2": "-5V_ISO"}),
     C("C8", "1u 50V", "GND_ISO", "-5V_ISO", fp=C0603, lcsc=L1u50),
-    # ---------------------------------------------------------------- set-point: TL431 -> /2.5 -> MCP4921 VREF
-    R("R7", "1.5k", "+5V_ISO", "VREF_2V5", fp=R0603, lcsc="C22843"),
-    dict(ref="U3", sym="TL431_SOT23", value="TL431 (2.5V)", fp=SOT23, lcsc="C181103",
-         nets={"1": "VREF_2V5", "2": "VREF_2V5", "3": "GND_ISO"}),
-    R("R8", "15.0k 0.1%", "VREF_2V5", "VREF_DAC", fp=R0603, lcsc="C326733"),
-    R("R9", "10.0k 0.1%", "VREF_DAC", "GND_ISO", fp=R0603, lcsc="C95204"),
-    C("C9", "10n", "VREF_DAC", "GND_ISO", lcsc=L10n),
-    dict(ref="U4", sym="MCP4921", value="MCP4921-E/MS", fp="Package_SO:MSOP-8_3x3mm_P0.65mm", lcsc="C185506",
-         nets={"1": "+5V_ISO", "2": "CS_n", "3": "SCK", "4": "MOSI", "5": "GND_ISO", "6": "VREF_DAC", "7": "GND_ISO", "8": "VSET_P"}),
+    # ---------------------------------------------------------------- set-point: DAC60501 (I2C, internal 2.5 V ref / 2 -> 0..1.25 V)
+    # SPI2C high = I2C; A0 = AGND -> address 1001000 (0x48); Z variant powers up at zero code.  Firmware: GAIN reg 0x04 =
+    # 0x0100 (REF-DIV = 1, BUFF-GAIN = 0) before the first DAC write, then DAC reg 0x08 = code << 4.
+    dict(ref="U4", sym="DAC60501", value="DAC60501ZDGSR", fp="Package_SO:VSSOP-10_3x3mm_P0.5mm", lcsc="C1852027",
+         nets={"1": "+5V_ISO", "2": "VSET_P", "3": None, "4": "GND_ISO", "5": "+5V_ISO", "6": "SCL", "7": "GND_ISO", "8": "SDA",
+               "9": None, "10": "VREFIO"}),
+    C("C9", "100n", "VREFIO", "GND_ISO", lcsc=L100n),
     C("C10", "100n", "+5V_ISO", "GND_ISO", lcsc=L100n),
     # ---------------------------------------------------------------- U5: OPA2192 (A = V->I output stage, B = -VSET inverter)
     dict(ref="U5", sym="OPA2192", value="OPA2192IDGKR", fp=VSSOP8, lcsc="C2876419",
@@ -91,19 +98,16 @@ PARTS = [
     R("R12", "1k", "V_IN", "OA_IN", lcsc=L1k),
     C("C15", "100p", "OA_IN", "GND_ISO", lcsc=L100p),
     R("R13", "47", "OA_OUT", "E1", lcsc=L47),
-    R("R14", "2.00k 0.1%", "ISENSE", "GND_ISO", fp=R0603, lcsc="C328425"),
+    R("R14", "2.49k 0.1%", "ISENSE", "GND_ISO", fp=R0603, lcsc="C861299"),    # 1.25 V full scale / 2.49 k = 502 uA
     C("C16", "1u 50V", "E1", "E1_OUT", fp=C0805, lcsc=L1u50_0805),
     dict(ref="J1", sym="Conn_01x02", value="ELECTRODE E1/E2", fp=HDR2RA, lcsc="", nets={"1": "E1_OUT", "2": "ISENSE"}),
     dict(ref="TP1", sym="TestPoint", value="ISENSE", fp=TP, lcsc="", nets={"1": "ISENSE"}),
     dict(ref="TP2", sym="TestPoint", value="GND_ISO", fp=TP, lcsc="", nets={"1": "GND_ISO"}),
-    # ---------------------------------------------------------------- SHORT switch (DG419, throw 1 = on while IN low) + hold timer
-    # HOLD stays high while EN or CATH is high and ~200 us after (R15*C17); then the switch shorts E1 to E2 (ISENSE).
-    dict(ref="D2", sym="BAT54C", value="BAT54C", fp=SOT23, lcsc="C37704", nets={"1": "EN", "2": "CATH", "3": "HOLD"}),
-    R("R15", "100k", "HOLD", "GND_ISO", lcsc=L100k),
-    C("C17", "2.2n", "HOLD", "GND_ISO", lcsc=L2n2),
-    # M3: DG419B in MSOP-8 (15 ohm, 38 pC injection, 12 pF off-capacitance) instead of the DG419DY SOIC-8 (20 ohm, 60 pC, 8 pF)
+    # ---------------------------------------------------------------- SHORT switch (DG419B, throw 1 = on while IN low), driven by RELEASE
+    # RELEASE comes straight from the HAT through U1: low (idle, unpowered, faulted) = E1 shorted to E2 (ISENSE); the M1-M3
+    # hold timer (BAT54C + RC) is gone.  DG419B MSOP-8: 15 ohm, 38 pC injection, 12 pF off-capacitance.
     dict(ref="U7", sym="DG419", value="DG419BDQ", fp="Package_SO:MSOP-8_3x3mm_P0.65mm", lcsc="C2673354",
-         nets={"1": "E1", "2": "ISENSE", "3": "GND_ISO", "4": "+V_STIM", "5": "+5V_ISO", "6": "HOLD", "7": "-V_STIM", "8": None}),
+         nets={"1": "E1", "2": "ISENSE", "3": "GND_ISO", "4": "+V_STIM", "5": "+5V_ISO", "6": "RELEASE", "7": "-V_STIM", "8": None}),
     # ---------------------------------------------------------------- fault detector: LM393 window on E1 -> FAULT_n (open collector into U1 INF)
     # E1_LS = 0.0767*E1 + 1.42 V against TH_P (from +V) and TH_N (from -V): FAULT_n low while |E1| > ~0.915*V, i.e.
     # just before U5A saturates (compliance / open electrode).  Unpowered isolated side: R19 unpowered -> FAULT_n low.

@@ -50,10 +50,10 @@ mm = pcbnew.FromMM
 MIN_W = 0.15
 GNDS = ("GND_H", "GND_ISO")
 H = B.BARRIER_W / 2
-HAT_POLY = [(B.X0, B.Y0), (B.X1, B.Y0), (B.X1, 101.2 - H), (122.0 + H, 101.2 - H), (122.0 + H, 81.6 - H),
+HAT_POLY = [(B.X0, B.Y0), (B.X1, B.Y0), (B.X1, 107.0 - H), (122.0 + H, 107.0 - H), (122.0 + H, 81.6 - H),
             (108.0 - H, 81.6 - H), (108.0 - H, 83.58 - H), (B.X0, 83.58 - H)]
 ISO_POLY = [(B.X0, 83.58 + H), (108.0 + H, 83.58 + H), (108.0 + H, 81.6 + H), (122.0 - H, 81.6 + H),
-            (122.0 - H, 101.2 + H), (B.X1, 101.2 + H), (B.X1, B.Y1), (B.X0, B.Y1)]
+            (122.0 - H, 107.0 + H), (B.X1, 107.0 + H), (B.X1, B.Y1), (B.X0, B.Y1)]
 LAYERS = (pcbnew.F_Cu, pcbnew.In1_Cu, pcbnew.In2_Cu, pcbnew.B_Cu)
 
 

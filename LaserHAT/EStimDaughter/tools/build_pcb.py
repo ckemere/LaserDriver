@@ -32,12 +32,12 @@ X0, X1, Y0, Y1 = 101.0, 127.5, 76.0, 112.5
 SINGLE_SIDED = True           # all SMD on F.Cu (M3); False = the M1/M2 double-sided placement rules
 J8_PIN1, J9_PIN1 = (109.0, 78.5), (125.5, 82.0)
 # barrier centre line and width (copper keepout on all layers)
-BARRIER = [(X0 - 1, 83.58), (108.0, 83.58), (108.0, 81.6), (122.0, 81.6), (122.0, 101.2), (X1 + 1, 101.2)]
+BARRIER = [(X0 - 1, 83.58), (108.0, 83.58), (108.0, 81.6), (122.0, 81.6), (122.0, 107.0), (X1 + 1, 107.0)]
 BARRIER_W = 2.0
 # domains as unions of rectangles (x0, x1, y0, y1); a part's courtyard must lie inside one rectangle of its domain
-HAT = [(X0, 107.0, Y0, 82.58), (X0, X1, Y0, 80.6), (123.0, X1, Y0, 100.2)]
-ISO = [(X0, 121.0, 84.58, Y1), (109.0, 121.0, 82.6, Y1), (X0, X1, 102.2, Y1)]
-HAT_NETS = {"GND_H", "+5V_H", "+3V3_H", "EN_H", "CATH_H", "CS_H", "SCK_H", "MOSI_H", "FAULT_H"}
+HAT = [(X0, 107.0, Y0, 82.58), (X0, X1, Y0, 80.6), (123.0, X1, Y0, 106.0)]
+ISO = [(X0, 121.0, 84.58, Y1), (109.0, 121.0, 82.6, Y1), (X0, X1, 108.0, Y1)]
+HAT_NETS = {"GND_H", "+5V_H", "+3V3_H", "EN_H", "CATH_H", "RELEASE_H", "SDA_H", "SCL_H", "FAULT_H"}
 POWER_NETS = {"GND_H", "GND_ISO", "+5V_H", "+3V3_H", "+5V_ISO", "-5V_ISO", "+V_STIM", "-V_STIM"}
 EDGE = 0.35
 MARGIN = 0.0
@@ -48,6 +48,7 @@ ANCHORS = {
     "J8": (J8_PIN1[0], J8_PIN1[1], None, "B"),
     "J9": (J9_PIN1[0], J9_PIN1[1], None, "B"),
     "U1": (122.0, 96.3, 180, "F"),        # side 1 (pins 1-8, HAT) east, side 2 west; straddles the barrier
+    "U9": (122.0, 103.0, 180, "F"),       # I2C isolator, straddling below U1 (side 1 east)
     "J1": (115.0, 111.0, 270, "F"),       # right-angle 1x2: pads 1.5 mm in from the south edge, plastic body overhangs it
     # top: set-point chain and output amplifier
     "U6": (114.0, 86.2, 0, "F"),          # 4053 (DHVQFN): control/signal pins 9-16 face east (U4, U1)
@@ -57,10 +58,8 @@ ANCHORS = {
     "U7": (113.5, 102.5, 0, "F"),         # DG419 between the output stage and J1
     # HAT-side pull resistors in the empty NE corner (north of J9, east of J8) so the J9 column stays free for tracks
     "R1": (122.2, 78.2, 90, "F"), "R2": (123.4, 78.2, 90, "F"), "C3": (125.0, 78.5, 90, "F"),
-    "U3": (110.0, 86.5, 0, "F"),          # TL431 reference between PS1 and U6
     "U2": (104.5, 99.5, 0, "F"),          # +5V LDO below the DC-DC body, at its output pins
-    "U8": (123.5, 106.5, 90, "F"),        # LM393 fault detector in the SE corner (isolated below the HAT column)
-    "D2": (118.9, 101.6, 90, "F"),        # BAT54C between U1's EN/CATH pins and U7
+    "U8": (121.5, 110.0, 0, "F"),         # LM393 fault detector in the SE corner (isolated below the HAT column)
 }
 HEADER_DIR = {"J8": (1, 0), "J9": (0, 1)}
 TOP_ONLY = set()
@@ -70,14 +69,13 @@ SIDE_PENALTY = 1.2            # mm: cost of putting a passive on the other side 
 # decoupling: target the IC supply pin
 DECOUPLE = {"C1": ("U1", "1"), "C2": ("U1", "16"), "C3": ("PS1", "1"), "C4": ("PS1", "6"), "C5": ("PS1", "4"),
             "C11": ("U5", "8"), "C12": ("U5", "4"), "C13": ("U6", "16"), "C14": ("U6", "7"), "C10": ("U4", "1"),
-"C6": ("U2", "2"), "C7": ("U2", "1")}
-ORDER = ["R15", "C17",                                   # hold timer next to the anchored D2
-         "R12", "C15", "R13", "R14", "C16", "R10", "R11",   # signal path around U5 / U6 before anything else takes the room
+            "C6": ("U2", "2"), "C7": ("U2", "1"), "C17": ("U9", "4"), "C20": ("U9", "5"), "C9": ("U4", "10")}
+ORDER = ["R12", "C15", "R13", "R14", "C16", "R10", "R11",   # signal path around U5 / U6 before anything else takes the room
+         "R9", "R15", "C9", "C10",                            # I2C pull-ups and caps at the DAC
          "R21", "R22", "C18", "R20", "R23", "R24", "R25", "R26", "R27", "R28", "C19", "R19",   # monitor block around U8
          "D1", "C3", "C4", "C5", "C6", "C7", "R6", "C8",
          "C11", "C12", "C13", "C14",
-         "U3", "R7", "R8", "R9", "C9", "C10",
-         "C2", "C1", "R1", "R2", "R3", "R4", "R5", "TP1", "TP2"]
+         "C2", "C1", "C17", "C20", "R1", "R2", "R3", "R7", "R8", "TP1", "TP2"]
 
 
 def netlist():
@@ -350,7 +348,7 @@ def restore_rules():
     json.dump(d, open(pro, "w"), indent=2)
 
 
-JITTER = ("U4", "U5", "U6", "U2", "U3", "U7")
+JITTER = ("U4", "U5", "U6", "U2", "U7")
 
 
 def main(seed=0):

@@ -9,8 +9,7 @@ Every other part is modelled inside `../spice.py` from datasheet values:
 
 | Part | Model |
 |---|---|
-| U4 MCP4921 | Ideal voltage source, `code/4096 × VREF`. The output buffer, INL and offset are not modelled. |
-| U3 TL431 + R8/R9 | Folded into VREF = 1.000 V |
+| U4 DAC60501 | Ideal voltage source, `code/4096 × 1.25 V` (internal 2.5 V reference ÷ 2). The output buffer, INL and offset are not modelled. |
 | U6 74HC4053 | Voltage-controlled switches driven by EN/CATH, R_on 100 Ω (typical at +5 / −4.7 V) |
 | U7 DG419B | Switch on throw 1 (D–S1), closed while IN < 1.6 V (the part has no hysteresis). R_on 15 Ω; 12 pF off-capacitance each side; internal gate ±15 V with a 20 ns time constant; 1.3 pF injection into each terminal (≈ 38 pC per edge, the DG419B datasheet typical; the original DG419 was 20 Ω / 8 pF / 60 pC). |
 | D2 BAT54C | Schottky diode model (IS 2e-7, RS 1.5 Ω, CJO 10 pF) |

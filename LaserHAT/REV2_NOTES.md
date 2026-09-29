@@ -148,16 +148,16 @@ So a blue diode at full current is fine for this protocol. Revisit Q2's heat-sin
 
 ## E-stim module (`EStimDaughter/`)
 
-This is the isolated biphasic constant-current stimulator (rev M3). It was designed in a separate session against `estim_interface/ESTIM_MODULE_SPEC.md` and imported from `kbest/estim_module` at kbest commit `9200766`. The project was renamed `estim_module` → `EStimDaughter`, and the script paths and schematic instance names were updated to match. `EStimDaughter/README.md` is the full description; `DESIGN_NOTES.md` covers its history.
+This is the isolated biphasic constant-current stimulator (rev M4). It was designed in a separate session against `estim_interface/ESTIM_MODULE_SPEC.md` and imported from `kbest/estim_module` at kbest commit `9200766`. The project was renamed `estim_module` → `EStimDaughter`, and the script paths and schematic instance names were updated to match. `EStimDaughter/README.md` is the full description; `DESIGN_NOTES.md` covers its history.
 
 **Circuit summary**
-- **Control.** A digital-only barrier: an ISO7761F carries EN, CATH, CS_n, SCK and MOSI across, and FAULT_n back.
-- **Set-point.** An MCP4921 DAC with a TL431-derived 1.000 V reference produces +VSET. An OPA2192 inverter makes −VSET.
+- **Control (M4).** A digital-only barrier: an ISO7741F carries EN, CATH and RELEASE across and FAULT_n back; an ISO1640 carries the I²C bus (SDA/SCL) to the DAC.
+- **Set-point.** A DAC60501Z (I²C, internal 2.5 V reference ÷ 2 → 0–1.25 V) produces +VSET; an OPA2192 inverter makes −VSET. I = V / 2.49 kΩ.
 - **Waveform.** A 74HC4053 selects ±VSET (CATH) or 0 (EN) into a floating-load V→I stage: I = V / 2.00 kΩ, 0–500 µA.
-- **Electrode path.** The electrode is behind a 1 µF DC block. A DG419 shorts it ~200 µs after each pulse pair.
+- **Electrode path.** The electrode is behind a 1 µF DC block. A DG419B shorts it whenever the HAT's RELEASE line (J9.3) is low.
 - **Fault detector (M2, 2026-09-28).** An LM393 window on the electrode-side voltage (trip at |E1| > 0.915 × rail) pulls FAULT_n low a few µs before the output stage runs out of compliance, or within ~4 µs of EN on an open electrode; the HAT's latched TIMA0_FAULT0 then kills EN/CATH. Same line still reads low while the isolated side is unpowered. See `EStimDaughter/DESIGN_NOTES.md` and HAT NOTICE 11.
 - **Power.** The isolated ±15 V comes from a DNP SIP DC-DC (or battery packs).
-- **Board (M3, 2026-09-28).** 26.5 × 36.5 mm — the module extends 12.5 mm past the HAT's south edge over the Pi's port edge (NOTICE 12; the HAT's keep-out marker still needs extending to y 112.5). 4 layers, all parts on the top (single-sided assembly), 2 mm isolation gap. On the original 23.5 mm outline the fault-detector version would not route; see `SMA_VS_BNC_STUDY.md` for the options that were considered.
+- **Board (M3/M4, 2026-09-29).** 26.5 × 36.5 mm — the module extends 12.5 mm past the HAT's south edge over the Pi's port edge (NOTICE 12; the HAT's keep-out marker still needs extending to y 112.5). 4 layers, all parts on the top (single-sided assembly), 2 mm isolation gap. The M4 board is placed, not routed (hand routing). On the original 23.5 mm outline the fault-detector version would not route; see `SMA_VS_BNC_STUDY.md` for the options that were considered.
 
 **Import checks (2026-09-26)**
 - ERC: 0 violations. DRC: 0 errors, 0 unconnected.
@@ -188,8 +188,8 @@ This is the isolated biphasic constant-current stimulator (rev M3). It was desig
 
 ### Firmware requirements agreed with the e-stim module (see `estim_interface/QUESTIONS.md`)
 
-- **Pins:** PA15 (CS_n), PA22 (MOSI) and PA17 (SCK) become push-pull GPIO for bit-banged, write-only 16-bit SPI (mode 0) to the module's isolated MCP4921. CS_n idles high. Transfers happen only between trains.
-- **Pulse outputs:** PA7 = TIMA0_CCP1 (EN) and PA12 = TIMA0_CCP3 (CATH, *not* CCP0_CMPL). They are independent edges: CATH leads EN by ≥ 5 µs and changes only while EN is low. EN edge precision is ~0.1 µs.
+- **Pins (rev M4, NOTICE 13):** PA17 (SCL) and PA22 (SDA) become open-drain GPIO for bit-banged I²C to the module's isolated DAC60501Z (address 0x48; GAIN 0x04 = 0x0100 once, then DAC 0x08 = code << 4); PA15 becomes the push-pull **RELEASE** output that opens the electrode SHORT switch (high) — raise it ≥ 1 µs before a pair, drop it ~200 µs after for ≥ 200 µs, and drop it in the fault handler. Transfers happen only between trains. (M1–M3: SPI CS_n / SCK / MOSI on the same pins.)
+- **Pulse outputs:** PA7 = TIMA0_CCP1 (EN) and PA12 = TIMA0_CCP3 (CATH, *not* CCP0_CMPL). They are independent edges: CATH leads EN (≥ 1 µs since M4) and changes only while EN is low. EN edge precision is ~0.1 µs.
 - **Fault:** PA6 = TIMA0_FAULT0 (was PA26, also FAULT0), active-low, latched, forcing both CCP1 (EN) and CCP3 (CATH) low. It is armed only after FAULT_n reads high at start-up (module isolated supply up; ~100 ms timeout means "module not ready"), and cleared only between trains. Faults are reported to the Pi.
 
 ## Rebuilding

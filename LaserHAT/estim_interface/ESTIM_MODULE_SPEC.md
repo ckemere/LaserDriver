@@ -95,7 +95,7 @@ This is a suggestion; the firmware is flexible, so tell us what you need.
 | ADC_A (PA17) | Delivered-current monitor (sense-resistor voltage) |
 | ADC_B (PA22) | Compliance-voltage monitor. The laser module uses ADC_B for its compliance rail, so the GUI already shows it. |
 
-What the e-stim module actually does with these lines (Q1–Q4 in `QUESTIONS.md`): DAC/ADC_A/ADC_B carry bit-banged SPI (CS_n / SCK / MOSI) to an isolated DAC, PWM_A = EN, PWM_B = CATH, and GPIO = FAULT_n from the module's LM393 compliance window (rev M2).
+What the e-stim module actually does with these lines (Q1–Q4 and NOTICE 13 in `QUESTIONS.md`): DAC = RELEASE (SHORT-switch control), ADC_A / ADC_B = SCL / SDA of a bit-banged I²C bus to an isolated DAC (rev M4; M1–M3 used SPI CS_n / SCK / MOSI on the three), PWM_A = EN, PWM_B = CATH, and GPIO = FAULT_n from the module's LM393 compliance window.
 
 Existing firmware already has an "EStim mode" (paired monophasic pulses on the STIM_MIRROR BNC). PWM_A/B-driven biphasic output on the module is the natural extension.
 

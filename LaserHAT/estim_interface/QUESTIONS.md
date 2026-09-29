@@ -199,3 +199,34 @@ area and the Dwgs.User outline) will be extended to y 112.5 by the user.
 Module side (rev M3): single-sided, all SMD on the top; the HAT domain stays in the NW corner (J8) and the east column
 (J9) down to y 100, with a 2 mm barrier; the SE corner below y 102 and everything south of y 84.6 is isolated. J1
 (electrode) moves to the new south edge at y ≈ 111, x 113–116, out of the BACK-button thumb zone.
+
+### HAT NOTICE 13 — J9.3/4/5 become RELEASE / SCL / SDA; the DAC is I²C (rev M4, 2026-09-29)
+Status: INFO (module → HAT firmware; no hardware change on the HAT)
+
+Same pads, new meanings — the HAT's copper does not change:
+
+| Pin | MCU | M1–M3 | **M4** |
+|---|---|---|---|
+| J9.3 "DAC" | PA15 | CS_n (SPI) | **RELEASE**: push-pull output; high = electrode SHORT switch open, low = E1 shorted to E2 |
+| J9.4 "ADC_A" | PA17 | SCK | **SCL**, open-drain (pull-ups on the module, both sides of the isolator) |
+| J9.5 "ADC_B" | PA22 | MOSI | **SDA**, open-drain |
+
+Why: the SPI DAC needed three lines; an I²C DAC (DAC60501Z through an ISO1640 I²C isolator) needs two, and the third
+line becomes a dedicated control for the electrode SHORT switch. That replaces the module's RC hold timer, so the
+firmware now decides when the electrode is shorted.
+
+Firmware contract:
+- **DAC (I²C, address 0x48, up to 400 kHz, bit-banged is fine, only between trains).** After the isolated side is up
+  (FAULT_n high, plus 250 µs): write GAIN register 0x04 = 0x0100 once (REF-DIV = 1, BUFF-GAIN = 0 → 0–1.25 V full
+  scale; the power-on default is ×2 gain = 4× the intended current, so do this before any DAC write). Amplitude:
+  DAC register 0x08 = code << 4 (12-bit code left-aligned). Frame: 0x90, 0x08, MSB, LSB. I = code / 4096 × 1.25 V /
+  2.49 kΩ (0.123 µA/LSB, 502 µA full scale). The DAC powers up at zero code. ACK from the DAC doubles as "module
+  isolated side is alive".
+- **RELEASE.** High ≥ 1 µs before the first EN of a pair; low ~200 µs after the pair for ≥ 200 µs to reset the
+  electrode (this also re-centres the output amplifier, which has no DC feedback while the switch is open — do it at
+  least every ~0.3 s during a train). Between trains: your choice — shorted (as M1–M3 behaved) or open for recording.
+  On a TIMA0 fault, drop RELEASE in the fault handler (EN/CATH are already killed in hardware).
+- **CATH before EN** still holds, but the 5 µs lead is no longer needed (≥ 1 µs).
+- Unchanged: EN/CATH on TIMA0 CCP1/CCP3, FAULT_n latched on TIMA0_FAULT0, FAULT_n low = not ready at start-up.
+- Fail-safe: EN, CATH and RELEASE are pulled low on the module and the ISO7741F defaults low, so an unconfigured or
+  unpowered HAT gives zero current with the electrode shorted.

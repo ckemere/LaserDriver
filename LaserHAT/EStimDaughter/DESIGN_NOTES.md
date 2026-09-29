@@ -1,4 +1,4 @@
-# kbest e-stim module for LaserHAT Rev 2 — rev M3
+# kbest e-stim module for LaserHAT Rev 2 — rev M4
 
 Plug-in isolated biphasic constant-current stimulator. Interface is frozen by
 `LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md`; HAT-side questions Q1–Q4 in `QUESTIONS.md` are all answered.
@@ -14,29 +14,30 @@ The circuit is kbest rev E (`../biphasic_stim/DESIGN_NOTES.md`) with the changes
 | J8.3 PWM_A | PA7 TIMA0_CCP1 | **EN**: current flows while high |
 | J8.4 PWM_B | PA12 TIMA0_CCP3 | **CATH**: 1 = cathodic, 0 = anodic |
 | J8.5 GPIO | PA6 TIMA0_FAULT0 | **FAULT_n**: low = compliance / open-electrode fault, or isolated side not up |
-| J9.3 "DAC" | PA15 GPIO | CS_n (MCP4921) |
-| J9.4 "ADC_A" | PA17 GPIO | SCK |
-| J9.5 "ADC_B" | PA22 GPIO | MOSI |
+| J9.3 "DAC" | PA15 GPIO | **RELEASE**: high = SHORT switch open (M4; was CS_n) |
+| J9.4 "ADC_A" | PA17 GPIO, open-drain | **SCL** (M4; was SCK) |
+| J9.5 "ADC_B" | PA22 GPIO, open-drain | **SDA** (M4; was MOSI) |
 
-(MCU pins as of HAT NOTICE 10, 2026-09-28: PA21/PA22/PA26/PA16 were the pre-remap pins.)
+(MCU pins as of HAT NOTICE 10, 2026-09-28: PA21/PA22/PA26/PA16 were the pre-remap pins. J9.3–5 meanings per NOTICE 13.)
 
 Defaults while the MCU pins are Hi-Z:
-- pull-downs on EN, CATH, SCK and MOSI;
-- a pull-up on CS_n;
-- the ISO7761F outputs low when side 1 is unpowered.
+- pull-downs on EN, CATH and RELEASE;
+- pull-ups on SDA/SCL (I²C idle);
+- the ISO7741F outputs low when side 1 is unpowered.
 
 So an unconfigured or unpowered HAT means zero current, and the electrode shorted.
 
 ## Firmware contract
-- **Set-point.** One 16-bit SPI write, mode 0,0, between trains: MCP4921 with BUF = 1 and gain 1×.
-  I = code / 4096 × 1.0 V / 2.00 kΩ, so full scale is 500 µA and one LSB is 0.12 µA.
+- **Set-point.** Bit-banged I²C to the DAC60501Z (address 0x48) between trains: once after power-up GAIN register 0x04 = 0x0100 (REF-DIV = 1, BUFF-GAIN = 0), then DAC register 0x08 = code << 4.
+  I = code / 4096 × 1.25 V / 2.49 kΩ, so full scale is 502 µA and one LSB is 0.123 µA.
 - **Pulse pair.**
-  1. CATH high ≥ 5 µs before EN rises.
-  2. EN high for t_pw.
-  3. EN low for the interphase gap; CATH falls during the gap.
-  4. EN high for t_pw.
-  5. EN low.
-- **SHORT.** SHORT closes by itself about 200 µs after both EN and CATH are low (the HOLD RC: R15, C17). It opens as soon as either line goes high.
+  1. RELEASE high ≥ 1 µs before EN (SHORT switch opens).
+  2. CATH high before EN rises.
+  3. EN high for t_pw.
+  4. EN low for the interphase gap; CATH falls during the gap.
+  5. EN high for t_pw.
+  6. EN low; RELEASE low ~200 µs later for ≥ 200 µs (electrode reset), then as the experiment wants.
+- **SHORT.** Driven by RELEASE through the ISO7741F: low = E1 shorted to E2. The M1–M3 hold timer (D2, R15, C17) is gone.
 - **FAULT_n.** Low while the isolated side is unpowered (treat low at start-up as "module not ready", HAT Q4), and low while the electrode voltage E1 is outside the LM393 window (|E1| > ~0.915 × V: compliance limit reached, or an open electrode). The HAT latches it on TIMA0_FAULT0, which forces EN and CATH low; firmware clears it between trains (Q4).
 
 ## PS1 (isolated ±15 V) is DNP: converter or batteries
@@ -104,6 +105,17 @@ Result: seed 0 of `tools/route_pcb.py` plus small fix-ups (two dangling stubs fr
 
 **Firmware consequences** (HAT NOTICE 11 in `../estim_interface/QUESTIONS.md`): keep TIMA0_FAULT0 latched with a short (≤ 1 µs) or no glitch filter, clear it only between trains, and report the fault to the Pi with the train aborted. Start-up behaviour is unchanged (low = not ready until +5V_ISO is up).
 
+## Changes from M3 (M4, 2026-09-29): I²C DAC, dedicated RELEASE line
+
+| Change | Why |
+|---|---|
+| ISO7761F → **ISO7741F** (3 forward + 1 reverse) + **ISO1640** bidirectional I²C isolator (SOIC-8) | Seven signals across the barrier: EN, CATH, RELEASE, SDA, SCL forward, FAULT_n back. |
+| MCP4921 (SPI) + TL431 / R7 / R8 / R9 / C9 reference → **DAC60501Z** (I²C, internal 2.5 V reference ÷ 2 = 0–1.25 V, ±0.1 %), R14 2.00 k → **2.49 k 0.1 %** | I²C needs two lines, SPI three: the third J9 line becomes RELEASE with no connector change. The internal reference is at least as accurate as the TL431 divider and saves 5 parts. Full scale stays ~500 µA. |
+| Hold timer (D2 BAT54C, R15, C17) removed; DG419B IN driven by RELEASE | The HAT decides when the electrode is shorted: precise release before the pulse, reset after the pair, and the option to leave the electrode open while recording (no 15 Ω loop in the tissue). Fail-safe unchanged: RELEASE pulled low + isolator default low = shorted. |
+| J9.3/4/5 = RELEASE / SCL / SDA (were CS_n / SCK / MOSI); R3 becomes the RELEASE pull-down, R4/R5 removed; R7/R8 and R9/R15 are the I²C pull-ups (4.7 k) | NOTICE 13. |
+
+Board: rebuilt on the M3 outline with U9 straddling the barrier below U1 (the HAT column now ends at y 106, barrier at y 106–108) — **placed only, not routed**; the user routes it by hand.
+
 ### DG419 SHORT: simulation (`../biphasic_stim/sim/p1_dg419.py`, log `p1_dg419.log`)
 Model:
 - ideal switch with 20 Ω on-resistance;
@@ -146,7 +158,8 @@ Caveat: the DG419 input has no hysteresis. On HOLD's slow decay the switch may c
 - Rules: 0.15 mm clearance, 0.15–0.3 mm tracks, 0.5/0.3 mm vias, vias tented.
 - Freerouting, plus a placement-jitter search (Freerouting is deterministic for a given input).
 - A ground via fix-up, then a small grid router (`tools/fixroute.py`) for the last few connections.
-- M3: DRC clean, 0 unconnected (seed 0, `route/placed0.kicad_pcb` + `seed0.ses`, plus the fix-ups above). M1 was clean too; M2 on the 23.5 mm outline never got below 4 open items in 27 seeds, and re-feeding a routed board to Freerouting (`COMPLETE_PASSES`) only rips up more.
+- M3: DRC clean, 0 unconnected (Freerouting seed 0 plus fix-ups; commit `bbd4e76`). M1 was clean too; M2 on the 23.5 mm outline never got below 4 open items in 27 seeds, and re-feeding a routed board to Freerouting (`COMPLETE_PASSES`) only rips up more.
+- M4: placed with `tools/build_pcb.py` (planes and pours from `route_pcb.py`), not routed.
 - Most reference designators don't fit at 0.8 mm text and are hidden. Assembly uses the CPL file, not the silkscreen.
 
 **Build:**

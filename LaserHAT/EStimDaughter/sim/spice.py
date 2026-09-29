@@ -3,8 +3,8 @@ ngspice helpers for the e-stim module (rev M1).  Netlists here follow the schema
 
 Modelled parts
   U5A/U5B  OPA2192        TI PSpice macro-model (models/OPAx192.lib, subckt OPAx192: IN+ IN- VCC VEE OUT)
-  U4       MCP4921        ideal voltage source VSET_P = code/4096 * VREF (its output buffer is not modelled)
-  U3 etc.  TL431 + R8/R9  folded into VREF = 1.000 V
+  U4       DAC60501       ideal voltage source VSET_P = code/4096 * VREF, VREF = 1.25 V (internal 2.5 V reference / 2);
+                          its output buffer is not modelled
   U6       74HC4053       voltage-controlled switches, R_on = RON_4053, driven by EN / CATH (5 V logic)
   U7       DG419B         behavioural: throw 1 (D=E1 to S1=ISENSE) closed while IN (= HOLD) is below 1.6 V;
                           15 ohm on, 12 pF off-capacitance per side, charge injection via 1.3 pF from a +/-15 V
@@ -32,14 +32,14 @@ NGSPICE = os.environ.get("NGSPICE") or shutil.which("ngspice") or "/opt/homebrew
 
 # ---------------------------------------------------------------------------------------------- schematic values
 VALUES = dict(
-    VREF=1.000,          # MCP4921 VREF (TL431 2.495 V * R9 / (R8 + R9) = 10.0k / 25.0k), BUF=1, gain 1x
+    VREF=1.25,           # DAC60501 full scale: internal 2.5 V reference with REF-DIV = 1, BUFF-GAIN = 0 (M4)
     R10=10.0e3,          # U5B inverter input  (0.1 %)
     R11=10.0e3,          # U5B inverter feedback (0.1 %)
     RON_4053=100.0,      # 74HC4053 on-resistance at VCC = +5 V, VEE = -4.7 V (datasheet typ. 70-100 ohm)
     R12=1.0e3,           # V_IN -> U5A +IN (OA_IN)
     C15=100e-12,         # OA_IN to GND_ISO
     R13=47.0,            # U5A output isolation -> E1
-    R14=2.00e3,          # R_SENSE, ISENSE -> GND_ISO (0.1 %)
+    R14=2.49e3,          # R_SENSE, ISENSE -> GND_ISO (0.1 %); 1.25 V / 2.49 k = 502 uA full scale
     C16=1e-6,            # DC block E1 -> J1.1 (E1_OUT)
     R15=100e3, C17=2.2e-9,   # SHORT hold timer
     RON_DG419=15.0, COFF_DG419=12e-12, CINJ_DG419=1.3e-12, VTH_DG419=1.6,   # DG419B (M3): 15 ohm, 12 pF, 38 pC per edge
@@ -97,7 +97,7 @@ def rails(V=RAIL):
 def setpoint(code, v=VALUES):
     """U4 DAC (ideal) -> VSET_P; U5B unity inverter -> VSET_N"""
     vset = code / 4096 * v["VREF"]
-    return f"""* U4 MCP4921 (ideal DAC output)
+    return f"""* U4 DAC60501 (ideal DAC output)
 VDAC VSET_P 0 {vset:.9g}
 * U5B: inverter, IN+ = GND_ISO
 R10 VSET_P U5B_N {v['R10']}
