@@ -76,8 +76,8 @@ MCU pins per `../REV2_NOTES.md`; the J8/J9 pad positions are frozen, the J9.3–
 - **FAULT_n** reads low until the isolated supply is up (treat that as "not ready"), and pulses low whenever the electrode voltage leaves the compliance window during a pulse (see *Fault detector* below). The HAT latches TIMA0_FAULT0 (forces PWM_A/B low) and clears it between trains; a fault during a train therefore ends the train, and the Pi is told.
 - **Fail-safe.** EN, CATH and RELEASE are pulled low before the isolator, and the ISO7741F outputs low when its HAT side is unpowered. So an unconfigured or unpowered HAT gives zero current with the electrode shorted. The I²C lines idle high (pull-ups); the DAC only changes on a complete, addressed write.
 
-### Fault detector (rev M2)
-U8, an LM393, compares a scaled copy of the electrode-side voltage E1 (E1_LS = 0.0767·E1 + 1.42 V, R20/R21/R22 with C18) with two thresholds derived from the rails (TH_P from +V, TH_N from −V, each 110 k / 12 k / 27 k). Both open-collector outputs pull FAULT_n low (R19 4.7 k to +5V_ISO) while |E1| > 0.915·V, i.e. 13.9 V at ±15 V, 11.1 V at ±12 V, 16.6 V at ±18 V. The thresholds track the rails, so the detector needs no adjustment between the DC-DC converter and battery packs. Simulated (`sim/fault.py`): it fires 7–12 µs before the electrode current starts to collapse and stays low for the rest of the over-compliance phase (≥ 3 µs); an open electrode trips it 3.8 µs after EN rises; in-compliance trains never come within 0.3 V of the window. The HAT's TIMA0 fault input is latched and forces EN and CATH low, so a train that hits compliance is cut at the first phase that does; firmware should keep the fault input's glitch filter short (≤ 1 µs) or off, clear the latch only between trains, and report the event to the Pi. Because the same line is the module-ready flag, the start-up behaviour (low until +5V_ISO is up) is unchanged.
+### Fault detector (rev M2, simplified in M4b)
+U8, a TLV1702 dual comparator running from the ±V rails (36 V, rail-to-rail inputs), compares the electrode-side voltage E1 directly with two taps of a single 10 k / 215 k / 10 k string between +V and −V. Each tap sits 0.043 × (V+ + |V−|) inside its rail: |E1| > 0.915·V for equal packs (13.7 V at ±15 V, 11.0 V at ±12 V, 15.4 V at ±16.8 V); with unequal packs both margins become the average (e.g. 1.10 V each at +16.8 / −9 V), and a missing pack holds the fault on. Both open-collector outputs (wired-OR, sinking to −V) reach the isolator through R26 10 k with D2 clamping FAULT_n to GND_ISO; R19 4.7 k pulls it high. Simulated (`sim/fault.py`, full run): it fires 8–13 µs before the electrode current starts to collapse and stays low for the rest of the over-compliance phase; an open electrode trips it ~1 µs after EN rises; in-compliance trains never come within 3 V of the window. The HAT's TIMA0 fault input is latched and forces EN and CATH low, so a train that hits compliance is cut at the first phase that does; firmware should keep the fault input's glitch filter short (≤ 1 µs) or off, clear the latch only between trains, and report the event to the Pi. Because the same line is the module-ready flag, the start-up behaviour (low until +5V_ISO is up) is unchanged. (M2–M4 used an LM393 at 0/5 V with E1 divided and offset: nine resistors; the ±V-supplied comparator needs five and does not load E1.)
 
 ---
 
@@ -100,15 +100,15 @@ U8, an LM393, compares a scaled copy of the electrode-side voltage E1 (E1_LS = 0
 
 | Side / type | Parts |
 |---|---|
-| Top SMT (54) | U1 ISO7741F (SSOP-16), U9 ISO1640 (SOIC-8), U2 TLV76050 (SOT-23), U4 DAC60501Z (VSSOP-10), U5 OPA2192 (VSSOP-8), U6 74HC4053BQ (DHVQFN-16), U7 DG419BDQ (MSOP-8), U8 LM393 (VSSOP-8), D1 (SOD-323), 44 passives, plus two bare test pads TP1 ISENSE / TP2 GND_ISO |
+| Top SMT (50) | U1 ISO7741F (SSOP-16), U9 ISO1640 (SOIC-8), U2 TLV76050 (SOT-23), U4 DAC60501Z (VSSOP-10), U5 OPA2192 (VSSOP-8), U6 74HC4053BQ (DHVQFN-16), U7 DG419BDQ (MSOP-8), U8 TLV1702 (VSSOP-8), D1, D2 (SOD-323), 39 passives, plus two bare test pads TP1 ISENSE / TP2 GND_ISO |
 | Bottom SMT | **none** (single-sided assembly, JLC Economic tier) |
 | Through-hole, hand-soldered | **J8, J9**: male 1×5 0.1" headers on the **underside**, into the HAT sockets. **J1**: 1×2 0.1" right-angle electrode header on the south edge. Its plastic body overhangs the edge by about 2.5 mm and its pins by about 9 mm. |
 | **DNP** | **PS1**, the isolated 5 V → ±15 V DC-DC (SIP, pins 1 2 4 5 6 on 0.1", 10 mm tall, top side). Fit one of: RECOM **RB-0515D/HP** (Mouser; verified drop-in), Mornsun A0515S-1WR3, or LCSC C5369388 (YLPTEC). Solder it or use a machined-pin SIP socket. Alternatively leave it empty and wire two battery packs: + → **+V**, centre tap → **0V**, − → **−V** (up to ±18 V; draw about 10 mA per rail). |
 | LCSC parts | 29 unique (M1: 25; M2 adds LM393DGKR C34440 and the 12 k / 27 k / 110 k 0402 resistors). Stock checked 2026-09-26 for the M1 set; re-run `tools/lcsc_check.py` before ordering. |
 
 Extended parts:
-- ICs: ISO7741FDBQR, ISO1640BDR, TLV76050DBZR, DAC60501ZDGSR, OPA2192IDGKR, 74HC4053BQ, DG419BDQ, LM393DGKR.
-- Diodes: BAT54C, BZT52C4V7S.
+- ICs: ISO7741FDBQR, ISO1640BDR, TLV76050DBZR, DAC60501ZDGSR, OPA2192IDGKR, 74HC4053BQ, DG419BDQ, TLV1702AIDGKR.
+- Diodes: BAT54WS, BZT52C4V7S.
 - Resistors: 0.1 % 10.0k and 2.49k (0603); 47 Ω (0402).
 - Capacitors: 1 µF 50 V (0603 and 0805), 4.7 µF (0603), 2.2 nF (0402).
 
@@ -132,7 +132,7 @@ Extended parts:
 | DAC60501Z with its internal 2.5 V reference (÷2) | ±0.1 % initial reference accuracy, 5 ppm/°C: better than the M1–M3 TL431 + 0.1 % divider it replaces (5 parts), and it speaks I²C. Powers up at zero code. |
 | DG419B analog switch for the SHORT (E1 to E2), driven by the HAT's RELEASE line | One ±15 V part, driven straight from the isolator: the HAT decides when the electrode is shorted (M1–M3 derived it from EN/CATH with a 200 µs RC hold timer). Simulated: electrode charge resets to 0 mV every cycle, and the switch's charge injection doesn't accumulate. |
 | ISO7741F (3 forward + 1 reverse, fail-safe low) + ISO1640 (bidirectional I²C) | Seven signals across the barrier in two packages; the ISO7741F's defaults are the safe state (EN, CATH, RELEASE low). |
-| FAULT_n from an LM393 window on E1 (rev E circuit, restored in M2) | Open-collector, so the same line is also the module-ready flag: R19 is unpowered until the isolated side is up. Trip points track the rails (±0.915 V), so the detector works from ±12 V converters to ±18 V battery packs without a change. |
+| FAULT_n from a comparator window on E1 (rev E circuit, restored in M2; ±V-supplied TLV1702 since M4b) | Open-collector, so the same line is also the module-ready flag: R19 is unpowered until the isolated side is up. Trip points track the rails (±0.915 V), so the detector works from ±12 V converters to ±18 V battery packs without a change. |
 | PS1 is DNP | Keeps the choice open between the DC-DC and batteries. Batteries avoid the converter's switching common-mode noise, which couples through 20–75 pF of isolation capacitance. The isolator adds only about 2 pF. |
 | 4 layers, parts on the top only (M3) | The split ground planes on In1.Cu make the isolated domain routable; the 12.5 mm southward extension (26.5 × 36.5 mm) is what made single-sided assembly possible — M1/M2 needed both sides on 23.5 mm. Isolation itself comes from the copper-free barrier, not the layer count. |
 | Right-angle 0.1" electrode header on the south edge | The spec's accessible edges are south and west. The cable exits away from the HAT. |
@@ -152,7 +152,7 @@ Extended parts:
 
 A self-contained ngspice model of the final circuit, with part names matching the schematic. `sim/spice.py` builds the netlists:
 - **U5A/U5B (OPA2192):** TI's PSpice macro-model, `sim/models/OPAx192.lib`. The DAC is an ideal source (M4: 0–1.25 V, R14 2.49 k).
-- **U8 (LM393):** TI's LM2903B PSpice macro-model, `sim/models/LM393_LM2903B.lib` (used by `fault.py`; the other scripts model only the detector's divider load on E1).
+- **U8 (TLV1702):** a behavioural open-collector comparator pair (`COMPOC` in `sim/spice.py`: ideal threshold, 0.5 µs delay) with the R26 / D2 level shift; the LM393 macro-model in `sim/models/` is no longer used.
 - **Everything else** is modelled from datasheet values: DAC, 74HC4053, DG419 with charge injection, BAT54C hold timer, rails, the ISO7761F input load on FAULT_n, and a Randles-cell electrode. `sim/models/README.md` lists every model.
 
 **Requirements**
@@ -182,7 +182,7 @@ Component values are in `VALUES` in `spice.py`, so change them there.
 | `setpoint.py` | Error vs ideal, and phase matching | 250 µA: −0.35 % in both phases (op-amp tracking of the Cdl ramp, ≈ 1/(2π·GBW·Cdl·R14)), pair charge mismatch −0.006 % |
 | `compliance.py` | Max phase width before saturation, worst electrode | 100 µA: 221 µs. 500 µA: 21.5 µs. |
 | `train.py` | Charge left on the electrode each cycle | With SHORT, Vcdl after each cycle is +0.8 mV, +1.5 mV, … This is C16 absorbing the net faradaic charge; it converges over about C16·Rct ≈ 2 s. Without SHORT it ratchets to about −1 V. |
-| `fault.py` (full run, 2026-09-28) | FAULT_n fires before U5A runs out of headroom, never on an in-compliance train | Trip points ±0.915 V (13.9 V at ±15 V). 250 µA phase-width sweeps: FAULT_n goes low 7–12 µs before the electrode current starts to fall (15 V worst electrode: 63.1 vs 70.2 µs; 12 V: 72.2 vs 80.3; 16.8 V: 111.7 vs 123.5; 18 V: 81.1 vs 89.9), while the pair mismatch is still < 0.01 %. Open electrode: low 3.8 µs after EN at 12–18 V. Trains at 250 µA × 60 µs, 100 µA × 100 µs and 20 µA × 20 µs: FAULT_n stays at 4.95 V, ≥ 0.3 V of window margin. |
+| `fault.py` (full run, 2026-09-29, TLV1702 model) | FAULT_n fires before U5A runs out of headroom, never on an in-compliance train | Trip points ±0.915 V (13.7 V at ±15 V). 250 µA phase-width sweeps: FAULT_n goes low 8–13 µs before the electrode current starts to fall (15 V worst electrode: 61.1 vs 69.3 µs; 12 V: 70.2 vs 79.1; 16.8 V: 109.7 vs 122.3; 18 V: 79.1 vs 89.0), mismatch still < 0.02 % when it fires. Open electrode: low 0.9–1.2 µs after EN at 12–18 V. Trains at 250 µA × 60 µs, 100 µA × 100 µs and 20 µA × 20 µs: FAULT_n stays at 4.95 V, ≥ 3.9 V of window margin. (M2 LM393 version, 2026-09-28: 7–12 µs lead, open electrode 3.8 µs.) |
 
 Not modelled:
 - component tolerances (0.1 % resistors, TL431, DAC INL/offset);

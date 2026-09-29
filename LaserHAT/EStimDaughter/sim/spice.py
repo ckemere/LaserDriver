@@ -9,10 +9,12 @@ Modelled parts
   U7       DG419B         behavioural: throw 1 (D=E1 to S1=ISENSE) closed while IN (= HOLD) is below 1.6 V;
                           15 ohm on, 12 pF off-capacitance per side, charge injection via 1.3 pF from a +/-15 V
                           internal gate node into each terminal (~38 pC per side per edge, DG419B datasheet typ.)
-  D2       BAT54C         diode model (Schottky), EN and CATH OR'ed onto HOLD; R15 100k + C17 2.2n
-  U8       LM393          TI PSpice macro-model (models/LM393_LM2903B.lib, subckt LM2903B: IN+ IN- Vcc GND OUT), the
-                          compliance window: E1 -> R20/R21/R22 (+C18) = E1_LS; TH_P / TH_N from +/-V; both open
-                          collectors wired-OR onto FAULT_n with R19 4.7k to +5V_ISO, loaded by the ISO7761F input
+  HOLD                    (M4: the DG419 is driven by the HAT's RELEASE line; short_switch() keeps the M1-M3 BAT54C + RC
+                          hold timer as a stand-in for the recommended firmware timing: release on EN/CATH, short ~200 us after)
+  U8       TLV1702        behavioural comparator pair (COMPOC subckt: ideal threshold, 0.5 us delay, open collector to
+                          -V) powered from +/-V, comparing E1 directly with the taps of the +V - R23 - R24 - R25 - -V
+                          string; wired-OR output through R26 with D2 clamping FAULT_n to GND_ISO, R19 4.7k pull-up to
+                          +5V_ISO, loaded by the ISO7741F input.  (M2/M3 used an LM393 at 0/5 V with divided E1.)
   PS1      +/-V rails     ideal sources (A0515S / RB-0515D nominal +/-15 V, or battery packs up to +/-18 V)
   electrode               Randles cell: Rs + (Cdl || Rct), between J1.1 (E1_OUT) and J1.2 (ISENSE)
 
@@ -44,11 +46,11 @@ VALUES = dict(
     R15=100e3, C17=2.2e-9,   # SHORT hold timer
     RON_DG419=15.0, COFF_DG419=12e-12, CINJ_DG419=1.3e-12, VTH_DG419=1.6,   # DG419B (M3): 15 ohm, 12 pF, 38 pC per edge
     V_LOGIC=5.0,         # ISO7761F side 2 / +5V_ISO
-    # compliance window (U8 LM393): E1_LS = E1*R21||R22/(R20+R21||R22) + 5*R20||R21/(R22+R20||R21) = 0.0767*E1 + 1.42 V
-    R20=100e3, R21=12e3, R22=27e3, C18=100e-12,     # E1 -> E1_LS, E1_LS -> GND_ISO, +5V_ISO -> E1_LS, E1_LS -> GND_ISO
-    R23=110e3, R24=12e3, R25=27e3,                  # +V_STIM -> TH_P, TH_P -> GND_ISO, +5V_ISO -> TH_P
-    R26=110e3, R27=12e3, R28=27e3,                  # TH_N -> -V_STIM, TH_N -> GND_ISO, +5V_ISO -> TH_N
-    R19=4.7e3,           # FAULT_n pull-up to +5V_ISO
+    # compliance window (U8 TLV1702 on +/-V): TH_P = V+ - (V+ - V-)*R23/(R23+R24+R25), TH_N = V- + (V+ - V-)*R25/(...)
+    R23=10e3, R24=215e3, R25=10e3,                  # +V_STIM -> TH_P -> TH_N -> -V_STIM
+    R26=10e3,            # comparator open collectors (FAULT_OC) -> FAULT_n
+    R19=4.7e3,           # FAULT_n pull-up to +5V_ISO; D2 BAT54WS clamps FAULT_n to GND_ISO
+    TPD_CMP=0.5e-6,      # TLV1702 propagation delay
     I_IH_ISO=10e-6,      # ISO7761F input high current (datasheet max), sunk from FAULT_n while it is high
 )
 RAIL = 15.0              # PS1 nominal; use 16.8 for two 4S Li-ion packs
@@ -67,17 +69,15 @@ def include_models(lm393=False):
     return "\n".join(f".include {os.path.join(MODELS, lib)}" for lib in libs)
 
 
-def window_thresholds(V, v=VALUES):
-    """analytic trip points of the compliance window at rail +/-V: (E1_high, E1_low, a, b, TH_P, TH_N) with
-    E1_LS = a*E1 + b.  FAULT_n goes low while E1 > E1_high or E1 < E1_low."""
-    v5 = v["V_LOGIC"]
-    g = 1 / v["R20"] + 1 / v["R21"] + 1 / v["R22"]
-    a, b = (1 / v["R20"]) / g, (v5 / v["R22"]) / g
-    gp = 1 / v["R23"] + 1 / v["R24"] + 1 / v["R25"]
-    thp = (V / v["R23"] + v5 / v["R25"]) / gp
-    gn = 1 / v["R26"] + 1 / v["R27"] + 1 / v["R28"]
-    thn = (-V / v["R26"] + v5 / v["R28"]) / gn
-    return (thp - b) / a, (thn - b) / a, a, b, thp, thn
+def window_thresholds(V, v=VALUES, Vneg=None):
+    """analytic trip points of the compliance window at rails +V / Vneg (default -V):
+    (E1_high, E1_low, a, b, TH_P, TH_N); a = 1, b = 0 are kept for the callers of the M2/M3 (divided-E1) version.
+    FAULT_n goes low while E1 > E1_high or E1 < E1_low."""
+    vn = -V if Vneg is None else Vneg
+    tot = v["R23"] + v["R24"] + v["R25"]
+    thp = V - (V - vn) * v["R23"] / tot
+    thn = vn + (V - vn) * v["R25"] / tot
+    return thp, thn, 1.0, 0.0, thp, thn
 
 
 def i_full_scale(v=VALUES):
@@ -171,18 +171,32 @@ CINJ_S DGG ISENSE {v['CINJ_DG419']}
 """
 
 
+COMPOC = """
+* open-collector comparator: OUT pulled to VEE (through 50 ohm) while INP < INN, after a propagation delay
+.subckt COMPOC INP INN OUT VEE params: tpd=0.5u
+BCTL C0 0 V=0.5*(1-tanh((V(INP)-V(INN))/0.002))
+RCTL C0 C1 1k
+CCTL C1 0 {tpd/1k/2.2}
+SOC OUT VEE C1 0 SWOC
+.model SWOC SW(Ron=50 Roff=100G Vt=0.5 Vh=0.05)
+.ends
+"""
+
+
 def monitor(v=VALUES, comparator=True, ref="V5ISO"):
-    """U8 LM393 compliance window on E1 (op-amp side of C16) -> FAULT_n, with R19 pull-up and the ISO7761F input load.
-    comparator=False keeps only the E1 divider (R20/R21/R22 + C18): the part of the monitor that loads the output
-    stage, for sims that don't look at FAULT_n (the LM2903B macro-model is slow).  ref="0" returns R22 to ground
-    instead of +5V_ISO: the same small-signal load without the DC injection (for the AC loop-gain deck)."""
-    lines = ["* U8 compliance window: E1_LS = a*E1 + b",
-             f"R20 E1 E1_LS {v['R20']}", f"R21 E1_LS 0 {v['R21']}", f"R22 {ref} E1_LS {v['R22']}", f"C18 E1_LS 0 {v['C18']}"]
+    """U8 TLV1702 window on E1 (op-amp side of C16), powered from +/-V, -> FAULT_n through the R26 / D2 level shift,
+    with the R19 pull-up and the ISO7741F input load.  The comparators are behavioural (COMPOC).  comparator=False
+    leaves only the threshold string, which does not touch E1 (nothing loads the output stage any more).  `ref` is
+    unused (kept for the callers of the M2/M3 model)."""
+    lines = ["* U8 compliance window: threshold string between the rails",
+             f"R23 VP TH_P {v['R23']}", f"R24 TH_P TH_N {v['R24']}", f"R25 TH_N VN {v['R25']}"]
     if comparator:
-        lines += [f"R23 VP TH_P {v['R23']}", f"R24 TH_P 0 {v['R24']}", f"R25 V5ISO TH_P {v['R25']}",
-                  f"R26 TH_N VN {v['R26']}", f"R27 TH_N 0 {v['R27']}", f"R28 V5ISO TH_N {v['R28']}",
-                  "XU8A TH_P E1_LS V5ISO 0 FAULT_N LM2903B",
-                  "XU8B E1_LS TH_N V5ISO 0 FAULT_N LM2903B",
+        lines += [COMPOC,
+                  f"XU8A TH_P E1 FAULT_OC VN COMPOC params: tpd={v['TPD_CMP']}",     # low when E1 > TH_P
+                  f"XU8B E1 TH_N FAULT_OC VN COMPOC params: tpd={v['TPD_CMP']}",     # low when E1 < TH_N
+                  f"R26 FAULT_OC FAULT_N {v['R26']}",
+                  "DCLAMP 0 FAULT_N DBAT54W",
+                  ".model DBAT54W D(IS=3e-8 N=1.05 RS=1.0 CJO=10p BV=30)",
                   f"R19 V5ISO FAULT_N {v['R19']}",
                   f"BISO FAULT_N 0 I={v['I_IH_ISO']}*min(1, max(0, V(FAULT_N)/0.5))"]
     return "\n".join(lines) + "\n"
@@ -208,7 +222,7 @@ def module_deck(code, pairs, pw, gap, period, V=RAIL, Rs=10e3, Cdl=2.2e-9, Rct=2
     fault: "full" = U8 comparators + FAULT_n; "load" = only the monitor's E1 divider (default); None = no monitor."""
     return "\n".join([
         f"* e-stim module M1: code {code}, {pairs} pair(s), pw {pw * 1e6:g} us, gap {gap * 1e6:g} us, rails +/-{V} V",
-        include_models(lm393=fault == "full"), ELECTRODE, rails(V), setpoint(code, v), switch_4053(v),
+        include_models(), ELECTRODE, rails(V), setpoint(code, v), switch_4053(v),
         output_stage(v, cable_c),
         f"XEL E1_OUT ISENSE ELECTRODE params: Rs={Rs} Cdl={Cdl} Rct={Rct}",
         short_switch(v, short), monitor(v, comparator=fault == "full") if fault else "",

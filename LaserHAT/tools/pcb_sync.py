@@ -24,7 +24,7 @@ import sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from sexpr_patch import parse  # noqa: E402
 
-STD_FP_DIR = "/Applications/KiCad/KiCad.app/Contents/SharedSupport/footprints"
+STD_FP_DIR = os.environ.get("KICAD_FOOTPRINTS") or next((d for d in ("/usr/share/kicad/footprints", "/Applications/KiCad/KiCad.app/Contents/SharedSupport/footprints") if os.path.isdir(d)), "/usr/share/kicad/footprints")
 PROJECT_FP_LIBS = {   # fp-lib-table nicknames of the project libraries
     "Footprints": os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                                "Footprints.pretty"),
@@ -65,7 +65,10 @@ def load_fp(fpid, library):
         return pcbnew.FOOTPRINT(library[fpid])      # copy constructor
     nick, name = fpid.split(":")
     lib = PROJECT_FP_LIBS.get(nick) or os.path.join(STD_FP_DIR, nick + ".pretty")
-    fp = pcbnew.FootprintLoad(lib, name)
+    try:                                   # KiCad 9.0.8's pcbnew.FootprintLoad() loses its plugin after a LoadBoard()
+        fp = pcbnew.PCB_IO_KICAD_SEXPR().FootprintLoad(lib, name)
+    except Exception:                      # noqa: BLE001
+        fp = pcbnew.FootprintLoad(lib, name)
     if fp is None:
         raise RuntimeError(f"cannot load footprint {fpid}")
     fp.SetFPID(pcbnew.LIB_ID(nick, name))

@@ -21,6 +21,7 @@ L100k, L10k, L1k, L47, L2k2, L22k, L12k, L27k, L110k, L4k7 = ("C25741", "C25744"
                                                               "C25752", "C22369538", "C2909311", "C25900")
 L100n, L100n50, L100p, L10n, L2n2 = "C1525", "C14663", "C1546", "C15195", "C106861"
 L1u50, L4u7, L1u50_0805 = "C559769", "C69335", "C726584"
+L215k = "C185443"
 
 
 def R(ref, val, a, b, fp=R0402, lcsc=""):
@@ -113,23 +114,20 @@ PARTS = [
     # hold timer (BAT54C + RC) is gone.  DG419B MSOP-8: 15 ohm, 38 pC injection, 12 pF off-capacitance.
     dict(ref="U7", sym="DG419", value="DG419BDQ", fp="Package_SO:MSOP-8_3x3mm_P0.65mm", lcsc="C2673354",
          nets={"1": "E1", "2": "ISENSE", "3": "GND_ISO", "4": "+V_STIM", "5": "+5V_ISO", "6": "RELEASE", "7": "-V_STIM", "8": None}),
-    # ---------------------------------------------------------------- fault detector: LM393 window on E1 -> FAULT_n (open collector into U1 INF)
-    # E1_LS = 0.0767*E1 + 1.42 V against TH_P (from +V) and TH_N (from -V): FAULT_n low while |E1| > ~0.915*V, i.e.
-    # just before U5A saturates (compliance / open electrode).  Unpowered isolated side: R19 unpowered -> FAULT_n low.
+    # ---------------------------------------------------------------- fault detector: TLV1702 window on E1 -> FAULT_n (M4b, 2026-09-29)
+    # U8 runs from +/-V (36 V rail-to-rail-input comparator) and looks at E1 directly.  One string +V - 10k - 215k - 10k - -V
+    # puts TH_P / TH_N at 0.0426 * (V+ + |V-|) inside each rail (= +/-0.915 V for symmetric packs; the average for unequal
+    # packs, a missing pack holds FAULT_n low).  Both open collectors sink to -V, so the wired-OR output reaches the
+    # isolator through R26 with D2 clamping FAULT_n at about -0.3 V; R19 pulls it high.  Unpowered isolated side: low.
     R("R19", "4.7k", "+5V_ISO", "FAULT_n", lcsc=L4k7),
-    R("R20", "100k", "E1", "E1_LS", lcsc=L100k),
-    R("R21", "12k", "E1_LS", "GND_ISO", lcsc=L12k),
-    R("R22", "27k", "+5V_ISO", "E1_LS", lcsc=L27k),
-    C("C18", "100p", "E1_LS", "GND_ISO", lcsc=L100p),
-    R("R23", "110k", "+V_STIM", "TH_P", lcsc=L110k),
-    R("R24", "12k", "TH_P", "GND_ISO", lcsc=L12k),
-    R("R25", "27k", "+5V_ISO", "TH_P", lcsc=L27k),
-    R("R26", "110k", "TH_N", "-V_STIM", lcsc=L110k),
-    R("R27", "12k", "TH_N", "GND_ISO", lcsc=L12k),
-    R("R28", "27k", "+5V_ISO", "TH_N", lcsc=L27k),
-    dict(ref="U8", sym="LM393", value="LM393DGKR", fp=VSSOP8, lcsc="C34440",
-         nets={"3": "TH_P", "2": "E1_LS", "1": "FAULT_n", "5": "E1_LS", "6": "TH_N", "7": "FAULT_n", "8": "+5V_ISO", "4": "GND_ISO"}),
-    C("C19", "100n", "+5V_ISO", "GND_ISO", lcsc=L100n),
+    R("R23", "10k", "+V_STIM", "TH_P", lcsc=L10k),
+    R("R24", "215k", "TH_P", "TH_N", lcsc=L215k),
+    R("R25", "10k", "TH_N", "-V_STIM", lcsc=L10k),
+    dict(ref="U8", sym="TLV1702", value="TLV1702AIDGKR", fp=VSSOP8, lcsc="C2870937",
+         nets={"3": "TH_P", "2": "E1", "1": "FAULT_OC", "5": "E1", "6": "TH_N", "7": "FAULT_OC", "8": "+V_STIM", "4": "-V_STIM"}),
+    R("R26", "10k", "FAULT_OC", "FAULT_n", lcsc=L10k),
+    dict(ref="D2", sym="D", value="BAT54WS", fp=SOD323, lcsc="C124205", nets={"1": "FAULT_n", "2": "GND_ISO"}),   # K = FAULT_n, A = GND_ISO
+    C("C19", "100n", "+V_STIM", "-V_STIM", fp=C0603, lcsc=L100n50),
 ]
 
 BY_REF = {p["ref"]: p for p in PARTS}

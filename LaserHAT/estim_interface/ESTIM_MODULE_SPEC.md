@@ -116,7 +116,7 @@ Everything below was negotiated between the two sessions in 2026-09-26 … 29 an
 |---|---|---|---|
 | J8.3 PWM_A | PA7 = TIMA0_CCP1 | **EN** — current flows while high | independent channel; edge precision ~0.1 µs |
 | J8.4 PWM_B | PA12 = TIMA0_CCP3 | **CATH** — 1 = cathodic, 0 = anodic | changes only while EN is low; leads EN by ≥ 1 µs |
-| J8.5 GPIO | PA6 = TIMA0_FAULT0, active low, **latched**, forces CCP1 and CCP3 low | **FAULT_n** — low = compliance / open-electrode fault, or isolated side unpowered | at start-up low means "module not ready": wait for high (≤ ~100 ms) before arming; clear only between trains; report faults to the Pi; keep the input glitch filter ≤ 1 µs (pulses at the window edge can be ~1 µs) |
+| J8.5 GPIO | PA6 = TIMA0_FAULT0, active low, **latched**, forces CCP1 and CCP3 low | **FAULT_n** — low = compliance / open-electrode fault, isolated side unpowered, or (M4b) one battery pack missing | at start-up low means "module not ready": wait for high (≤ ~100 ms) before arming; clear only between trains; report faults to the Pi; keep the input glitch filter ≤ 1 µs (pulses at the window edge can be ~1 µs) |
 | J9.3 "DAC" | PA15, push-pull GPIO | **RELEASE** — high = electrode SHORT switch open | high ≥ 1 µs before the first EN of a pair; low ~200 µs after the pair for ≥ 200 µs (electrode reset, also re-centres the output amplifier — do it at least every ~0.3 s during a train); also drop it in the fault handler |
 | J9.4 "ADC_A" | PA17, open-drain GPIO | **SDA** | bit-banged I²C ≤ 400 kHz, between trains only; pull-ups on the module. **SDA/SCL swapped on 2026-09-29** (module layout; HAT firmware only, no HAT copper). Before that: J9.4 = SCL, J9.5 = SDA |
 | J9.5 "ADC_B" | PA22, open-drain GPIO | **SCL** | " |

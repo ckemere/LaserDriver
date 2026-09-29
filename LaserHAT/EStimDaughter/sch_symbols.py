@@ -220,6 +220,7 @@ def dual_amp(name, out_type):
 dual_amp("OPA2192", "output")
 dual_amp("TLV9062", "output")
 dual_amp("LM393", "open_collector")
+dual_amp("TLV1702", "open_collector")      # same pinout: 1 OUTA, 2 INA-, 3 INA+, 4 V-, 5 INB+, 6 INB-, 7 OUTB, 8 V+
 
 
 # ----------------------------------------------------------------------------- module-specific symbols

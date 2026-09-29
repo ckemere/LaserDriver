@@ -21,7 +21,8 @@ the older M3 set. Contract with the HAT: `estim_interface/ESTIM_MODULE_SPEC.md` 
    connector, reverse-polarity Schottkys, a power switch.
 5. Noise (µV recording) is the concern, not safety: no bleed resistor across the barrier; bond the Pi's ground to the
    recording ground; keep the ISO77xx (1 pF) rather than optos (3–5 pF).
-6. **Rev M4: dedicated SHORT-release line.** I²C DAC60501Z (internal 2.5 V ref ÷ 2, 0–1.25 V, addr 0x48) through an
+6. **Rev M4b (2026-09-29): fault detector = TLV1702 on ±V** (E1 direct, one 10k/215k/10k string, R26 + BAT54WS level shift): 5 resistors instead of 9, faster, no load on E1; unequal packs give the average margin, a missing pack holds the fault on. The layout session (user) had meanwhile re-wired U1/U9 channels and swapped J9.4/J9.5 = SDA/SCL (firmware only) and made the barrier an L; the board was synced with `pcb_sync.py --keep-tracks`.
+7. **Rev M4: dedicated SHORT-release line.** I²C DAC60501Z (internal 2.5 V ref ÷ 2, 0–1.25 V, addr 0x48) through an
    ISO1640, ISO7741F for EN/CATH/RELEASE + FAULT_n; J9.3/4/5 = RELEASE/SCL/SDA (no HAT copper change); hold timer and
    TL431 chain removed; R14 2.49 k (502 µA FS). Firmware: GAIN 0x04 = 0x0100 once, DAC 0x08 = code << 4.
 

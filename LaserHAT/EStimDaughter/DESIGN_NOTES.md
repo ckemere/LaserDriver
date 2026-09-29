@@ -117,6 +117,14 @@ Result: seed 0 of `tools/route_pcb.py` plus small fix-ups (two dangling stubs fr
 
 Board: rebuilt on the M3 outline with U9 straddling the barrier below U1 — **placed only, not routed**; the user routes it by hand. On 2026-09-29 the barrier became a plain L (y 83.58 from the west edge to x 120, then x 120 south to y 95.5, then east to the edge), so the HAT domain is the north strip y < 82.58 plus the east column x > 121, y < 94.5.
 
+## M4b (2026-09-29): fault detector simplified — TLV1702 on ±V
+
+| Change | Why |
+|---|---|
+| U8 LM393DGKR (0/5 V) → **TLV1702AIDGKR** (same VSSOP-8 footprint) powered from +V_STIM / −V_STIM; E1 into the comparators directly; thresholds from **one string R23 10 k – R24 215 k – R25 10 k between the rails**; outputs (FAULT_OC, sinking to −V) through **R26 10 k** with **D2 BAT54WS** clamping FAULT_n to GND_ISO; C19 becomes a 100 n 50 V across ±V | The LM393's 0–3.5 V input range forced E1 to be divided and offset and both thresholds to be built with the same offset: nine resistors. A 36 V rail-to-rail-input comparator needs five (incl. the pull-up), none of them on E1, and is faster (0.5 µs vs 1.3 µs). Removed: R20, R21, R22, C18, R27, R28. |
+
+Behaviour: each tap sits R23/(R23+R24+R25) = 4.26 % of the total span inside its rail → ±0.915·V for equal packs; for unequal packs both margins equal 0.0426 × (V+ + |V−|) (slightly more conservative on the weak side, e.g. 1.10 V each at +16.8/−9 V); with one pack missing the near tap crosses 0 V and FAULT_n stays low — the HAT refuses to arm. Supply limit 36 V between the rails (±18 V is the datasheet maximum, ±20 V absolute). `sim/fault.py` (full run): FAULT_n leads the current collapse by 8–13 µs (±15 V worst electrode 61.1 vs 69.3 µs; ±12 V 70.2 vs 79.1; ±16.8 V 109.7 vs 122.3; ±18 V 79.1 vs 89.0); open electrode 0.9–1.2 µs after EN; no false trips, ≥ 3.9 V margin on in-compliance trains. The comparator is modelled behaviourally (`COMPOC` in `spice.py`).
+
 ### DG419 SHORT: simulation (`../biphasic_stim/sim/p1_dg419.py`, log `p1_dg419.log`)
 Model:
 - ideal switch with 20 Ω on-resistance;

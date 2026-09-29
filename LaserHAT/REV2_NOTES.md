@@ -188,7 +188,7 @@ This is the isolated biphasic constant-current stimulator (rev M4). It was desig
 
 ### Firmware requirements agreed with the e-stim module (authoritative copy: `estim_interface/ESTIM_MODULE_SPEC.md` §7)
 
-- **Pins (rev M4):** PA17 (SCL) and PA22 (SDA) become open-drain GPIO for bit-banged I²C to the module's isolated DAC60501Z (address 0x48; GAIN 0x04 = 0x0100 once, then DAC 0x08 = code << 4); PA15 becomes the push-pull **RELEASE** output that opens the electrode SHORT switch (high) — raise it ≥ 1 µs before a pair, drop it ~200 µs after for ≥ 200 µs, and drop it in the fault handler. Transfers happen only between trains. (M1–M3: SPI CS_n / SCK / MOSI on the same pins.)
+- **Pins (rev M4):** PA17 (SDA) and PA22 (SCL) become open-drain GPIO for bit-banged I²C to the module's isolated DAC60501Z (address 0x48; GAIN 0x04 = 0x0100 once, then DAC 0x08 = code << 4); PA15 becomes the push-pull **RELEASE** output that opens the electrode SHORT switch (high) — raise it ≥ 1 µs before a pair, drop it ~200 µs after for ≥ 200 µs, and drop it in the fault handler. Transfers happen only between trains. (M1–M3: SPI CS_n / SCK / MOSI on the same pins.)
 - **Pulse outputs:** PA7 = TIMA0_CCP1 (EN) and PA12 = TIMA0_CCP3 (CATH, *not* CCP0_CMPL). They are independent edges: CATH leads EN (≥ 1 µs since M4) and changes only while EN is low. EN edge precision is ~0.1 µs.
 - **Fault:** PA6 = TIMA0_FAULT0 (was PA26, also FAULT0), active-low, latched, forcing both CCP1 (EN) and CCP3 (CATH) low. It is armed only after FAULT_n reads high at start-up (module isolated supply up; ~100 ms timeout means "module not ready"), and cleared only between trains. Faults are reported to the Pi.
 

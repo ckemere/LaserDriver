@@ -1,8 +1,9 @@
 """
-Fault detector: U8 LM393 window on E1 -> FAULT_n (J8.5 -> HAT TIMA0_FAULT0, which kills EN/CATH in hardware).
-E1_LS = 0.0767*E1 + 1.42 V is compared with TH_P (from +V) and TH_N (from -V), so the trip points track the rails:
-|E1| > ~0.915*V.  Checks, with the full module deck (U5A/U5B and U8 TI models, 4053, DG419, hold timer):
-  1. analytic trip points vs rail (12 / 15 / 16.8 / 18 V) and the LM393 input common-mode margin;
+Fault detector: U8 TLV1702 window on E1 -> FAULT_n (J8.5 -> HAT TIMA0_FAULT0, which kills EN/CATH in hardware).
+E1 is compared directly with the taps of a 10k / 215k / 10k string between +V and -V, so the trip points track the
+rails: |E1| > 0.915*V for equal packs.  Checks, with the full module deck (U5A/U5B TI model, 4053, DG419, hold timer
+standing in for the RELEASE line, behavioural comparators with the R26 / D2 level shift):
+  1. analytic trip points vs rail (12 / 15 / 16.8 / 18 V) and for unequal packs;
   2. 250 uA cathodic-first pair, phase width swept across the compliance limit: when FAULT_n fires relative to the
      moment the electrode current starts to fall (U5A running out of headroom), and the resulting charge mismatch;
   3. open electrode: time from EN rising to FAULT_n low;
@@ -24,10 +25,9 @@ from spice import VALUES, RAIL, ROBUST_OPTS, code_for, module_deck, run_robust, 
 
 OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 T0, GAP, PERIOD = 10e-6, 50e-6, 1e-3
-# gear with a 50 ns step integrates the LM2903B macro-model in ~2 s per pair; a 20 ns step or the trap solver can crawl for
-# minutes once U5A saturates
+# gear with a 50 ns step; a 20 ns step or the trap solver can crawl for minutes once U5A saturates
 FAULT_OPTS = [ROBUST_OPTS[0], ROBUST_OPTS[1], ROBUST_OPTS[2], ""]
-VEC = ["v(e1_out)", "v(xel.n1)", "v(e1)", "v(oa_out)", "v(fault_n)", "v(e1_ls)", "v(th_p)", "v(th_n)", "v(hold)"]
+VEC = ["v(e1_out)", "v(xel.n1)", "v(e1)", "v(oa_out)", "v(fault_n)", "v(th_p)", "v(th_n)", "v(hold)"]
 
 
 def _run(I, pairs, pw, gap, period, V, Rs, Cdl, Rct, tstop, step):
@@ -35,8 +35,8 @@ def _run(I, pairs, pw, gap, period, V, Rs, Cdl, Rct, tstop, step):
         "\n{OPTS}\n" + f".tran {step} {tstop} 0 {step}\n"
     r = run_robust(deck, VEC, tstop, opts=FAULT_OPTS, attempt_timeout=300)
     r["i_el"] = (r["v(e1_out)"] - r["v(xel.n1)"]) / Rs        # + = anodic (into E1)
-    r["margin_p"] = r["v(th_p)"] - r["v(e1_ls)"]              # > 0 while U8A is quiet
-    r["margin_n"] = r["v(e1_ls)"] - r["v(th_n)"]              # > 0 while U8B is quiet
+    r["margin_p"] = r["v(th_p)"] - r["v(e1)"]                 # > 0 while U8A is quiet
+    r["margin_n"] = r["v(e1)"] - r["v(th_n)"]                 # > 0 while U8B is quiet
     return r
 
 
@@ -95,8 +95,11 @@ if __name__ == "__main__":
     for V in (12.0, 15.0, 16.8, 18.0):
         p, n, a, b, thp, thn = window_thresholds(V)
         res["thresholds"].append(dict(V=V, e1_high=p, e1_low=n, th_p=thp, th_n=thn, a=a, b=b))
-        print(f"rails +/-{V:4.1f} V: FAULT_n while E1 > {p:+6.2f} or E1 < {n:+6.2f} V  (TH_P {thp:.3f}, TH_N {thn:.3f}; "
-              f"E1_LS at E1 = +V: {a * V + b:.2f} V, LM393 Vicr max = Vcc - 1.5 = 3.5 V)", flush=True)
+        print(f"rails +/-{V:4.1f} V: FAULT_n while E1 > {p:+6.2f} or E1 < {n:+6.2f} V  (margin {V - p:.2f} V to each rail)", flush=True)
+    for Vp, Vn in ((16.8, -13.0), (16.8, -9.0)):
+        p, n, *_ = window_thresholds(Vp, Vneg=Vn)
+        print(f"rails +{Vp:4.1f} / {Vn:5.1f} V (unequal packs): FAULT_n while E1 > {p:+6.2f} or E1 < {n:+6.2f} V "
+              f"(margins {Vp - p:.2f} / {n - Vn:.2f} V)", flush=True)
     # 2. phase-width sweep across the compliance limit, 250 uA cathodic-first
     I = 250e-6
     cases = [("15 V, Rs 15k / Cdl 1.6n (worst electrode)", RAIL, 15e3, 1.6e-9, np.arange(50, 90.1, 5)),
