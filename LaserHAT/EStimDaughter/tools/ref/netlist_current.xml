@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <export version="E">
   <design>
-    <source>/home/claude-agent/Code/LaserDriver/LaserHAT/EStimDaughter/EStimDaughter.kicad_sch</source>
-    <date>2026-09-29T10:04:17-0500</date>
-    <tool>Eeschema 9.0.8+dfsg-1</tool>
+    <source>/Users/ckemere/Code/LabTools/SmallProjects/LaserDriver/LaserHAT/EStimDaughter/EStimDaughter.kicad_sch</source>
+    <date>2026-09-29T11:06:45-0500</date>
+    <tool>Eeschema 9.0.8</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
         <title>kbest e-stim module for LaserHAT Rev 2</title>
@@ -38,7 +38,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>284e1538-724c-4aa1-9833-c5b0d50bc7ab</tstamps>
+      <tstamps>c4cafabe-4de8-4b09-a3a4-4f3fd87724b6</tstamps>
     </comp>
     <comp ref="C2">
       <value>100n</value>
@@ -54,7 +54,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>ecda29ff-597c-428b-af65-7f6b94c86c7d</tstamps>
+      <tstamps>9631430b-d4f8-4e54-85df-bd110e3103ea</tstamps>
     </comp>
     <comp ref="C3">
       <value>4.7u</value>
@@ -70,7 +70,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>6c66b5bb-8ad4-4fc2-a0db-fa283ad4c0be</tstamps>
+      <tstamps>ea3d32bf-849c-4953-99bc-849622864d2f</tstamps>
     </comp>
     <comp ref="C4">
       <value>1u 50V</value>
@@ -86,7 +86,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7136acad-18ef-48b6-9d62-0a047383d3ec</tstamps>
+      <tstamps>9b6d7c7b-29be-49cd-9543-cdb33139f40b</tstamps>
     </comp>
     <comp ref="C5">
       <value>1u 50V</value>
@@ -102,7 +102,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>26536c5e-691b-49da-9838-996bb0dc4115</tstamps>
+      <tstamps>863bfc65-a924-404b-9486-030c51b5320e</tstamps>
     </comp>
     <comp ref="C6">
       <value>1u 50V</value>
@@ -118,7 +118,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a15dbe60-350c-42c5-ab16-ae83ab6cca4e</tstamps>
+      <tstamps>b1af3932-a1a1-4834-b68b-04a81a74e1e5</tstamps>
     </comp>
     <comp ref="C7">
       <value>1u 50V</value>
@@ -134,7 +134,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>1b9c15cc-c659-4f8d-80d9-ad6b7781389f</tstamps>
+      <tstamps>5b96587f-7f72-45d2-987d-51fb5042cdcb</tstamps>
     </comp>
     <comp ref="C8">
       <value>1u 50V</value>
@@ -150,7 +150,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>fb8293f6-4c10-4dc4-91bb-5bacada0720d</tstamps>
+      <tstamps>d44f410f-4b8f-4602-94cb-f7af59ac6721</tstamps>
     </comp>
     <comp ref="C9">
       <value>100n</value>
@@ -166,7 +166,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>12ad738b-eecf-4df7-977c-335e58ded068</tstamps>
+      <tstamps>c99beca8-9d42-4811-851c-340ffd75bd8c</tstamps>
     </comp>
     <comp ref="C10">
       <value>100n</value>
@@ -182,7 +182,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>447f83ff-b9c2-4301-a284-e136ec8519a4</tstamps>
+      <tstamps>06505ae7-6d57-4afa-a154-fb5f1ccb9297</tstamps>
     </comp>
     <comp ref="C11">
       <value>100n</value>
@@ -198,7 +198,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>4b73dc17-d839-45ec-9482-7cae307d7a2d</tstamps>
+      <tstamps>4e6f1e15-1881-47bc-a724-1a9814d6cbc6</tstamps>
     </comp>
     <comp ref="C12">
       <value>100n</value>
@@ -214,7 +214,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>df0231ff-a777-44b7-8243-4d634b5c9aad</tstamps>
+      <tstamps>120461e4-3a57-493f-80d4-6bbb2956bb76</tstamps>
     </comp>
     <comp ref="C13">
       <value>100n</value>
@@ -230,7 +230,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>9984eeda-3889-444b-812a-4edfb476e020</tstamps>
+      <tstamps>d75ec5bf-7d57-4a3a-aaa4-7913aee38270</tstamps>
     </comp>
     <comp ref="C14">
       <value>100n</value>
@@ -246,7 +246,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>5399d537-2412-4071-bf60-8ea8fc4131f4</tstamps>
+      <tstamps>aa0583f8-4270-4f78-ba96-b1778a05eccb</tstamps>
     </comp>
     <comp ref="C15">
       <value>100p</value>
@@ -262,7 +262,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>c616afd1-72ab-4da7-afde-dca2481535c8</tstamps>
+      <tstamps>3aca573c-54a1-4ed7-89fc-9cdda14c1f13</tstamps>
     </comp>
     <comp ref="C16">
       <value>1u 50V</value>
@@ -278,7 +278,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>1f971c4d-056f-43ed-aeb3-5d77169db9c6</tstamps>
+      <tstamps>f9ae12a4-4ea9-4732-93c1-6fa6be94b817</tstamps>
     </comp>
     <comp ref="C17">
       <value>100n</value>
@@ -294,7 +294,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>8a07fbe8-0002-4cba-aa83-e4139c9895ec</tstamps>
+      <tstamps>9844c527-6fbc-4c69-a815-08a157d3aaa7</tstamps>
     </comp>
     <comp ref="C18">
       <value>100p</value>
@@ -310,7 +310,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>5a0cf26a-c4e3-41f1-9285-93d5188411f2</tstamps>
+      <tstamps>a89c3933-1c11-4091-a18d-16c04207081a</tstamps>
     </comp>
     <comp ref="C19">
       <value>100n</value>
@@ -326,7 +326,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>878005da-23ec-4fd2-b676-1019060036e9</tstamps>
+      <tstamps>2899ae60-af0b-4354-953d-3532a0171d7a</tstamps>
     </comp>
     <comp ref="C20">
       <value>100n</value>
@@ -342,7 +342,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>4b4bfbbf-86bf-4526-b494-bc3e3a2f32f0</tstamps>
+      <tstamps>2a5a7b29-a5ac-43d2-a488-556dc9600eaf</tstamps>
     </comp>
     <comp ref="D1">
       <value>BZT52C4V7S</value>
@@ -358,7 +358,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>21b84cc7-0138-4b8b-b5ad-22470e4d8ad5</tstamps>
+      <tstamps>62108a05-77da-4291-977e-28a6866ade81</tstamps>
     </comp>
     <comp ref="J1">
       <value>ELECTRODE E1/E2</value>
@@ -372,7 +372,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>add9c755-11e7-4c44-8665-dc68d828c08a</tstamps>
+      <tstamps>8e5f2cda-47c7-4d5f-90ab-a1759b958275</tstamps>
     </comp>
     <comp ref="J8">
       <value>J8 power/timing (underside)</value>
@@ -386,7 +386,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>15e935d6-7ee6-435d-bd91-52038561291e</tstamps>
+      <tstamps>b5d0c9d0-b903-4083-be6e-562d003ae844</tstamps>
     </comp>
     <comp ref="J9">
       <value>J9 I2C/release (underside)</value>
@@ -400,7 +400,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>3c2634b1-3a8e-4cde-a9dd-dce93767a8e4</tstamps>
+      <tstamps>d4a188bf-251b-4bd0-aabc-b9bc0c937db2</tstamps>
     </comp>
     <comp ref="PS1">
       <value>A0515S-1WR3</value>
@@ -415,7 +415,7 @@
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <property name="dnp"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7af8bbee-2719-4600-bf95-cee5c1b5cbf2</tstamps>
+      <tstamps>14a1aae9-4778-4b21-bf63-c106dd7ead56</tstamps>
     </comp>
     <comp ref="R1">
       <value>100k</value>
@@ -431,7 +431,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>89da014e-a59a-4390-8362-25d1fd915c02</tstamps>
+      <tstamps>a94c7b0d-9fad-44b9-a2e4-ffdce14442fa</tstamps>
     </comp>
     <comp ref="R2">
       <value>100k</value>
@@ -447,7 +447,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>45435fe5-7913-49ff-a394-f5bd4897d9ad</tstamps>
+      <tstamps>d783495c-659b-480e-8ef5-bb16e38d2abb</tstamps>
     </comp>
     <comp ref="R3">
       <value>100k</value>
@@ -463,7 +463,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>dc328710-4ae0-4b60-ae21-8009352e4ced</tstamps>
+      <tstamps>5635594f-2330-4908-b7d5-3d29a2e41bba</tstamps>
     </comp>
     <comp ref="R6">
       <value>1.5k</value>
@@ -479,7 +479,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>c517dccc-ec91-484f-a042-7bdc2a88b404</tstamps>
+      <tstamps>9fcf52f5-0167-4f93-ba81-c1a6e3b99036</tstamps>
     </comp>
     <comp ref="R7">
       <value>4.7k</value>
@@ -495,7 +495,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>e6e93a84-0565-41ce-b1c1-f0e8b0a4c8d0</tstamps>
+      <tstamps>09994c0d-1f2d-460d-8500-dfc4a5eea55b</tstamps>
     </comp>
     <comp ref="R8">
       <value>4.7k</value>
@@ -511,7 +511,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>d0ffdb07-d0e2-49ca-a7b4-08fbbc8dcda6</tstamps>
+      <tstamps>6f4d3eec-6b95-4eff-b994-852384d4d87a</tstamps>
     </comp>
     <comp ref="R9">
       <value>4.7k</value>
@@ -527,7 +527,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7d75d371-cabf-48bd-840f-f6f378be14b8</tstamps>
+      <tstamps>8b9d823f-d23a-4ad4-a218-5c2c56235d27</tstamps>
     </comp>
     <comp ref="R10">
       <value>10.0k 0.1%</value>
@@ -543,7 +543,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>5d2f375c-ee5d-4f0b-9dbf-01918ff41e12</tstamps>
+      <tstamps>314a3ccc-2979-464f-aa7d-06ff395d1522</tstamps>
     </comp>
     <comp ref="R11">
       <value>10.0k 0.1%</value>
@@ -559,7 +559,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>0e6a4387-a8ed-4a2f-a8c6-f31dc46b1ae2</tstamps>
+      <tstamps>9cfb676a-3f4a-415b-9701-1a3b8ef27517</tstamps>
     </comp>
     <comp ref="R12">
       <value>1k</value>
@@ -575,7 +575,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>6fd58d5a-4881-4412-afb7-bdc3fdfd1c27</tstamps>
+      <tstamps>88edd7fd-6928-4d1f-b30b-33e273757c4c</tstamps>
     </comp>
     <comp ref="R13">
       <value>47</value>
@@ -591,7 +591,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>626fca65-0986-4abe-bbf0-7086d603823f</tstamps>
+      <tstamps>474f0657-8cef-4857-9bce-6dc371ad8350</tstamps>
     </comp>
     <comp ref="R14">
       <value>2.49k 0.1%</value>
@@ -607,7 +607,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>c8bae724-fb6a-4cb2-9f9e-4f2636a90e6e</tstamps>
+      <tstamps>c17363db-d06d-43d2-b554-b60c1760cc4c</tstamps>
     </comp>
     <comp ref="R15">
       <value>4.7k</value>
@@ -623,7 +623,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>cba56cd4-3052-49d3-a607-f085f90e8f2f</tstamps>
+      <tstamps>7cfdd774-5661-4dca-9749-f1da9751cdec</tstamps>
     </comp>
     <comp ref="R19">
       <value>4.7k</value>
@@ -639,7 +639,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>333ea589-3992-4266-8316-9194a77c2dfe</tstamps>
+      <tstamps>0695000a-096c-4bb8-9931-b0d5b49b3468</tstamps>
     </comp>
     <comp ref="R20">
       <value>100k</value>
@@ -655,7 +655,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>ee33859b-dd6f-4e32-a3ee-a7b6097fdc7e</tstamps>
+      <tstamps>97aa3f4f-7aaa-4762-ad6e-12c3eea9eaf6</tstamps>
     </comp>
     <comp ref="R21">
       <value>12k</value>
@@ -671,7 +671,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>3a26b773-6788-48ac-bef3-28aa357c411c</tstamps>
+      <tstamps>5dfc8ac0-d389-4638-88b0-4cb009e4b2c1</tstamps>
     </comp>
     <comp ref="R22">
       <value>27k</value>
@@ -687,7 +687,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a84113b2-d502-4912-aea2-8a28cd99c36c</tstamps>
+      <tstamps>2e2cf517-1198-439a-9914-187cade51789</tstamps>
     </comp>
     <comp ref="R23">
       <value>110k</value>
@@ -703,7 +703,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>dde67439-04dc-4417-a407-29d28efc8c8b</tstamps>
+      <tstamps>17e25ebe-f9c5-43a7-af16-f05bdd48f68b</tstamps>
     </comp>
     <comp ref="R24">
       <value>12k</value>
@@ -719,7 +719,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>7ce04a2e-f3f0-4e7f-bf39-823765407852</tstamps>
+      <tstamps>8f26a93d-e532-431f-b43e-88cdad8300cc</tstamps>
     </comp>
     <comp ref="R25">
       <value>27k</value>
@@ -735,7 +735,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>aff6a2fd-8b27-43f6-b9e4-8affafbed6d5</tstamps>
+      <tstamps>a9e626de-1c66-4575-a4bf-c9912babdea8</tstamps>
     </comp>
     <comp ref="R26">
       <value>110k</value>
@@ -751,7 +751,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a73e70e6-e5c3-475b-825c-a9d351f59287</tstamps>
+      <tstamps>51a59c0f-155b-4ddb-86bc-1b161fd23a63</tstamps>
     </comp>
     <comp ref="R27">
       <value>12k</value>
@@ -767,7 +767,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>f594a1f5-c230-45bf-9f2c-1fb58c633d2c</tstamps>
+      <tstamps>f3cb4740-d0fa-411d-8720-b7082d6f737b</tstamps>
     </comp>
     <comp ref="R28">
       <value>27k</value>
@@ -783,7 +783,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>d54c6769-2b4c-41df-822f-59286445f9f2</tstamps>
+      <tstamps>71c77218-b2f4-4795-a1a6-8882bd004a5d</tstamps>
     </comp>
     <comp ref="TP1">
       <value>ISENSE</value>
@@ -798,7 +798,7 @@
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>e3471797-0a32-41b0-af35-33a4e64b53e9</tstamps>
+      <tstamps>eddc3f40-f1b1-4ca5-ba98-dc23853ae6b6</tstamps>
     </comp>
     <comp ref="TP2">
       <value>GND_ISO</value>
@@ -813,7 +813,7 @@
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>29a09f56-0e67-4617-968e-414401701921</tstamps>
+      <tstamps>ec96e24a-8e38-405a-aa80-7c38516e20d5</tstamps>
     </comp>
     <comp ref="U1">
       <value>ISO7741FDBQR</value>
@@ -829,7 +829,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>b9975d65-6f1d-4f70-bd9a-c38832a51afb</tstamps>
+      <tstamps>3750f8de-1bd2-456e-97bb-0320eea1ad5e</tstamps>
     </comp>
     <comp ref="U2">
       <value>TLV76050DBZR</value>
@@ -845,7 +845,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>dafe29fc-30d8-4642-9a18-74dc8c329969</tstamps>
+      <tstamps>a48293cd-8f3e-474e-bdba-b115ab226004</tstamps>
     </comp>
     <comp ref="U4">
       <value>DAC60501ZDGSR</value>
@@ -861,7 +861,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>aba37eb2-25aa-4fef-995e-caea8682cfdf</tstamps>
+      <tstamps>8615ebb3-e52d-4998-8582-f8059243393c</tstamps>
     </comp>
     <comp ref="U5">
       <value>OPA2192IDGKR</value>
@@ -877,7 +877,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>c4b17907-3705-4152-acda-2d3d66a81b7b b1379c95-cf13-48c9-bdab-217a2efef7bf 1d955d04-f6d1-42e7-9d3e-eb7b2c6c4ee2</tstamps>
+      <tstamps>f56f1757-31db-44e2-8cbe-87d37172bd2d 9dde2de7-60a6-401e-823f-5de2d9fbf6c5 5bbedd5f-1e32-4bc5-9962-238647ea7869</tstamps>
     </comp>
     <comp ref="U6">
       <value>74HC4053BQ</value>
@@ -893,7 +893,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>61082095-efe7-460f-9271-4dd39996bd73</tstamps>
+      <tstamps>90a185d8-b44c-438f-b93a-ea3167d4fe7b</tstamps>
     </comp>
     <comp ref="U7">
       <value>DG419BDQ</value>
@@ -909,7 +909,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>5be0105d-f13a-483f-8457-b6d0fcf3cd82</tstamps>
+      <tstamps>fede76f8-5a76-4c07-83e4-e7c4e533c267</tstamps>
     </comp>
     <comp ref="U8">
       <value>LM393DGKR</value>
@@ -925,7 +925,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>281e441b-365b-4378-a097-d32ca1d662b7 21498337-79ea-435f-a979-f1ecfa21081a 1ac25497-abe4-4023-ab59-9a08033380db</tstamps>
+      <tstamps>5b262d8e-cc86-4ba3-bee4-3605eb52ddd5 72a0d9d3-0bab-4925-a62d-3156ee75a99b 11bff435-3783-4377-b40e-63955507b4a7</tstamps>
     </comp>
     <comp ref="U9">
       <value>ISO1640BDR</value>
@@ -941,7 +941,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="EStimDaughter.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>641e5e9a-956f-4f9a-a4c6-bcbccd26e5e8</tstamps>
+      <tstamps>2aacf28d-3be1-415f-9d6d-fb0c9c4aa480</tstamps>
     </comp>
   </components>
   <libparts>
@@ -1209,7 +1209,7 @@
   </libparts>
   <libraries>
     <library logical="estim">
-      <uri>/home/claude-agent/Code/LaserDriver/LaserHAT/EStimDaughter/estim.kicad_sym</uri>
+      <uri>/Users/ckemere/Code/LabTools/SmallProjects/LaserDriver/LaserHAT/EStimDaughter/estim.kicad_sym</uri>
     </library>
   </libraries>
   <nets>
@@ -1285,7 +1285,7 @@
     <net code="8" name="/EN_H" class="Default">
       <node ref="J8" pin="3" pinfunction="Pin_3" pintype="passive"/>
       <node ref="R1" pin="1" pintype="passive"/>
-      <node ref="U1" pin="3" pinfunction="INA" pintype="input"/>
+      <node ref="U1" pin="5" pinfunction="INC" pintype="input"/>
     </net>
     <net code="9" name="/FAULT_H" class="Default">
       <node ref="J8" pin="5" pinfunction="Pin_5" pintype="passive"/>
@@ -1294,17 +1294,17 @@
     <net code="10" name="/RELEASE_H" class="Default">
       <node ref="J9" pin="3" pinfunction="Pin_3" pintype="passive"/>
       <node ref="R3" pin="1" pintype="passive"/>
-      <node ref="U1" pin="5" pinfunction="INC" pintype="input"/>
+      <node ref="U1" pin="3" pinfunction="INA" pintype="input"/>
     </net>
     <net code="11" name="/SCL_H" class="Default">
-      <node ref="J9" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="J9" pin="5" pinfunction="Pin_5" pintype="passive"/>
       <node ref="R8" pin="2" pintype="passive"/>
-      <node ref="U9" pin="3" pinfunction="SCL1" pintype="bidirectional"/>
+      <node ref="U9" pin="2" pinfunction="SDA1" pintype="bidirectional"/>
     </net>
     <net code="12" name="/SDA_H" class="Default">
-      <node ref="J9" pin="5" pinfunction="Pin_5" pintype="passive"/>
+      <node ref="J9" pin="4" pinfunction="Pin_4" pintype="passive"/>
       <node ref="R7" pin="2" pintype="passive"/>
-      <node ref="U9" pin="2" pinfunction="SDA1" pintype="bidirectional"/>
+      <node ref="U9" pin="3" pinfunction="SCL1" pintype="bidirectional"/>
     </net>
     <net code="13" name="/SW_P" class="Default">
       <node ref="U6" pin="1" pinfunction="2Y1" pintype="passive"/>
@@ -1321,7 +1321,7 @@
       <node ref="U7" pin="1" pinfunction="D" pintype="passive"/>
     </net>
     <net code="16" name="EN" class="Default">
-      <node ref="U1" pin="14" pinfunction="OUTA" pintype="output"/>
+      <node ref="U1" pin="12" pinfunction="OUTC" pintype="output"/>
       <node ref="U6" pin="10" pinfunction="S2" pintype="input"/>
     </net>
     <net code="17" name="FAULT_n" class="Default">
@@ -1445,18 +1445,18 @@
       <node ref="U8" pin="6" pinfunction="-" pintype="input"/>
     </net>
     <net code="31" name="RELEASE" class="Default">
-      <node ref="U1" pin="12" pinfunction="OUTC" pintype="output"/>
+      <node ref="U1" pin="14" pinfunction="OUTA" pintype="output"/>
       <node ref="U7" pin="6" pinfunction="IN" pintype="input"/>
     </net>
     <net code="32" name="SCL" class="Default">
       <node ref="R15" pin="2" pintype="passive"/>
       <node ref="U4" pin="6" pinfunction="SCL" pintype="input"/>
-      <node ref="U9" pin="6" pinfunction="SCL2" pintype="bidirectional"/>
+      <node ref="U9" pin="7" pinfunction="SDA2" pintype="bidirectional"/>
     </net>
     <net code="33" name="SDA" class="Default">
       <node ref="R9" pin="2" pintype="passive"/>
       <node ref="U4" pin="8" pinfunction="SDA" pintype="bidirectional"/>
-      <node ref="U9" pin="7" pinfunction="SDA2" pintype="bidirectional"/>
+      <node ref="U9" pin="6" pinfunction="SCL2" pintype="bidirectional"/>
     </net>
     <net code="34" name="V_IN" class="Default">
       <node ref="R12" pin="1" pintype="passive"/>

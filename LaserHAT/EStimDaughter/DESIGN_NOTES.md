@@ -15,8 +15,8 @@ The circuit is kbest rev E (`../biphasic_stim/DESIGN_NOTES.md`) with the changes
 | J8.4 PWM_B | PA12 TIMA0_CCP3 | **CATH**: 1 = cathodic, 0 = anodic |
 | J8.5 GPIO | PA6 TIMA0_FAULT0 | **FAULT_n**: low = compliance / open-electrode fault, or isolated side not up |
 | J9.3 "DAC" | PA15 GPIO | **RELEASE**: high = SHORT switch open (M4; was CS_n) |
-| J9.4 "ADC_A" | PA17 GPIO, open-drain | **SCL** (M4; was SCK) |
-| J9.5 "ADC_B" | PA22 GPIO, open-drain | **SDA** (M4; was MOSI) |
+| J9.4 "ADC_A" | PA17 GPIO, open-drain | **SDA** (M4; was SCK; SDA/SCL swapped 2026-09-29 for the layout) |
+| J9.5 "ADC_B" | PA22 GPIO, open-drain | **SCL** (M4; was MOSI) |
 
 (MCU pins as of the HAT's 2026-09-28 routing: PA21/PA22/PA26/PA16 were the pre-remap pins. J9.3–5 meanings per spec §7.)
 
@@ -112,9 +112,10 @@ Result: seed 0 of `tools/route_pcb.py` plus small fix-ups (two dangling stubs fr
 | ISO7761F → **ISO7741F** (3 forward + 1 reverse) + **ISO1640** bidirectional I²C isolator (SOIC-8) | Seven signals across the barrier: EN, CATH, RELEASE, SDA, SCL forward, FAULT_n back. |
 | MCP4921 (SPI) + TL431 / R7 / R8 / R9 / C9 reference → **DAC60501Z** (I²C, internal 2.5 V reference ÷ 2 = 0–1.25 V, ±0.1 %), R14 2.00 k → **2.49 k 0.1 %** | I²C needs two lines, SPI three: the third J9 line becomes RELEASE with no connector change. The internal reference is at least as accurate as the TL431 divider and saves 5 parts. Full scale stays ~500 µA. |
 | Hold timer (D2 BAT54C, R15, C17) removed; DG419B IN driven by RELEASE | The HAT decides when the electrode is shorted: precise release before the pulse, reset after the pair, and the option to leave the electrode open while recording (no 15 Ω loop in the tissue). Fail-safe unchanged: RELEASE pulled low + isolator default low = shorted. |
-| J9.3/4/5 = RELEASE / SCL / SDA (were CS_n / SCK / MOSI); R3 becomes the RELEASE pull-down, R4/R5 removed; R7/R8 and R9/R15 are the I²C pull-ups (4.7 k) | Spec §7. |
+| J9.3/4/5 = RELEASE / SDA / SCL (were CS_n / SCK / MOSI; SDA/SCL swapped on 2026-09-29 so the ISO1640 and the DAC connect without crossings); R3 becomes the RELEASE pull-down, R4/R5 removed; R7/R8 and R9/R15 are the I²C pull-ups (4.7 k) | Spec §7. |
+| Isolator channel order follows the layout (2026-09-29): U1 A = RELEASE, B = CATH, C = EN (FAULT_n stays on the reverse channel D); U9's "SDA" channel (pins 2/7) carries SCL and its "SCL" channel (3/6) carries SDA — both ISO1640 channels are identical and bidirectional | Straight connections from J8/J9 into U1/U9 and from U9 into the DAC. FAULT_H (J8.5, east) to U1 pin 6 (west) still needs one via: PA6 is the only TIMA0 fault pin on the MCU, so it cannot move to J8.3. |
 
-Board: rebuilt on the M3 outline with U9 straddling the barrier below U1 (the HAT column now ends at y 106, barrier at y 106–108) — **placed only, not routed**; the user routes it by hand.
+Board: rebuilt on the M3 outline with U9 straddling the barrier below U1 — **placed only, not routed**; the user routes it by hand. On 2026-09-29 the barrier became a plain L (y 83.58 from the west edge to x 120, then x 120 south to y 95.5, then east to the edge), so the HAT domain is the north strip y < 82.58 plus the east column x > 121, y < 94.5.
 
 ### DG419 SHORT: simulation (`../biphasic_stim/sim/p1_dg419.py`, log `p1_dg419.log`)
 Model:
@@ -139,10 +140,10 @@ Caveat: the DG419 input has no hysteresis. On HOLD's slow decay the switch may c
 - Outline x 101–127.5, y 76–112.5 (HAT coordinates; M1/M2 ended at y 99.5).
 - 4 layers:
   - F.Cu: signal.
-  - In1.Cu: split ground planes. GND_H covers the north strip over J8 and the east column over J9 down to y 100; GND_ISO covers the rest, including the SE corner below y 102.
+  - In1.Cu: split ground planes. GND_H covers the north strip over J8 (y < 82.58) and the east column over J9 (x > 121, y < 94.5); GND_ISO covers the rest. The F/In2/B pours use the same two outlines.
   - In2.Cu: signal.
   - B.Cu: signal.
-- 2 mm copper-free barrier on all layers. Only PS1 (A0515S, pins 1–2 on the HAT side) and U1 (ISO7761F) cross it.
+- 2 mm copper-free barrier on all layers (rule areas `ISOLATION_BARRIER_0/1/2`). Only PS1 (pins 1–2 on the HAT side), U1 (ISO7741F) and U9 (ISO1640) cross it.
 - Verified: no pad, track, via or pour of either domain lies on the other side.
 - Ground pours on F, In2 and B are confined to their own domain and stitched to the planes.
 

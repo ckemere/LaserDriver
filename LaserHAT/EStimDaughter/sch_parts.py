@@ -3,8 +3,9 @@ kbest e-stim module (LaserHAT Rev 2 plug-in), rev M1: single source of truth for
 pin -> net.  Circuit = kbest rev E output stage, powered from the HAT's +5 V through an isolated +/-15 V DC-DC,
 controlled over the J8/J9 headers (ESTIM_MODULE_SPEC.md, section 7 = the agreed contract):
   J8: 1 GND_H, 2 +5V_H, 3 PWM_A = EN, 4 PWM_B = CATH, 5 GPIO = FAULT_n (module -> HAT, TIMA0_FAULT0)
-  J9: 1 GND_H, 2 +3V3_H, 3 "DAC" = RELEASE (SHORT switch open while high), 4 "ADC_A" = SCL, 5 "ADC_B" = SDA
-      (bit-banged I2C to the DAC60501, rev M4; M1-M3 carried bit-banged SPI to an MCP4921 here)
+  J9: 1 GND_H, 2 +3V3_H, 3 "DAC" = RELEASE (SHORT switch open while high), 4 "ADC_A" = SDA, 5 "ADC_B" = SCL
+      (bit-banged I2C to the DAC60501, rev M4; M1-M3 carried bit-banged SPI to an MCP4921 here. SDA/SCL swapped on
+      2026-09-29 for the layout: J9.4 = SDA, J9.5 = SCL; spec section 7)
 """
 
 R0402, R0603, R0805 = "Resistor_SMD:R_0402_1005Metric", "Resistor_SMD:R_0603_1608Metric", "Resistor_SMD:R_0805_2012Metric"
@@ -35,7 +36,7 @@ PARTS = [
     dict(ref="J8", sym="Conn_01x05", value="J8 power/timing (underside)", fp=HDR5, lcsc="",
          nets={"1": "GND_H", "2": "+5V_H", "3": "EN_H", "4": "CATH_H", "5": "FAULT_H"}),
     dict(ref="J9", sym="Conn_01x05", value="J9 I2C/release (underside)", fp=HDR5, lcsc="",
-         nets={"1": "GND_H", "2": "+3V3_H", "3": "RELEASE_H", "4": "SCL_H", "5": "SDA_H"}),
+         nets={"1": "GND_H", "2": "+3V3_H", "3": "RELEASE_H", "4": "SDA_H", "5": "SCL_H"}),
     # safe defaults while the MCU pins are Hi-Z (Q1/Q3): EN/CATH/RELEASE pulled low (zero current, electrode shorted)
     R("R1", "100k", "EN_H", "GND_H", lcsc=L100k),
     R("R2", "100k", "CATH_H", "GND_H", lcsc=L100k),
@@ -43,15 +44,19 @@ PARTS = [
     # I2C pull-ups, HAT side (ISO1640 side 1 draws <= 3.5 mA: >= 1 k) and isolated side
     R("R7", "4.7k", "+3V3_H", "SDA_H", lcsc=L4k7),
     R("R8", "4.7k", "+3V3_H", "SCL_H", lcsc=L4k7),
-    # U1: 3 forward (EN, CATH, RELEASE) + 1 reverse (FAULT_n), fail-safe low; EN1/EN2 output enables tied high
+    # U1: 3 forward (EN, CATH, RELEASE) + 1 reverse (FAULT_n), fail-safe low; EN1/EN2 output enables tied high.
+    # Channel order follows the layout (U1 rotated -90, HAT pins run east -> west 1..8): A (3/14) = RELEASE, which
+    # arrives from J9 in the east; B (4/13) = CATH under J8.4; C (5/12) = EN. FAULT_n is fixed on the reverse channel D.
     dict(ref="U1", sym="ISO7741", value="ISO7741FDBQR", fp="Package_SO:SSOP-16_3.9x4.9mm_P0.635mm", lcsc="C2872241",
-         nets={"1": "+3V3_H", "2": "GND_H", "3": "EN_H", "4": "CATH_H", "5": "RELEASE_H", "6": "FAULT_H", "7": "+3V3_H", "8": "GND_H",
-               "9": "GND_ISO", "10": "+5V_ISO", "11": "FAULT_n", "12": "RELEASE", "13": "CATH", "14": "EN", "15": "GND_ISO", "16": "+5V_ISO"}),
+         nets={"1": "+3V3_H", "2": "GND_H", "3": "RELEASE_H", "4": "CATH_H", "5": "EN_H", "6": "FAULT_H", "7": "+3V3_H", "8": "GND_H",
+               "9": "GND_ISO", "10": "+5V_ISO", "11": "FAULT_n", "12": "EN", "13": "CATH", "14": "RELEASE", "15": "GND_ISO", "16": "+5V_ISO"}),
     C("C1", "100n", "+3V3_H", "GND_H", lcsc=L100n),
     C("C2", "100n", "+5V_ISO", "GND_ISO", lcsc=L100n),
-    # U9: bidirectional I2C isolator (SDA, SCL) to the DAC
+    # U9: bidirectional I2C isolator to the DAC. Both ISO1640 channels are identical and bidirectional, so the channel
+    # the datasheet calls SDA (pins 2/7) carries SCL and the SCL channel (3/6) carries SDA: with U9 rotated 180 this
+    # puts J9.4 SDA / J9.5 SCL straight onto pins 3 / 2 and SDA / SCL on pins 6 / 7 in the order the DAC wants them.
     dict(ref="U9", sym="ISO1640", value="ISO1640BDR", fp="Package_SO:SOIC-8_3.9x4.9mm_P1.27mm", lcsc="C5122339",
-         nets={"1": "GND_H", "2": "SDA_H", "3": "SCL_H", "4": "+3V3_H", "5": "+5V_ISO", "6": "SCL", "7": "SDA", "8": "GND_ISO"}),
+         nets={"1": "GND_H", "2": "SCL_H", "3": "SDA_H", "4": "+3V3_H", "5": "+5V_ISO", "6": "SDA", "7": "SCL", "8": "GND_ISO"}),
     C("C17", "100n", "+3V3_H", "GND_H", lcsc=L100n),
     C("C20", "100n", "+5V_ISO", "GND_ISO", lcsc=L100n),
     R("R9", "4.7k", "+5V_ISO", "SDA", lcsc=L4k7),

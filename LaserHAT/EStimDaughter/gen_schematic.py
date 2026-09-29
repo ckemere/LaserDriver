@@ -28,13 +28,15 @@ put("J8", 12, 20, mirror=True, val_at=(0, 8.89))
 put("J9", 12, 34, mirror=True, val_at=(0, 8.89))
 put("U1", 40, 27, ref_at=(0, -13.97), val_at=(0, 13.97))
 put("U9", 40, 50, ref_at=(0, -11.43), val_at=(0, 11.43))
-W("J8.3", ("x", 26 * u), "U1.3")          # EN_H      (PWM_A)   -> INA
+# channel order follows the board (2026-09-29): U1 A = RELEASE (from J9 in the east), B = CATH, C = EN; U9's "SCL"
+# channel (3/6) carries SDA and its "SDA" channel (2/7) carries SCL; J9.4 = SDA, J9.5 = SCL (spec section 7)
+W("J8.3", ("x", 26 * u), "U1.5")          # EN_H      (PWM_A)   -> INC
 W("J8.4", ("x", 27 * u), "U1.4")          # CATH_H    (PWM_B)   -> INB
 W("U1.6", ("x", 25 * u), "J8.5")          # FAULT_H   <- OUTD   -> GPIO (TIMA0_FAULT0)
-W("J9.3", ("x", 31 * u), "U1.5")          # RELEASE_H ("DAC")   -> INC
-W("J9.4", ("x", 29 * u), "U9.3")          # SCL_H     ("ADC_A") -> SCL1
-W("J9.5", ("x", 30 * u), "U9.2")          # SDA_H     ("ADC_B") -> SDA1
-for net, x, y in (("EN_H", 22, 20), ("CATH_H", 22, 21), ("FAULT_H", 22, 22), ("RELEASE_H", 22, 34), ("SCL_H", 22, 35), ("SDA_H", 22, 36)):
+W("J9.3", ("x", 31 * u), "U1.3")          # RELEASE_H ("DAC")   -> INA
+W("J9.4", ("x", 29 * u), "U9.3")          # SDA_H     ("ADC_A") -> pin 3 ("SCL1" channel)
+W("J9.5", ("x", 30 * u), "U9.2")          # SCL_H     ("ADC_B") -> pin 2 ("SDA1" channel)
+for net, x, y in (("EN_H", 22, 20), ("CATH_H", 22, 21), ("FAULT_H", 22, 22), ("RELEASE_H", 22, 34), ("SDA_H", 22, 35), ("SCL_H", 22, 36)):
     LAB(net, pt(x, y))
 e = PWR("J8.1", length=2.54); FLAG(e, up=(1, 0))
 e = PWR("J8.2", length=5.08); FLAG(e, up=(1, 0))
@@ -46,7 +48,7 @@ W("U1.10", pt(49, 29), pt(49, 31.5)); PWR(None, "+5V_ISO", at=pt(49, 31.5), up=(
 for pin in ("14", "13", "12", "11"):
     LBL(f"U1.{pin}", length=2.54)         # EN, CATH, RELEASE, FAULT_n
 PWR("U9.4"); PWR("U9.5"); PWR("U9.1"); PWR("U9.8")
-LBL("U9.7", length=2.54); LBL("U9.6", length=2.54)     # SDA, SCL (isolated)
+LBL("U9.7", length=2.54); LBL("U9.6", length=2.54)     # SCL, SDA (isolated)
 # safe defaults while the MCU pins are Hi-Z (HAT answers Q1/Q3): EN, CATH, RELEASE low; I2C pull-ups
 for i, (r, net) in enumerate((("R1", "EN_H"), ("R2", "CATH_H"), ("R3", "RELEASE_H"))):
     put(r, 14 + 4 * i, 43)
@@ -64,7 +66,7 @@ for i, c in enumerate(("C17", "C20")):
     PWR(f"{c}.1"); PWR(f"{c}.2")
 sh.text("R1-R3: EN/CATH/RELEASE pulled low while the MCU pins are Hi-Z or the HAT 3V3 is off (zero current, electrode shorted).", 9 * u, 47 * u)
 sh.text("R7/R8: I2C pull-ups, HAT side.  C1 at U1 pin 1, C2 at pin 16, C17/C20 at U9 pins 4/5.", 9 * u, 49 * u)
-sh.text("J8 (underside): 1 GND, 2 +5V, 3 PWM_A=EN, 4 PWM_B=CATH, 5 GPIO=FAULT_n.  J9: 1 GND, 2 +3V3, 3 RELEASE, 4 SCL, 5 SDA.",
+sh.text("J8 (underside): 1 GND, 2 +5V, 3 PWM_A=EN, 4 PWM_B=CATH, 5 GPIO=FAULT_n.  J9: 1 GND, 2 +3V3, 3 RELEASE, 4 SDA, 5 SCL.",
         9 * u, 13 * u)
 
 # =========================================================================== 2. isolated power

@@ -27,8 +27,8 @@ Status (rev M4, 2026-09-29): schematic complete and verified (ERC 0, netlist = `
  J8.3 PWM_A = EN     ──┐     ║         ║        ┌─► 74HC4053: CATH selects +VSET / −VSET, EN selects that or 0 V
  J8.4 PWM_B = CATH   ──┤ U1  ║ ISO7741F║ ───────┤
  J9.3 RELEASE ────────┘ 3+1  ║         ║        ├─► DG419B SHORT switch across E1–E2: closed while RELEASE is low
- J9.4 SCL ────────────┐ U9   ║ ISO1640 ║ ───────┼─► DAC60501 12-bit I²C DAC, internal 2.5 V ref / 2 = 0–1.25 V
- J9.5 SDA ────────────┘      ║  (I²C)  ║        │      └─► OPA2192 B: unity inverter makes −VSET
+ J9.4 SDA ────────────┐ U9   ║ ISO1640 ║ ───────┼─► DAC60501 12-bit I²C DAC, internal 2.5 V ref / 2 = 0–1.25 V
+ J9.5 SCL ────────────┘      ║  (I²C)  ║        │      └─► OPA2192 B: unity inverter makes −VSET
  J8.5 FAULT_n ◄──────────────╫─────────╫────────┤  LM393 window on the electrode voltage: low = compliance /
                              ║         ║        │  open-electrode fault (also low while the isolated side is unpowered)
                              ║         ║
@@ -57,10 +57,10 @@ Status (rev M4, 2026-09-29): schematic complete and verified (ERC 0, netlist = `
 | J8.5 GPIO | PA6 TIMA0_FAULT0 | **FAULT_n**: low = fault (electrode voltage past the compliance window, open electrode) or isolated side not powered (module not ready) |
 | J9.2 +3V3 | MSPM0_3V3 | ISO7741F / ISO1640 VCC1 |
 | J9.3 "DAC" | PA15 as GPIO | **RELEASE**: high = SHORT switch open (electrode free), low = E1 shorted to E2 |
-| J9.4 "ADC_A" | PA17 as GPIO (open-drain) | **SCL** (bit-banged I²C) |
-| J9.5 "ADC_B" | PA22 as GPIO (open-drain) | **SDA** |
+| J9.4 "ADC_A" | PA17 as GPIO (open-drain) | **SDA** (bit-banged I²C) |
+| J9.5 "ADC_B" | PA22 as GPIO (open-drain) | **SCL** |
 
-MCU pins per `../REV2_NOTES.md`; the J8/J9 pad positions are frozen, the J9.3–5 meanings changed in rev M4 (`../estim_interface/ESTIM_MODULE_SPEC.md` §7; M1–M3 carried CS_n / SCK / MOSI for an SPI DAC).
+MCU pins per `../REV2_NOTES.md`; the J8/J9 pad positions are frozen, the J9.3–5 meanings changed in rev M4 (`../estim_interface/ESTIM_MODULE_SPEC.md` §7; M1–M3 carried CS_n / SCK / MOSI for an SPI DAC; SDA and SCL swapped places on 2026-09-29 for the layout).
 
 ### Firmware contract
 - **Amplitude.** Bit-banged I²C (any clock up to 400 kHz; both lines open-drain with 4.7 k pull-ups on both sides of the isolator) to the DAC60501Z at address **0x48**, between trains. After the isolated side powers up (250 µs POR): write the GAIN register **0x04 = 0x0100** (REF-DIV = 1, BUFF-GAIN = 0 → 0–1.25 V full scale; the power-on default is ×2 gain, which would give 4× the intended current), then per amplitude the DAC register **0x08 = code << 4** (12-bit code left-aligned in 16 bits). Frame: address byte 0x90, command byte, data MSB, data LSB. The Z variant powers up at zero code.

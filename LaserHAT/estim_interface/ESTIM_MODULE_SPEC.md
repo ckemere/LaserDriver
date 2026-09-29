@@ -110,7 +110,7 @@ Existing firmware already has an "EStim mode" (paired monophasic pulses on the S
 
 ## 7. Agreed contract with the e-stim module (rev M4, 2026-09-29)
 
-Everything below was negotiated between the two sessions in 2026-09-26 … 29 and is the binding state. The HAT's copper is unchanged by it.
+Everything below was negotiated between the two sessions in 2026-09-26 … 29 and is the binding state. The HAT's copper is unchanged by it. The J9.4/J9.5 SDA/SCL swap (2026-09-29, module layout session, user decision) was made while the HAT session was unreachable; it is a firmware-only change on the HAT (PA17 = SDA, PA22 = SCL) and is listed in `../EStimDaughter/LAYOUT_HANDOFF.md` for acknowledgement.
 
 | Line | HAT pin | Module meaning | Notes |
 |---|---|---|---|
@@ -118,8 +118,8 @@ Everything below was negotiated between the two sessions in 2026-09-26 … 29 an
 | J8.4 PWM_B | PA12 = TIMA0_CCP3 | **CATH** — 1 = cathodic, 0 = anodic | changes only while EN is low; leads EN by ≥ 1 µs |
 | J8.5 GPIO | PA6 = TIMA0_FAULT0, active low, **latched**, forces CCP1 and CCP3 low | **FAULT_n** — low = compliance / open-electrode fault, or isolated side unpowered | at start-up low means "module not ready": wait for high (≤ ~100 ms) before arming; clear only between trains; report faults to the Pi; keep the input glitch filter ≤ 1 µs (pulses at the window edge can be ~1 µs) |
 | J9.3 "DAC" | PA15, push-pull GPIO | **RELEASE** — high = electrode SHORT switch open | high ≥ 1 µs before the first EN of a pair; low ~200 µs after the pair for ≥ 200 µs (electrode reset, also re-centres the output amplifier — do it at least every ~0.3 s during a train); also drop it in the fault handler |
-| J9.4 "ADC_A" | PA17, open-drain GPIO | **SCL** | bit-banged I²C ≤ 400 kHz, between trains only; pull-ups on the module |
-| J9.5 "ADC_B" | PA22, open-drain GPIO | **SDA** | " |
+| J9.4 "ADC_A" | PA17, open-drain GPIO | **SDA** | bit-banged I²C ≤ 400 kHz, between trains only; pull-ups on the module. **SDA/SCL swapped on 2026-09-29** (module layout; HAT firmware only, no HAT copper). Before that: J9.4 = SCL, J9.5 = SDA |
+| J9.5 "ADC_B" | PA22, open-drain GPIO | **SCL** | " |
 | J9.2 +3V3 | MSPM0_3V3 (off when the Pi powers the MCU down) | isolator input side | while the MCU pins are Hi-Z the module's pulls give EN = CATH = RELEASE = low: zero current, electrode shorted |
 
 DAC (DAC60501Z, I²C address 0x48, frame 0x90 · command · MSB · LSB): after the isolated side is up (FAULT_n high + 250 µs) write GAIN register 0x04 = 0x0100 once (REF-DIV = 1, BUFF-GAIN = 0 → 0–1.25 V full scale; the power-on default is ×2 gain = 4× the intended current), then DAC register 0x08 = code << 4. I = code / 4096 × 1.25 V / 2.49 kΩ (0.123 µA/LSB, 502 µA full scale). The DAC powers up at zero code; its ACK doubles as "isolated side alive". Pulse pair: RELEASE high → CATH high → EN high t_pw → EN low, CATH low in the gap → EN high t_pw → EN low → RELEASE low ~200 µs later.
