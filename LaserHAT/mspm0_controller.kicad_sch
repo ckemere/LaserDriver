@@ -1939,6 +1939,167 @@
 			)
 			(embedded_fonts no)
 		)
+		(symbol "LaserHAT:BL-DT"
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "SW"
+				(at 0 7.62 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "BL-DT"
+				(at 0 -10.16 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" "Footprints:SW-SMD_BL-DT"
+				(at 0 -12.7 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "https://www.lcsc.com/datasheet/C53223909.pdf"
+				(at 0 -15.24 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Manufacturer" "SHOU HAN(首韩)"
+				(at 0 -17.78 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "MPN" "BL-DT"
+				(at 0 -20.32 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "LCSC Part" "C53223909"
+				(at 0 -22.86 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "BL-DT_0_1"
+				(rectangle
+					(start -3.81 5.08)
+					(end 6.35 -2.54)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type background)
+					)
+				)
+				(pin unspecified line
+					(at -6.35 2.54 0)
+					(length 2.54)
+					(name "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "A"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at -1.27 -5.08 90)
+					(length 2.54)
+					(name "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "B"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 1.27 -5.08 90)
+					(length 2.54)
+					(name "C"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "C"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin unspecified line
+					(at 3.81 -5.08 90)
+					(length 2.54)
+					(name "D"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "D"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
 		(symbol "Power_Management:AP2171W"
 			(exclude_from_sim no)
 			(in_bom yes)
@@ -2489,52 +2650,29 @@
 			)
 			(embedded_fonts no)
 		)
-	    (symbol "LaserHAT:BL-DT" (in_bom yes) (on_board yes)
-      (property "Reference" "SW" (id 0) (at 0 7.62 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Value" "BL-DT" (id 1) (at 0 -10.16 0)
-        (effects (font (size 1.27 1.27)))
-      )
-      (property "Footprint" "Footprints:SW-SMD_BL-DT" (id 2) (at 0 -12.7 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Datasheet" "https://www.lcsc.com/datasheet/C53223909.pdf" (id 3) (at 0 -15.24 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "Manufacturer" "SHOU HAN(首韩)" (id 4) (at 0 -17.78 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "MPN" "BL-DT" (id 5) (at 0 -20.32 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (property "LCSC Part" "C53223909" (id 6) (at 0 -22.86 0)
-        (effects (font (size 1.27 1.27)) hide)
-      )
-      (symbol "BL-DT_0_1"
-        (rectangle (start -3.81 5.08) (end 6.35 -2.54)
-          (stroke (width 0) (type default))
-          (fill (type background))
-        )
-        (pin unspecified line (at -6.35 2.54 0) (length 2.54)
-          (name "A" (effects (font (size 1.27 1.27))))
-          (number "A" (effects (font (size 1.27 1.27))))
-        )
-        (pin unspecified line (at 3.81 -5.08 90) (length 2.54)
-          (name "D" (effects (font (size 1.27 1.27))))
-          (number "D" (effects (font (size 1.27 1.27))))
-        )
-        (pin unspecified line (at 1.27 -5.08 90) (length 2.54)
-          (name "C" (effects (font (size 1.27 1.27))))
-          (number "C" (effects (font (size 1.27 1.27))))
-        )
-        (pin unspecified line (at -1.27 -5.08 90) (length 2.54)
-          (name "B" (effects (font (size 1.27 1.27))))
-          (number "B" (effects (font (size 1.27 1.27))))
-        )
-      )
-    )
-  )
+	)
+	(text "Rev 2 pin map: PA0/PA1 I2C0 -> Pi GPIO2/3 (OLED bonnet, stand-alone mode)\nPA8/PA9 UART1 TX/RX <-> Pi (GPIO15 RXD / GPIO14 TXD); PA10/PA11 UART0 <-> CH340N (+BSL)\nPA27 <- Pi GPIO26 trigger; PA25/PA26 BNC out/in via U8; PA24 status LED\nButtons (active LOW, internal pull-ups): PA21 BACK, PA14 select, PA16/PA13 wheel, PA23 FIRE\nDaughterboard: PA7/PA12 PWM_A/B (TIMA0 CCP1/3), PA15 DAC, PA17/PA22 ADC_A/B, PA6 GPIO (FAULT0)"
+		(exclude_from_sim no)
+		(at 230 205 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "470cbd39-42a7-45f9-a7bd-ea7130899900")
+	)
+	(text "UI: SW7 thumbwheel (left edge) roll = BUTTON3/4, push = BUTTON2 (select)\nSW8 BACK (bottom edge) = BUTTON1; SW9 FIRE (right edge) = BUTTON5 / PA22"
+		(exclude_from_sim no)
+		(at 60 175 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "e99cad00-6c78-4169-9a2d-60104b6e44c5")
+	)
 	(junction
 		(at 74.93 115.57)
 		(diameter 0)
@@ -2552,6 +2690,18 @@
 		(diameter 0)
 		(color 0 0 0 0)
 		(uuid "f07df806-cd14-4239-9729-5ea870dc07f4")
+	)
+	(no_connect
+		(at 152.4 251.46)
+		(uuid "3b4cbd8d-14b4-4bcd-ba4a-9d7322438b73")
+	)
+	(no_connect
+		(at 152.4 256.54)
+		(uuid "a8ed6e2c-7cd7-4468-8c90-ffa808626442")
+	)
+	(no_connect
+		(at 152.4 254)
+		(uuid "d78557a3-8710-491b-a8ef-be8f73fbd068")
 	)
 	(wire
 		(pts
@@ -2575,6 +2725,36 @@
 	)
 	(wire
 		(pts
+			(xy 91.44 208.28) (xy 86.36 208.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2623e29d-5c7e-449f-8ab8-9bc257008732")
+	)
+	(wire
+		(pts
+			(xy 218.44 243.84) (xy 223.52 243.84)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2ace4d31-1020-48a2-ba90-4eb71e757e74")
+	)
+	(wire
+		(pts
+			(xy 102.87 195.58) (xy 102.87 200.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "2c4d4682-490b-4c68-ace1-5214e875e2bd")
+	)
+	(wire
+		(pts
 			(xy 118.11 132.08) (xy 118.11 128.27)
 		)
 		(stroke
@@ -2582,6 +2762,16 @@
 			(type default)
 		)
 		(uuid "2e0eac7f-abcd-45bf-8103-f703b8c0b5ea")
+	)
+	(wire
+		(pts
+			(xy 218.44 246.38) (xy 223.52 246.38)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "32094f5e-98da-42b5-accd-923a546f1628")
 	)
 	(wire
 		(pts
@@ -2605,6 +2795,16 @@
 	)
 	(wire
 		(pts
+			(xy 218.44 241.3) (xy 223.52 241.3)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "45191603-0743-4ba7-bc19-63d24a3fec6c")
+	)
+	(wire
+		(pts
 			(xy 163.83 113.03) (xy 163.83 119.38)
 		)
 		(stroke
@@ -2625,6 +2825,26 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 236.22) (xy 147.32 236.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5779a445-62ba-4f0d-a67f-ded9e826533f")
+	)
+	(wire
+		(pts
+			(xy 218.44 251.46) (xy 223.52 251.46)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "5d3962fb-32d1-4a63-8a8c-cbfb6c1f8dc2")
+	)
+	(wire
+		(pts
 			(xy 139.7 113.03) (xy 138.43 113.03)
 		)
 		(stroke
@@ -2635,6 +2855,36 @@
 	)
 	(wire
 		(pts
+			(xy 100.33 195.58) (xy 100.33 200.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "640f8293-39e2-4228-873b-3a5b5911d358")
+	)
+	(wire
+		(pts
+			(xy 218.44 236.22) (xy 223.52 236.22)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "67affb50-b9ac-4d30-848a-077e9b0a311f")
+	)
+	(wire
+		(pts
+			(xy 97.79 195.58) (xy 97.79 200.66)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6a9974c6-2c6d-42cd-bd35-7ad269a4f7cd")
+	)
+	(wire
+		(pts
 			(xy 139.7 129.54) (xy 139.7 127)
 		)
 		(stroke
@@ -2642,6 +2892,16 @@
 			(type default)
 		)
 		(uuid "6ca2eb17-074d-47d9-9e61-6a29499f9a0f")
+	)
+	(wire
+		(pts
+			(xy 218.44 269.24) (xy 223.52 269.24)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "74c3c37f-3ac6-4e83-8548-192363b0e530")
 	)
 	(wire
 		(pts
@@ -2662,6 +2922,16 @@
 			(type default)
 		)
 		(uuid "903ecaf6-572f-4613-b633-d111a9cdc4cb")
+	)
+	(wire
+		(pts
+			(xy 218.44 248.92) (xy 223.52 248.92)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "90e65acd-310c-4d1b-bb4f-1e724c2f85c6")
 	)
 	(wire
 		(pts
@@ -2695,6 +2965,16 @@
 	)
 	(wire
 		(pts
+			(xy 92.71 187.96) (xy 87.63 187.96)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "9df31721-1614-4f82-a51e-8d7fb8c49fba")
+	)
+	(wire
+		(pts
 			(xy 74.93 115.57) (xy 85.09 115.57)
 		)
 		(stroke
@@ -2705,6 +2985,26 @@
 	)
 	(wire
 		(pts
+			(xy 101.6 208.28) (xy 106.68 208.28)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a8d9f103-4d95-48f1-ab5f-859811ef47b6")
+	)
+	(wire
+		(pts
+			(xy 152.4 274.32) (xy 147.32 274.32)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b394bd7f-9b14-4aed-a216-dd723a6f3e97")
+	)
+	(wire
+		(pts
 			(xy 139.7 119.38) (xy 139.7 113.03)
 		)
 		(stroke
@@ -2712,6 +3012,16 @@
 			(type default)
 		)
 		(uuid "b5d5a27d-690b-4434-b944-29d45aa6ab56")
+	)
+	(wire
+		(pts
+			(xy 152.4 261.62) (xy 147.32 261.62)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b7af71dc-dc0c-431f-836c-e58bcfb22cd0")
 	)
 	(wire
 		(pts
@@ -2735,6 +3045,16 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 266.7) (xy 147.32 266.7)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d2d7e584-e79e-4fe6-9308-63962dd51519")
+	)
+	(wire
+		(pts
 			(xy 74.93 129.54) (xy 74.93 124.46)
 		)
 		(stroke
@@ -2752,6 +3072,36 @@
 			(type default)
 		)
 		(uuid "daa19f57-0cff-4edc-a6a1-b1a23a9a4be7")
+	)
+	(wire
+		(pts
+			(xy 91.44 218.44) (xy 86.36 218.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "de2a7288-2290-4e4d-98ec-cceb9d38783e")
+	)
+	(wire
+		(pts
+			(xy 152.4 264.16) (xy 147.32 264.16)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "dfa9573d-4afc-437e-a627-f487f3eeadb1")
+	)
+	(wire
+		(pts
+			(xy 101.6 218.44) (xy 106.68 218.44)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e33b5104-ce94-4d58-b87c-5760354f1bad")
 	)
 	(wire
 		(pts
@@ -2785,6 +3135,16 @@
 	)
 	(wire
 		(pts
+			(xy 152.4 238.76) (xy 147.32 238.76)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "f1f9a8d3-dc51-4090-abe1-01e0a92a3097")
+	)
+	(wire
+		(pts
 			(xy 379.73 97.79) (xy 373.38 97.79)
 		)
 		(stroke
@@ -2802,6 +3162,147 @@
 			(type default)
 		)
 		(uuid "fb20a154-20d1-4d19-a69f-14779186ed5a")
+	)
+	(label "BUTTON4"
+		(at 218.44 276.86 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "0fb12a71-0266-4bd2-925d-4ba1a110834a")
+	)
+	(label "BUTTON3"
+		(at 102.87 200.66 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "12fa2ce1-7343-4d72-b3de-27be7afe23b3")
+	)
+	(label "BUTTON1"
+		(at 218.44 256.54 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "1d2601bb-ce64-4573-8973-999e8fe85f5c")
+	)
+	(label "BUTTON3"
+		(at 223.52 269.24 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "2bd44d44-93aa-4f6a-b337-1cd21e2b2a56")
+	)
+	(label "BUTTON5"
+		(at 223.52 251.46 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "4ec3362c-a136-44b8-ac29-724cde247c92")
+	)
+	(label "BUTTON2"
+		(at 100.33 200.66 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "555ddbd7-3569-4a5f-9e9a-c1fa9d35e16b")
+	)
+	(label "MSPM0_BSL_INVOKE"
+		(at 218.44 264.16 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "7e13282b-756e-4191-9b6c-c0086f3d3fd3")
+	)
+	(label "MSPM0_BSL_INVOKE"
+		(at 359.41 97.79 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "91237695-338b-41da-91b1-ef161ec1a2f8")
+	)
+	(label "BUTTON5"
+		(at 86.36 218.44 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "c7ec785a-e697-408d-8575-df944aea7522")
+	)
+	(label "BUTTON1"
+		(at 86.36 208.28 180)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "ed0d7a2e-ef97-405d-8d4b-9542a9a9c685")
+	)
+	(label "BUTTON4"
+		(at 97.79 200.66 270)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "fbafe893-ab59-46f9-b8d6-b27bbe23a563")
+	)
+	(label "BUTTON2"
+		(at 218.44 274.32 0)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "fdabe416-4517-4e76-bd99-a8b450019e1c")
+	)
+	(global_label "PI_RXD"
+		(shape bidirectional)
+		(at 147.32 264.16 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "0347e14e-5293-4e0d-926c-e6e7d6e641e1")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 147.32 264.16 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 	)
 	(global_label "MSPM0_3V3"
 		(shape input)
@@ -2821,6 +3322,48 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DB_DAC"
+		(shape bidirectional)
+		(at 218.44 271.78 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "18e65cae-f767-4424-af1f-971665832b44")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 218.44 271.78 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DB_PWM_B"
+		(shape bidirectional)
+		(at 147.32 274.32 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "293c317a-e71e-415d-a65f-38190f02230e")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 147.32 274.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -2847,6 +3390,48 @@
 			)
 		)
 	)
+	(global_label "DB_PWM_A"
+		(shape bidirectional)
+		(at 147.32 261.62 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "2ef364ad-927f-41e7-82ed-3cbe78edf93d")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 147.32 261.62 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "PI_TRIGGER"
+		(shape bidirectional)
+		(at 223.52 241.3 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "361e6a7a-1f40-42a3-9393-30fe279d6645")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 223.52 241.3 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "MSPM0_3V3"
 		(shape input)
 		(at 152.4 243.84 180)
@@ -2869,6 +3454,27 @@
 			)
 		)
 	)
+	(global_label "DB_ADC_A"
+		(shape bidirectional)
+		(at 218.44 266.7 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6a1ce1c4-a7a1-469a-93ea-264ab2b22561")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 218.44 266.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "MSPM0_3V3"
 		(shape input)
 		(at 69.85 115.57 180)
@@ -2887,6 +3493,48 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MCU_STIM_OUT"
+		(shape bidirectional)
+		(at 223.52 246.38 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "6fa78473-053d-485d-8508-fa6e41fcce9c")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 223.52 246.38 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "I2C_SDA"
+		(shape bidirectional)
+		(at 147.32 236.22 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "777e2652-ecbe-4dd5-80b1-7005b29c8029")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 147.32 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -2935,6 +3583,27 @@
 			)
 		)
 	)
+	(global_label "I2C_SCL"
+		(shape bidirectional)
+		(at 147.32 238.76 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "89f86916-2883-4160-a445-e3bc8d686200")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 147.32 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
 	(global_label "VCORE"
 		(shape input)
 		(at 218.44 238.76 0)
@@ -2953,6 +3622,90 @@
 					(size 1.27 1.27)
 				)
 				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DB_GPIO"
+		(shape bidirectional)
+		(at 152.4 259.08 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b05a27f9-921b-4855-bc9a-d115a4433d73")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 152.4 259.08 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "MCU_STIM_IN"
+		(shape bidirectional)
+		(at 223.52 243.84 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "baee9c7c-780e-4ce4-8eec-6c0467384561")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 223.52 243.84 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "PI_TXD"
+		(shape bidirectional)
+		(at 147.32 266.7 180)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "d1160168-f039-4cf8-9973-a39adebc9cd0")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 147.32 266.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "LED_MCU"
+		(shape bidirectional)
+		(at 223.52 248.92 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "d14dbae8-a697-4244-90e7-719fe38b1daf")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 223.52 248.92 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -2997,6 +3750,27 @@
 					(size 1.27 1.27)
 				)
 				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "DB_ADC_B"
+		(shape bidirectional)
+		(at 218.44 254 0)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "f2466222-f48e-4cf5-bcd7-bce7b0c4ae6f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 218.44 254 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
 				(hide yes)
 			)
 		)
@@ -3221,6 +3995,138 @@
 		)
 	)
 	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 96.52 218.44 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "141f7a7a-9f3e-524b-8bf7-90ecedee3bb3")
+		(property "Reference" "SW9"
+			(at 99.06 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "FIRE"
+			(at 99.06 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_TS-1088-xR020"
+			(at 96.52 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "639c60f4-c118-4fe3-b3e9-4ccb66e31e5e")
+		)
+		(pin "2"
+			(uuid "99e7d988-91ae-4c98-9b47-31c9fc14caa3")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
+					(reference "SW9")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 223.52 236.22 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "229cd1ef-a274-5997-9639-68c6919c7988")
+		(property "Reference" "#PWR0901"
+			(at 226.06 233.68 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 226.06 238.76 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 223.52 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 223.52 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 223.52 236.22 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "18e79d53-e8b0-4375-b3bd-6a8915fa674a")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
+					(reference "#PWR0901")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:C_Small")
 		(at 85.09 121.92 0)
 		(unit 1)
@@ -3357,6 +4263,71 @@
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
 					(reference "#PWR030")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 87.63 187.96 270)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "334b41de-8818-5a2f-8d3f-e97aca8745a6")
+		(property "Reference" "#PWR0902"
+			(at 90.17 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 90.17 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 87.63 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 87.63 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 87.63 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "0028961c-a3df-4d1d-860c-1cd89a9b5037")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
+					(reference "#PWR0902")
 					(unit 1)
 				)
 			)
@@ -3610,6 +4581,71 @@
 		)
 	)
 	(symbol
+		(lib_id "power:GND")
+		(at 106.68 208.28 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "59b7a8d3-98a6-5fcc-b7eb-dc9707b9eff6")
+		(property "Reference" "#PWR0903"
+			(at 109.22 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 109.22 210.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 106.68 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 106.68 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 106.68 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "4bae455f-bec0-478c-a8c9-feb8e7b55aa1")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
+					(reference "#PWR0903")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
 		(lib_id "Device:R")
 		(at 139.7 123.19 0)
 		(unit 1)
@@ -3769,6 +4805,211 @@
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
 					(reference "U5")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Switch:SW_Push")
+		(at 96.52 208.28 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "84d1352a-c254-5fbb-b896-0223034954ed")
+		(property "Reference" "SW8"
+			(at 99.06 205.74 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BACK"
+			(at 99.06 210.82 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Button_Switch_THT:SW_Tactile_SPST_Angled_PTS645Vx39-2LFS"
+			(at 96.52 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 96.52 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 96.52 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "87b4677d-0290-42c5-a7f7-ce3e503567fe")
+		)
+		(pin "2"
+			(uuid "66154aff-9de9-4317-8a25-dca4add1fce9")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
+					(reference "SW8")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "LaserHAT:BL-DT")
+		(at 99.06 190.5 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "9a791b2d-f5b3-5462-9d60-287a2bbbf140")
+		(property "Reference" "SW7"
+			(at 101.6 187.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Value" "BL-DT (LCSC C53223909)"
+			(at 101.6 193.04 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" "Footprints:SW-SMD_BL-DT"
+			(at 99.06 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 99.06 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 99.06 190.5 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "A"
+			(uuid "41f5fc98-4642-4175-9129-1688fa35ae70")
+		)
+		(pin "D"
+			(uuid "af5d980b-2f38-4249-b2c7-7e3b55d5a47c")
+		)
+		(pin "C"
+			(uuid "5025dbb3-c9bf-4c85-b5a7-23baadbe9095")
+		)
+		(pin "B"
+			(uuid "90f7c91b-1aba-4b25-b182-0a86621b5594")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
+					(reference "SW7")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 106.68 218.44 90)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom no)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "b3411e6c-5e08-54a4-967d-86437fe1c59a")
+		(property "Reference" "#PWR0904"
+			(at 109.22 215.9 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 109.22 220.98 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 106.68 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 106.68 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" ""
+			(at 106.68 218.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(pin "1"
+			(uuid "b68814eb-49c8-40d2-9cd1-61395d8fd937")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
+					(reference "#PWR0904")
 					(unit 1)
 				)
 			)
@@ -4337,420 +5578,4 @@
 			)
 		)
 	)
-  (symbol (lib_id "power:GND") (at 223.52 236.22 90) (unit 1)
-    (in_bom no) (on_board yes) (fields_autoplaced)
-    (uuid 229cd1ef-a274-5997-9639-68c6919c7988)
-    (property "Reference" "#PWR0901" (id 0) (at 226.06 233.68 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "GND" (id 1) (at 226.06 238.76 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (id 2) (at 223.52 236.22 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 223.52 236.22 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 18e79d53-e8b0-4375-b3bd-6a8915fa674a))
-    (instances
-      (project "LaserDriver"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
-          (reference "#PWR0901") (unit 1)
-        )
-      )
-    )
-  )
-  (symbol (lib_id "LaserHAT:BL-DT") (at 99.06 190.5 0) (unit 1)
-    (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid 9a791b2d-f5b3-5462-9d60-287a2bbbf140)
-    (property "Reference" "SW7" (id 0) (at 101.6 187.96 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "BL-DT (LCSC C53223909)" (id 1) (at 101.6 193.04 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Footprints:SW-SMD_BL-DT" (id 2) (at 99.06 190.5 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 99.06 190.5 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "A" (uuid 41f5fc98-4642-4175-9129-1688fa35ae70))
-    (pin "D" (uuid af5d980b-2f38-4249-b2c7-7e3b55d5a47c))
-    (pin "C" (uuid 5025dbb3-c9bf-4c85-b5a7-23baadbe9095))
-    (pin "B" (uuid 90f7c91b-1aba-4b25-b182-0a86621b5594))
-    (instances
-      (project "LaserDriver"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
-          (reference "SW7") (unit 1)
-        )
-      )
-    )
-  )
-  (symbol (lib_id "power:GND") (at 87.63 187.96 270) (unit 1)
-    (in_bom no) (on_board yes) (fields_autoplaced)
-    (uuid 334b41de-8818-5a2f-8d3f-e97aca8745a6)
-    (property "Reference" "#PWR0902" (id 0) (at 90.17 185.42 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "GND" (id 1) (at 90.17 190.5 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (id 2) (at 87.63 187.96 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 87.63 187.96 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 0028961c-a3df-4d1d-860c-1cd89a9b5037))
-    (instances
-      (project "LaserDriver"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
-          (reference "#PWR0902") (unit 1)
-        )
-      )
-    )
-  )
-  (symbol (lib_id "Switch:SW_Push") (at 96.52 208.28 0) (unit 1)
-    (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid 84d1352a-c254-5fbb-b896-0223034954ed)
-    (property "Reference" "SW8" (id 0) (at 99.06 205.74 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "BACK" (id 1) (at 99.06 210.82 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Button_Switch_THT:SW_Tactile_SPST_Angled_PTS645Vx39-2LFS" (id 2) (at 96.52 208.28 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 96.52 208.28 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 87b4677d-0290-42c5-a7f7-ce3e503567fe))
-    (pin "2" (uuid 66154aff-9de9-4317-8a25-dca4add1fce9))
-    (instances
-      (project "LaserDriver"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
-          (reference "SW8") (unit 1)
-        )
-      )
-    )
-  )
-  (symbol (lib_id "power:GND") (at 106.68 208.28 90) (unit 1)
-    (in_bom no) (on_board yes) (fields_autoplaced)
-    (uuid 59b7a8d3-98a6-5fcc-b7eb-dc9707b9eff6)
-    (property "Reference" "#PWR0903" (id 0) (at 109.22 205.74 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "GND" (id 1) (at 109.22 210.82 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (id 2) (at 106.68 208.28 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 106.68 208.28 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 4bae455f-bec0-478c-a8c9-feb8e7b55aa1))
-    (instances
-      (project "LaserDriver"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
-          (reference "#PWR0903") (unit 1)
-        )
-      )
-    )
-  )
-  (symbol (lib_id "Switch:SW_Push") (at 96.52 218.44 0) (unit 1)
-    (in_bom yes) (on_board yes) (fields_autoplaced)
-    (uuid 141f7a7a-9f3e-524b-8bf7-90ecedee3bb3)
-    (property "Reference" "SW9" (id 0) (at 99.06 215.9 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Value" "FIRE" (id 1) (at 99.06 220.98 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "Button_Switch_SMD:SW_SPST_TS-1088-xR020" (id 2) (at 96.52 218.44 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 96.52 218.44 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid 639c60f4-c118-4fe3-b3e9-4ccb66e31e5e))
-    (pin "2" (uuid 99e7d988-91ae-4c98-9b47-31c9fc14caa3))
-    (instances
-      (project "LaserDriver"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
-          (reference "SW9") (unit 1)
-        )
-      )
-    )
-  )
-  (symbol (lib_id "power:GND") (at 106.68 218.44 90) (unit 1)
-    (in_bom no) (on_board yes) (fields_autoplaced)
-    (uuid b3411e6c-5e08-54a4-967d-86437fe1c59a)
-    (property "Reference" "#PWR0904" (id 0) (at 109.22 215.9 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Value" "GND" (id 1) (at 109.22 220.98 0)
-      (effects (font (size 1.27 1.27)))
-    )
-    (property "Footprint" "" (id 2) (at 106.68 218.44 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (property "Datasheet" "" (id 3) (at 106.68 218.44 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-    (pin "1" (uuid b68814eb-49c8-40d2-9cd1-61395d8fd937))
-    (instances
-      (project "LaserDriver"
-        (path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55/212bfd25-f831-4b85-926b-000000000003"
-          (reference "#PWR0904") (unit 1)
-        )
-      )
-    )
-  )
-  (wire (pts (xy 152.4 236.22) (xy 147.32 236.22))
-    (stroke (width 0.0))
-    (uuid 5779a445-62ba-4f0d-a67f-ded9e826533f)
-  )
-  (wire (pts (xy 152.4 238.76) (xy 147.32 238.76))
-    (stroke (width 0.0))
-    (uuid f1f9a8d3-dc51-4090-abe1-01e0a92a3097)
-  )
-  (wire (pts (xy 152.4 261.62) (xy 147.32 261.62))
-    (stroke (width 0.0))
-    (uuid b7af71dc-dc0c-431f-836c-e58bcfb22cd0)
-  )
-  (wire (pts (xy 152.4 264.16) (xy 147.32 264.16))
-    (stroke (width 0.0))
-    (uuid dfa9573d-4afc-437e-a627-f487f3eeadb1)
-  )
-  (wire (pts (xy 152.4 266.7) (xy 147.32 266.7))
-    (stroke (width 0.0))
-    (uuid d2d7e584-e79e-4fe6-9308-63962dd51519)
-  )
-  (wire (pts (xy 152.4 274.32) (xy 147.32 274.32))
-    (stroke (width 0.0))
-    (uuid b394bd7f-9b14-4aed-a216-dd723a6f3e97)
-  )
-  (wire (pts (xy 218.44 269.24) (xy 223.52 269.24))
-    (stroke (width 0.0))
-    (uuid 74c3c37f-3ac6-4e83-8548-192363b0e530)
-  )
-  (wire (pts (xy 218.44 251.46) (xy 223.52 251.46))
-    (stroke (width 0.0))
-    (uuid 5d3962fb-32d1-4a63-8a8c-cbfb6c1f8dc2)
-  )
-  (wire (pts (xy 218.44 248.92) (xy 223.52 248.92))
-    (stroke (width 0.0))
-    (uuid 90e65acd-310c-4d1b-bb4f-1e724c2f85c6)
-  )
-  (wire (pts (xy 218.44 246.38) (xy 223.52 246.38))
-    (stroke (width 0.0))
-    (uuid 32094f5e-98da-42b5-accd-923a546f1628)
-  )
-  (wire (pts (xy 218.44 243.84) (xy 223.52 243.84))
-    (stroke (width 0.0))
-    (uuid 2ace4d31-1020-48a2-ba90-4eb71e757e74)
-  )
-  (wire (pts (xy 218.44 241.3) (xy 223.52 241.3))
-    (stroke (width 0.0))
-    (uuid 45191603-0743-4ba7-bc19-63d24a3fec6c)
-  )
-  (wire (pts (xy 218.44 236.22) (xy 223.52 236.22))
-    (stroke (width 0.0))
-    (uuid 67affb50-b9ac-4d30-848a-077e9b0a311f)
-  )
-  (wire (pts (xy 92.71 187.96) (xy 87.63 187.96))
-    (stroke (width 0.0))
-    (uuid 9df31721-1614-4f82-a51e-8d7fb8c49fba)
-  )
-  (wire (pts (xy 100.33 195.58) (xy 100.33 200.66))
-    (stroke (width 0.0))
-    (uuid 640f8293-39e2-4228-873b-3a5b5911d358)
-  )
-  (wire (pts (xy 97.79 195.58) (xy 97.79 200.66))
-    (stroke (width 0.0))
-    (uuid 6a9974c6-2c6d-42cd-bd35-7ad269a4f7cd)
-  )
-  (wire (pts (xy 102.87 195.58) (xy 102.87 200.66))
-    (stroke (width 0.0))
-    (uuid 2c4d4682-490b-4c68-ace1-5214e875e2bd)
-  )
-  (wire (pts (xy 91.44 208.28) (xy 86.36 208.28))
-    (stroke (width 0.0))
-    (uuid 2623e29d-5c7e-449f-8ab8-9bc257008732)
-  )
-  (wire (pts (xy 101.6 208.28) (xy 106.68 208.28))
-    (stroke (width 0.0))
-    (uuid a8d9f103-4d95-48f1-ab5f-859811ef47b6)
-  )
-  (wire (pts (xy 91.44 218.44) (xy 86.36 218.44))
-    (stroke (width 0.0))
-    (uuid de2a7288-2290-4e4d-98ec-cceb9d38783e)
-  )
-  (wire (pts (xy 101.6 218.44) (xy 106.68 218.44))
-    (stroke (width 0.0))
-    (uuid e33b5104-ce94-4d58-b87c-5760354f1bad)
-  )
-  (label "BUTTON4" (at 218.44 276.86 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 0fb12a71-0266-4bd2-925d-4ba1a110834a)
-  )
-  (label "BUTTON2" (at 218.44 274.32 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid fdabe416-4517-4e76-bd99-a8b450019e1c)
-  )
-  (label "BUTTON3" (at 223.52 269.24 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 2bd44d44-93aa-4f6a-b337-1cd21e2b2a56)
-  )
-  (label "BUTTON1" (at 218.44 256.54 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 1d2601bb-ce64-4573-8973-999e8fe85f5c)
-  )
-  (label "BUTTON5" (at 223.52 251.46 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 4ec3362c-a136-44b8-ac29-724cde247c92)
-  )
-  (label "BUTTON2" (at 100.33 200.66 270) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 555ddbd7-3569-4a5f-9e9a-c1fa9d35e16b)
-  )
-  (label "BUTTON4" (at 97.79 200.66 270) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid fbafe893-ab59-46f9-b8d6-b27bbe23a563)
-  )
-  (label "BUTTON3" (at 102.87 200.66 270) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 12fa2ce1-7343-4d72-b3de-27be7afe23b3)
-  )
-  (label "BUTTON1" (at 86.36 208.28 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid ed0d7a2e-ef97-405d-8d4b-9542a9a9c685)
-  )
-  (label "BUTTON5" (at 86.36 218.44 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid c7ec785a-e697-408d-8575-df944aea7522)
-  )
-  (label "MSPM0_BSL_INVOKE" (at 359.41 97.79 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 91237695-338b-41da-91b1-ef161ec1a2f8)
-  )
-  (label "MSPM0_BSL_INVOKE" (at 218.44 264.16 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 7e13282b-756e-4191-9b6c-c0086f3d3fd3)
-  )
-  (global_label "I2C_SDA" (shape bidirectional) (at 147.32 236.22 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 777e2652-ecbe-4dd5-80b1-7005b29c8029)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 147.32 236.22 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "I2C_SCL" (shape bidirectional) (at 147.32 238.76 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 89f86916-2883-4160-a445-e3bc8d686200)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 147.32 238.76 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "DB_GPIO" (shape bidirectional) (at 152.4 259.08 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid b05a27f9-921b-4855-bc9a-d115a4433d73)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 152.4 259.08 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "DB_PWM_A" (shape bidirectional) (at 147.32 261.62 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 2ef364ad-927f-41e7-82ed-3cbe78edf93d)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 147.32 261.62 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "PI_RXD" (shape bidirectional) (at 147.32 264.16 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 0347e14e-5293-4e0d-926c-e6e7d6e641e1)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 147.32 264.16 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "PI_TXD" (shape bidirectional) (at 147.32 266.7 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid d1160168-f039-4cf8-9973-a39adebc9cd0)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 147.32 266.7 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "DB_PWM_B" (shape bidirectional) (at 147.32 274.32 180) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify right))
-    (uuid 293c317a-e71e-415d-a65f-38190f02230e)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 147.32 274.32 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "DB_DAC" (shape bidirectional) (at 218.44 271.78 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 18e65cae-f767-4424-af1f-971665832b44)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 218.44 271.78 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "DB_ADC_A" (shape bidirectional) (at 218.44 266.7 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 6a1ce1c4-a7a1-469a-93ea-264ab2b22561)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 218.44 266.7 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "DB_ADC_B" (shape bidirectional) (at 218.44 254 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid f2466222-f48e-4cf5-bcd7-bce7b0c4ae6f)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 218.44 254 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "LED_MCU" (shape bidirectional) (at 223.52 248.92 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid d14dbae8-a697-4244-90e7-719fe38b1daf)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 223.52 248.92 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "MCU_STIM_OUT" (shape bidirectional) (at 223.52 246.38 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 6fa78473-053d-485d-8508-fa6e41fcce9c)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 223.52 246.38 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "MCU_STIM_IN" (shape bidirectional) (at 223.52 243.84 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid baee9c7c-780e-4ce4-8eec-6c0467384561)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 223.52 243.84 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (global_label "PI_TRIGGER" (shape bidirectional) (at 223.52 241.3 0) (fields_autoplaced)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 361e6a7a-1f40-42a3-9393-30fe279d6645)
-    (property "Intersheetrefs" "${INTERSHEET_REFS}" (id 0) (at 223.52 241.3 0)
-      (effects (font (size 1.27 1.27)) hide)
-    )
-  )
-  (no_connect (at 152.4 251.46) (uuid 3b4cbd8d-14b4-4bcd-ba4a-9d7322438b73))
-  (no_connect (at 152.4 254.0) (uuid d78557a3-8710-491b-a8ef-be8f73fbd068))
-  (no_connect (at 152.4 256.54) (uuid a8ed6e2c-7cd7-4468-8c90-ffa808626442))
-  (text "UI: SW7 thumbwheel (left edge) roll = BUTTON3/4, push = BUTTON2 (select)\nSW8 BACK (bottom edge) = BUTTON1; SW9 FIRE (right edge) = BUTTON5 / PA22"
-    (at 60 175 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid e99cad00-6c78-4169-9a2d-60104b6e44c5)
-  )
-  (text "Rev 2 pin map: PA0/PA1 I2C0 -> Pi GPIO2/3 (OLED bonnet, stand-alone mode)\nPA8/PA9 UART1 TX/RX <-> Pi (GPIO15 RXD / GPIO14 TXD); PA10/PA11 UART0 <-> CH340N (+BSL)\nPA27 <- Pi GPIO26 trigger; PA25/PA26 BNC out/in via U8; PA24 status LED\nButtons (active LOW, internal pull-ups): PA21 BACK, PA14 select, PA16/PA13 wheel, PA23 FIRE\nDaughterboard: PA7/PA12 PWM_A/B (TIMA0 CCP1/3), PA15 DAC, PA17/PA22 ADC_A/B, PA6 GPIO (FAULT0)"
-    (at 230 205 0)
-    (effects (font (size 1.27 1.27)) (justify left))
-    (uuid 470cbd39-42a7-45f9-a7bd-ea7130899900)
-  )
-	)
+)
