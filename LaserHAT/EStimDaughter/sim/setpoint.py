@@ -2,7 +2,7 @@
 Set-point accuracy and phase matching across the DAC range: one cathodic-first pair (100 us / 50 us / 100 us) into the
 nominal electrode at each current.  Plateau current of each phase vs the ideal code/4096 * VREF / R14, and the
 cathodic/anodic mismatch (which sets charge balance).  Component tolerances (0.1 % resistors, TL431, DAC INL/offset)
-are not in the model: this checks the circuit, i.e. U5A/U5B offsets and gain, 4053 R_on, C15 settling, C16.
+are not in the model: this checks the circuit, i.e. U5A/U5B offsets and gain, ADG1436 switches R_on, C15 settling, C16.
 
   python setpoint.py [--quick]        -> results/setpoint.json, results/setpoint.png
 """

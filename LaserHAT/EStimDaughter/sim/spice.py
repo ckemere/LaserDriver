@@ -5,7 +5,7 @@ Modelled parts
   U5A/U5B  OPA2192        TI PSpice macro-model (models/OPAx192.lib, subckt OPAx192: IN+ IN- VCC VEE OUT)
   U4       DAC60501       ideal voltage source VSET_P = code/4096 * VREF, VREF = 1.25 V (internal 2.5 V reference / 2);
                           its output buffer is not modelled
-  U6       74HC4053       voltage-controlled switches, R_on = RON_4053, driven by EN / CATH (5 V logic)
+  U6       ADG1436        voltage-controlled switches, R_on = RON_SW, driven by CATH / EN (5 V logic); was a 74HC4053 (M1-M4b)
   U7       DG419B         behavioural: throw 1 (D=E1 to S1=ISENSE) closed while IN (= HOLD) is below 1.6 V;
                           15 ohm on, 12 pF off-capacitance per side, charge injection via 1.3 pF from a +/-15 V
                           internal gate node into each terminal (~38 pC per side per edge, DG419B datasheet typ.)
@@ -37,7 +37,7 @@ VALUES = dict(
     VREF=1.25,           # DAC60501 full scale: internal 2.5 V reference with REF-DIV = 1, BUFF-GAIN = 0 (M4)
     R10=10.0e3,          # U5B inverter input  (0.1 %)
     R11=10.0e3,          # U5B inverter feedback (0.1 %)
-    RON_4053=100.0,      # 74HC4053 on-resistance at VCC = +5 V, VEE = -4.7 V (datasheet typ. 70-100 ohm)
+    RON_SW=1.5,          # ADG1436 on-resistance (datasheet typ. 1.5 ohm on +/-15 V); the 74HC4053 of M1-M4b was ~100 ohm
     R12=1.0e3,           # V_IN -> U5A +IN (OA_IN)
     C15=100e-12,         # OA_IN to GND_ISO
     R13=47.0,            # U5A output isolation -> E1
@@ -107,10 +107,10 @@ XU5B 0 U5B_N VP VN VSET_N OPAx192
 
 
 def switch_4053(v=VALUES):
-    """U6: switch 1 (S1 = CATH) picks VSET_P (0) / VSET_N (1) onto SW_P; switch 2 (S2 = EN) picks GND (0) / SW_P (1)
+    """U6 switch 2 (IN2 = CATH) picks VSET_P (0) / VSET_N (1) onto SW_P; switch 1 (IN1 = EN) picks GND (0) / SW_P (1)
     onto V_IN.  Break-before-make comes from the 0.1 V hysteresis of the ideal switches."""
-    r = v["RON_4053"]
-    return f"""* U6 74HC4053
+    r = v["RON_SW"]
+    return f"""* U6 ADG1436 (dual SPDT)
 S1A SW_P VSET_P CATH_N 0 SW4053
 S1B SW_P VSET_N CATH 0 SW4053
 S2A V_IN 0 EN_N 0 SW4053
@@ -192,8 +192,8 @@ def monitor(v=VALUES, comparator=True, ref="V5ISO"):
              f"R23 VP TH_P {v['R23']}", f"R24 TH_P TH_N {v['R24']}", f"R25 TH_N VN {v['R25']}"]
     if comparator:
         lines += [COMPOC,
-                  f"XU8A TH_P E1 FAULT_OC VN COMPOC params: tpd={v['TPD_CMP']}",     # low when E1 > TH_P
-                  f"XU8B E1 TH_N FAULT_OC VN COMPOC params: tpd={v['TPD_CMP']}",     # low when E1 < TH_N
+                  f"XU8B TH_P E1 FAULT_OC VN COMPOC params: tpd={v['TPD_CMP']}",     # low when E1 > TH_P (unit B since 2026-09-29)
+                  f"XU8A E1 TH_N FAULT_OC VN COMPOC params: tpd={v['TPD_CMP']}",     # low when E1 < TH_N (unit A)
                   f"R26 FAULT_OC FAULT_N {v['R26']}",
                   "DCLAMP 0 FAULT_N DBAT54W",
                   ".model DBAT54W D(IS=3e-8 N=1.05 RS=1.0 CJO=10p BV=30)",

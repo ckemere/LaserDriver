@@ -1,5 +1,5 @@
 # =========================================================================== 3. set-point
-sh.box(8 * u, 60 * u, 95 * u, 104 * u, "3. SET-POINT  (DAC60501 I2C, internal 2.5 V ref / 2 -> 0..1.25 V = VSET_P; U5B inverts -> VSET_N; 74HC4053 -> V_IN)")
+sh.box(8 * u, 60 * u, 95 * u, 104 * u, "3. SET-POINT  (DAC60501 I2C, internal 2.5 V ref / 2 -> 0..1.25 V = VSET_P; U5B inverts -> VSET_N; ADG1436 -> V_IN)")
 put("U4", 38, 72)
 W("U4.6", pt(31, 70), pt(31, 66)); LBL(None, "SCL", at=pt(31, 66), direction=(0, -1))
 W("U4.8", pt(32.5, 71), pt(32.5, 66)); LBL(None, "SDA", at=pt(32.5, 66), direction=(0, -1))
@@ -22,40 +22,35 @@ W(pt(59, 72), pt(59, 81), "R10.1")
 W("R10.2", "U5.6")
 W(pt(63, 81), pt(63, 85.5), "R11.1")
 W("R11.2", pt(71, 85.5), pt(71, 80))
-W("U5.7", pt(73, 80), pt(73, 81), pt(79, 81))    # VSET_N -> 1Y1
 W("U5.5", pt(63, 79), pt(63, 77.5))
 PWR(None, "GND_ISO", at=pt(63, 77.5), up=(0, -1))
-# 74HC4053
-put("U6", 84, 84, ref_at=(-7.62, -16.51), val_at=(7.62, -16.51))
-W(pt(59, 72), pt(76, 72), pt(76, 80), "U6.12")   # VSET_P -> 1Y0
-sh.wired.add(("U6", "13"))
-W("U6.2", pt(78, 83)); W("U6.5", pt(78, 86)); W("U6.3", pt(78, 87))
-W(pt(78, 83), pt(78, 88))
-PWR(None, "GND_ISO", at=pt(78, 88), up=(0, 1))
-sh.NET("U6.14", "SW_P", length=2.54)
-sh.NET("U6.1", "SW_P", length=2.54 * 3)
-LBL("U6.15", length=2.54)                        # V_IN -> output stage
-PWR("U6.4")
-PWR("U6.16")
-W("U6.9", pt(83, 91.5)); W("U6.6", pt(84, 91.5)); W("U6.8", pt(86, 91.5)); W(pt(83, 91.5), pt(86, 91.5))
-W(pt(85, 91.5), pt(85, 92.5))
-PWR(None, "GND_ISO", at=pt(85, 92.5), up=(0, 1))
-W("U6.7", pt(87, 91), pt(90, 91), pt(90, 92.5))
-PWR(None, "-5V_ISO", at=pt(90, 92.5), up=(0, 1))
-W("U6.11", pt(81, 94), pt(69, 94))
-LBL(None, "CATH", at=pt(69, 94), direction=(-1, 0))
-W("U6.10", pt(82, 96), pt(69, 96))
-LBL(None, "EN", at=pt(69, 96), direction=(-1, 0))
+# ADG1436 dual SPDT (mirrored: S / D pins face west, IN1 / EN / IN2 east).  Switch 2 = phase (CATH), switch 1 = gate (EN)
+put("U6", 84, 84, mirror=True, ref_at=(0, -13.97), val_at=(0, 13.97))
+W(pt(59, 72), pt(76, 72), pt(76, 84.5), "U6.10")  # VSET_P -> S2B (on while CATH low)
+W("U5.7", pt(73, 80), pt(73, 86.5), "U6.8")       # VSET_N -> S2A (on while CATH high)
+sh.LAB("VSET_P", pt(62, 72))                     # net labels on the two set-point wires
+sh.LAB("VSET_N", pt(75, 86.5))
+sh.NET("U6.9", "SW_P", length=2.54)               # D2
+sh.NET("U6.16", "SW_P", length=2.54)              # S1A (on while EN high)
+PWR("U6.2", length=2.54)                          # S1B = 0 V (EN low)
+LBL("U6.1", length=2.54)                          # D1 = V_IN -> output stage
+LBL("U6.6", length=2.54)                          # CATH
+LBL("U6.15", length=2.54)                         # EN
+PWR("U6.12")                                      # EN pin high (VDD = +V_STIM)
+PWR("U6.11"); PWR("U6.3"); PWR("U6.4")            # VDD / VSS / GND
+W("U6.17", pt(85, 89)); W("U6.3", pt(86, 89)); W(pt(85, 89), pt(86, 89))    # exposed pad to VSS
+for p_ in ("5", "7", "13", "14"):
+    sh.NC(f"U6.{p_}")
 # decoupling row
 for i, c in enumerate(("C10", "C13")):
     put(c, 14 + 5 * i, 90)
     PWR(f"{c}.1"); PWR(f"{c}.2")
 put("C14", 24, 90, rot=180)
 PWR("C14.1"); PWR("C14.2")
-sh.text("Decoupling at: C10 U4 VDD, C9 U4 VREFIO, C13/C14 U6.  DAC60501Z: I2C address 0x48; write GAIN (0x04) = 0x0100 first, then DAC (0x08) = code << 4.", 10 * u, 97 * u)
-sh.text("VSET_P = 0..1.25 V.  4053: S1 = CATH picks -VSET / +VSET, S2 = EN picks that or 0 V -> V_IN.  EN low (isolator fail-safe) = zero current.",
+sh.text("Decoupling at: C10 U4 VDD, C9 U4 VREFIO, C13/C14 (+/-V) on the west feed near U6.  DAC60501Z: I2C address 0x48; write GAIN (0x04) = 0x0100 first, then DAC (0x08) = code << 4.", 10 * u, 97 * u)
+sh.text("VSET_P = 0..1.25 V.  U6 sw 2: CATH picks VSET_P (0) / VSET_N (1) -> SW_P; sw 1: EN picks 0 V (0) / SW_P (1) -> V_IN.  EN low (isolator fail-safe) = zero current.",
         10 * u, 101 * u)
-sh.text("Firmware: set CATH before raising EN, hold it until EN falls.  Switch 3 unused (tied to GND).", 10 * u, 103 * u)
+sh.text("Firmware: set CATH before raising EN, hold it until EN falls.  ADG1436 EN pin tied high: EN low would float V_IN.", 10 * u, 103 * u)
 
 # =========================================================================== 4. output stage
 sh.box(98 * u, 60 * u, 137 * u, 100 * u, "4. OUTPUT STAGE  (floating-load V->I, I = V_IN / R_SENSE)")
@@ -110,14 +105,15 @@ PWR("R25.2", length=2.54)                                # -V_STIM
 W(pt(148, 74.5), pt(153, 74.5)); sh.wired.add(("R24", "1"))      # TH_P tap
 W(pt(148, 83.5), pt(153, 83.5)); sh.wired.add(("R25", "1"))      # TH_N tap
 # comparators
-put("U8", 162, 76, unit=1)          # A: +IN = TH_P (pin 3, y 75), -IN = E1 (pin 2, y 77): low when E1 > TH_P
-put("U8", 162, 89, unit=2)          # B: +IN = E1 (pin 5, y 88), -IN = TH_N (pin 6, y 90): low when E1 < TH_N
-W(pt(153, 74.5), pt(153, 75), "U8.3")                    # TH_P -> A+
-W(pt(153, 83.5), pt(153, 90), "U8.6")                    # TH_N -> B-
-W("U8.2", pt(156, 77), pt(156, 68), pt(144, 68))         # E1 -> A-  (the vertical crosses the TH_P feed: no junction)
-W("U8.5", pt(157, 88), pt(157, 77))                      # E1 -> B+  (joins the A- run at (157, 77))
+# units swapped 2026-09-29 for the layout: B is the upper (TH_P) comparator, A the lower (TH_N) one
+put("U8", 162, 76, unit=2)          # B: +IN = TH_P (pin 5, y 75), -IN = E1 (pin 6, y 77): low when E1 > TH_P
+put("U8", 162, 89, unit=1)          # A: +IN = E1 (pin 3, y 88), -IN = TH_N (pin 2, y 90): low when E1 < TH_N
+W(pt(153, 74.5), pt(153, 75), "U8.5")                    # TH_P -> B+
+W(pt(153, 83.5), pt(153, 90), "U8.2")                    # TH_N -> A-
+W("U8.6", pt(156, 77), pt(156, 68), pt(144, 68))         # E1 -> B-  (the vertical crosses the TH_P feed: no junction)
+W("U8.3", pt(157, 88), pt(157, 77))                      # E1 -> A+  (joins the B- run at (157, 77))
 LBL(None, "E1", at=pt(144, 68), direction=(-1, 0))
-W("U8.1", pt(168, 76), pt(168, 89)); W("U8.7", pt(168, 89))     # wired-OR (FAULT_OC)
+W("U8.7", pt(168, 76), pt(168, 89)); W("U8.1", pt(168, 89))     # wired-OR (FAULT_OC)
 sh.LAB("FAULT_OC", pt(168, 80))
 # level shift to the isolator: R26 series, D2 clamp to GND_ISO, R19 pull-up
 put("R26", 172, 82, rot=90)

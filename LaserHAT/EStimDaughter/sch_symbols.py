@@ -260,6 +260,13 @@ ic_symbol("TLV760", "U", 12.7, 7.62,
 ic_symbol("74LVC1G14", "U", 10.16, 7.62,
           left=[("2", "A", 0, "input"), ("1", "NC", -2.54, "no_connect")], right=[("4", "Y", 0, "output")],
           top=[("5", "VCC", 0, "power_in")], bottom=[("3", "GND", 0, "power_in")])
+ic_symbol("ADG1436", "U", 20.32, 17.78,      # LFCSP-16 pin numbers; INx = 0 -> SxB on, 1 -> SxA on; EN low = all off
+          left=[("15", "IN1", 3.81, "input"), ("12", "EN", 0, "input"), ("6", "IN2", -3.81, "input")],
+          right=[("2", "S1B", 6.35, "passive"), ("1", "D1", 3.81, "passive"), ("16", "S1A", 1.27, "passive"),
+                 ("10", "S2B", -1.27, "passive"), ("9", "D2", -3.81, "passive"), ("8", "S2A", -6.35, "passive")],
+          top=[("11", "VDD", 0, "power_in"), ("13", "NC", -7.62, "no_connect"), ("14", "NC", -5.08, "no_connect"),
+               ("5", "NC", 5.08, "no_connect"), ("7", "NC", 7.62, "no_connect")],
+          bottom=[("3", "VSS", -5.08, "power_in"), ("17", "EP", -2.54, "passive"), ("4", "GND", 2.54, "power_in")])
 ic_symbol("DG419", "U", 12.7, 10.16,
           left=[("6", "IN", 0, "input")],
           right=[("1", "D", 2.54, "passive"), ("2", "S1", 0, "passive"), ("8", "S2", -2.54, "passive")],

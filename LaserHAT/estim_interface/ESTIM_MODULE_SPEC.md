@@ -54,9 +54,9 @@ Pitch 2.54 mm, round THT pads.
 |---|---|---|---|
 | 1 | (109.00, 78.50) | **GND** | HAT ground (= Pi ground, = USB ground) |
 | 2 | (111.54, 78.50) | **+5V** | Pi 5 V rail (Pi supply or HAT USB-C through an ideal diode) |
-| 3 | (114.08, 78.50) | **PWM_A** | PA7, TIMA0_CCP1 |
+| 3 | (114.08, 78.50) | **GPIO / FAULT** | PA6, general GPIO; also TIMA0_FAULT0 input (hardware PWM kill, latched, forces PWM_A and PWM_B low). **Pins 3 and 5 swapped on 2026-09-29 (evening)**; the HAT copper follows. |
 | 4 | (116.62, 78.50) | **PWM_B** | PA12, TIMA0_CCP3 (an independent channel on the same timer as PWM_A; the laser module's firmware runs it as the complement of PWM_A, e-stim mode drives it independently) |
-| 5 | (119.16, 78.50) | **GPIO** | PA6, general GPIO; also TIMA0_FAULT0 input (hardware PWM kill, latched, forces PWM_A and PWM_B low) |
+| 5 | (119.16, 78.50) | **PWM_A** | PA7, TIMA0_CCP1 (was pin 3 until 2026-09-29) |
 
 **J9 — "analog" (column, pins run +y):**
 
@@ -110,13 +110,13 @@ Existing firmware already has an "EStim mode" (paired monophasic pulses on the S
 
 ## 7. Agreed contract with the e-stim module (rev M4, 2026-09-29)
 
-Everything below was negotiated between the two sessions in 2026-09-26 … 29 and is the binding state. The HAT's copper is unchanged by it. The J9.4/J9.5 SDA/SCL swap (2026-09-29, module layout session, user decision) was made while the HAT session was unreachable; it is a firmware-only change on the HAT (PA17 = SDA, PA22 = SCL) and is listed in `../EStimDaughter/LAYOUT_HANDOFF.md` for acknowledgement.
+Everything below was negotiated between the two sessions in 2026-09-26 … 29 and is the binding state. The HAT's copper is unchanged by it. The J8.3/J8.5 FAULT/EN swap (2026-09-29 evening, user decision; HAT copper change, laser module re-route) and the J9.4/J9.5 SDA/SCL swap (2026-09-29, module layout session, user decision) were made while the HAT session was unreachable; it is a firmware-only change on the HAT (PA17 = SDA, PA22 = SCL) and is listed in `../EStimDaughter/LAYOUT_HANDOFF.md` for acknowledgement.
 
 | Line | HAT pin | Module meaning | Notes |
 |---|---|---|---|
-| J8.3 PWM_A | PA7 = TIMA0_CCP1 | **EN** — current flows while high | independent channel; edge precision ~0.1 µs |
+| J8.5 PWM_A | PA7 = TIMA0_CCP1 | **EN** — current flows while high | independent channel; edge precision ~0.1 µs. **On J8.5 since 2026-09-29 evening (was J8.3)** |
 | J8.4 PWM_B | PA12 = TIMA0_CCP3 | **CATH** — 1 = cathodic, 0 = anodic | changes only while EN is low; leads EN by ≥ 1 µs |
-| J8.5 GPIO | PA6 = TIMA0_FAULT0, active low, **latched**, forces CCP1 and CCP3 low | **FAULT_n** — low = compliance / open-electrode fault, isolated side unpowered, or (M4b) one battery pack missing | at start-up low means "module not ready": wait for high (≤ ~100 ms) before arming; clear only between trains; report faults to the Pi; keep the input glitch filter ≤ 1 µs (pulses at the window edge can be ~1 µs) |
+| J8.3 GPIO | PA6 = TIMA0_FAULT0, active low, **latched**, forces CCP1 and CCP3 low | **FAULT_n** (**on J8.3 since 2026-09-29 evening, was J8.5**; HAT copper change: swap the PA6 and PA7 traces to J8, re-route the laser module to match) — low = compliance / open-electrode fault, isolated side unpowered, or (M4b) one battery pack missing | at start-up low means "module not ready": wait for high (≤ ~100 ms) before arming; clear only between trains; report faults to the Pi; keep the input glitch filter ≤ 1 µs (pulses at the window edge can be ~1 µs) |
 | J9.3 "DAC" | PA15, push-pull GPIO | **RELEASE** — high = electrode SHORT switch open | high ≥ 1 µs before the first EN of a pair; low ~200 µs after the pair for ≥ 200 µs (electrode reset, also re-centres the output amplifier — do it at least every ~0.3 s during a train); also drop it in the fault handler |
 | J9.4 "ADC_A" | PA17, open-drain GPIO | **SDA** | bit-banged I²C ≤ 400 kHz, between trains only; pull-ups on the module. **SDA/SCL swapped on 2026-09-29** (module layout; HAT firmware only, no HAT copper). Before that: J9.4 = SCL, J9.5 = SDA |
 | J9.5 "ADC_B" | PA22, open-drain GPIO | **SCL** | " |

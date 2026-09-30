@@ -5,3 +5,4 @@
 - [E-stim module status](estim-module-status.md) — rev M4 (I2C DAC, RELEASE line, 26.5 x 36.5 mm single-sided) placed, not routed; decisions and what was rejected
 - [Next tasks](laserhat-next-tasks.md) — hand-route M4; HAT keep-out; battery connector decision; fab after routing
 - [No local testing](no-local-testing.md) — Pi software: build/test via GitHub CI only; never locally or with Docker
+- [KiCad Python footprint loader quirk](kicad-python-footprint-loader.md) — load footprints before LoadBoard on 9.0.8 macOS; F8 link details

@@ -1,7 +1,7 @@
 """
 Output-stage stability: U5A loop gain (Tian double injection at the op-amp output, before R13) into the electrode,
 with electrode-cable capacitance from J1.1 (E1_OUT) to GND_ISO.  The DG419's 8 pF off-capacitance on E1 and ISENSE
-is included; V_IN is held at 0 V (the 4053 output impedance is R12's source).
+is included; V_IN is held at 0 V (the ADG1436 switches output impedance is R12's source).
 
   python stability.py [--quick]       -> results/stability.json, results/stability.png
 Pass criterion used in the design: phase margin >= 45 deg for cable C up to 500 pF.

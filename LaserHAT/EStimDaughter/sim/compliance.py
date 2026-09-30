@@ -2,7 +2,7 @@
 Compliance: how long can the module hold a constant cathodic current into a worst-case electrode before U5A saturates?
 
 The load voltage during a phase is  I*Rs + I*t/Cdl (+ I*t/C16), and the stage runs out of headroom when it nears
-V_rail - I*(R13 + R14) - ~0.5 V.  Simulated with the full module deck (U5A/U5B TI models, 4053, DG419, hold timer):
+V_rail - I*(R13 + R14) - ~0.5 V.  Simulated with the full module deck (U5A/U5B TI models, ADG1436 switches, DG419, hold timer):
 one long cathodic phase, t_max = time the electrode current first falls 1 % below its plateau.
 
   python compliance.py [--quick]      -> results/compliance.json, results/compliance.png

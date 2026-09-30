@@ -22,14 +22,14 @@ Status (rev M4, 2026-09-29): schematic complete and verified (ERC 0, netlist = `
 ```
  HAT side (GND_H)            ║ barrier ║            isolated side (GND_ISO)
                              ║  2 mm   ║
- J8.2 +5V ──────────────► PS1 isolated DC-DC ────► ±15 V ──► LDO → +5V_ISO,  zener → −5V_ISO
+ J8.2 +5V ──────────────► PS1 isolated DC-DC ────► ±15 V ──► LDO → +5V_ISO
                              ║         ║
- J8.3 PWM_A = EN     ──┐     ║         ║        ┌─► 74HC4053: CATH selects +VSET / −VSET, EN selects that or 0 V
+ J8.5 PWM_A = EN     ──┐     ║         ║        ┌─► ADG1436 dual SPDT: CATH selects +VSET / −VSET, EN selects that or 0 V
  J8.4 PWM_B = CATH   ──┤ U1  ║ ISO7741F║ ───────┤
  J9.3 RELEASE ────────┘ 3+1  ║         ║        ├─► DG419B SHORT switch across E1–E2: closed while RELEASE is low
  J9.4 SDA ────────────┐ U9   ║ ISO1640 ║ ───────┼─► DAC60501 12-bit I²C DAC, internal 2.5 V ref / 2 = 0–1.25 V
  J9.5 SCL ────────────┘      ║  (I²C)  ║        │      └─► OPA2192 B: unity inverter makes −VSET
- J8.5 FAULT_n ◄──────────────╫─────────╫────────┤  LM393 window on the electrode voltage: low = compliance /
+ J8.3 FAULT_n ◄──────────────╫─────────╫────────┤  LM393 window on the electrode voltage: low = compliance /
                              ║         ║        │  open-electrode fault (also low while the isolated side is unpowered)
                              ║         ║
                              ║         ║  OPA2192 A: floating-load V→I; I = V_IN / 2.49 kΩ → J1 E1 / E2
@@ -52,22 +52,22 @@ Status (rev M4, 2026-09-29): schematic complete and verified (ERC 0, netlist = `
 |---|---|---|
 | J8.1, J9.1 GND | — | GND_H |
 | J8.2 +5V | — | DC-DC input |
-| J8.3 PWM_A | PA7 TIMA0_CCP1 | **EN**: current flows while high |
+| J8.5 PWM_A | PA7 TIMA0_CCP1 | **EN**: current flows while high |
 | J8.4 PWM_B | PA12 TIMA0_CCP3 | **CATH**: 1 = cathodic, 0 = anodic |
-| J8.5 GPIO | PA6 TIMA0_FAULT0 | **FAULT_n**: low = fault (electrode voltage past the compliance window, open electrode) or isolated side not powered (module not ready) |
+| J8.3 GPIO | PA6 TIMA0_FAULT0 | **FAULT_n**: low = fault (electrode voltage past the compliance window, open electrode) or isolated side not powered (module not ready) |
 | J9.2 +3V3 | MSPM0_3V3 | ISO7741F / ISO1640 VCC1 |
 | J9.3 "DAC" | PA15 as GPIO | **RELEASE**: high = SHORT switch open (electrode free), low = E1 shorted to E2 |
 | J9.4 "ADC_A" | PA17 as GPIO (open-drain) | **SDA** (bit-banged I²C) |
 | J9.5 "ADC_B" | PA22 as GPIO (open-drain) | **SCL** |
 
-MCU pins per `../REV2_NOTES.md`; the J8/J9 pad positions are frozen, the J9.3–5 meanings changed in rev M4 (`../estim_interface/ESTIM_MODULE_SPEC.md` §7; M1–M3 carried CS_n / SCK / MOSI for an SPI DAC; SDA and SCL swapped places on 2026-09-29 for the layout).
+MCU pins per `../REV2_NOTES.md`; the J8/J9 pad positions are frozen, the J9.3–5 meanings changed in rev M4 (`../estim_interface/ESTIM_MODULE_SPEC.md` §7; M1–M3 carried CS_n / SCK / MOSI for an SPI DAC; SDA and SCL swapped places on 2026-09-29 for the layout; J8.3 and J8.5 swapped the same evening so FAULT_n meets the ISO7741's reverse channel — a HAT copper change).
 
 ### Firmware contract
 - **Amplitude.** Bit-banged I²C (any clock up to 400 kHz; both lines open-drain with 4.7 k pull-ups on both sides of the isolator) to the DAC60501Z at address **0x48**, between trains. After the isolated side powers up (250 µs POR): write the GAIN register **0x04 = 0x0100** (REF-DIV = 1, BUFF-GAIN = 0 → 0–1.25 V full scale; the power-on default is ×2 gain, which would give 4× the intended current), then per amplitude the DAC register **0x08 = code << 4** (12-bit code left-aligned in 16 bits). Frame: address byte 0x90, command byte, data MSB, data LSB. The Z variant powers up at zero code.
   I = code / 4096 × 1.25 V / 2.49 kΩ (0.123 µA/LSB, 502 µA full scale).
 - **Pulse pair.**
   1. RELEASE high ≥ 1 µs before the first EN (opens the SHORT switch).
-  2. CATH high before EN rises (≥ 1 µs; the 4053 needs ~20 ns).
+  2. CATH high before EN rises (≥ 1 µs; the ADG1436 switches in ~150 ns).
   3. EN high for t_pw.
   4. EN low for the gap; CATH falls during the gap.
   5. EN high for t_pw.
@@ -86,7 +86,7 @@ U8, a TLV1702 dual comparator running from the ±V rails (36 V, rail-to-rail inp
 | Item | Value |
 |---|---|
 | Outline | **26.5 × 36.5 mm** rectangle, drawn in **HAT board coordinates**: x 101.0–127.5, y 76.0–112.5 mm. The module extends 12.5 mm past the HAT's south edge (y = 100), over the Pi's USB-C / micro-HDMI edge (HAT NOTICE 12). J8/J9 pads land exactly on the HAT sockets. |
-| Layers | **4**: F.Cu signal / In1.Cu split ground planes (GND_H \| GND_ISO) / In2.Cu signal / B.Cu signal |
+| Layers | **4**: F.Cu parts + signals with GND pours / In1.Cu split ground planes (GND_H \| GND_ISO) / In2.Cu power distribution / B.Cu signals with GND pours. (A 2-layer attempt on 2026-09-29 was abandoned.) |
 | Thickness | 1.6 mm |
 | Track / clearance | 0.15 mm minimum each (signal 0.2 mm, power 0.3 mm) |
 | Vias | 0.5 mm pad / 0.3 mm drill, tented. No blind or buried vias. (Board not yet routed in M4.) |
@@ -100,20 +100,20 @@ U8, a TLV1702 dual comparator running from the ±V rails (36 V, rail-to-rail inp
 
 | Side / type | Parts |
 |---|---|
-| Top SMT (50) | U1 ISO7741F (SSOP-16), U9 ISO1640 (SOIC-8), U2 TLV76050 (SOT-23), U4 DAC60501Z (VSSOP-10), U5 OPA2192 (VSSOP-8), U6 74HC4053BQ (DHVQFN-16), U7 DG419BDQ (MSOP-8), U8 TLV1702 (VSSOP-8), D1, D2 (SOD-323), 39 passives, plus two bare test pads TP1 ISENSE / TP2 GND_ISO |
+| Top SMT (45) | U1 ISO7741F (SSOP-16), U9 ISO1640 (SOIC-8), U2 TLV76050 (SOT-23), U4 DAC60501Z (VSSOP-10), U5 OPA2192 (VSSOP-8), U6 ADG1436 (LFCSP-16 4 × 4 mm), U7 DG419BDQ (MSOP-8), U8 TLV1702 (VSSOP-8), D2 (SOD-323), 34 passives, plus two bare test pads TP1 ISENSE / TP2 GND_ISO |
 | Bottom SMT | **none** (single-sided assembly, JLC Economic tier) |
 | Through-hole, hand-soldered | **J8, J9**: male 1×5 0.1" headers on the **underside**, into the HAT sockets. **J1**: 1×2 0.1" right-angle electrode header on the south edge. Its plastic body overhangs the edge by about 2.5 mm and its pins by about 9 mm. |
 | **DNP** | **PS1**, the isolated 5 V → ±15 V DC-DC (SIP, pins 1 2 4 5 6 on 0.1", 10 mm tall, top side). Fit one of: RECOM **RB-0515D/HP** (Mouser; verified drop-in), Mornsun A0515S-1WR3, or LCSC C5369388 (YLPTEC). Solder it or use a machined-pin SIP socket. Alternatively leave it empty and wire two battery packs: + → **+V**, centre tap → **0V**, − → **−V** (up to ±18 V; draw about 10 mA per rail). |
 | LCSC parts | 29 unique (M1: 25; M2 adds LM393DGKR C34440 and the 12 k / 27 k / 110 k 0402 resistors). Stock checked 2026-09-26 for the M1 set; re-run `tools/lcsc_check.py` before ordering. |
 
 Extended parts:
-- ICs: ISO7741FDBQR, ISO1640BDR, TLV76050DBZR, DAC60501ZDGSR, OPA2192IDGKR, 74HC4053BQ, DG419BDQ, TLV1702AIDGKR.
-- Diodes: BAT54WS, BZT52C4V7S.
+- ICs: ISO7741FDBQR, ISO1640BDR, TLV76050DBZR, DAC60501ZDGSR, OPA2192IDGKR, ADG1436YCPZ, DG419BDQ, TLV1702AIDGKR.
+- Diodes: BAT54WS.
 - Resistors: 0.1 % 10.0k and 2.49k (0603); 47 Ω (0402).
 - Capacitors: 1 µF 50 V (0603 and 0805), 4.7 µF (0603), 2.2 nF (0402).
 
 **Panelization notes**
-- The design needs **4 layers**; assembly is **single-sided** since M3 (the 23.5 mm outline of M1/M2 could not be routed single-sided: `../SMA_VS_BNC_STUDY.md`).
+- The board is **4 layers** (a 2-layer attempt on 2026-09-29 was abandoned); assembly is **single-sided** since M3 (the 23.5 mm outline of M1/M2 could not be routed single-sided: `../SMA_VS_BNC_STUDY.md`).
 - Copper comes within 0.3 mm of the edge. Prefer tab routing with mouse bites to V-scoring.
 - Leave a routed gap (not a V-score) along the south edge, where J1 overhangs. J1 is hand-fitted after depanelizing.
 - Put fiducials and tooling holes on the panel rails.
@@ -125,7 +125,7 @@ Extended parts:
 | Decision | Reason |
 |---|---|
 | Digital-only isolation: bit-banged I²C to an isolated DAC (SPI in M1–M3) | No analog signal crosses the barrier, and the amplitude is exact. I²C needs two lines instead of three, which freed J9.3 for the RELEASE line without changing the connectors. A PWM-filtered set-point was evaluated and rejected: amplitude spread, and offset at low codes. |
-| ±VSET from one DAC through an inverter, selected by a 74HC4053 | Both phases derive from the same set-point, which gives 0.003–0.07 % charge balance without trimming |
+| ±VSET from one DAC through an inverter, selected by an ADG1436 dual SPDT on the ±V rails (a 74HC4053 with a −5 V zener rail until M4b) | Both phases derive from the same set-point, which gives 0.003–0.07 % charge balance without trimming |
 | Floating-load V→I op-amp (OPA2192, ±15 V) with a 2.49 kΩ 0.1 % sense resistor | Current accuracy is set by one precision resistor. The ±15 V rails give about ±13.5 V compliance for 5–15 kΩ electrodes at up to 500 µA. |
 | C16, 1 µF DC block in series with the electrode | Safety: no DC can reach tissue under any single fault (stuck EN, latched op-amp, bad DAC code). The worst case is C16 × V ≈ 15 µC, after which the current stops. Normal pulses cost only about 50 mV of compliance. The trade-off: U5A's DC feedback comes from the SHORT closing between pulses (see open items). |
 | 502 µA full scale (R14 = 2.49 kΩ, 1.25 V DAC full scale) | Set by the electrode, not the circuit. I_max ≈ 14.5 V / (Rs + 2.5 kΩ + pw/Cdl): about 180–250 µA at 100 µs and 490–690 µA at 20 µs for microwires. For larger or coated electrodes, lower R14 (1.24 k → 1 mA, 619 Ω → 2 mA full scale); nothing else changes. High current on microwires would need higher rails, which means a different op-amp, switch and converter. |
@@ -153,7 +153,7 @@ Extended parts:
 A self-contained ngspice model of the final circuit, with part names matching the schematic. `sim/spice.py` builds the netlists:
 - **U5A/U5B (OPA2192):** TI's PSpice macro-model, `sim/models/OPAx192.lib`. The DAC is an ideal source (M4: 0–1.25 V, R14 2.49 k).
 - **U8 (TLV1702):** a behavioural open-collector comparator pair (`COMPOC` in `sim/spice.py`: ideal threshold, 0.5 µs delay) with the R26 / D2 level shift; the LM393 macro-model in `sim/models/` is no longer used.
-- **Everything else** is modelled from datasheet values: DAC, 74HC4053, DG419 with charge injection, BAT54C hold timer, rails, the ISO7761F input load on FAULT_n, and a Randles-cell electrode. `sim/models/README.md` lists every model.
+- **Everything else** is modelled from datasheet values: DAC, ADG1436, DG419 with charge injection, BAT54C hold timer, rails, the ISO7761F input load on FAULT_n, and a Randles-cell electrode. `sim/models/README.md` lists every model.
 
 **Requirements**
 - ngspice ≥ 40. It's found on `PATH`, or set `NGSPICE=/path/to/ngspice`.

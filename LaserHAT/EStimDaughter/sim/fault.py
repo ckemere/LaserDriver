@@ -1,7 +1,7 @@
 """
 Fault detector: U8 TLV1702 window on E1 -> FAULT_n (J8.5 -> HAT TIMA0_FAULT0, which kills EN/CATH in hardware).
 E1 is compared directly with the taps of a 10k / 215k / 10k string between +V and -V, so the trip points track the
-rails: |E1| > 0.915*V for equal packs.  Checks, with the full module deck (U5A/U5B TI model, 4053, DG419, hold timer
+rails: |E1| > 0.915*V for equal packs.  Checks, with the full module deck (U5A/U5B TI model, ADG1436 switches, DG419, hold timer
 standing in for the RELEASE line, behavioural comparators with the R26 / D2 level shift):
   1. analytic trip points vs rail (12 / 15 / 16.8 / 18 V) and for unequal packs;
   2. 250 uA cathodic-first pair, phase width swept across the compliance limit: when FAULT_n fires relative to the
@@ -35,8 +35,8 @@ def _run(I, pairs, pw, gap, period, V, Rs, Cdl, Rct, tstop, step):
         "\n{OPTS}\n" + f".tran {step} {tstop} 0 {step}\n"
     r = run_robust(deck, VEC, tstop, opts=FAULT_OPTS, attempt_timeout=300)
     r["i_el"] = (r["v(e1_out)"] - r["v(xel.n1)"]) / Rs        # + = anodic (into E1)
-    r["margin_p"] = r["v(th_p)"] - r["v(e1)"]                 # > 0 while U8A is quiet
-    r["margin_n"] = r["v(e1)"] - r["v(th_n)"]                 # > 0 while U8B is quiet
+    r["margin_p"] = r["v(th_p)"] - r["v(e1)"]                 # > 0 while U8B is quiet
+    r["margin_n"] = r["v(e1)"] - r["v(th_n)"]                 # > 0 while U8A is quiet
     return r
 
 

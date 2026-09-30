@@ -11,7 +11,22 @@ import sch_symbols as S
 from sch_parts import BY_REF
 
 G = 1.27
-U = lambda: str(uuid.uuid4())
+# Deterministic UUIDs (2026-09-29): symbol instances hash their reference (unit 1) or "REF#uN", everything else a running
+# counter, all in one fixed namespace.  Regenerating therefore keeps every UUID, so the board footprints, whose path is
+# "/ROOT/<symbol uuid>", stay linked across F8 (Update PCB from Schematic) and git diffs stay small.
+UUID_NS = uuid.UUID("6f1d3c2a-9b7e-4e5f-8a1c-0e2d4b6a8c10")
+_uuid_counter = [0]
+
+
+def U(key=None):
+    if key is None:
+        _uuid_counter[0] += 1
+        key = f"item{_uuid_counter[0]}"
+    return str(uuid.uuid5(UUID_NS, key))
+
+
+def symbol_uuid(ref, unit=1):
+    return U(ref if unit == 1 else f"{ref}#u{unit}")
 F = S.F
 
 # PWR_FLAG (power symbol with a power_out pin)
@@ -77,7 +92,7 @@ class Sheet:
         is_tp = p["sym"] == "TestPoint"
         self.items.append(
             f'(symbol (lib_id "{S.LIB}:{p["sym"]}") (at {F(x)} {F(y)} {rot}){" (mirror y)" if mirror else ""} (unit {unit}) '
-            f'(exclude_from_sim no) (in_bom {"no" if is_tp else "yes"}) (on_board yes) (dnp {"yes" if p.get("dnp") else "no"})\n    (uuid "{U()}")\n    '
+            f'(exclude_from_sim no) (in_bom {"no" if is_tp else "yes"}) (on_board yes) (dnp {"yes" if p.get("dnp") else "no"})\n    (uuid "{symbol_uuid(ref, unit)}")\n    '
             + "\n    ".join(props) + f"\n    {pins_txt}\n"
             f'    (instances (project "{PROJ}" (path "/{ROOT}" (reference "{ref}") (unit {unit}))))\n  )')
 

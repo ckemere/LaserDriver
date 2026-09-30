@@ -11,9 +11,9 @@ The circuit is kbest rev E (`../biphasic_stim/DESIGN_NOTES.md`) with the changes
 | J8.1 / J9.1 | GND | GND_H (HAT side of the barrier) |
 | J8.2 | +5V | A0515S input (±15 V isolated out) |
 | J9.2 | +3V3 | ISO7761F side 1 (VCC1) |
-| J8.3 PWM_A | PA7 TIMA0_CCP1 | **EN**: current flows while high |
+| J8.5 PWM_A | PA7 TIMA0_CCP1 | **EN**: current flows while high (J8.5 since 2026-09-29 evening; was J8.3) |
 | J8.4 PWM_B | PA12 TIMA0_CCP3 | **CATH**: 1 = cathodic, 0 = anodic |
-| J8.5 GPIO | PA6 TIMA0_FAULT0 | **FAULT_n**: low = compliance / open-electrode fault, or isolated side not up |
+| J8.3 GPIO | PA6 TIMA0_FAULT0 | **FAULT_n**: low = compliance / open-electrode fault, or isolated side not up (J8.3 since 2026-09-29 evening; was J8.5) |
 | J9.3 "DAC" | PA15 GPIO | **RELEASE**: high = SHORT switch open (M4; was CS_n) |
 | J9.4 "ADC_A" | PA17 GPIO, open-drain | **SDA** (M4; was SCK; SDA/SCL swapped 2026-09-29 for the layout) |
 | J9.5 "ADC_B" | PA22 GPIO, open-drain | **SCL** (M4; was MOSI) |
@@ -142,16 +142,29 @@ The injection is reset by every closure, so nothing accumulates.
 
 Caveat: the DG419 input has no hysteresis. On HOLD's slow decay the switch may chatter for about 1 µs as it closes. That happens while the electrode is idle and about to be shorted anyway.
 
+## Changes from M4b (M4c, 2026-09-29): ADG1436 dual switch, U8 units swapped
+
+| Change | Why |
+|---|---|
+| 74HC4053 (U6) + −5 V zener rail (R6 1.5 k, D1 BZT52C4V7S, C8) → **one ADG1436YCPZ** (LFCSP-16 4 × 4 mm, ±15 V iCMOS dual SPDT, 1.5 Ω, 20 pC injection, break-before-make, exposed pad = VSS): switch 2 = phase (IN2 = CATH: S2B = VSET_P, S2A = VSET_N → SW_P), switch 1 = gate (IN1 = EN: S1B = 0 V, S1A = SW_P → V_IN); channels chosen so IN1 / S1x face east on the board. EN pin tied to VDD = +V_STIM (allowed: logic inputs rated to VDD + 0.3 V, and IDD drops from ~140 µA to ~1 nA; EN low would leave the drains floating). C13/C14 become 100 n 50 V on ±V; neither fits within 2 mm of U6, so they sit as taps on the west feed (kept for now; either could go, since C6/C11/C19 cover +V and C5/C12/C19 cover −V). | Runs from the rails already there, so the −5 V rail and its 6 mA go away: one placement instead of five, ~16 mm² less. Cost goes the other way, ≈ $7.22 per board at LCSC (C655227, 1,451 in stock) against ≈ $0.40 — the user chose it anyway (the M1 rejection of a TMUX6136 was on price). Considered and rejected the same day: two ADG1219 (SOT-23-8, $10.75, built then replaced), TMUX7219/6219 in WSON-8 (LCSC stock 4 / 0), four TMUX6201/6202 SPSTs (no break-before-make), TS5A22364 (5 V part), DG636E (±8 V max, keeps the −5 V rail), ADG6436 ($17.67, 13 in stock). |
+| **PS1 minimum load**: with the zener chain gone the −V rail draws only ~1.5 mA (U5, U8, the threshold string) | Below the 10 % minimum load of the Mornsun A0515S. The RECOM RB-0515D/HP (0 % minimum load) or battery packs are unaffected. |
+| Decoupling audit: **C4** (1 µF at PS1 +V) and **C20** (100 n at U9 VCC2) dropped; C2 moved between U1 pin 16 and U9 pin 5 | C6 (LDO input, same +V rail 7.5 mm away) is the only cap that rail needs; the SIP converters and battery packs need none. U1 pin 16 and U9 pin 5 are 3.3 mm apart, so one 100 n within 1.6 mm of each covers both. C14 was on the list too but became U6's −V cap in the ADG1436 change. |
+| U8 comparator halves swapped (B = upper / TH_P window edge, A = lower / TH_N) | Layout: matches where the threshold taps land on the board. Same circuit. |
+| J9.4 = SDA, J9.5 = SCL; U1 channels A/B/C = RELEASE/EN/CATH (B/C swapped again in the evening for the routing); U9 channel swap |
+| **J8.3 = FAULT_n, J8.5 = EN** (were EN / FAULT_n) | The ISO7741's only reverse channel leaves on pin 6, the west end of its HAT-side row, under J8.3. With FAULT there every J8/J9 line drops straight into U1 (6/5/4/3 = FAULT/CATH/EN/RELEASE). This is a **connector-standard change**: the HAT must move PA6 (TIMA0_FAULT0) to J8.3 and PA7 (TIMA0_CCP1) to J8.5, and the laser module is re-routed to match. Spec §3 / §7. | Layout (see the M4 table and spec §7). |
+
+ADG1436 LFCSP pinout (1 D1, 2 S1B, 3 VSS, 4 GND, 6 IN2, 8 S2A, 9 D2, 10 S2B, 11 VDD, 12 EN, 15 IN1, 16 S1A; INx = 0 → SxB on, 1 → SxA on; EN = 0 → all off) from the datasheet Rev. B (LCSC mirror). Note the sense is the reverse of the ADG1219.
+
 ## Board (`EStimDaughter.kicad_pcb`)
 
 **Outline and stack-up**
 - Outline x 101–127.5, y 76–112.5 (HAT coordinates; M1/M2 ended at y 99.5).
-- 4 layers:
-  - F.Cu: signal.
-  - In1.Cu: split ground planes. GND_H covers the north strip over J8 (y < 82.58) and the east column over J9 (x > 121, y < 94.5); GND_ISO covers the rest. The F/In2/B pours use the same two outlines.
-  - In2.Cu: signal.
-  - B.Cu: signal.
-- 2 mm copper-free barrier on all layers (rule areas `ISOLATION_BARRIER_0/1/2`). Only PS1 (pins 1–2 on the HAT side), U1 (ISO7741F) and U9 (ISO1640) cross it.
+- 4 layers (a 2-layer version was tried and abandoned on 2026-09-29):
+  - F.Cu: all parts, the user's signal routing, GND pours (GND_H north strip y < 82.58 and east column x > 121, y < 94.5; GND_ISO the rest).
+  - In1.Cu: split ground planes with the same two outlines (`PLANE_GND_H`, `PLANE_GND_ISO`).
+  - In2.Cu: power distribution, routed by the user.
+  - B.Cu: the long isolated-side logic runs (EN, CATH, RELEASE, FAULT_n), V_IN, GND pours with the same two outlines.
+- 2 mm copper-free barrier on all four layers (rule areas `ISOLATION_BARRIER_0/1/2`). Only PS1 (pins 1–2 on the HAT side), U1 (ISO7741F) and U9 (ISO1640) cross it.
 - Verified: no pad, track, via or pour of either domain lies on the other side.
 - Ground pours on F, In2 and B are confined to their own domain and stitched to the planes.
 
@@ -159,7 +172,7 @@ Caveat: the DG419 input has no hysteresis. On HOLD's slow decay the switch may c
 - J8 and J9 are male 1×5 headers on B.Cu, at exactly the spec pad positions (verified).
 - J1 is a 1×2 right-angle 0.1″ header on the south edge. Its plastic body overhangs the edge by about 2.5 mm, and the pins point south.
 - M3: all 56 SMT parts (plus 2 bare test pads) on the top, and 4 through-hole (J1, J8, J9, PS1 DNP). M1/M2 (623 mm²) needed both sides at 54 % / 59 % courtyard fill of the isolated domain.
-- The DC-DC (10 mm tall) stands along the west edge; the +5 V LDO and the −5 V zener sit below its body.
+- The DC-DC (10 mm tall) stands along the west edge; the +5 V LDO sits below its body, U6 (ADG1436) with C14 above and C13 below it in a column under that along the west edge.
 - The optional M2.5 hole at (103.5, 96.5) was not added: it collides with the DC-DC body.
 - J1 (electrode) is at the far south edge, x 113–116, y 111, clear of the HAT's BACK-button thumb zone.
 
