@@ -17373,7 +17373,7 @@
 			(type default)
 		)
 		(layer "Dwgs.User")
-		(uuid "c9aed395-0f5b-49b1-a661-0c36b72037d1")
+		(uuid "c013afe1-489f-4ddf-b123-d118f9ebcf34")
 	)
 	(gr_line
 		(start 101 99.5)
@@ -17384,6 +17384,16 @@
 		)
 		(layer "Dwgs.User")
 		(uuid "82752ca5-9215-48a5-9a11-f45e8bd26037")
+	)
+	(gr_line
+		(start 101 109)
+		(end 101 76)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "2a1c346c-0f5a-4e6a-88a0-4bddded0d46b")
 	)
 	(gr_circle
 		(center 103.5 47.5)
@@ -17418,6 +17428,16 @@
 		(uuid "dfc648c5-1a9c-4895-ab06-a22b25d35433")
 	)
 	(gr_line
+		(start 127.5 76)
+		(end 127.5 109)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "5a499d86-828f-4c12-b74e-65298980b990")
+	)
+	(gr_line
 		(start 127.5 99.5)
 		(end 101 99.5)
 		(stroke
@@ -17426,6 +17446,16 @@
 		)
 		(layer "Dwgs.User")
 		(uuid "457215b1-e267-41d3-8b65-e219aeec4b85")
+	)
+	(gr_line
+		(start 127.5 109)
+		(end 101 109)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "Dwgs.User")
+		(uuid "cc80c3e5-1c06-4b9a-ae22-34d10f26f079")
 	)
 	(gr_circle
 		(center 161.5 47.5)
@@ -17873,6 +17903,28 @@
 				(bold yes)
 			)
 			(justify left bottom mirror)
+		)
+	)
+	(gr_text "LASER MODULE 26.5 x 23.5 mm"
+		(at 114.25 98 0)
+		(layer "Dwgs.User")
+		(uuid "b6e4536b-12ce-4274-9ecf-72c0eb190603")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
+		)
+	)
+	(gr_text "E-STIM MODULE 26.5 x 33 mm (overhangs the HAT edge to y 109)"
+		(at 114.25 107 0)
+		(layer "Dwgs.User")
+		(uuid "399843b9-2a6b-407d-bdbc-09d7ab7d6f8d")
+		(effects
+			(font
+				(size 0.8 0.8)
+				(thickness 0.12)
+			)
 		)
 	)
 	(gr_text "Pi 4 PoE / Pi 5 fan"

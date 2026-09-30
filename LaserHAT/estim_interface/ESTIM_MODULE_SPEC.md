@@ -124,7 +124,7 @@ Everything below was negotiated between the two sessions in 2026-09-26 … 29 an
 
 DAC (DAC60501Z, I²C address 0x48, frame 0x90 · command · MSB · LSB): after the isolated side is up (FAULT_n high + 250 µs) write GAIN register 0x04 = 0x0100 once (REF-DIV = 1, BUFF-GAIN = 0 → 0–1.25 V full scale; the power-on default is ×2 gain = 4× the intended current), then DAC register 0x08 = code << 4. I = code / 4096 × 1.25 V / 2.49 kΩ (0.123 µA/LSB, 502 µA full scale). The DAC powers up at zero code; its ACK doubles as "isolated side alive". Pulse pair: RELEASE high → CATH high → EN high t_pw → EN low, CATH low in the gap → EN high t_pw → EN low → RELEASE low ~200 µs later.
 
-Module outline: x 101.0–127.5, y 76.0–112.5 (26.5 × 36.5 mm, 12.5 mm past the HAT's south edge over the Pi's port edge; the HAT's `DAUGHTERBOARD` keep-out / Dwgs.User marker still ends at y 99.5 and should be extended by the HAT owner). Everything else (BNCs, laser module, MCU pin map) is as in §1–6.
+Module outline: x 101.0–127.5, y 76.0–112.5 (26.5 × 36.5 mm, 12.5 mm past the HAT's south edge over the Pi's port edge; the HAT's User.Drawings layer carries both the laser module outline (y 76–99.5) and the e-stim board's actual outline (y 76–109, M4c) since 2026-09-30; the `DAUGHTERBOARD` F.Cu keep-out under the module is unchanged). Everything else (BNCs, laser module, MCU pin map) is as in §1–6.
 
 ## 8. Coordination
 
