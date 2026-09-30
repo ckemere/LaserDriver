@@ -2120,6 +2120,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C25105"
+			(at 157.48 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "14a4c384-4905-4862-8375-b95d0fa8302b")
 		)
@@ -2317,6 +2326,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C80500"
+			(at 91.44 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "5"
 			(uuid "1d5fb783-6ab3-4750-917d-b737e4815d70")
 		)
@@ -2472,6 +2490,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C80500"
+			(at 121.92 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "6ceadf80-b249-42bb-a945-b9bb01a554be")
 		)
@@ -2549,6 +2576,15 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC Part #" "C2286"
+			(at 157.48 127 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -2759,6 +2795,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C4109"
+			(at 157.48 147.32 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "9be24fff-43a7-489f-8fa5-179f8b87df9e")
 		)
@@ -2826,6 +2871,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C11702"
+			(at 76.2 60.96 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "d6420b19-67db-42ce-8cfb-a746dcec4ca0")
 		)
@@ -2891,6 +2945,15 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC Part #" "C80500"
+			(at 121.92 101.6 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "3"
@@ -3167,6 +3230,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C307331"
+			(at 106.68 139.7 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "fa89ec47-e389-46b2-b233-8b189e4c3b9f")
 		)
@@ -3299,6 +3371,15 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC Part #" "C25741"
+			(at 91.44 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"

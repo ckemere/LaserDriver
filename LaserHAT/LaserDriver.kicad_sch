@@ -6515,7 +6515,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C5336487"
+		(property "LCSC Part #" "C2290"
 			(at 275.59 127 90)
 			(effects
 				(font
@@ -7087,6 +7087,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C25900"
+			(at 271.78 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "3b2de540-35bd-4e89-9873-f8457358a8cf")
 		)
@@ -7381,7 +7390,7 @@
 				)
 			)
 		)
-		(property "Value" "CAT24C32"
+		(property "Value" "M24C32-WDW6TP"
 			(at 87.63 184.5245 0)
 			(effects
 				(font
@@ -7416,7 +7425,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C94264"
+		(property "LCSC Part #" "C283445"
 			(at 81.28 177.8 0)
 			(effects
 				(font
@@ -7513,7 +7522,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C25087"
+		(property "LCSC Part #" "C4109"
 			(at 300.99 140.97 0)
 			(effects
 				(font
@@ -8060,6 +8069,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C25900"
+			(at 256.54 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "395bbaec-8f60-45fc-88db-e2f842674748")
 		)
@@ -8170,7 +8188,7 @@
 				(justify left)
 			)
 		)
-		(property "Value" "3k"
+		(property "Value" "2k"
 			(at 278.13 142.2399 0)
 			(effects
 				(font
@@ -8206,7 +8224,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C131360"
+		(property "LCSC Part #" "C4109"
 			(at 275.59 140.97 0)
 			(effects
 				(font
@@ -8771,7 +8789,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C5336487"
+		(property "LCSC Part #" "C2286"
 			(at 300.99 127 90)
 			(effects
 				(font

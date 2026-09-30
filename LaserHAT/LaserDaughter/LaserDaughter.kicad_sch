@@ -5140,7 +5140,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C7427158"
+		(property "LCSC Part #" "C503307"
 			(at 130.81 44.45 90)
 			(effects
 				(font
@@ -5480,7 +5480,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C844101"
+		(property "LCSC Part #" "C25761"
 			(at 157.48 62.23 0)
 			(effects
 				(font
@@ -5735,7 +5735,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C42460620"
+		(property "LCSC Part #" "C2105197"
 			(at 146.05 226.06 0)
 			(effects
 				(font
@@ -5994,7 +5994,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C843869"
+		(property "LCSC Part #" "C852624"
 			(at 200.66 148.59 0)
 			(effects
 				(font
@@ -6516,7 +6516,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C119617"
+		(property "LCSC Part #" "C37049"
 			(at 127 138.43 90)
 			(effects
 				(font
@@ -6604,7 +6604,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C894423"
+		(property "LCSC Part #" "C37049"
 			(at 149.86 55.88 0)
 			(effects
 				(font
@@ -6823,6 +6823,15 @@
     (property "Datasheet" "" (id 3) (at 88.9 185.42 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C25783"
+			(at 88.9 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid 604533bf-3d84-5ae5-925d-35b7ea0e46da))
     (pin "2" (uuid d8e67437-0cb0-5918-9ad1-d6050f55cade))
     (instances (project "LaserDaughter" (path "/212bfd25-f831-4b85-926b-000000000002" (reference "R3") (unit 1))))
@@ -6842,6 +6851,15 @@
     (property "Datasheet" "" (id 3) (at 99.06 185.42 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C25744"
+			(at 99.06 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid 171160f1-240e-5d35-9108-328a94753866))
     (pin "2" (uuid 26d95ffe-0757-5dce-88d3-ba128721930d))
     (instances (project "LaserDaughter" (path "/212bfd25-f831-4b85-926b-000000000002" (reference "R4") (unit 1))))
@@ -6879,6 +6897,15 @@
     (property "Datasheet" "" (id 3) (at 143.51 199.39 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C274612"
+			(at 143.51 199.39 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid e32d46d6-086f-5dbf-8a72-368c71d5bbc8))
     (pin "2" (uuid f3f69131-9084-5c86-b701-892be32e4a71))
     (pin "3" (uuid d6c2015b-885e-580c-b76b-ec1da018c653))
@@ -6899,6 +6926,15 @@
     (property "Datasheet" "" (id 3) (at 109.22 185.42 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C307331"
+			(at 109.22 185.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid 87b1d228-a4a2-56b0-833c-3c81c37d052d))
     (pin "2" (uuid 0e6f9fb3-9f6b-5258-ac89-ab16731bab7d))
     (instances (project "LaserDaughter" (path "/212bfd25-f831-4b85-926b-000000000002" (reference "C12") (unit 1))))
@@ -6954,6 +6990,15 @@
     (property "Datasheet" "" (id 3) (at 139.7 110.49 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C209582"
+			(at 139.7 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid e1d3b3f5-5567-5d22-8e77-547df817f327))
     (pin "2" (uuid 77962c42-b57f-5748-bcdb-8ff6ccb7d7c0))
     (instances (project "LaserDaughter" (path "/212bfd25-f831-4b85-926b-000000000002" (reference "D2") (unit 1))))
@@ -6973,6 +7018,15 @@
     (property "Datasheet" "" (id 3) (at 154.94 110.49 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C209583"
+			(at 154.94 110.49 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid 239384cf-d3fb-5490-a1c1-5502d6b8320b))
     (pin "2" (uuid 3734a6cd-e4d1-5fe6-948a-42085f246fdc))
     (instances (project "LaserDaughter" (path "/212bfd25-f831-4b85-926b-000000000002" (reference "D4") (unit 1))))
@@ -7011,6 +7065,15 @@
     (property "Datasheet" "" (id 3) (at 254.0 71.12 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C25741"
+			(at 254.0 71.12 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid cf0b86c8-c748-570b-89bd-4c1a35216fe3))
     (pin "2" (uuid 51d244f0-fb97-5a6d-a292-ff686a15196d))
     (instances (project "LaserDaughter" (path "/212bfd25-f831-4b85-926b-000000000002" (reference "R1") (unit 1))))
@@ -7030,6 +7093,15 @@
     (property "Datasheet" "" (id 3) (at 254.0 91.44 0)
       (effects (font (size 1.27 1.27)) hide)
     )
+		(property "LCSC Part #" "C25779"
+			(at 254.0 91.44 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
     (pin "1" (uuid aa5c36bb-b8e8-5617-8fab-406c245935b1))
     (pin "2" (uuid 95134c28-81a2-5966-b305-e3db84657fd7))
     (instances (project "LaserDaughter" (path "/212bfd25-f831-4b85-926b-000000000002" (reference "R2") (unit 1))))

@@ -198,6 +198,7 @@ This is the isolated biphasic constant-current stimulator (rev M4). It was desig
 ```sh
 python tools/rev2_migrate.py                # HAT schematics (kiutils)
 python tools/make_laser_daughter.py --sync-pcb   # laser module schematic + headless F8 (paths/nets, copper kept)
+python tools/stamp_lcsc.py HAT LASER              # 'LCSC Part #' fields from tools/lcsc_parts.py into schematics + boards (Fabrication Toolkit reads them)
 python tools/path_check.py LaserDaughter/LaserDaughter.kicad_pcb LaserDaughter/LaserDaughter.kicad_sch   # 0 mismatches or F8 will replace parts
 sh tools/build_hat_pcb.sh --route           # HAT PCB (~20 min) - DO NOT run on the hand-routed LaserDriver.kicad_pcb
 sh tools/build_daughter_pcb.sh --route      # laser module PCB (a few min)

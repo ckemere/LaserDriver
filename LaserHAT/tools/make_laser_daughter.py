@@ -223,6 +223,9 @@ def main():
     with open(out, "w") as f:
         f.write(txt)
     print("wrote", out)
+    import lcsc_parts
+    import stamp_lcsc
+    stamp_lcsc.stamp_schematic(out, lcsc_parts.LASER, lcsc_parts.VALUES["LASER"])   # "LCSC Part #" fields
     if "--sync-pcb" in sys.argv:
         sync_pcb(out)
 

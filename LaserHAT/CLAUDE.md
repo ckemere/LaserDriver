@@ -24,6 +24,10 @@ minimal edits (see `REV2_NOTES.md`):
   byte-identical; `--sync-pcb` = headless F8 via `pcb_sync.py --keep-tracks`).  After any schematic
   or board scripting, `tools/path_check.py board.kicad_pcb root.kicad_sch` must report 0 mismatches,
   otherwise KiCad's F8 replaces footprints and the hand placement is lost.
+- **Part numbers:** `tools/lcsc_parts.py` is the only source of LCSC codes (verified against LCSC/JLC on
+  2026-09-30).  `tools/stamp_lcsc.py` writes them into the `LCSC Part #` field of every symbol and footprint
+  (the field the Fabrication Toolkit reads) and removes the misspelt Rev 1 variants; run it after editing
+  the table.  Hand-fitted parts are marked **DNP** in the schematic; `jlc_fab.py` lists them as such.
 
 ### The HAT PCB is hand-placed and hand-routed (2026-09-28)
 

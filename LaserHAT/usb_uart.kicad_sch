@@ -3299,6 +3299,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C471913"
+			(at 157.48 40.64 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "9e6f6fa9-1437-4c23-a2f6-27ac31e4e787")
 		)
@@ -4019,6 +4028,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C431540"
+			(at 45.72 76.2 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "2"
 			(uuid "69ee68de-afb9-4891-babb-7a58c76a4438")
 		)
@@ -4089,6 +4107,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C25741"
+			(at 55.88 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "56833a78-dfab-4a5c-bbf7-a8d52378635a")
 		)
@@ -4154,6 +4181,15 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC Part #" "C471913"
+			(at 76.2 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"
@@ -4490,7 +4526,7 @@
 				(hide yes)
 			)
 		)
-		(property "LCSC Part #" "C2927038"
+		(property "LCSC Part #" "C2988369"
 			(at 107.95 106.68 0)
 			(effects
 				(font
@@ -4678,6 +4714,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C25792"
+			(at 200.66 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "4b9415bd-2efb-4adc-8047-185fe8abd19f")
 		)
@@ -4745,6 +4790,15 @@
 				)
 			)
 		)
+		(property "LCSC Part #" "C25744"
+			(at 213.36 45.72 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
 		(pin "1"
 			(uuid "a85e0acf-4dd9-4234-b9f5-6cdd4c509f9a")
 		)
@@ -4810,6 +4864,15 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC Part #" "C154733"
+			(at 175.26 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "3"
@@ -5032,6 +5095,15 @@
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC Part #" "C154733"
+			(at 139.7 58.42 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "2"

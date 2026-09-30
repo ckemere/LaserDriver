@@ -110,6 +110,9 @@ def main():
             elif code and not fp.IsExcludedFromBOM():
                 fitted[ref] = (fp.GetValue(), fpn, code)
                 sides.add("Bottom" if fp.IsFlipped() else "Top")
+                field = fp.GetFieldsText().get("LCSC Part #", "")
+                if field != code:            # the Fabrication Toolkit reads the field: keep them equal
+                    print(f"{name}: {ref} field 'LCSC Part #' = {field!r} but lcsc_parts says {code}; run tools/stamp_lcsc.py")
             else:
                 nocode.append((ref, fp.GetValue(), fpn))          # real part, no LCSC number: nobody fits it
         missing = [r for r in codes if r not in fitted and r not in [h[0] for h in hand]]
