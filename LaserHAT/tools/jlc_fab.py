@@ -102,6 +102,7 @@ def main():
                 fitted[ref] = (fp.GetValue(), fp.GetFPID().GetLibItemName().wx_str(), code)
                 sides.add("Bottom" if fp.IsFlipped() else "Top")
             elif fp.IsDNP() or not fp.Pads() or ref.startswith(("MH", "REF", "JP", "TP")) or \
+                    (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()) or \
                     fp.GetFPID().GetLibItemName().wx_str().startswith("SolderJumper"):
                 nonparts.append(ref)
             else:

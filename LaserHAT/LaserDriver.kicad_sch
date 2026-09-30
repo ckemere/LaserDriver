@@ -2884,7 +2884,7 @@
 					(hide yes)
 				)
 			)
-			(property "Description" "Owl logo with laser eyes and a pyramidal neuron (graphic only, no pins)"
+			(property "Description" "Owl logo with laser eyes and a pyramidal neuron; pin 1 = the exposed-copper eyes and beams, tie to GND"
 				(at 0 0 0)
 				(effects
 					(font
@@ -3448,6 +3448,26 @@
 					)
 					(fill
 						(type outline)
+					)
+				)
+			)
+			(symbol "OwlLogo_1_1"
+				(pin passive line
+					(at 0 -10.16 90)
+					(length 2.54)
+					(name "GND"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
 					)
 				)
 			)
@@ -8354,7 +8374,7 @@
 	)
 	(symbol
 		(lib_id "LaserHAT:OwlLogo")
-		(at 25.4 275 0)
+		(at 25.4 274.32 0)
 		(unit 1)
 		(exclude_from_sim yes)
 		(in_bom no)
@@ -8362,7 +8382,7 @@
 		(dnp no)
 		(uuid "db312fd1-97bf-5de1-b91e-f29a3f781c65")
 		(property "Reference" "G1"
-			(at 25.4 267.15 0)
+			(at 25.4 266.47 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8371,7 +8391,7 @@
 			)
 		)
 		(property "Value" "OwlLogo"
-			(at 25.4 282.85 0)
+			(at 25.4 282.17 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8380,7 +8400,7 @@
 			)
 		)
 		(property "Footprint" "Footprints:OwlLogo_Laser_14mm"
-			(at 25.4 275 0)
+			(at 25.4 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8389,7 +8409,7 @@
 			)
 		)
 		(property "Datasheet" ""
-			(at 25.4 275 0)
+			(at 25.4 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
@@ -8397,19 +8417,85 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Owl logo with laser eyes (graphic only, no pins); keeps the board logo through F8"
-			(at 25.4 275 0)
+		(property "Description" "Owl logo with laser eyes; pin 1 = exposed-copper eyes and beams, tied to GND; keeps the board logo through F8"
+			(at 25.4 274.32 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
 				(hide yes)
 			)
+		)
+		(pin "1"
+			(uuid "35fab44c-b90f-46df-a510-cfe918df38b1")
 		)
 		(instances
 			(project "LaserDriver"
 				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
 					(reference "G1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GND")
+		(at 25.4 284.48 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "e6ad10d9-d086-4822-9041-e4ecf82f1c31")
+		(property "Reference" "#PWR0924"
+			(at 25.4 290.83 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GND"
+			(at 25.5143 288.8044 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 25.4 284.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Datasheet" ""
+			(at 25.4 284.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GND\" , ground"
+			(at 25.4 284.48 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "579ceb91-1eb1-4a71-8cea-52f0e64f2887")
+		)
+		(instances
+			(project "LaserDriver"
+				(path "/e63e39d7-6ac0-4ffd-8aa3-1841a4541b55"
+					(reference "#PWR0924")
 					(unit 1)
 				)
 			)

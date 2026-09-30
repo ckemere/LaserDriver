@@ -92,7 +92,7 @@
       (property "Value" "OwlLogo" (at 0 -7.85 0) (effects (font (size 1.27 1.27)) hide))
       (property "Footprint" "Footprints:OwlLogo_Laser_14mm" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
       (property "Datasheet" "" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
-      (property "Description" "Owl logo with laser eyes and a pyramidal neuron (graphic only, no pins)" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
+      (property "Description" "Owl logo with laser eyes and a pyramidal neuron; pin 1 = the exposed-copper eyes and beams, tie to GND" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
       (property "ki_keywords" "logo owl laser" (at 0 0 0) (effects (font (size 1.27 1.27)) hide))
       (symbol "OwlLogo_0_1"
         (polyline (pts (xy 3.6665 -4.2661) (xy 2.9838 -3.837) (xy 2.3849 -3.3624) (xy 1.8539 -2.8224) (xy 1.3652 -2.1839) (xy 1.2909 -2.129) (xy 1.2035 -2.1189) (xy 1.1254 -2.1579) (xy 1.0773 -2.2471) (xy 1.084 -2.3489) (xy 1.4558 -2.852) (xy 2.0197 -3.4825) (xy 2.0926 -3.6198) (xy 2.0914 -3.7445) (xy 1.8775 -4.3314) (xy 1.2021 -3.9516) (xy 0.707 -3.6002) (xy 0.1468 -3.0884) (xy -0.2502 -2.6172) (xy -0.7414 -1.8561) (xy -0.9993 -1.3192) (xy -1.2018 -0.7617) (xy -1.3492 -0.1861) (xy -1.4417 0.4051) (xy -1.4797 1.0094) (xy -1.4635 1.6243) (xy -0.7666 1.5543) (xy -0.0575 1.5672) (xy 0.0133 1.6271) (xy 0.0395 1.7524) (xy -0.0133 1.8384) (xy -0.1092 1.8799) (xy -1.0733 1.8998) (xy -1.3391 1.9666) (xy -1.4178 2.0116) (xy -1.4767 2.1394) (xy -1.5308 2.474) (xy -1.4859 2.7427) (xy -1.3321 3.0563) (xy -1.0239 2.934) (xy -0.7058 2.8898) (xy -0.3885 2.9279) (xy -0.0824 3.0523) (xy 0.0391 2.6064) (xy 0.6389 1.3612) (xy 0.792 1.2201) (xy 0.9142 1.184) (xy 1.02 1.1853) (xy 1.166 1.2443) (xy 1.2927 1.3904) (xy 1.9189 2.7034) (xy 1.9888 3.0586) (xy 2.2998 2.933) (xy 2.6184 2.8882) (xy 2.9374 2.929) (xy 3.2497 3.06) (xy 3.3787 2.8171) (xy 3.4404 2.5539) (xy 3.4294 2.2828) (xy 3.3402 2.016) (xy 3.1722 1.9415) (xy 2.9812 1.9005) (xy 2.0134 1.8786) (xy 1.9053 1.8133) (xy 1.8745 1.7078) (xy 1.9379 1.5899) (xy 2.0755 1.5416) (xy 2.0548 0.8683) (xy 2.1045 0.2036) (xy 2.2231 -0.4478) (xy 2.4091 -1.081) (xy 2.5268 -1.3893) (xy 2.8111 -1.986) (xy 2.9771 -2.2733) (xy 3.3561 -2.8227) (xy 3.8309 -3.374) (xy 3.8958 -3.4974) (xy 3.8964 -3.6881) (xy 3.6665 -4.2663))
@@ -173,6 +173,12 @@
           (stroke (width 0.15) (type default)) (fill (type none)))
         (polyline (pts (xy 2.2231 3.6545) (xy -5.7324 -4.6499))
           (stroke (width 0.15) (type default)) (fill (type none)))
+      )
+      (symbol "OwlLogo_1_1"
+        (pin passive line (at 0 -10.16 90) (length 2.54)
+          (name "GND" (effects (font (size 1.27 1.27))))
+          (number "1" (effects (font (size 1.27 1.27))))
+        )
       )
     )
 )
