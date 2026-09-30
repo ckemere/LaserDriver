@@ -5,10 +5,16 @@
 - Assembly: `LaserHAT_BOM.csv` + `LaserHAT_CPL.csv`. 44 placements, 29 unique parts, sides: **Top**
 - Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.
 
-## Hand-fitted (not in BOM/CPL)
+## Hand-fitted (DNP in the schematic; not in BOM/CPL)
+
+- J1: GPIO (Samtec_HLE-120-02-xxx-DV-BE-LC_2x20_P2.54mm_Horizontal)
+- J6: BNC TRIGGER IN (BNC_Amphenol_031-5540_031-5539_Dual)
+- J7: BNC STIM OUT (BNC_Amphenol_031-5540_031-5539_Dual)
+
+## No LCSC number and not DNP — not in BOM/CPL, nobody fits these yet
 
 - J8: DB_POWER_TIMING (PinSocket_1x05_P2.54mm_Vertical)
 - J9: DB_ANALOG (PinSocket_1x05_P2.54mm_Vertical)
 - SW8: BACK (SW_Tactile_SPST_Angled_PTS645Vx39-2LFS)
 
-Not parts (jumpers, holes, logo, test pads) or DNP: G1, J1, J6, J7, JP1, JP4, JP5, MH1, MH2, MH3, MH4
+Not parts (jumpers, holes, logo, test pads, padless footprints): G1, JP1, JP4, JP5, MH1, MH2, MH3, MH4

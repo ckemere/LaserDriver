@@ -11,7 +11,10 @@ Per board:
   README.md             stack-up, size, assembly sides, hand-fit parts, extended-part count
 
 LCSC numbers come from tools/lcsc_parts.py (HAT, laser module) and EStimDaughter/bom_EStimDaughter.csv.
-Parts without an LCSC number, and DNP / BOM-excluded parts, are left out of the BOM and CPL.
+Mark hand-fitted parts **DNP in the schematic**: DNP parts are left out of the BOM and CPL and listed
+under "Hand-fitted" in the README.  Parts without an LCSC number are also left out (and flagged, so
+they can be given a number or marked DNP).  Footprints excluded from both the BOM and the position
+files (logo, mounting holes, jumpers, test pads) are not parts.
 """
 import csv
 import io
@@ -94,22 +97,26 @@ def main():
         os.makedirs(out, exist_ok=True)
         board = pcbnew.LoadBoard(pcb)
         codes = table if table is not None else estim_codes()
-        fitted, hand, nonparts, sides = {}, [], [], set()
+        fitted, hand, nocode, nonparts, sides = {}, [], [], [], set()
         for fp in sorted(board.GetFootprints(), key=lambda f: f.GetReference()):
             ref = fp.GetReference()
             code = codes.get(ref)
-            if code and not fp.IsDNP() and not fp.IsExcludedFromBOM():
-                fitted[ref] = (fp.GetValue(), fp.GetFPID().GetLibItemName().wx_str(), code)
-                sides.add("Bottom" if fp.IsFlipped() else "Top")
-            elif fp.IsDNP() or not fp.Pads() or ref.startswith(("MH", "REF", "JP", "TP")) or \
-                    (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()) or \
-                    fp.GetFPID().GetLibItemName().wx_str().startswith("SolderJumper"):
+            fpn = fp.GetFPID().GetLibItemName().wx_str()
+            if not fp.Pads() or ref.startswith(("MH", "REF", "JP", "TP")) or fpn.startswith("SolderJumper") or \
+                    (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()):
                 nonparts.append(ref)
+            elif fp.IsDNP():
+                hand.append((ref, fp.GetValue(), fpn))            # DNP in the schematic = fitted by hand
+            elif code and not fp.IsExcludedFromBOM():
+                fitted[ref] = (fp.GetValue(), fpn, code)
+                sides.add("Bottom" if fp.IsFlipped() else "Top")
             else:
-                hand.append((ref, fp.GetValue(), fp.GetFPID().GetLibItemName().wx_str()))
-        missing = [r for r in codes if r not in fitted]
+                nocode.append((ref, fp.GetValue(), fpn))          # real part, no LCSC number: nobody fits it
+        missing = [r for r in codes if r not in fitted and r not in [h[0] for h in hand]]
         if missing:
             print(f"{name}: LCSC table refs not on the board / not fitted: {missing}")
+        if nocode:
+            print(f"{name}: no LCSC number and not DNP (give them a number or mark them DNP): {[n[0] for n in nocode]}")
 
         # BOM, grouped by LCSC number
         groups = {}
@@ -136,11 +143,15 @@ def main():
             f.write(f"- Assembly: `{name}_BOM.csv` + `{name}_CPL.csv`. "
                     f"{len(fitted)} placements, {len(groups)} unique parts, sides: **{' + '.join(sorted(sides, reverse=True))}**\n")
             f.write("- Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.\n\n")
-            f.write("## Hand-fitted (not in BOM/CPL)\n\n")
+            f.write("## Hand-fitted (DNP in the schematic; not in BOM/CPL)\n\n")
             for ref, val, fpn in hand:
                 f.write(f"- {ref}: {val} ({fpn})\n")
+            if nocode:
+                f.write("\n## No LCSC number and not DNP — not in BOM/CPL, nobody fits these yet\n\n")
+                for ref, val, fpn in nocode:
+                    f.write(f"- {ref}: {val} ({fpn})\n")
             if nonparts:
-                f.write(f"\nNot parts (jumpers, holes, logo, test pads) or DNP: {', '.join(nonparts)}\n")
+                f.write(f"\nNot parts (jumpers, holes, logo, test pads, padless footprints): {', '.join(nonparts)}\n")
         print(f"{name}: {len(fitted)} placements / {len(groups)} unique, sides {sorted(sides)}, "
               f"{board.GetCopperLayerCount()}L {w_mm:.1f}x{h_mm:.1f} mm, hand-fit {[h[0] for h in hand]}")
 
