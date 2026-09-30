@@ -23,8 +23,16 @@ STUB = 5.08
 PASSIVES = {"Device:R", "Device:C", "Device:L", "Device:R_Small", "Device:C_Small"}
 
 
+UUID_NS = _uuid.uuid5(_uuid.NAMESPACE_URL, "laserhat")
+_uid_counter = [0]
+
+
 def uid():
-    return str(_uuid.uuid4())
+    """Deterministic UUID for wires, labels, junctions, pins: the n-th call always returns the
+    same value, so a re-run of a generator is byte-identical (small git diffs, and KiCad's
+    schematic<->PCB links never move).  Symbols use their own key in add_symbol()."""
+    _uid_counter[0] += 1
+    return str(_uuid.uuid5(UUID_NS, f"item{_uid_counter[0]}"))
 
 
 def eff(hide=False, justify=None):
@@ -184,7 +192,7 @@ def add_symbol(sch, lib_id, ref, value, x, y, angle=0, footprint="", mirror=None
     for u in ls.units:
         for p in u.pins:
             if u.unitId in (0, unit):
-                s.pins[p.number] = uid()
+                s.pins[p.number] = str(_uuid.uuid5(UUID_NS, f"{sheet_path}:{ref}:{unit}:pin{p.number}"))
     s.instances = [SymbolProjectInstance(name=project, paths=[
         SymbolProjectPath(sheetInstancePath=sheet_path, reference=ref, unit=unit)])]
     sch.schematicSymbols.append(s)

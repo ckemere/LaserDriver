@@ -18,6 +18,12 @@ minimal edits (see `REV2_NOTES.md`):
   In that Python, defer every `board.Remove()` to the end, compare items by `m_Uuid` (not `is`),
   and copy `VECTOR2I`s before editing (`GetStart()` returns a live reference).
 - Use the `kicad` micromamba env for everything else.
+- **2026-09-30: the HAT schematics were hand-edited and re-saved in KiCad (commit 9a940e9), so
+  `rev2_migrate.py` is stale as well — do not re-run it; patch the `.kicad_sch` text directly.**
+  The laser module sheet is still generated: `tools/make_laser_daughter.py --sync-pcb` (re-runs are
+  byte-identical; `--sync-pcb` = headless F8 via `pcb_sync.py --keep-tracks`).  After any schematic
+  or board scripting, `tools/path_check.py board.kicad_pcb root.kicad_sch` must report 0 mismatches,
+  otherwise KiCad's F8 replaces footprints and the hand placement is lost.
 
 ### The HAT PCB is hand-placed and hand-routed (2026-09-28)
 

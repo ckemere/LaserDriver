@@ -156,7 +156,6 @@
 	(net 21 "Net-(U2-FB)")
 	(net 22 "unconnected-(J3-Pin_2-Pad2)")
 	(net 23 "unconnected-(U2-NC-Pad6)")
-	(net 24 "unconnected-(J1-Pin_3-Pad3)")
 	(footprint "Package_TO_SOT_SMD:SOT-363_SC-70-6"
 		(layer "F.Cu")
 		(uuid "085b7585-fd91-424b-b333-15bdd890755b")
@@ -1258,7 +1257,7 @@
 				)
 			)
 		)
-		(path "/4dd03cac-ef1f-5d94-be5b-d616b4a44092")
+		(path "/8838e816-8303-4b3f-ac3b-bf53aa9b1cc8")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -1422,7 +1421,7 @@
 				)
 			)
 		)
-		(path "/9c4e87d2-75e9-503c-ba70-a3aaf58d2888")
+		(path "/e85230d1-48c0-4072-81ca-64213fd3955d")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -1587,7 +1586,7 @@
 				)
 			)
 		)
-		(path "/df2d0400-4dc4-582d-a6b5-2fa4e2003c00")
+		(path "/f0b7482e-ef51-4b45-b69f-65ecdecc741c")
 		(attr smd)
 		(fp_line
 			(start -0.153641 0.38)
@@ -1752,7 +1751,7 @@
 				)
 			)
 		)
-		(path "/4841ce00-0f12-5340-9142-d48b58cabc26")
+		(path "/61eefc9c-464c-4135-8ea1-17a101e4cc1a")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -2500,7 +2499,7 @@
 				)
 			)
 		)
-		(path "/02585437-ac38-580a-ab03-e96b8bb3a4af")
+		(path "/a5096b01-282a-40b4-b565-29e03c34fb9f")
 		(attr through_hole)
 		(fp_line
 			(start -1.11 -1.11)
@@ -3163,7 +3162,7 @@
 				)
 			)
 		)
-		(path "/bdabccdc-6408-58a0-b575-0433a07268e9")
+		(path "/3580fc45-41bc-466b-b04f-ed5fac798c94")
 		(attr smd)
 		(fp_line
 			(start -0.107836 0.36)
@@ -3671,7 +3670,7 @@
 				)
 			)
 		)
-		(path "/6e611a76-6579-5f50-a09f-3a8146866147")
+		(path "/9055f75e-a310-4167-93db-8f0f68012e15")
 		(attr smd)
 		(fp_line
 			(start 1.91 -3.41)
@@ -4761,7 +4760,7 @@
 				)
 			)
 		)
-		(path "/99e53b92-8cd6-5626-b8e3-01cf19238775")
+		(path "/ae16c238-3fc2-467c-8695-75c545375547")
 		(attr smd)
 		(fp_line
 			(start -2.21 1)
@@ -5426,7 +5425,7 @@
 				)
 			)
 		)
-		(path "/62a8b949-2287-5a62-8b7e-9699bf383ec7")
+		(path "/fe042318-41fa-4ee7-b4d2-bf049f293d95")
 		(attr smd)
 		(fp_line
 			(start -2.21 -1)
@@ -6571,7 +6570,7 @@
 				(justify mirror)
 			)
 		)
-		(path "/b96f87d5-ed70-5cc2-8db6-1624f5190684")
+		(path "/6b60282f-71e5-49e8-9422-6f327b614955")
 		(attr through_hole)
 		(fp_line
 			(start -1.38 1.38)
@@ -6730,7 +6729,6 @@
 			(drill 1)
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
-			(net 24 "unconnected-(J1-Pin_3-Pad3)")
 			(uuid "fd455230-bd3b-4c51-80b1-b769a364a456")
 		)
 		(pad "4" thru_hole circle
@@ -6820,7 +6818,7 @@
 				(justify mirror)
 			)
 		)
-		(path "/eb56d591-866a-52d7-89cf-863bc2025755")
+		(path "/860e131e-58ca-488f-ba79-d608f61c03c3")
 		(attr through_hole)
 		(fp_line
 			(start 1.38 -1.27)

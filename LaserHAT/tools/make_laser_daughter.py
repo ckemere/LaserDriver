@@ -9,6 +9,15 @@ LaserHAT/LaserDaughter/LaserDaughter.kicad_sch with these changes:
   * R1/R2 divider reports the 5 V / 12 V compliance rail on DB_ADC_B
     (replaces the Rev 1 RGB indicator; shown on the OLED / web GUI instead)
   * J1/J3: 1x5 male headers mating with HAT J8/J9
+
+    python tools/make_laser_daughter.py [--sync-pcb]
+
+Re-runs are byte-identical (deterministic UUIDs, see schlib.uid / add_symbol), so the
+symbol UUIDs that the board's footprints reference never change.  --sync-pcb then exports
+the netlist and runs tools/pcb_sync.py --keep-tracks on LaserDaughter.kicad_pcb (footprint
+paths, nets, values, DNP; placement and copper untouched), which is what KiCad's F8 would do
+-- run it after any change that touches nets, or press F8 in pcbnew.  Refuses if pcbnew has
+the board open (~LaserDaughter.kicad_pcb.lck).
 """
 import os
 import sys
@@ -185,6 +194,27 @@ def retarget_instances(txt):
     return txt
 
 
+def sync_pcb(sch_path):
+    """Headless F8: relink footprint paths / nets from the schematic, keep placement and copper."""
+    import shutil
+    import subprocess
+    import tempfile
+    board = os.path.join(OUT_DIR, "LaserDaughter.kicad_pcb")
+    lock = os.path.join(OUT_DIR, "~LaserDaughter.kicad_pcb.lck")
+    if not os.path.exists(board):
+        print("no board to sync")
+        return
+    if os.path.exists(lock):
+        raise SystemExit(f"{lock} exists: close the board in pcbnew (or press F8 there) before --sync-pcb")
+    cli = shutil.which("kicad-cli") or "/Applications/KiCad/KiCad.app/Contents/MacOS/kicad-cli"
+    net = os.path.join(tempfile.gettempdir(), "LaserDaughter.net")
+    subprocess.run([cli, "sch", "export", "netlist", "--format", "kicadsexpr", "-o", net, sch_path], check=True,
+                   capture_output=True)
+    tools = os.path.dirname(os.path.abspath(__file__))
+    subprocess.run([sys.executable, os.path.join(tools, "pcb_sync.py"), board, net, "--keep-tracks"], check=True)
+    subprocess.run([sys.executable, os.path.join(tools, "fill_zones.py"), board], check=True, capture_output=True)
+
+
 def main():
     s = build()
     os.makedirs(OUT_DIR, exist_ok=True)
@@ -193,6 +223,8 @@ def main():
     with open(out, "w") as f:
         f.write(txt)
     print("wrote", out)
+    if "--sync-pcb" in sys.argv:
+        sync_pcb(out)
 
 
 if __name__ == "__main__":

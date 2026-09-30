@@ -20,7 +20,11 @@ The pin map, header-pin swaps and button polarity live in `LaserHAT/CLAUDE.md` (
 
 **Why:** hard-won layout. Two earlier near-misses:
 - Rebuilding would wipe the hand layout.
-- Random symbol UUIDs made KiCad's F8 replace footprints. Fixed: `schlib.add_symbol` now uses uuid5.
+- Random symbol UUIDs made KiCad's F8 replace footprints. Fixed: `schlib.add_symbol` now uses uuid5, and
+  since 2026-09-30 `schlib.uid()` (wires, labels, pins) is deterministic too, so generator re-runs are byte-identical.
+  A board built *before* that fix keeps the old uuid4 paths (the laser module had 11 such footprints): relink with
+  `pcb_sync.py --keep-tracks` (or `make_laser_daughter.py --sync-pcb`) and verify with `tools/path_check.py` —
+  path = "/<symbol uuid>" on the root sheet, "/<sheet uuid>/<symbol uuid>" on sub-sheets, any unit of a multi-unit part.
 
 **How to apply:**
 - Never run `tools/build_hat_pcb.sh` on the HAT.
