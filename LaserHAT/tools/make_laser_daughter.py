@@ -129,10 +129,10 @@ def build():
                     footprint=FP_HDR, **kw)
     stub_power(s, j1, "1", "power:GND", **kw)
     stub_power(s, j1, "2", "power:+5V", **kw)
-    stub_label(s, j1, "3", "DB_PWM_A", kind="global")
+    x, y, _ = sym_pins(s, j1)["3"]
+    no_connect(s, x, y)                     # J8.3 = GPIO / FAULT_n since 2026-09-29: unused on the laser board
     stub_label(s, j1, "4", "DB_PWM_B", kind="global")
-    x, y, _ = sym_pins(s, j1)["5"]
-    no_connect(s, x, y)                     # DB_GPIO unused on the laser board
+    stub_label(s, j1, "5", "DB_PWM_A", kind="global")   # J8.5 = PWM_A (PA7) since 2026-09-29 (was pin 3)
     j3 = add_symbol(s, "Connector_Generic:Conn_01x05", "J3", "HAT_J9", 330.2, 147.32,
                     footprint=FP_HDR, **kw)
     stub_power(s, j3, "1", "power:GND", **kw)
@@ -142,7 +142,7 @@ def build():
     stub_label(s, j3, "4", "DB_ADC_A", kind="global")
     stub_label(s, j3, "5", "DB_ADC_B", kind="global")
     text(s, "HAT interface (two 1x5, 2.54 mm)\n"
-            "J1 (HAT J8): 1 GND  2 +5V  3 PWM_A = laser  4 PWM_B = dummy  5 GPIO (n/c)\n"
+            "J1 (HAT J8): 1 GND  2 +5V  3 GPIO/FAULT (n/c)  4 PWM_B = dummy  5 PWM_A = laser\n"
             "J3 (HAT J9): 1 GND  2 +3V3 (n/c)  3 DAC = current setpoint  4 ADC_A = PD  5 ADC_B = compliance",
          292.1, 101.6)
     prune(s)

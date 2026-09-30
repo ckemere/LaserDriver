@@ -52,8 +52,9 @@ Related: [[laserhat-next-tasks]], [[hat-manual-routing-handoff]], [[laserhat-use
    R10. V_IN on B.Cu, not under U5 on top. 0 unconnected, 0 electrical DRC errors; ~75 vias, bottom pour fragmented by the
    diagonal power runs (user may tidy). Outline stayed y 76–109.
 11. **Connector standard change (2026-09-29 evening, user decision): J8.3 = FAULT_n (PA6), J8.5 = EN (PA7).** HAT copper and the
-   laser module must follow; `laserhat-87` to be told (open question 2 in LAYOUT_HANDOFF, spec §3/§7 updated). U1 pins unchanged
-   (6/5/4/3 = FAULT/CATH/EN/RELEASE). Board J8 pads not yet re-netted: the user does F8.
+   laser module must follow — **done 2026-09-30** (HAT sheet + copper, laser module sheet + copper, LAYOUT_HANDOFF Q1/Q2 answered).
+   U1 pins unchanged (6/5/4/3 = FAULT/CATH/EN/RELEASE). Hardware I2C1 cannot use PA17/PA22 (only bit-bang); the re-map that would
+   allow it (J9.4 → PA16, J9.5 → PA17, BUTTON3 → PA22) is written up in REV2_NOTES, not applied.
 12. C13/C14 both kept for now (2026-09-29 late, after going back and forth): ±V taps on the west feed, 45 SMT parts. Candidates to drop later; C17 too.
 13. **Back to 4 layers (2026-09-29 late):** the user gave up on 2 layers. In1 = split GND planes (zones `PLANE_GND_H/ISO`), In2 =
    power, routed by the user; my router's power/I2C/EN/CATH/FAULT_H runs were all ripped earlier at the user's request.

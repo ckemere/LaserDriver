@@ -18,7 +18,7 @@ from kiutils.items.schitems import (
 )
 from kiutils.items.common import Position, Property, Effects, Font, Justify
 
-KICAD_SYM_DIR = "/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols"
+KICAD_SYM_DIR = os.environ.get("KICAD_SYMBOLS") or next((d for d in ("/usr/share/kicad/symbols", "/Applications/KiCad/KiCad.app/Contents/SharedSupport/symbols") if os.path.isdir(d)), "/usr/share/kicad/symbols")
 STUB = 5.08
 PASSIVES = {"Device:R", "Device:C", "Device:L", "Device:R_Small", "Device:C_Small"}
 

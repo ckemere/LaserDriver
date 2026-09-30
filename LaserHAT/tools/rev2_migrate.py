@@ -342,9 +342,9 @@ def build_io(template):
                     footprint=FP_SOCKET, **kw)
     stub_power(s, j8, "1", "power:GND", **kw)     # GND on the end pin: pour can always reach it
     stub_power(s, j8, "2", "power:+5V", **kw)
-    stub_label(s, j8, "3", "DB_PWM_A", kind="global", shape="output")
+    stub_label(s, j8, "3", "DB_GPIO", kind="global")                    # 2026-09-29: pins 3/5 swapped (FAULT_n on 3, EN on 5)
     stub_label(s, j8, "4", "DB_PWM_B", kind="global", shape="output")
-    stub_label(s, j8, "5", "DB_GPIO", kind="global")
+    stub_label(s, j8, "5", "DB_PWM_A", kind="global", shape="output")
     j9 = add_symbol(s, "Connector_Generic:Conn_01x05", "J9", "DB_ANALOG", 236.22, 101.6,
                     footprint=FP_SOCKET, **kw)
     stub_power(s, j9, "1", "power:GND", **kw)
@@ -356,7 +356,7 @@ def build_io(template):
     text(s, "BNC IN: 5 V TTL tolerant (74LVC inputs), 100k pull-down, Schmitt trigger.\n"
             "BNC OUT: 3.3 V CMOS from U8 through 33R; STIM LED follows the output.", 30, 30)
     text(s, "Daughterboard interface (two 1x5, 2.54 mm)\n"
-            "J8: 1 GND  2 +5V  3 PWM_A (PA21)  4 PWM_B (PA22, complement)  5 GPIO (PA26)\n"
+            "J8: 1 GND  2 +5V  3 GPIO/FAULT (PA6)  4 PWM_B (PA12)  5 PWM_A (PA7)\n"
             "J9: 1 GND  2 +3V3 (switched MCU rail)  3 DAC (PA15)  4 ADC_A (PA17)  5 ADC_B (PA16)\n"
             "Laser board: ADC_A = photodiode monitor, ADC_B = compliance-rail divider.",
          200, 130)

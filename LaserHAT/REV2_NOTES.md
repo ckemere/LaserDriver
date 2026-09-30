@@ -49,8 +49,8 @@ The pin map was re-chosen to untangle the MCU fan-out (`tools/pinopt/opt.py` in 
 | 3 | NRST | GPIO23 | reset (Pi GPIO23 — **swapped with MCU_POWER_EN vs Rev 1**, now GPIO18; CH340 RTS via JP4) |
 | 6 | PA2 | ROSC | 100 k 0.1 % |
 | 7, 8, 9 | PA3, PA4, PA5 | — | spare (no-connect) |
-| 10 | PA6 | DB_GPIO | module GPIO; **TIMA0_FAULT0** for the hardware PWM kill |
-| 11 | PA7 | DB_PWM_A | **TIMA0_CCP1** → module (J8.3, EN) |
+| 10 | PA6 | DB_GPIO | module GPIO / FAULT_n (J8.3 since 2026-09-29); **TIMA0_FAULT0** for the hardware PWM kill |
+| 11 | PA7 | DB_PWM_A | **TIMA0_CCP1** → module (J8.5 since 2026-09-29, EN) |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | **UART1** TX/RX ↔ Pi GPIO15/14 |
 | 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 ↔ CH340N (and BSL) |
 | 16 | PA12 | DB_PWM_B | **TIMA0_CCP3** → module (J8.4, CATH) |
@@ -58,11 +58,11 @@ The pin map was re-chosen to untangle the MCU fan-out (`tools/pinopt/opt.py` in 
 | 18 | PA14 | BUTTON2 | thumbwheel SW7 push = select |
 | 19 | PA15 | DB_DAC | DAC0 → module (laser setpoint; e-stim CS_n) |
 | 20 | PA16 | BUTTON3 | thumbwheel SW7 roll |
-| 21 | PA17 | DB_ADC_A | ADC1.2 ← module (laser photodiode; e-stim SCK) |
+| 21 | PA17 | DB_ADC_A | ADC1.2 ← module (laser photodiode; e-stim I²C SDA, bit-banged) |
 | 22 | PA18 | BSL_INVOKE | BSL button SW6 |
 | 23, 24 | PA19, PA20 | SWDIO, SWCLK | ← Pi GPIO25 / GPIO24 (**swapped vs Rev 1** so the traces don't cross) |
 | 25 | PA21 | BUTTON1 | BACK button SW8 |
-| 26 | PA22 | DB_ADC_B | ADC1.8 ← module (laser compliance rail; e-stim MOSI) |
+| 26 | PA22 | DB_ADC_B | ADC1.8 ← module (laser compliance rail; e-stim I²C SCL, bit-banged) |
 | 27 | PA23 | BUTTON5 | FIRE button SW9 |
 | 28 | PA24 | LED_MCU | status LED D7 |
 | 29 | PA25 | MCU_STIM_OUT | → U8 → BNC STIM OUT (J7) + STIM LED; TIMG12_CCP1 |
@@ -86,7 +86,7 @@ There are two 1×5 2.54 mm sockets on the HAT. They sit in an L shape, which als
 
 | | Pin 1 | Pin 2 | Pin 3 | Pin 4 | Pin 5 |
 |---|---|---|---|---|---|
-| **J8** (row, pin 1 at x 109.0, y 78.5, +x) | GND | +5V | PWM_A (PA7) | PWM_B (PA12) | GPIO (PA6) |
+| **J8** (row, pin 1 at x 109.0, y 78.5, +x) | GND | +5V | GPIO / FAULT_n (PA6) | PWM_B (PA12) | PWM_A (PA7) |
 | **J9** (column, pin 1 at x 125.5, y 82.0, +y) | GND | +3V3 (switched MCU rail) | DAC (PA15) | ADC_A (PA17) | ADC_B (PA22) |
 
 - **Why GND is on pin 1:** GND sits on the end pin of each socket so the ground pour can always reach it.
@@ -189,6 +189,7 @@ This is the isolated biphasic constant-current stimulator (rev M4). It was desig
 ### Firmware requirements agreed with the e-stim module (authoritative copy: `estim_interface/ESTIM_MODULE_SPEC.md` §7)
 
 - **Pins (rev M4):** PA17 (SDA) and PA22 (SCL) become open-drain GPIO for bit-banged I²C to the module's isolated DAC60501Z (address 0x48; GAIN 0x04 = 0x0100 once, then DAC 0x08 = code << 4); PA15 becomes the push-pull **RELEASE** output that opens the electrode SHORT switch (high) — raise it ≥ 1 µs before a pair, drop it ~200 µs after for ≥ 200 µs, and drop it in the fault handler. Transfers happen only between trains. (M1–M3: SPI CS_n / SCK / MOSI on the same pins.)
+  - *Hardware I2C1 instead of bit-banging?* Not on the current pins. On the 32-pin RHB the I2C1 mux options are SDA = PA3, PA10, PA16, PA18 and SCL = PA4, PA11, PA15, PA17 (datasheet table 6-1). PA17 is SCL-only and PA22 has no I2C function, so J9.4/J9.5 as wired can only be bit-banged (a DAC write is 3 bytes ≈ 80 µs at 400 kHz, between trains — fine). The one re-map that keeps the module contract (J9.4 = SDA, J9.5 = SCL) *and* the laser module's two ADC inputs is **J9.4 → PA16 (I2C1_SDA, ADC1.1) and J9.5 → PA17 (I2C1_SCL, ADC1.2), with BUTTON3 moved from PA16 to PA22**: three HAT nets re-routed at U7, no connector or module change. The spare pins PA3/PA4 are also an I2C1 pair but have no ADC, so they would cost the laser module its photodiode / compliance readings. Not done in Rev 2 as of 2026-09-30.
 - **Pulse outputs:** PA7 = TIMA0_CCP1 (EN) and PA12 = TIMA0_CCP3 (CATH, *not* CCP0_CMPL). They are independent edges: CATH leads EN (≥ 1 µs since M4) and changes only while EN is low. EN edge precision is ~0.1 µs.
 - **Fault:** PA6 = TIMA0_FAULT0 (was PA26, also FAULT0), active-low, latched, forcing both CCP1 (EN) and CCP3 (CATH) low. It is armed only after FAULT_n reads high at start-up (module isolated supply up; ~100 ms timeout means "module not ready"), and cleared only between trains. Faults are reported to the Pi.
 

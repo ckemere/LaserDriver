@@ -42,18 +42,18 @@ minimal edits (see `REV2_NOTES.md`):
 | 3 | NRST | GPIO23 net | reset ← Pi GPIO23 (J1.16), R3 47k / C3 10n, JP4 RTS_NRST |
 | 6 / 32 | PA2 / VCORE | ROSC / VCORE | R4 100k 0.1 % / C4 |
 | 7, 8, 9 | PA3–PA5 | — | spare |
-| 10 | PA6 | DB_GPIO | J8.5 FAULT_n → **TIMA0_FAULT0** (hardware PWM kill) |
-| 11 | PA7 | DB_PWM_A | J8.3 EN, **TIMA0_CCP1** |
+| 10 | PA6 | DB_GPIO | J8.3 FAULT_n → **TIMA0_FAULT0** (hardware PWM kill); J8 pins 3/5 swapped 2026-09-29 |
+| 11 | PA7 | DB_PWM_A | J8.5 EN, **TIMA0_CCP1** |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | **UART1** TX/RX ↔ Pi GPIO15/14 |
 | 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 ↔ CH340N (BSL) — fixed |
 | 16 | PA12 | DB_PWM_B | J8.4 CATH, **TIMA0_CCP3** (independent channel, not a complement) |
 | 17 / 18 / 20 | PA13 / PA14 / PA16 | BUTTON4 / 2 / 3 | SW7 wheel roll / push / roll |
 | 19 | PA15 | DB_DAC | J9.3 DAC0 (e-stim CS_n) — fixed |
-| 21 | PA17 | DB_ADC_A | J9.4 ADC1.2 (e-stim bit-banged SCK) |
+| 21 | PA17 | DB_ADC_A | J9.4 ADC1.2 (e-stim bit-banged I²C SDA; PA17 only muxes I2C1_SCL, so hardware I2C1 needs a pin move — see REV2_NOTES) |
 | 22 | PA18 | BSL_INVOKE | SW6 (active **high**) — fixed |
 | 23, 24 | PA19, PA20 | SWDIO, SWCLK | ← Pi GPIO25 / GPIO24 (swapped vs Rev 1) — fixed MCU side |
 | 25 | PA21 | BUTTON1 | SW8 BACK |
-| 26 | PA22 | DB_ADC_B | J9.5 ADC1.8 (e-stim bit-banged MOSI) |
+| 26 | PA22 | DB_ADC_B | J9.5 ADC1.8 (e-stim bit-banged I²C SCL; no I2C function on PA22) |
 | 27 | PA23 | BUTTON5 | SW9 FIRE |
 | 28 | PA24 | LED_MCU | D7 |
 | 29 / 30 / 31 | PA25 / PA26 / PA27 | MCU_STIM_OUT / MCU_STIM_IN / PI_TRIGGER | U8 → J7 (TIMG12) / J6 → U8 (TIMG8 capture) / ← Pi GPIO26 (TIMG7) |
