@@ -25,7 +25,7 @@
    "Voltage Rating": "50V",
    "Tolerance": "±1%"
   },
-  "jlc_stock": 7253788,
+  "jlc_stock": 7253753,
   "jlc_type": "base"
  },
  "C124205": {
@@ -53,7 +53,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "25V"
   },
-  "jlc_stock": 595653,
+  "jlc_stock": 595643,
   "jlc_type": "base"
  },
  "C137973": {
@@ -86,7 +86,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "50V"
   },
-  "jlc_stock": 54490959,
+  "jlc_stock": 54491215,
   "jlc_type": "base"
  },
  "C15195": {
@@ -102,7 +102,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "50V"
   },
-  "jlc_stock": 4069309,
+  "jlc_stock": 4069299,
   "jlc_type": "base"
  },
  "C1525": {
@@ -162,7 +162,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "25V"
   },
-  "jlc_stock": 5001892,
+  "jlc_stock": 5001886,
   "jlc_type": "base"
  },
  "C1852027": {
@@ -274,7 +274,7 @@
   "price": 0.0076,
   "lcsc_stock": 3065000,
   "params": {},
-  "jlc_stock": 4852525,
+  "jlc_stock": 4852724,
   "jlc_type": "base"
  },
  "C2290": {
@@ -303,7 +303,7 @@
    "Voltage Rating": "50V",
    "Tolerance": "±1%"
   },
-  "jlc_stock": 1840093,
+  "jlc_stock": 1840108,
   "jlc_type": "base"
  },
  "C25741": {
@@ -320,7 +320,7 @@
    "Voltage Rating": "50V",
    "Tolerance": "±1%"
   },
-  "jlc_stock": 8287270,
+  "jlc_stock": 8287260,
   "jlc_type": "base"
  },
  "C25744": {
@@ -337,7 +337,7 @@
    "Voltage Rating": "50V",
    "Tolerance": "±1%"
   },
-  "jlc_stock": 21829416,
+  "jlc_stock": 21829411,
   "jlc_type": "base"
  },
  "C25761": {
@@ -478,6 +478,20 @@
   "jlc_stock": 7772,
   "jlc_type": "expand"
  },
+ "C285519": {
+  "mpn": "PTS645VK392LFS",
+  "brand": "C&K",
+  "package": "Through Hole",
+  "desc": "Tactile Switch SPST 260gf PC Pin Through Hole, Right Angle",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/562a3ff7cc4a11dfb85e5324391a4dcf.pdf?productCode=C285519",
+  "price": 0.5108,
+  "lcsc_stock": 6569,
+  "params": {
+   "Voltage Rating": "12V"
+  },
+  "jlc_stock": 6569,
+  "jlc_type": "expand"
+ },
  "C2867465": {
   "mpn": "TLV76050DBZR",
   "brand": "TI",
@@ -535,7 +549,7 @@
   "price": 0.6264,
   "lcsc_stock": 46888,
   "params": {},
-  "jlc_stock": 47039,
+  "jlc_stock": 47044,
   "jlc_type": "expand"
  },
  "C2988369": {
@@ -675,7 +689,7 @@
   "price": 1.8863,
   "lcsc_stock": 4172,
   "params": {},
-  "jlc_stock": 4174,
+  "jlc_stock": 4172,
   "jlc_type": "expand"
  },
  "C51721": {
@@ -804,7 +818,7 @@
   "params": {
    "Voltage Rating": "12V"
   },
-  "jlc_stock": 788207,
+  "jlc_stock": 788197,
   "jlc_type": "base"
  },
  "C726584": {
@@ -911,7 +925,7 @@
    "Voltage Rating": "75V",
    "Tolerance": "±0.1%"
   },
-  "jlc_stock": 1709076,
+  "jlc_stock": 1709043,
   "jlc_type": "expand"
  }
 }

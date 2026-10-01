@@ -4854,7 +4854,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/562a3ff7cc4a11dfb85e5324391a4dcf.pdf?productCode=C285519"
 			(at 96.52 208.28 0)
 			(effects
 				(font
@@ -4863,12 +4863,21 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "PTS645VK392LFS (C&K, Through Hole): Tactile Switch SPST 260gf PC Pin Through Hole, Right Angle"
 			(at 96.52 208.28 0)
 			(effects
 				(font
 					(size 1.27 1.27)
 				)
+			)
+		)
+		(property "LCSC Part #" "C285519"
+			(at 96.52 208.28 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
 			)
 		)
 		(pin "1"

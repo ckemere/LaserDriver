@@ -46,6 +46,8 @@ HAT = {
     "U8": "C80500",      # 74LVC2G17GW,125 (Nexperia)
     "J5": "C2988369",    # G-Switch GT-USB-7010ASV (matches the footprint; Rev 1 field pointed elsewhere)
     "SW6": "C720477",    # TS-1088 (BSL)
+    "SW8": "C285519",    # C&K PTS645VK39-2LFS: right-angle 6 mm tactile, PC-pin version matching the
+                         # PTS645Vx39-2LFS footprint (2 signal pins + 2 bracket holes), 2.6 N; JLC places THT
     "SW7": "C53223909",  # SHOUHAN BL-DT thumbwheel
     "SW9": "C720477",    # TS-1088 (FIRE), same as SW6
     "SW10": "C431540",   # SHOU HAN MSK12C02 right-angle slide switch (USB power; gate drive only)
@@ -85,14 +87,13 @@ NOT_FITTED = {
                                  # the board attribute "exclude from BOM" from here
 }
 HAND_FIT = {
-    "HAT": {"J1", "J6", "J7", "J8", "J9", "SW8"},    # Pi header, BNCs, module sockets, BACK button
+    "HAT": {"J1", "J6", "J7", "J8", "J9"},           # Pi header, BNCs, module sockets (SW8 BACK is placed by JLC)
     "LASER": {"J1", "J2", "J3", "J5"},               # HAT headers, laser-diode socket, RED shunt header
     "ESTIM": {"J1", "J8", "J9"},                     # electrode header, HAT headers
 }
 # For ordering the hand-fitted parts ourselves (not used by the fab outputs)
 HAND_FIT_LCSC = {
     "J1": "C42411761",   # Samtec HLE-120-02-G-DV-BE-LC (Pi header), if the SMT header is used
-    "SW8": None,         # C&K PTS645Vx39-2LFS right-angle tactile
 }
 
 LASER = {

@@ -12,11 +12,10 @@
 - J7: BNC STIM OUT (BNC_Amphenol_031-5540_031-5539_Dual)
 - J8: DB_POWER_TIMING (PinSocket_1x05_P2.54mm_Vertical)
 - J9: DB_ANALOG (PinSocket_1x05_P2.54mm_Vertical)
-- SW8: BACK (SW_Tactile_SPST_Angled_PTS645Vx39-2LFS)
 
 ## Not fitted (DNP)
 
 - R1: 3.9k (R_0402_1005Metric)
 - R2: 3.9k (R_0402_1005Metric)
 
-Not parts (jumpers, holes, logo, test pads, padless footprints): G1, JP1, JP4, JP5, MH1, MH2, MH3, MH4
+Not parts (jumpers, holes, logo, test pads, padless footprints): G1, JP1, JP4, JP5, MH1, MH2, MH3, MH4, SW8
