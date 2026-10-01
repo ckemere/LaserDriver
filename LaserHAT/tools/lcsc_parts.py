@@ -106,10 +106,10 @@ LASER = {
     "C12": "C307331",    # 100nF 0402 (basic)
     "C8": "C12891", "C9": "C12891",      # 22uF 25V 1206 (basic)
     "D1": "C37049", "D3": "C37049",      # DSK14, 1A 40V Schottky SOD-123FL (SS14FL is out of stock)
-    "D2": "C209582",     # KDZVTR2.4B 2.4V 1W SOD-123FL (ROHM)
-    "D4": "C209583",     # KDZVTR2.7B 2.7V 1W SOD-123FL (ROHM)
+    "D2": "C209583",     # KDZVTR2.7B 2.7V 1W SOD-123FL (ROHM) -- shunted by J5 (RED) since 2026-10-01
+    "D4": "C209582",     # KDZVTR2.4B 2.4V 1W SOD-123FL (ROHM)
     "L1": "C503307",     # Bourns SRN4018-100M, 10uH, Isat 1.4A
-    "Q1": "C3290118",    # SI3134KDWA-TP
+    "Q1": "C428343",     # AO9926B (AOS) SOIC-8 dual N, Vth 0.4-1.1 V; was SI3134KDWA-TP (SOT-363, too hot as a cascode)
     "Q2": "C274612",     # NDT3055L (onsemi)
     "R1": "C25741",      # 100k (basic)
     "R2": "C25779",      # 33k (basic)

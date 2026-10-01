@@ -927,5 +927,17 @@
   },
   "jlc_stock": 1707031,
   "jlc_type": "expand"
+ },
+ "C428343": {
+  "mpn": "AO9926B",
+  "brand": "AOS",
+  "package": "SOIC-8",
+  "desc": "N-Channel Array 20V Surface Mount SOIC-8",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/db816020be12763331a0a1d2d901e585.pdf?productCode=C428343",
+  "price": 0.2243,
+  "lcsc_stock": 5995,
+  "params": {},
+  "jlc_stock": 5996,
+  "jlc_type": "expand"
  }
 }

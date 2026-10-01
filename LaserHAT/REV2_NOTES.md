@@ -109,7 +109,7 @@ This is the Rev 1 laser sheet with the following changes:
   - L1 = 10 µH, I_sat ≥ 1.5 A (Bourns SRN4018-100M).
   - D3 (and D1) = DSK14, a 1 A / 40 V Schottky (SOD-123FL). SS14FL is out of stock.
   - The C8 → L1 → U2 → D1 → C9 loop is kept to a few mm.
-- **Dummy-load fix.** Rev 1 drew the dummy-load zener forward-biased. The stack is now LASER_V → D3 → D2 (2.4 V) → D4 (2.7 V) → Q1. **J5 "RED" (2-pin 2.00 mm shunt) shorts D4** for the red diode. D2/D4 are ROHM KDZVTR2.4B / KDZVTR2.7B (1 W, SOD-123FL); 1 W zeners this low aren't stocked in SMA.
+- **Dummy-load fix.** Rev 1 drew the dummy-load zener forward-biased. The stack is now LASER_V → D3 → D2 (2.7 V) → D4 (2.4 V) → Q1. **J5 "RED" (2-pin 2.00 mm shunt) shorts D2** (DUMMY_TOP–DUMMY_MID; moved from across D4 on 2026-10-01 for layout, with the D2/D4 values swapped so the totals stay ~2.8 V red / ~5.5 V blue). D2/D4 are ROHM KDZVTR2.7B / KDZVTR2.4B (1 W, SOD-123FL); 1 W zeners this low aren't stocked in SMA.
 - J4 (PD cathode configuration) is now a solder jumper.
 - R1/R2 (100 k / 33 k) scale LASER_V into ADC_B: 12 V → 2.98 V, 5 V → 1.24 V.
 - The 5 V/12 V slide switch SW5 overhangs the module's left edge.
@@ -136,7 +136,15 @@ The router (`tools/grid_router.py`, plan in `LaserDaughter/route_plan.json`) is 
 - Thin supply branches (`pad_widths`) are routed last.
 - Nets that fail are ripped up and promoted.
 
-**Thermal check for blue LDs.** Q2 dissipates (LASER_V − V_LD − V_Rs1) × I. At 12 V with a ~5 V blue diode that is ~2 W at 300 mA.
+**Q1 is a cascode (2026-10-01).** The steering FETs' gates are driven to 3.3 V and their sources sit on Q2's drain, so
+LaserDrive settles at ≈ 3.3 V − V_GS(Q1) ≈ 2.3 V and **Q1, not Q2, takes LASER_V − V_LD − ~2.3 V**; Q2 takes only ~1.7 V × I
+(≤ 0.5 W). At 12 V: blue LD at 120 mA ≈ 0.47 W in Q1, 300 mA ≈ 1.2 W, a red LD on 12 V by mistake ≈ 1.9 W. The SOT-363
+SI3134KDWA (0.15 W, 833 °C/W) could not take that, so Q1 is now an **AO9926B** (AOS SOIC-8 independent dual, LCSC C428343,
+20 V, V_GS(th) 0.4–1.1 V, 90 °C/W): pins 3/4/5/6 = dummy switch (S, G = PWM_B, D = DUMMY_BOT), 1/2/7/8 = laser switch
+(S, G = PWM_A, D = LD cathode). Operating rule: 100 ms pulses, **DAC to zero between pulses** (≤ 20 % duty; no dummy
+current between pulses) → peak junction rise ≈ 60 °C at 1.2 W, ≈ 90 °C in the 1.9 W mistake case.
+
+**Thermal check for blue LDs (original note; the split between Q1 and Q2 is as above).** Total linear-stage dissipation is (LASER_V − V_LD − V_Rs1) × I. At 12 V with a ~5 V blue diode that is ~2 W at 300 mA.
 
 - **Continuous operation** would be too much for a SOT-223 on this board.
 - **Typical use:** 100 ms pulses at ≤ 1 Hz, which is ≤ 10 % duty.
