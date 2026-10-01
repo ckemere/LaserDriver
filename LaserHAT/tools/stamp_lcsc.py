@@ -7,8 +7,10 @@ For every symbol / footprint whose reference is in the table:
   * one "LCSC Part #" field (what the Fabrication Toolkit reads first) with the table's code,
   * the misspelt Rev 1 variants ("LCSC Part#", "LCSC Parth#", "LCSC Part") removed,
   * the Value replaced where lcsc_parts.VALUES says so (part changed, e.g. CAT24C32 -> M24C32).
-References not in the table only lose the misspelt variants.  Schematics are patched as text
-(KiCad 9 files are hand-edited; kiutils cannot round-trip them), boards through pcbnew.
+lcsc_parts.NOT_FITTED symbols get DNP (schematic + board); lcsc_parts.HAND_FIT ones get DNP cleared,
+no part-number field at all, and the footprint attribute "exclude from position files".
+Other references only lose the misspelt variants.  Schematics are patched as text (KiCad 9 files
+are hand-edited; kiutils cannot round-trip them), boards through pcbnew.
 Refuses to touch a board that pcbnew has open (~<board>.lck).
 """
 import os
@@ -26,6 +28,8 @@ BOARDS = {
     "HAT": (["LaserDriver.kicad_sch", "mspm0_controller.kicad_sch", "usb_uart.kicad_sch", "bnc_daughter_io.kicad_sch"],
             "LaserDriver.kicad_pcb", lcsc_parts.HAT),
     "LASER": (["LaserDaughter/LaserDaughter.kicad_sch"], "LaserDaughter/LaserDaughter.kicad_pcb", lcsc_parts.LASER),
+    # the e-stim schematic is the module's own generator (gen_schematic.py); only its board gets the attributes
+    "ESTIM": ([], "EStimDaughter/EStimDaughter.kicad_pcb", {}),
 }
 
 
@@ -33,7 +37,7 @@ def _tok(node, i):
     return node.tokens[i][2].strip('"')
 
 
-def stamp_schematic(path, table, values):
+def stamp_schematic(path, table, values, not_fitted=(), hand_fit=()):
     txt = open(path).read()
     root = parse(txt)
     edits = []          # (start, end, replacement)
@@ -48,7 +52,17 @@ def stamp_schematic(path, table, values):
         at = sym.child("at")
         x, y = _tok(at, 1), _tok(at, 2)
         lcsc = [p for p in props if _tok(p, 1) in VARIANTS]
-        if ref in table:
+        dnp = sym.child("dnp")
+        want_dnp = "yes" if ref in not_fitted else "no" if ref in hand_fit else None
+        if dnp is not None and want_dnp is not None and _tok(dnp, 1) != want_dnp:
+            s, e, _ = dnp.tokens[1]
+            edits.append((s, e, want_dnp))
+            changed.add(ref)
+        if ref in hand_fit:              # populated by us: JLC must not see a part number
+            for p in lcsc:
+                edits.append(_span_with_ws(txt, p))
+                changed.add(ref)
+        elif ref in table:
             code = table[ref]
             keep = next((p for p in lcsc if _tok(p, 1) == FIELD), None)
             for p in lcsc:
@@ -93,7 +107,7 @@ def _span_with_ws(txt, node):
     return (s, node.end, "")
 
 
-def stamp_board(path, table, values):
+def stamp_board(path, table, values, not_fitted=(), hand_fit=()):
     import pcbnew
     lock = os.path.join(os.path.dirname(path), "~" + os.path.basename(path) + ".lck")
     if os.path.exists(lock):
@@ -103,15 +117,28 @@ def stamp_board(path, table, values):
     for fp in board.GetFootprints():
         ref = fp.GetReference()
         fields = fp.GetFieldsText()
+        if ref in not_fitted or ref in hand_fit:
+            want = ref in not_fitted
+            if fp.IsDNP() != want:
+                fp.SetDNP(want)
+                changed.add(ref)
+            if ref in hand_fit and not fp.IsExcludedFromPosFiles():
+                fp.SetExcludedFromPosFiles(True)
+                changed.add(ref)
+        if not table and ref not in hand_fit:
+            continue                     # board with its own part list (e-stim): flags only, leave its fields alone
         for name in list(fields):
-            if name in VARIANTS and (name != FIELD or ref in table):
+            if ref in hand_fit and name in VARIANTS:
+                fp.RemoveField(name) if hasattr(fp, "RemoveField") else fp.Remove(fp.GetFieldByName(name))
+                changed.add(ref)
+            elif name in VARIANTS and (name != FIELD or ref in table):
                 if ref in table and name == FIELD and fields[name] == table[ref]:
                     continue
                 f = fp.GetFieldByName(name)
                 if f is not None:
                     fp.RemoveField(name) if hasattr(fp, "RemoveField") else fp.Remove(f)
                     changed.add(ref)
-        if ref in table:
+        if ref in table and ref not in hand_fit:
             if fp.GetFieldByName(FIELD) is None:
                 fp.SetField(FIELD, table[ref])
                 f = fp.GetFieldByName(FIELD)
@@ -131,9 +158,10 @@ def main(names):
     for name in names:
         sheets, board, table = BOARDS[name]
         values = lcsc_parts.VALUES.get(name, {})
+        nf, hf = lcsc_parts.NOT_FITTED.get(name, set()), lcsc_parts.HAND_FIT.get(name, set())
         for sh in sheets:
-            stamp_schematic(os.path.join(ROOT, sh), table, values)
-        stamp_board(os.path.join(ROOT, board), table, values)
+            stamp_schematic(os.path.join(ROOT, sh), table, values, nf, hf)
+        stamp_board(os.path.join(ROOT, board), table, values, nf, hf)
 
 
 if __name__ == "__main__":

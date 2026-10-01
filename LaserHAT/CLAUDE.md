@@ -27,7 +27,9 @@ minimal edits (see `REV2_NOTES.md`):
 - **Part numbers:** `tools/lcsc_parts.py` is the only source of LCSC codes (verified against LCSC/JLC on
   2026-09-30).  `tools/stamp_lcsc.py` writes them into the `LCSC Part #` field of every symbol and footprint
   (the field the Fabrication Toolkit reads) and removes the misspelt Rev 1 variants; run it after editing
-  the table.  Hand-fitted parts are marked **DNP** in the schematic; `jlc_fab.py` lists them as such.
+  the table.  Two flags, two meanings: `lcsc_parts.NOT_FITTED` → symbol **DNP** (not populated);
+  `lcsc_parts.HAND_FIT` → no part number + footprint "exclude from position files" (we solder it; it stays
+  in the BOM so JLC's upload shows it as "do not place").  `stamp_lcsc.py` applies both.
 
 ### The HAT PCB is hand-placed and hand-routed (2026-09-28)
 

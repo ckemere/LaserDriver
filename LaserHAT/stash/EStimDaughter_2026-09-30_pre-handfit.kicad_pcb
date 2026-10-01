@@ -9254,7 +9254,7 @@
 		(path "/3daef592-3e98-5163-8a1a-2d32f1f31954")
 		(sheetname "/")
 		(sheetfile "EStimDaughter.kicad_sch")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole)
 		(fp_line
 			(start 1.38 -1.27)
 			(end 1.38 -11.54)
@@ -9516,7 +9516,7 @@
 		(path "/a44f4fe1-215a-5a2c-b7f6-b1120e7339a0")
 		(sheetname "/")
 		(sheetfile "EStimDaughter.kicad_sch")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole)
 		(fp_line
 			(start -1.27 1.27)
 			(end 0 1.27)
@@ -9927,7 +9927,7 @@
 		(path "/856b92c3-8ae2-5680-8f76-138be3e28653")
 		(sheetname "/")
 		(sheetfile "EStimDaughter.kicad_sch")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole)
 		(fp_line
 			(start -1.38 1.38)
 			(end 0 1.38)

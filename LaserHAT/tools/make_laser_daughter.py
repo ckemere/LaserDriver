@@ -225,7 +225,8 @@ def main():
     print("wrote", out)
     import lcsc_parts
     import stamp_lcsc
-    stamp_lcsc.stamp_schematic(out, lcsc_parts.LASER, lcsc_parts.VALUES["LASER"])   # "LCSC Part #" fields
+    stamp_lcsc.stamp_schematic(out, lcsc_parts.LASER, lcsc_parts.VALUES["LASER"],    # "LCSC Part #" fields,
+                               lcsc_parts.NOT_FITTED["LASER"], lcsc_parts.HAND_FIT["LASER"])   # DNP / hand-fit flags
     if "--sync-pcb" in sys.argv:
         sync_pcb(out)
 

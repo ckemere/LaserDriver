@@ -6268,7 +6268,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp yes)
+		(dnp no)
 		(uuid "00000000-0000-0000-0000-000059ad464a")
 		(property "Reference" "J1"
 			(at 67.31 22.4598 0)
@@ -6305,15 +6305,6 @@
 			)
 		)
 		(property "Description" "Generic connector, double row, 02x20, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
-			(at 66.04 50.8 0)
-			(effects
-				(font
-					(size 1.27 1.27)
-				)
-				(hide yes)
-			)
-		)
-		(property "LCSC Part #" "C42411761"
 			(at 66.04 50.8 0)
 			(effects
 				(font
@@ -6624,7 +6615,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "23a975f6-1804-488b-95df-72344a03f45b")
 		(property "Reference" "R1"
 			(at 95.4786 169.037 0)
@@ -6964,7 +6955,7 @@
 		(exclude_from_sim no)
 		(in_bom yes)
 		(on_board yes)
-		(dnp no)
+		(dnp yes)
 		(uuid "510c400a-2410-46b0-a7fb-1072fc4f848b")
 		(property "Reference" "R2"
 			(at 103.0986 169.037 0)

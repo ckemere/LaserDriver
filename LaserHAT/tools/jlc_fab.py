@@ -11,10 +11,11 @@ Per board:
   README.md             stack-up, size, assembly sides, hand-fit parts, extended-part count
 
 LCSC numbers come from tools/lcsc_parts.py (HAT, laser module) and EStimDaughter/bom_EStimDaughter.csv.
-Mark hand-fitted parts **DNP in the schematic**: DNP parts are left out of the BOM and CPL and listed
-under "Hand-fitted" in the README.  Parts without an LCSC number are also left out (and flagged, so
-they can be given a number or marked DNP).  Footprints excluded from both the BOM and the position
-files (logo, mounting holes, jumpers, test pads) are not parts.
+Three kinds of real part (tools/lcsc_parts.py + tools/stamp_lcsc.py keep the flags in step):
+  * machine-placed: LCSC number in the table and in the "LCSC Part #" field -> BOM + CPL
+  * hand-fitted (lcsc_parts.HAND_FIT): no number, footprint "exclude from position files" -> README list
+  * not fitted (lcsc_parts.NOT_FITTED): DNP in the schematic -> README list
+Footprints excluded from both the BOM and the position files (logo, holes, jumpers, test pads) are not parts.
 """
 import csv
 import io
@@ -97,29 +98,31 @@ def main():
         os.makedirs(out, exist_ok=True)
         board = pcbnew.LoadBoard(pcb)
         codes = table if table is not None else estim_codes()
-        fitted, hand, nocode, nonparts, sides = {}, [], [], [], set()
+        fitted, hand, notfit, nonparts, sides = {}, [], [], [], set()
         for fp in sorted(board.GetFootprints(), key=lambda f: f.GetReference()):
             ref = fp.GetReference()
             code = codes.get(ref)
             fpn = fp.GetFPID().GetLibItemName().wx_str()
+            ftxt = fp.GetFieldsText()       # the Fabrication Toolkit's field names, in its order of preference
+            field = next((ftxt[k] for k in ("LCSC Part #", "LCSC Part", "JLCPCB Part #", "LCSC") if ftxt.get(k)), "")
             if not fp.Pads() or ref.startswith(("MH", "REF", "JP", "TP")) or fpn.startswith("SolderJumper") or \
                     (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()):
                 nonparts.append(ref)
             elif fp.IsDNP():
-                hand.append((ref, fp.GetValue(), fpn))            # DNP in the schematic = fitted by hand
-            elif code and not fp.IsExcludedFromBOM():
+                notfit.append((ref, fp.GetValue(), fpn))          # DNP = not populated at all
+            elif code and not fp.IsExcludedFromBOM() and not fp.IsExcludedFromPosFiles():
                 fitted[ref] = (fp.GetValue(), fpn, code)
                 sides.add("Bottom" if fp.IsFlipped() else "Top")
-                field = fp.GetFieldsText().get("LCSC Part #", "")
                 if field != code:            # the Fabrication Toolkit reads the field: keep them equal
                     print(f"{name}: {ref} field 'LCSC Part #' = {field!r} but lcsc_parts says {code}; run tools/stamp_lcsc.py")
-            else:
-                nocode.append((ref, fp.GetValue(), fpn))          # real part, no LCSC number: nobody fits it
-        missing = [r for r in codes if r not in fitted and r not in [h[0] for h in hand]]
+            else:                            # populated by us: no number for JLC, excluded from the position file
+                hand.append((ref, fp.GetValue(), fpn))
+                if field or not fp.IsExcludedFromPosFiles():
+                    print(f"{name}: hand-fitted {ref} should have no 'LCSC Part #' and 'exclude from position files' set; "
+                          f"add it to lcsc_parts.HAND_FIT and run tools/stamp_lcsc.py")
+        missing = [r for r in codes if r not in fitted and r not in [n[0] for n in notfit]]
         if missing:
             print(f"{name}: LCSC table refs not on the board / not fitted: {missing}")
-        if nocode:
-            print(f"{name}: no LCSC number and not DNP (give them a number or mark them DNP): {[n[0] for n in nocode]}")
 
         # BOM, grouped by LCSC number
         groups = {}
@@ -146,12 +149,12 @@ def main():
             f.write(f"- Assembly: `{name}_BOM.csv` + `{name}_CPL.csv`. "
                     f"{len(fitted)} placements, {len(groups)} unique parts, sides: **{' + '.join(sorted(sides, reverse=True))}**\n")
             f.write("- Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.\n\n")
-            f.write("## Hand-fitted (DNP in the schematic; not in BOM/CPL)\n\n")
+            f.write("## Hand-fitted (no LCSC number, excluded from the position file; not placed by JLC)\n\n")
             for ref, val, fpn in hand:
                 f.write(f"- {ref}: {val} ({fpn})\n")
-            if nocode:
-                f.write("\n## No LCSC number and not DNP — not in BOM/CPL, nobody fits these yet\n\n")
-                for ref, val, fpn in nocode:
+            if notfit:
+                f.write("\n## Not fitted (DNP)\n\n")
+                for ref, val, fpn in notfit:
                     f.write(f"- {ref}: {val} ({fpn})\n")
             if nonparts:
                 f.write(f"\nNot parts (jumpers, holes, logo, test pads, padless footprints): {', '.join(nonparts)}\n")

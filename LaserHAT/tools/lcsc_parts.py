@@ -59,6 +59,28 @@ VALUES = {
     "LASER": {},
 }
 
+# Two different things, two different KiCad flags (stamp_lcsc.py applies both):
+#  * NOT_FITTED -> the symbol's DNP attribute (schematic, shown crossed out; F8 / pcb_sync carry it to
+#    the board; the Fabrication Toolkit's "exclude DNP" drops them from BOM and CPL).
+#  * HAND_FIT   -> populated, but by us: no "LCSC Part #" (so JLC cannot place it) and the footprint
+#    attribute "Exclude from position files" (board only; KiCad symbols have no such flag).  They stay
+#    in the BOM with an empty number, which JLC's upload page shows as "do not place".
+NOT_FITTED = {
+    "HAT": {"R1", "R2"},         # ID_SD / ID_SC pull-ups: the Pi has 3.9k on those pins already (HAT spec)
+    "LASER": set(),
+    "ESTIM": set(),              # PS1 (DC-DC, replaced by battery packs) is DNP in the module's own generator
+}
+HAND_FIT = {
+    "HAT": {"J1", "J6", "J7", "J8", "J9", "SW8"},    # Pi header, BNCs, module sockets, BACK button
+    "LASER": {"J1", "J2", "J3", "J5"},               # HAT headers, laser-diode socket, RED shunt header
+    "ESTIM": {"J1", "J8", "J9"},                     # electrode header, HAT headers
+}
+# For ordering the hand-fitted parts ourselves (not used by the fab outputs)
+HAND_FIT_LCSC = {
+    "J1": "C42411761",   # Samtec HLE-120-02-G-DV-BE-LC (Pi header), if the SMT header is used
+    "SW8": None,         # C&K PTS645Vx39-2LFS right-angle tactile
+}
+
 LASER = {
     "C11": "C15195",     # 10nF 0402 (basic)
     "C12": "C307331",    # 100nF 0402 (basic)

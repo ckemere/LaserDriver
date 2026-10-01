@@ -6,3 +6,4 @@
 - [Next tasks](laserhat-next-tasks.md) — hand-route M4; HAT keep-out; battery connector decision; fab after routing
 - [No local testing](no-local-testing.md) — Pi software: build/test via GitHub CI only; never locally or with Docker
 - [KiCad Python footprint loader quirk](kicad-python-footprint-loader.md) — load footprints before LoadBoard on 9.0.8 macOS; F8 link details
+- [Fab / BOM scheme](fab-bom-scheme.md) — LCSC codes only in tools/lcsc_parts.py, stamped into 'LCSC Part #'; DNP = not populated, HAND_FIT = no number + exclude-from-pos
