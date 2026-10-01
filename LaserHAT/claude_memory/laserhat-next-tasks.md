@@ -1,10 +1,13 @@
 ---
 name: laserhat-next-tasks
-description: "Next LaserHAT tasks as of 2026-09-30: e-stim board routed (M4c) and outline drawn on the HAT; decide the battery connector and a FAULT_n pull-up; Rev 2 firmware pin map"
+description: "Status 2026-10-01: all three Rev 2 boards ordered from JLC (fab/orders/); next = bring-up, then merge pcb-rev2 into main; Rev 2 firmware pin map still to write"
 metadata:
   type: project
 ---
 
+0. **2026-10-01: HAT, laser module and e-stim module ordered** (archives in `fab/orders/`). When the hardware
+   works, merge `pcb-rev2` into `main`. Bring-up needs the Rev 2 firmware pin map (`Firmware/` is still Rev 1 apart
+   from `make flash HAT_REV=2`): buttons active-low on PA13/14/16/21/23, PWM on PA7/PA12 (TIMA0), FAULT PA6, UART1 to the Pi.
 1. **Route `EStimDaughter/EStimDaughter.kicad_pcb` by hand** (the user, possibly with a second Claude session working
    — done, rev M4c). Then DRC with the project rules, `tools/netcheck.py`, `tools/jlc_fab.py`.
 2. **HAT:** e-stim outline (y 76–109, the M4c board) drawn on User.Drawings 2026-09-30 — done. Optionally the BNC
