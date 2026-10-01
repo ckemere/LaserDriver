@@ -1188,6 +1188,7 @@
 		(property "Reference" "D4"
 			(at 3.083571 0 90)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "02991db2-f3cc-4358-b24c-b39020e90b4e")
 			(effects
 				(font
@@ -2474,6 +2475,7 @@
 		(property "Reference" "U2"
 			(at 2.933571 0 0)
 			(layer "F.SilkS")
+			(hide yes)
 			(uuid "8da7cca7-826d-4952-99ec-88b69b63d344")
 			(effects
 				(font
@@ -6882,8 +6884,8 @@
 		(layer "Edge.Cuts")
 		(uuid "4367a5e7-f055-4329-8ca5-d994854ec7c6")
 	)
-	(gr_text "5V"
-		(at 106 90.75 0)
+	(gr_text "12V"
+		(at 102.7 90 0)
 		(layer "F.SilkS")
 		(uuid "82801857-9f45-4b3e-b31c-bceced0be6ed")
 		(effects
@@ -6891,10 +6893,11 @@
 				(size 0.8 0.8)
 				(thickness 0.12)
 			)
+			(justify left)
 		)
 	)
-	(gr_text "12V"
-		(at 106.05 98.55 0)
+	(gr_text "5V"
+		(at 106.5 98.55 0)
 		(layer "F.SilkS")
 		(uuid "5fc3e690-fd5f-4403-a53c-009359b94ae2")
 		(effects
@@ -6902,6 +6905,7 @@
 				(size 0.8 0.8)
 				(thickness 0.12)
 			)
+			(justify left)
 		)
 	)
 	(gr_text "RED"
@@ -7687,7 +7691,7 @@
 		(uuid "71684f52-c09b-4c69-8f8b-f9575a794496")
 	)
 	(via
-		(at 108.25 98.25)
+		(at 108.6 98.25)
 		(size 0.8)
 		(drill 0.4)
 		(layers "F.Cu" "B.Cu")

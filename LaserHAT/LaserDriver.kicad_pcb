@@ -10315,7 +10315,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "Owl logo with laser eyes; pin 1 = exposed-copper eyes and beams, tied to GND; keeps the board logo through F8"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10328,6 +10328,8 @@
 			)
 		)
 		(path "/db312fd1-97bf-5de1-b91e-f29a3f781c65")
+		(sheetname "/")
+		(sheetfile "LaserDriver.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -8.0017 3.286)
@@ -11510,6 +11512,8 @@
 			(size 0.267 0.267)
 			(layers "F.Cu" "F.Mask")
 			(net 1 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(zone_connect 2)
 			(options
 				(clearance outline)
@@ -11529,6 +11533,8 @@
 			(size 0.267 0.267)
 			(layers "F.Cu" "F.Mask")
 			(net 1 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(zone_connect 2)
 			(options
 				(clearance outline)
@@ -11548,6 +11554,8 @@
 			(size 0.5 0.5)
 			(layers "F.Cu" "F.Mask")
 			(net 1 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(zone_connect 2)
 			(options
 				(clearance outline)
@@ -11582,6 +11590,8 @@
 			(size 0.5 0.5)
 			(layers "F.Cu" "F.Mask")
 			(net 1 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(zone_connect 2)
 			(options
 				(clearance outline)
@@ -12769,7 +12779,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/562a3ff7cc4a11dfb85e5324391a4dcf.pdf?productCode=C285519"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12782,7 +12792,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "PTS645VK392LFS (C&K, Through Hole): Tactile Switch SPST 260gf PC Pin Through Hole, Right Angle"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -12808,6 +12818,8 @@
 			)
 		)
 		(path "/212bfd25-f831-4b85-926b-000000000003/84d1352a-c254-5fbb-b896-0223034954ed")
+		(sheetname "/MSPM0 Controller/")
+		(sheetfile "mspm0_controller.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -2.55 -1.51)
@@ -13006,6 +13018,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.2380952381)
 			(net 32 "/MSPM0 Controller/BUTTON1")
+			(pinfunction "1")
+			(pintype "passive")
 			(uuid "655d9ec4-6ccc-40ac-8cb6-570b806b4fae")
 		)
 		(pad "1" smd roundrect
@@ -13014,6 +13028,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.2380952381)
 			(net 32 "/MSPM0 Controller/BUTTON1")
+			(pinfunction "1")
+			(pintype "passive")
 			(uuid "d40922e4-806c-4505-a532-5ef0a0bbb13e")
 		)
 		(pad "2" smd roundrect
@@ -13022,6 +13038,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.2380952381)
 			(net 1 "GND")
+			(pinfunction "2")
+			(pintype "passive")
 			(uuid "23cf6ee3-296b-4787-9e3d-d1e120dcf2f4")
 		)
 		(pad "2" smd roundrect
@@ -13030,6 +13048,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.2380952381)
 			(net 1 "GND")
+			(pinfunction "2")
+			(pintype "passive")
 			(uuid "a72ce919-3cc9-4503-b43b-76dcb1d3e39a")
 		)
 		(embedded_fonts no)
@@ -23069,7 +23089,7 @@
 				(xy 138.463363 93.011231) (xy 138.463366 93.011244) (xy 138.529523 93.25815) (xy 138.627342 93.494306)
 				(xy 138.627347 93.494316) (xy 138.755154 93.715685) (xy 138.910765 93.918481) (xy 138.91077 93.918487)
 				(xy 138.912753 93.92047) (xy 138.912754 93.92047) (xy 139.588233 93.24499) (xy 139.603249 93.267463)
-				(xy 139.742537 93.406751) (xy 139.765009 93.421766) (xy 139.08953 94.097246) (xy 139.091512 94.099229)
+				(xy 139.742537 93.406751) (xy 139.765009 93.421766) (xy 139.089529 94.097246) (xy 139.091512 94.099229)
 				(xy 139.091518 94.099234) (xy 139.294314 94.254845) (xy 139.515683 94.382652) (xy 139.515693 94.382657)
 				(xy 139.751849 94.480476) (xy 139.998755 94.546633) (xy 139.998768 94.546636) (xy 140.25218 94.579998)
 				(xy 140.252197 94.58) (xy 140.507803 94.58) (xy 140.507819 94.579998) (xy 140.761231 94.546636)
@@ -25069,7 +25089,7 @@
 				(xy 138.463363 93.011231) (xy 138.463366 93.011244) (xy 138.529523 93.25815) (xy 138.627342 93.494306)
 				(xy 138.627347 93.494316) (xy 138.755154 93.715685) (xy 138.910765 93.918481) (xy 138.91077 93.918487)
 				(xy 138.912753 93.92047) (xy 138.912754 93.92047) (xy 139.588233 93.24499) (xy 139.603249 93.267463)
-				(xy 139.742537 93.406751) (xy 139.765009 93.421766) (xy 139.08953 94.097246) (xy 139.091512 94.099229)
+				(xy 139.742537 93.406751) (xy 139.765009 93.421766) (xy 139.089529 94.097246) (xy 139.091512 94.099229)
 				(xy 139.091518 94.099234) (xy 139.294314 94.254845) (xy 139.515683 94.382652) (xy 139.515693 94.382657)
 				(xy 139.751849 94.480476) (xy 139.998755 94.546633) (xy 139.998768 94.546636) (xy 140.25218 94.579998)
 				(xy 140.252197 94.58) (xy 140.507803 94.58) (xy 140.507819 94.579998) (xy 140.761231 94.546636)
@@ -25322,7 +25342,7 @@
 				(xy 153.829523 83.09815) (xy 153.927342 83.334306) (xy 153.927347 83.334316) (xy 154.055154 83.555685)
 				(xy 154.210765 83.758481) (xy 154.21077 83.758487) (xy 154.212753 83.76047) (xy 154.212754 83.76047)
 				(xy 154.888233 83.08499) (xy 154.903249 83.107463) (xy 155.042537 83.246751) (xy 155.065009 83.261766)
-				(xy 154.389529 83.937246) (xy 154.391512 83.939229) (xy 154.391518 83.939234) (xy 154.594314 84.094845)
+				(xy 154.38953 83.937246) (xy 154.391512 83.939229) (xy 154.391518 83.939234) (xy 154.594314 84.094845)
 				(xy 154.815683 84.222652) (xy 154.815693 84.222657) (xy 155.051849 84.320476) (xy 155.298755 84.386633)
 				(xy 155.298768 84.386636) (xy 155.55218 84.419998) (xy 155.552197 84.42) (xy 155.807803 84.42) (xy 155.807819 84.419998)
 				(xy 156.061231 84.386636) (xy 156.061244 84.386633) (xy 156.30815 84.320476) (xy 156.544306 84.222657)
