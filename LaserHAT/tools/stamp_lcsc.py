@@ -23,6 +23,23 @@ from sexpr_patch import parse  # noqa: E402
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 FIELD = "LCSC Part #"
+CATALOG = os.path.join(os.path.dirname(os.path.abspath(__file__)), "lcsc_catalog.json")
+
+
+def catalog():
+    """LCSC data per code (tools/lcsc_verify.py --refresh writes it): mpn, brand, package, desc, pdf."""
+    import json
+    return json.load(open(CATALOG)) if os.path.exists(CATALOG) else {}
+
+
+def describe(entry):
+    """Description text for a symbol/footprint: '<MPN> (<brand>, <package>): <LCSC description>'."""
+    if not entry:
+        return None
+    head = entry.get("mpn") or ""
+    tail = ", ".join(x for x in (entry.get("brand"), entry.get("package")) if x)
+    desc = entry.get("desc") or ""
+    return f"{head} ({tail}): {desc}".replace("(): ", "").rstrip(": ").strip()
 VARIANTS = {"LCSC Part #", "LCSC Part#", "LCSC Parth#", "LCSC Part", "LCSC PN", "LCSC"}
 BOARDS = {
     "HAT": (["LaserDriver.kicad_sch", "mspm0_controller.kicad_sch", "usb_uart.kicad_sch", "bnc_daughter_io.kicad_sch"],
@@ -42,6 +59,7 @@ def stamp_schematic(path, table, values, not_fitted=(), hand_fit=(), non_parts=(
     root = parse(txt)
     edits = []          # (start, end, replacement)
     changed = set()
+    cat = catalog()
     for sym in root.children:
         if sym.head != "symbol":
             continue
@@ -51,6 +69,27 @@ def stamp_schematic(path, table, values, not_fitted=(), hand_fit=(), non_parts=(
             continue
         at = sym.child("at")
         x, y = _tok(at, 1), _tok(at, 2)
+
+        def set_prop(name, value):
+            """Replace the property's text, or add it (hidden) after the last property."""
+            p = next((q for q in props if _tok(q, 1) == name), None)
+            if p is not None:
+                if _tok(p, 2) != value:
+                    s, e, _ = p.tokens[2]
+                    edits.append((s, e, '"' + value.replace('\\', '\\\\').replace('"', '\\"') + '"'))
+                    changed.add(ref)
+            else:
+                last = props[-1]
+                new = (f'\n\t\t(property "{name}" "{value}"\n\t\t\t(at {x} {y} 0)\n\t\t\t(effects\n\t\t\t\t(font\n'
+                       f'\t\t\t\t\t(size 1.27 1.27)\n\t\t\t\t)\n\t\t\t\t(hide yes)\n\t\t\t)\n\t\t)')
+                edits.append((last.end, last.end, new))
+                changed.add(ref)
+
+        if ref in table and ref not in hand_fit and table[ref] in cat:
+            entry = cat[table[ref]]            # the Rev 1 sheets carry descriptions of parts long replaced
+            set_prop("Description", describe(entry))
+            if entry.get("pdf"):
+                set_prop("Datasheet", entry["pdf"])
         lcsc = [p for p in props if _tok(p, 1) in VARIANTS]
         dnp = sym.child("dnp")
         want_dnp = "yes" if ref in not_fitted else "no" if ref in hand_fit else None
@@ -119,9 +158,17 @@ def stamp_board(path, table, values, not_fitted=(), hand_fit=(), non_parts=()):
         raise SystemExit(f"{lock} exists: close the board in pcbnew first")
     board = pcbnew.LoadBoard(path)
     changed = set()
+    cat = catalog()
     for fp in board.GetFootprints():
         ref = fp.GetReference()
         fields = fp.GetFieldsText()
+        if ref in table and ref not in hand_fit and table[ref] in cat:
+            entry = cat[table[ref]]
+            for name, value in (("Description", describe(entry)), ("Datasheet", entry.get("pdf"))):
+                f = fp.GetFieldByName(name)
+                if value and f is not None and f.GetText() != value:
+                    f.SetText(value)
+                    changed.add(ref)
         if ref in non_parts and not (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()):
             fp.SetExcludedFromBOM(True)
             fp.SetExcludedFromPosFiles(True)

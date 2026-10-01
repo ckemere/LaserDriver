@@ -30,9 +30,13 @@ minimal edits (see `REV2_NOTES.md`):
   the table.  Two flags, two meanings: `lcsc_parts.NOT_FITTED` → symbol **DNP** (not populated);
   `lcsc_parts.HAND_FIT` → no part number + footprint "exclude from position files" (we solder it; it stays
   in the BOM so JLC's upload shows it as "do not place"); `lcsc_parts.NON_PARTS` (jumpers, holes, logo, test
-  pads) → excluded from BOM and position files.  `stamp_lcsc.py` applies all three.  The Fabrication
-  Toolkit's own BOM/CPL can be reproduced headlessly with its `plugins.process.ProcessManager` (see
-  `claude_memory/fab-bom-scheme.md`) — do that before telling the user a BOM is right.
+  pads) → excluded from BOM and position files.  `stamp_lcsc.py` applies all three and also writes each
+  part's Description/Datasheet from `tools/lcsc_catalog.json` (the Rev 1 sheets carried descriptions of
+  parts long replaced — "200Ω" on a 2 k resistor).  **Before any fab export run, in this order:**
+  `tools/lcsc_verify.py` (every Value vs LCSC's parameter table, all three boards; `--refresh` re-fetches),
+  `tools/sync_check.py board sch` (netlist vs board: parts, footprints, values, DNP, pad nets, paths) and
+  `tools/path_check.py`; all must report 0.  The Fabrication Toolkit's own BOM/CPL can be reproduced
+  headlessly with its `plugins.process.ProcessManager` (see `claude_memory/fab-bom-scheme.md`).
 
 ### The HAT PCB is hand-placed and hand-routed (2026-09-28)
 

@@ -1,0 +1,917 @@
+{
+ "C110466": {
+  "mpn": "AP2171WG-7",
+  "brand": "DIODES",
+  "package": "SOT-25-5",
+  "desc": "1 Active High 1A High Side Switch SOT-25-5 Power Distribution Switches, Load Drivers RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/dfb41fb13385a5153365608bd440bf80.pdf?productCode=C110466",
+  "price": 0.1947,
+  "lcsc_stock": 29105,
+  "params": {},
+  "jlc_stock": 29108,
+  "jlc_type": "expand"
+ },
+ "C11702": {
+  "mpn": "0402WGF1001TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "1kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C11702",
+  "price": 0.0019,
+  "lcsc_stock": 0,
+  "params": {
+   "Resistance": "1kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 7253788,
+  "jlc_type": "base"
+ },
+ "C124205": {
+  "mpn": "BAT54WS-7-F",
+  "brand": "DIODES",
+  "package": "SOD-323",
+  "desc": "1 Independent 30V 1V@100mA 100mA SOD-323 Single Diodes RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/ae1de730e539e7c2ce35366c970d58e6.pdf?productCode=C124205",
+  "price": 0.0632,
+  "lcsc_stock": 69180,
+  "params": {},
+  "jlc_stock": 69669,
+  "jlc_type": "expand"
+ },
+ "C12891": {
+  "mpn": "CL31A226KAHNNNE",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "1206",
+  "desc": "22uF ±10% 25V Ceramic Capacitor X5R 1206",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C12891",
+  "price": 0.1751,
+  "lcsc_stock": 0,
+  "params": {
+   "Capacitance": "22uF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "25V"
+  },
+  "jlc_stock": 595653,
+  "jlc_type": "base"
+ },
+ "C137973": {
+  "mpn": "RC0402FR-0747RL",
+  "brand": "YAGEO",
+  "package": "0402",
+  "desc": "47Ω 62.5mW 50V Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/b426be3ce22c6de3e0c3a2248e49159e.pdf?productCode=C137973",
+  "price": 0.0029,
+  "lcsc_stock": 1656900,
+  "params": {
+   "Resistance": "47Ω",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 1783433,
+  "jlc_type": "expand"
+ },
+ "C14663": {
+  "mpn": "CC0603KRX7R9BB104",
+  "brand": "YAGEO",
+  "package": "0603",
+  "desc": "100nF ±10% 50V Ceramic Capacitor X7R 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23ccee80ee542e7cf156a772bb589942.pdf?productCode=C14663",
+  "price": 0.0124,
+  "lcsc_stock": 7667800,
+  "params": {
+   "Capacitance": "100nF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "50V"
+  },
+  "jlc_stock": 54490959,
+  "jlc_type": "base"
+ },
+ "C15195": {
+  "mpn": "CL05B103KB5NNNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0402",
+  "desc": "10nF ±10% 50V Ceramic Capacitor X7R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15195",
+  "price": 0.005,
+  "lcsc_stock": 1052400,
+  "params": {
+   "Capacitance": "10nF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "50V"
+  },
+  "jlc_stock": 4069309,
+  "jlc_type": "base"
+ },
+ "C1525": {
+  "mpn": "CL05B104KO5NNNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0402",
+  "desc": "100nF ±10% 16V Ceramic Capacitor X7R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C1525",
+  "price": 0.0045,
+  "lcsc_stock": 463300,
+  "params": {
+   "Capacitance": "100nF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "16V"
+  },
+  "jlc_stock": 21825736,
+  "jlc_type": "base"
+ },
+ "C1546": {
+  "mpn": "0402CG101J500NT",
+  "brand": "FH",
+  "package": "0402",
+  "desc": "100pF ±5% 50V Ceramic Capacitor C0G 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/09fe2daf22580a99fa7fea93ccb20fb7.pdf?productCode=C1546",
+  "price": 0.0042,
+  "lcsc_stock": 1640600,
+  "params": {
+   "Capacitance": "100pF",
+   "Tolerance": "±5%",
+   "Voltage Rating": "50V"
+  },
+  "jlc_stock": 3226221,
+  "jlc_type": "base"
+ },
+ "C154733": {
+  "mpn": "DMMT5401-7-F",
+  "brand": "DIODES",
+  "package": "SOT-26(SC74R)",
+  "desc": "Bipolar (BJT) Transistor PNP 150V 200mA 300MHz 300mW Surface Mount SOT-26(SC74R)",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/05b35e50c47741f69d8631d18fa1a261.pdf?productCode=C154733",
+  "price": 0.2473,
+  "lcsc_stock": 12750,
+  "params": {},
+  "jlc_stock": 12752,
+  "jlc_type": "expand"
+ },
+ "C15850": {
+  "mpn": "CL21A106KAYNNNE",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0805",
+  "desc": "10uF ±10% 25V Ceramic Capacitor X5R 0805",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15850",
+  "price": 0.0656,
+  "lcsc_stock": 501600,
+  "params": {
+   "Capacitance": "10uF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "25V"
+  },
+  "jlc_stock": 5001892,
+  "jlc_type": "base"
+ },
+ "C1852027": {
+  "mpn": "DAC60501ZDGSR",
+  "brand": "TI",
+  "package": "VSSOP-10-0.5mm",
+  "desc": "5us 2.7V~5.5V 1LSB 12 VSSOP-10-0.5mm Digital to Analog Converters (DAC) RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/bc76901e2dd6a291164bd170b5508c43.pdf?productCode=C1852027",
+  "price": 2.0944,
+  "lcsc_stock": 2028,
+  "params": {},
+  "jlc_stock": 2028,
+  "jlc_type": "expand"
+ },
+ "C185443": {
+  "mpn": "RC0402FR-07215KL",
+  "brand": "YAGEO",
+  "package": "0402",
+  "desc": "215kΩ 62.5mW 50V Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/b426be3ce22c6de3e0c3a2248e49159e.pdf?productCode=C185443",
+  "price": 0.0018,
+  "lcsc_stock": 59100,
+  "params": {
+   "Resistance": "215kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 59312,
+  "jlc_type": "expand"
+ },
+ "C20618748": {
+  "mpn": "MSPM0G3507SRHBR",
+  "brand": "TI",
+  "package": "VQFN-32(5x5)",
+  "desc": "ARM Cortex-M0+ 32 Bit VQFN-32(5x5) Microcontrollers RoHS",
+  "pdf": "",
+  "price": 1.8568,
+  "lcsc_stock": 722,
+  "params": {},
+  "jlc_stock": 722,
+  "jlc_type": "expand"
+ },
+ "C209582": {
+  "mpn": "KDZVTR2.4B",
+  "brand": "ROHM",
+  "package": "SOD-123FL",
+  "desc": "Zener Diode Independent 2.4V 1000mW Surface Mount SOD-123FL",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/d9bccfd8e63eb365d58c73057a153ad6.pdf?productCode=C209582",
+  "price": 0.0785,
+  "lcsc_stock": 2745,
+  "params": {
+   "Tolerance": "-"
+  },
+  "jlc_stock": 2747,
+  "jlc_type": "expand"
+ },
+ "C209583": {
+  "mpn": "KDZVTR2.7B",
+  "brand": "ROHM",
+  "package": "SOD-123FL",
+  "desc": "Zener Diode Independent 2.7V 1000mW Surface Mount SOD-123FL",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/194a99c672e895c626d5918b68d041da.pdf?productCode=C209583",
+  "price": 0.0788,
+  "lcsc_stock": 5430,
+  "params": {
+   "Tolerance": "-"
+  },
+  "jlc_stock": 5434,
+  "jlc_type": "expand"
+ },
+ "C2105197": {
+  "mpn": "ESR18EZPF2R00",
+  "brand": "ROHM",
+  "package": "1206",
+  "desc": "500mW 2Ω 200V Thick Film Resistor ±100ppm/℃ ±1% 1206 Chip Resistor - Surface Mount RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/47b0f000b8781f6578038fbca26cc49a.pdf?productCode=C2105197",
+  "price": 0.0174,
+  "lcsc_stock": 14900,
+  "params": {
+   "Power(Watts)": "500mW",
+   "Resistance": "2Ω",
+   "Voltage Rating": "200V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 14985,
+  "jlc_type": "expand"
+ },
+ "C221841": {
+  "mpn": "PCM12SMTR",
+  "brand": "C&K",
+  "package": "SMD",
+  "desc": "Slide Switch SPDT @ 6V Surface Mount Rectangular Columnar",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/677f227074f0d201058521a10a93c772.pdf?productCode=C221841",
+  "price": 1.8001,
+  "lcsc_stock": 631,
+  "params": {
+   "Voltage Rating": "6V"
+  },
+  "jlc_stock": 878,
+  "jlc_type": "expand"
+ },
+ "C2286": {
+  "mpn": "KT-0603R",
+  "brand": "Hubei KENTO Elec",
+  "package": "0603",
+  "desc": "Red 645nm LED Indication - Discrete 2.4V 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/011ec3e8cb1e825f6961d29bc4db4c7a.pdf?productCode=C2286",
+  "price": 0.0076,
+  "lcsc_stock": 3065000,
+  "params": {},
+  "jlc_stock": 4852525,
+  "jlc_type": "base"
+ },
+ "C2290": {
+  "mpn": "KT-0603W",
+  "brand": "Hubei KENTO Elec",
+  "package": "0603",
+  "desc": "White LED Indication - Discrete 2.6V~3.1V 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/8238ae278d43fbd59fd57ef71ae67c27.pdf?productCode=C2290",
+  "price": 0.0123,
+  "lcsc_stock": 1683500,
+  "params": {},
+  "jlc_stock": 2135509,
+  "jlc_type": "base"
+ },
+ "C25105": {
+  "mpn": "0402WGF330JTCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "33Ω ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25105",
+  "price": 0.0012,
+  "lcsc_stock": 0,
+  "params": {
+   "Power(Watts)": "62.5mW",
+   "Resistance": "33Ω",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 1840093,
+  "jlc_type": "base"
+ },
+ "C25741": {
+  "mpn": "0402WGF1003TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "100kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25741",
+  "price": 0.0025,
+  "lcsc_stock": 4093400,
+  "params": {
+   "Resistance": "100kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 8287270,
+  "jlc_type": "base"
+ },
+ "C25744": {
+  "mpn": "0402WGF1002TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "10kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25744",
+  "price": 0.0034,
+  "lcsc_stock": 7709100,
+  "params": {
+   "Resistance": "10kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 21829416,
+  "jlc_type": "base"
+ },
+ "C25761": {
+  "mpn": "0402WGF1873TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "187kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25761",
+  "price": 0.0015,
+  "lcsc_stock": 192400,
+  "params": {
+   "Power(Watts)": "62.5mW",
+   "Resistance": "187kΩ",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 192469,
+  "jlc_type": "expand"
+ },
+ "C25779": {
+  "mpn": "0402WGF3302TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "33kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25779",
+  "price": 0.0059,
+  "lcsc_stock": 712700,
+  "params": {
+   "Power(Watts)": "62.5mW",
+   "Resistance": "33kΩ",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 1215801,
+  "jlc_type": "base"
+ },
+ "C25783": {
+  "mpn": "0402WGF3902TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "39kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25783",
+  "price": 0.0024,
+  "lcsc_stock": 122400,
+  "params": {
+   "Power(Watts)": "62.5mW",
+   "Resistance": "39kΩ",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 220377,
+  "jlc_type": "expand"
+ },
+ "C25792": {
+  "mpn": "0402WGF4702TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "47kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25792",
+  "price": 0.0026,
+  "lcsc_stock": 4123500,
+  "params": {
+   "Resistance": "47kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 5571714,
+  "jlc_type": "base"
+ },
+ "C25900": {
+  "mpn": "0402WGF4701TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900",
+  "price": 0.0027,
+  "lcsc_stock": 10233900,
+  "params": {
+   "Resistance": "4.7kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 15525931,
+  "jlc_type": "base"
+ },
+ "C25905": {
+  "mpn": "0402WGF5101TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "5.1kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25905",
+  "price": 0.0024,
+  "lcsc_stock": 3816100,
+  "params": {
+   "Resistance": "5.1kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 6042099,
+  "jlc_type": "base"
+ },
+ "C2673354": {
+  "mpn": "DG419BDQ-T1-E3",
+  "brand": "VISHAY",
+  "package": "MSOP-8",
+  "desc": "-15V~15V 15Ω 1 MSOP-8 Analog Switches, Multiplexers, Demultiplexers RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/ec7de3db91dd80f45ed80e9797ab5814.pdf?productCode=C2673354",
+  "price": 5.8855,
+  "lcsc_stock": 375,
+  "params": {},
+  "jlc_stock": 412,
+  "jlc_type": "expand"
+ },
+ "C274612": {
+  "mpn": "NDT3055L",
+  "brand": "onsemi",
+  "package": "SOT-223",
+  "desc": "N-Channel 60V 4A 3W Surface Mount SOT-223",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/55bfae12a21820fec5cd773082090980.pdf?productCode=C274612",
+  "price": 0.6195,
+  "lcsc_stock": 6943,
+  "params": {},
+  "jlc_stock": 7220,
+  "jlc_type": "expand"
+ },
+ "C283445": {
+  "mpn": "M24C32-WDW6TP",
+  "brand": "ST",
+  "package": "TSSOP-8",
+  "desc": "32Kbit 1MHz I2C TSSOP-8 Memory ",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/aa364b66c07e650f97701dabb6c06961.pdf?productCode=C283445",
+  "price": 0.4335,
+  "lcsc_stock": 6475,
+  "params": {},
+  "jlc_stock": 7772,
+  "jlc_type": "expand"
+ },
+ "C2867465": {
+  "mpn": "TLV76050DBZR",
+  "brand": "TI",
+  "package": "SOT-23",
+  "desc": "Linear Voltage Regulator IC Positive Fixed 1 Output 100mA SOT-23",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/b92fd1784c17d709a1873f757313cfc5.pdf?productCode=C2867465",
+  "price": 0.1398,
+  "lcsc_stock": 19765,
+  "params": {},
+  "jlc_stock": 19765,
+  "jlc_type": "expand"
+ },
+ "C2870937": {
+  "mpn": "TLV1702AIDGKR",
+  "brand": "TI",
+  "package": "VSSOP-8",
+  "desc": "2 55uA 3.5mV Rail-to-rail input VSSOP-8 Comparators RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/495a3b7b0a757e978fcf2c5176e403b5.pdf?productCode=C2870937",
+  "price": 1.0901,
+  "lcsc_stock": 3475,
+  "params": {},
+  "jlc_stock": 3519,
+  "jlc_type": "expand"
+ },
+ "C2872241": {
+  "mpn": "ISO7741FDBQR",
+  "brand": "TI",
+  "package": "SSOP-16-150mil",
+  "desc": "Digital Isolator 3000Vrms Forward 3 Channel Reverse 1 Channel 100Mbps 100kV/us CMTI SSOP-16-150mil",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/64aa79f70f2263811e94b9f148915bf0.pdf?productCode=C2872241",
+  "price": 2.6395,
+  "lcsc_stock": 40,
+  "params": {},
+  "jlc_stock": 180,
+  "jlc_type": "expand"
+ },
+ "C2876419": {
+  "mpn": "OPA2192IDGKR",
+  "brand": "TI",
+  "package": "VSSOP-8",
+  "desc": "65mA 2 5uV 20V/us 140dB 5pA 1mA 10MHz Rail-to-Rail Input, Rail-to-Rail Output VSSOP-8 Instrumentation, Op Amps, Buffer Amps RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/5c194d8677e112950897e01027e40aa9.pdf?productCode=C2876419",
+  "price": 2.4832,
+  "lcsc_stock": 26383,
+  "params": {},
+  "jlc_stock": 26383,
+  "jlc_type": "expand"
+ },
+ "C2977777": {
+  "mpn": "CH340N",
+  "brand": "WCH",
+  "package": "SOP-8",
+  "desc": "1 USB to serial 2Mbps USB 2.0 SOP-8 Interface Controllers ",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/a3b2ca2c7638da2635df3f5b1d90bcc0.pdf?productCode=C2977777",
+  "price": 0.6264,
+  "lcsc_stock": 46888,
+  "params": {},
+  "jlc_stock": 47039,
+  "jlc_type": "expand"
+ },
+ "C2988369": {
+  "mpn": "GT-USB-7010ASV",
+  "brand": "G-Switch",
+  "package": "SMD",
+  "desc": "USB-C (USB TYPE-C) Receptacle Connector 16 Position Surface Mount, Right Angle",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/a1d5a66cf718dd88763ab794dba802b2.pdf?productCode=C2988369",
+  "price": 0.0883,
+  "lcsc_stock": 97780,
+  "params": {
+   "Voltage Rating": "24V"
+  },
+  "jlc_stock": 100702,
+  "jlc_type": "expand"
+ },
+ "C307331": {
+  "mpn": "CL05B104KB54PNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0402",
+  "desc": "100nF ±10% 50V Ceramic Capacitor X7R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331",
+  "price": 0.0092,
+  "lcsc_stock": 0,
+  "params": {
+   "Capacitance": "100nF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "50V"
+  },
+  "jlc_stock": 12550615,
+  "jlc_type": "base"
+ },
+ "C3290118": {
+  "mpn": "SI3134KDWA-TP",
+  "brand": "MCC",
+  "package": "SOT-363",
+  "desc": "20V 750mA 150mW 700mΩ@1.8V 2 N-Channel SOT-363 FET, MOSFET Arrays RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/a06ea9d4be5b949922fb059d8a265ac3.pdf?productCode=C3290118",
+  "price": 0.0407,
+  "lcsc_stock": 2600,
+  "params": {},
+  "jlc_stock": 2621,
+  "jlc_type": "expand"
+ },
+ "C37049": {
+  "mpn": "DSK14",
+  "brand": "MDD(Microdiode Semiconductor)",
+  "package": "SOD-123FL",
+  "desc": "Diode Independent 40V 1A Surface Mount SOD-123FL",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/8e0cf18bd22414395997806812bce7a5.pdf?productCode=C37049",
+  "price": 0.019,
+  "lcsc_stock": 350800,
+  "params": {},
+  "jlc_stock": 350803,
+  "jlc_type": "expand"
+ },
+ "C4109": {
+  "mpn": "0402WGF2001TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "2kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4109",
+  "price": 0.0026,
+  "lcsc_stock": 6703900,
+  "params": {
+   "Resistance": "2kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 8128302,
+  "jlc_type": "base"
+ },
+ "C431540": {
+  "mpn": "MSK12C02",
+  "brand": "SHOU HAN",
+  "package": "SMD,8x2.8mm",
+  "desc": "Slide Switch SPDT 50mA @ 12V Surface Mount, Right Angle 8mm",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/5162155576bfd231c35aa9a893d25c8c.pdf?productCode=C431540",
+  "price": 0.0571,
+  "lcsc_stock": 192530,
+  "params": {
+   "Voltage Rating": "12V"
+  },
+  "jlc_stock": 193743,
+  "jlc_type": "expand"
+ },
+ "C471913": {
+  "mpn": "AP30P30Q",
+  "brand": "ALLPOWER",
+  "package": "PDFN3333-8",
+  "desc": "P-Channel 30V 30A 1.5W Surface Mount PDFN3333-8",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/741ba14677c88fb4d9f793d97efdadf4.pdf?productCode=C471913",
+  "price": 0.2602,
+  "lcsc_stock": 43140,
+  "params": {},
+  "jlc_stock": 43141,
+  "jlc_type": "expand"
+ },
+ "C47339": {
+  "mpn": "CL05A474KP5NNNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0402",
+  "desc": "470nF ±10% 10V Ceramic Capacitor X5R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C47339",
+  "price": 0.0114,
+  "lcsc_stock": 316700,
+  "params": {
+   "Capacitance": "470nF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "10V"
+  },
+  "jlc_stock": 550872,
+  "jlc_type": "expand"
+ },
+ "C503307": {
+  "mpn": "SRN4018-100M",
+  "brand": "BOURNS",
+  "package": "SMD,4x4mm",
+  "desc": "1.3A 10uH ±20% 1.4A 180mΩ SMD,4x4mm Fixed Inductors RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/6fdc07f0c78cd50b7194a475062561ab.pdf?productCode=C503307",
+  "price": 0.3776,
+  "lcsc_stock": 285,
+  "params": {
+   "Inductance": "10uH",
+   "Tolerance": "±20%"
+  },
+  "jlc_stock": 286,
+  "jlc_type": "expand"
+ },
+ "C5122339": {
+  "mpn": "ISO1640BDR",
+  "brand": "TI",
+  "package": "SOIC-8",
+  "desc": "100kV/us SOIC-8 Digital Isolators RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/c2bd0e842451aaadb3d8f504e319850f.pdf?productCode=C5122339",
+  "price": 1.8863,
+  "lcsc_stock": 4172,
+  "params": {},
+  "jlc_stock": 4174,
+  "jlc_type": "expand"
+ },
+ "C51721": {
+  "mpn": "0402WGF3901TCE",
+  "brand": "UNI-ROYAL",
+  "package": "0402",
+  "desc": "3.9kΩ ±1% 62.5mW 0402 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C51721",
+  "price": 0.0014,
+  "lcsc_stock": 0,
+  "params": {
+   "Resistance": "3.9kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±1%"
+  },
+  "jlc_stock": 61202,
+  "jlc_type": "expand"
+ },
+ "C52923": {
+  "mpn": "CL05A105KA5NQNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0402",
+  "desc": "1uF ±10% 25V Ceramic Capacitor X5R 0402",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C52923",
+  "price": 0.01,
+  "lcsc_stock": 0,
+  "params": {
+   "Capacitance": "1uF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "25V"
+  },
+  "jlc_stock": 5658584,
+  "jlc_type": "base"
+ },
+ "C53223909": {
+  "mpn": "BL-DT",
+  "brand": "SHOU HAN",
+  "package": "SMD",
+  "desc": "SMD Navigation Switches, Joystick ",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/22b9f14a2a4b1bb65d3169eedf81cd19.pdf?productCode=C53223909",
+  "price": 0.1662,
+  "lcsc_stock": 5655,
+  "params": {
+   "Voltage Rating": "12V"
+  },
+  "jlc_stock": 5658,
+  "jlc_type": "expand"
+ },
+ "C55940": {
+  "mpn": "TLV2371IDBVR",
+  "brand": "TI",
+  "package": "SOT-23-5",
+  "desc": "16mA 1 4.5mV 2.1V/us 84dB 1pA 560uA 3MHz Rail-to-Rail Input, Rail-to-Rail Output SOT-23-5 Instrumentation, Op Amps, Buffer Amps RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23e44bd0438242088aee401649a6e930.pdf?productCode=C55940",
+  "price": 0.5812,
+  "lcsc_stock": 19015,
+  "params": {},
+  "jlc_stock": 19015,
+  "jlc_type": "expand"
+ },
+ "C559769": {
+  "mpn": "CC0603KRX7R9BB105",
+  "brand": "YAGEO",
+  "package": "0603",
+  "desc": "1uF ±10% 50V Ceramic Capacitor X7R 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23ccee80ee542e7cf156a772bb589942.pdf?productCode=C559769",
+  "price": 0.06,
+  "lcsc_stock": 714980,
+  "params": {
+   "Capacitance": "1uF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "50V"
+  },
+  "jlc_stock": 798181,
+  "jlc_type": "expand"
+ },
+ "C632000": {
+  "mpn": "MCP1700T-3302E/MB",
+  "brand": "MICROCHIP",
+  "package": "SOT-89-3",
+  "desc": "3.3V Positive Fixed SOT-89-3 Voltage Regulators - Linear, Low Drop Out (LDO) Regulators RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/72cfd1a349d992af3a1c7bc40df24196.pdf?productCode=C632000",
+  "price": 0.6818,
+  "lcsc_stock": 4034,
+  "params": {},
+  "jlc_stock": 4034,
+  "jlc_type": "expand"
+ },
+ "C655227": {
+  "mpn": "ADG1436YCPZ-REEL7",
+  "brand": "ADI",
+  "package": "LFCSP-16(4x4)",
+  "desc": "1.5Ω 2 LFCSP-16(4x4) Analog Switches, Multiplexers, Demultiplexers RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/7a419c7838519b3d40aacaf1e56389c3.pdf?productCode=C655227",
+  "price": 8.224,
+  "lcsc_stock": 1451,
+  "params": {},
+  "jlc_stock": 1451,
+  "jlc_type": "expand"
+ },
+ "C69335": {
+  "mpn": "CL10A475KA8NQNC",
+  "brand": "Samsung Electro-Mechanics",
+  "package": "0603",
+  "desc": "4.7uF ±10% 25V Ceramic Capacitor X5R 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/61ea68bfd9114bb188d3b5500037ea97.pdf?productCode=C69335",
+  "price": 0.0541,
+  "lcsc_stock": 1501720,
+  "params": {
+   "Capacitance": "4.7uF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "25V"
+  },
+  "jlc_stock": 1632410,
+  "jlc_type": "expand"
+ },
+ "C720477": {
+  "mpn": "TS-1088-AR02016",
+  "brand": "XUNPU",
+  "package": "SMD,4x3mm",
+  "desc": "Tactile Switch SPST 160gf 2mm SMD (SMT) Tab 4mm x 3mm Surface Mount",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0475ac02febf455ca9ddcfb380b0df0d.pdf?productCode=C720477",
+  "price": 0.0528,
+  "lcsc_stock": 633020,
+  "params": {
+   "Voltage Rating": "12V"
+  },
+  "jlc_stock": 788207,
+  "jlc_type": "base"
+ },
+ "C726584": {
+  "mpn": "AC0805KKX7R9BB105",
+  "brand": "YAGEO",
+  "package": "0805",
+  "desc": "1uF ±10% 50V Ceramic Capacitor X7R 0805 AEC-Q200",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/e147909414eb3b900a42b90481dc8914.pdf?productCode=C726584",
+  "price": 0.0582,
+  "lcsc_stock": 1177990,
+  "params": {
+   "Capacitance": "1uF",
+   "Tolerance": "±10%",
+   "Voltage Rating": "50V"
+  },
+  "jlc_stock": 1182548,
+  "jlc_type": "expand"
+ },
+ "C80500": {
+  "mpn": "74LVC2G17GW,125",
+  "brand": "Nexperia",
+  "package": "SOT-363",
+  "desc": "Schmitt trigger 1.65V~5.5V 1 2 3.6ns@3.3V,50pF SOT-363 Buffers, Drivers, Receivers, Transceivers RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/df73e86b8822ee2ea9fc0915b8db982b.pdf?productCode=C80500",
+  "price": 0.086,
+  "lcsc_stock": 13915,
+  "params": {},
+  "jlc_stock": 14651,
+  "jlc_type": "expand"
+ },
+ "C844674": {
+  "mpn": "TNPW0402100KBEED",
+  "brand": "VISHAY",
+  "package": "0402",
+  "desc": "100mW 100kΩ Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/b19aead5bee956848397b2fed1f2b97a.pdf?productCode=C844674",
+  "price": 0.0876,
+  "lcsc_stock": 16355,
+  "params": {
+   "Power(Watts)": "100mW",
+   "Resistance": "100kΩ",
+   "Tolerance": "±0.1%"
+  },
+  "jlc_stock": 16356,
+  "jlc_type": "expand"
+ },
+ "C84817": {
+  "mpn": "MT3608",
+  "brand": "XI'AN Aerosemi Tech",
+  "package": "SOT-23-6",
+  "desc": "1.2MHz Boost Adjustable 600mV~28V 2A SOT-23-6 Voltage Regulators - DC DC Switching Regulators RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/87b648f6991783104e708a12c210cc63.pdf?productCode=C84817",
+  "price": 0.0958,
+  "lcsc_stock": 158805,
+  "params": {},
+  "jlc_stock": 164835,
+  "jlc_type": "expand"
+ },
+ "C852624": {
+  "mpn": "RT0402BRD071KL",
+  "brand": "YAGEO",
+  "package": "0402",
+  "desc": "1kΩ 62.5mW 50V Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/46d7760c582640714d605308a25a220a.pdf?productCode=C852624",
+  "price": 0.0248,
+  "lcsc_stock": 504600,
+  "params": {
+   "Resistance": "1kΩ",
+   "Power(Watts)": "62.5mW",
+   "Voltage Rating": "50V",
+   "Tolerance": "±0.1%"
+  },
+  "jlc_stock": 792124,
+  "jlc_type": "expand"
+ },
+ "C861299": {
+  "mpn": "RT0603BRD072K49L",
+  "brand": "YAGEO",
+  "package": "0603",
+  "desc": "100mW 2.49kΩ 75V Thin Film Resistor ±25ppm/℃ ±0.1% 0603 Chip Resistor - Surface Mount RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/46d7760c582640714d605308a25a220a.pdf?productCode=C861299",
+  "price": 0.062,
+  "lcsc_stock": 15450,
+  "params": {
+   "Power(Watts)": "100mW",
+   "Resistance": "2.49kΩ",
+   "Voltage Rating": "75V",
+   "Tolerance": "±0.1%"
+  },
+  "jlc_stock": 15454,
+  "jlc_type": "expand"
+ },
+ "C95204": {
+  "mpn": "RT0603BRD0710KL",
+  "brand": "YAGEO",
+  "package": "0603",
+  "desc": "100mW 10kΩ 75V Thin Film Resistor ±25ppm/℃ ±0.1% 0603 Chip Resistor - Surface Mount RoHS",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/46d7760c582640714d605308a25a220a.pdf?productCode=C95204",
+  "price": 0.0331,
+  "lcsc_stock": 332720,
+  "params": {
+   "Power(Watts)": "100mW",
+   "Resistance": "10kΩ",
+   "Voltage Rating": "75V",
+   "Tolerance": "±0.1%"
+  },
+  "jlc_stock": 1709076,
+  "jlc_type": "expand"
+ }
+}

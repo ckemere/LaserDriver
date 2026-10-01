@@ -2103,7 +2103,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25105"
 			(at 157.48 101.6 0)
 			(effects
 				(font
@@ -2112,7 +2112,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF330JTCE (UNI-ROYAL, 0402): 33Ω ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 157.48 101.6 0)
 			(effects
 				(font
@@ -2309,7 +2309,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/df73e86b8822ee2ea9fc0915b8db982b.pdf?productCode=C80500"
 			(at 91.44 139.7 0)
 			(effects
 				(font
@@ -2318,7 +2318,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "74LVC2G17GW,125 (Nexperia, SOT-363): Schmitt trigger 1.65V~5.5V 1 2 3.6ns@3.3V,50pF SOT-363 Buffers, Drivers, Receivers, Transceivers RoHS"
 			(at 91.44 139.7 0)
 			(effects
 				(font
@@ -2473,7 +2473,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/df73e86b8822ee2ea9fc0915b8db982b.pdf?productCode=C80500"
 			(at 121.92 60.96 0)
 			(effects
 				(font
@@ -2482,7 +2482,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "74LVC2G17GW,125 (Nexperia, SOT-363): Schmitt trigger 1.65V~5.5V 1 2 3.6ns@3.3V,50pF SOT-363 Buffers, Drivers, Receivers, Transceivers RoHS"
 			(at 121.92 60.96 0)
 			(effects
 				(font
@@ -2561,7 +2561,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/011ec3e8cb1e825f6961d29bc4db4c7a.pdf?productCode=C2286"
 			(at 157.48 127 0)
 			(effects
 				(font
@@ -2570,7 +2570,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "KT-0603R (Hubei KENTO Elec, 0603): Red 645nm LED Indication - Discrete 2.4V 0603"
 			(at 157.48 127 0)
 			(effects
 				(font
@@ -2778,7 +2778,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4109"
 			(at 157.48 147.32 0)
 			(effects
 				(font
@@ -2787,7 +2787,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF2001TCE (UNI-ROYAL, 0402): 2kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 157.48 147.32 0)
 			(effects
 				(font
@@ -2854,7 +2854,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C11702"
 			(at 76.2 60.96 0)
 			(effects
 				(font
@@ -2863,7 +2863,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1001TCE (UNI-ROYAL, 0402): 1kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 76.2 60.96 0)
 			(effects
 				(font
@@ -2930,7 +2930,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/df73e86b8822ee2ea9fc0915b8db982b.pdf?productCode=C80500"
 			(at 121.92 101.6 0)
 			(effects
 				(font
@@ -2939,7 +2939,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "74LVC2G17GW,125 (Nexperia, SOT-363): Schmitt trigger 1.65V~5.5V 1 2 3.6ns@3.3V,50pF SOT-363 Buffers, Drivers, Receivers, Transceivers RoHS"
 			(at 121.92 101.6 0)
 			(effects
 				(font
@@ -3213,7 +3213,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 106.68 139.7 0)
 			(effects
 				(font
@@ -3222,7 +3222,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 106.68 139.7 0)
 			(effects
 				(font
@@ -3356,7 +3356,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25741"
 			(at 91.44 71.12 0)
 			(effects
 				(font
@@ -3365,7 +3365,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1003TCE (UNI-ROYAL, 0402): 100kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 91.44 71.12 0)
 			(effects
 				(font

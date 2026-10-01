@@ -56,8 +56,10 @@ HAT = {
 # Schematic Value strings that stamp_lcsc.py sets so the BOM reads the same as the part ordered.
 VALUES = {
     "HAT": {"U1": "M24C32-WDW6TP", "R13": "2k", "U5": "AP2171W",
-            "R3": "47k"},                                     # same part as R21: one BOM line, not "47k 1%" + "47k"
-    "LASER": {"R1": "100k", "R2": "33k", "R3": "39k", "R4": "10k", "R5": "187k"},   # all 1 % (the LCSC code says so)
+            "R3": "47k",                                      # same part as R21: one BOM line, not "47k 1%" + "47k"
+            "J5": "GT-USB-7010ASV"},                          # the receptacle ordered, not the generic symbol name
+    "LASER": {"R1": "100k", "R2": "33k", "R3": "39k", "R4": "10k", "R5": "187k",   # all 1 % (the LCSC code says so)
+              "D1": "DSK14", "D3": "DSK14"},                                     # the part ordered (SS14 SOD-123FL equivalent)
 }
 
 # Not parts: no BOM line, no placement (symbol "exclude from BOM" + footprint exclude-from-BOM/-position-files)

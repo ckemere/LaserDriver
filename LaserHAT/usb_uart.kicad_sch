@@ -3282,7 +3282,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/741ba14677c88fb4d9f793d97efdadf4.pdf?productCode=C471913"
 			(at 157.48 40.64 0)
 			(effects
 				(font
@@ -3291,7 +3291,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "AP30P30Q (ALLPOWER, PDFN3333-8): P-Channel 30V 30A 1.5W Surface Mount PDFN3333-8"
 			(at 157.48 40.64 0)
 			(effects
 				(font
@@ -3493,7 +3493,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 177.8 87.63 0)
 			(effects
 				(font
@@ -3502,7 +3502,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 177.8 87.63 0)
 			(effects
 				(font
@@ -3571,7 +3571,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25905"
 			(at 133.35 99.06 0)
 			(effects
 				(font
@@ -3580,7 +3580,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "5.1kΩ 100mW Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF5101TCE (UNI-ROYAL, 0402): 5.1kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 133.35 99.06 0)
 			(effects
 				(font
@@ -3651,7 +3651,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://aitendo3.sakura.ne.jp/aitendo_data/product_img/ic/inteface/CH340N/ch340n.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/a3b2ca2c7638da2635df3f5b1d90bcc0.pdf?productCode=C2977777"
 			(at 171.45 96.52 0)
 			(effects
 				(font
@@ -3660,7 +3660,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "USB serial converter, 2Mbps, UART, JEITA SOIC-8 (SOP-8)"
+		(property "Description" "CH340N (WCH, SOP-8): 1 USB to serial 2Mbps USB 2.0 SOP-8 Interface Controllers"
 			(at 173.99 101.6 0)
 			(effects
 				(font
@@ -4011,7 +4011,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/5162155576bfd231c35aa9a893d25c8c.pdf?productCode=C431540"
 			(at 45.72 76.2 0)
 			(effects
 				(font
@@ -4020,7 +4020,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "MSK12C02 (SHOU HAN, SMD,8x2.8mm): Slide Switch SPDT 50mA @ 12V Surface Mount, Right Angle 8mm"
 			(at 45.72 76.2 0)
 			(effects
 				(font
@@ -4090,7 +4090,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25741"
 			(at 55.88 45.72 0)
 			(effects
 				(font
@@ -4099,7 +4099,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1003TCE (UNI-ROYAL, 0402): 100kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 55.88 45.72 0)
 			(effects
 				(font
@@ -4166,7 +4166,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/741ba14677c88fb4d9f793d97efdadf4.pdf?productCode=C471913"
 			(at 76.2 45.72 0)
 			(effects
 				(font
@@ -4175,7 +4175,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "AP30P30Q (ALLPOWER, PDFN3333-8): P-Channel 30V 30A 1.5W Surface Mount PDFN3333-8"
 			(at 76.2 45.72 0)
 			(effects
 				(font
@@ -4491,7 +4491,7 @@
 				)
 			)
 		)
-		(property "Value" "USB_C_Receptacle_USB2.0_16P"
+		(property "Value" "GT-USB-7010ASV"
 			(at 107.95 86.36 0)
 			(effects
 				(font
@@ -4508,7 +4508,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/a1d5a66cf718dd88763ab794dba802b2.pdf?productCode=C2988369"
 			(at 111.76 106.68 0)
 			(effects
 				(font
@@ -4517,7 +4517,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "USB 2.0-only 16P Type-C Receptacle connector"
+		(property "Description" "GT-USB-7010ASV (G-Switch, SMD): USB-C (USB TYPE-C) Receptacle Connector 16 Position Surface Mount, Right Angle"
 			(at 107.95 106.68 0)
 			(effects
 				(font
@@ -4697,7 +4697,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25792"
 			(at 200.66 45.72 0)
 			(effects
 				(font
@@ -4706,7 +4706,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF4702TCE (UNI-ROYAL, 0402): 47kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 200.66 45.72 0)
 			(effects
 				(font
@@ -4773,7 +4773,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25744"
 			(at 213.36 45.72 0)
 			(effects
 				(font
@@ -4782,7 +4782,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1002TCE (UNI-ROYAL, 0402): 10kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 213.36 45.72 0)
 			(effects
 				(font
@@ -4849,7 +4849,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/05b35e50c47741f69d8631d18fa1a261.pdf?productCode=C154733"
 			(at 175.26 58.42 0)
 			(effects
 				(font
@@ -4858,7 +4858,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "DMMT5401-7-F (DIODES, SOT-26(SC74R)): Bipolar (BJT) Transistor PNP 150V 200mA 300MHz 300mW Surface Mount SOT-26(SC74R)"
 			(at 175.26 58.42 0)
 			(effects
 				(font
@@ -4938,7 +4938,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25905"
 			(at 127 96.52 0)
 			(effects
 				(font
@@ -4947,7 +4947,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "5.1kΩ 100mW Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF5101TCE (UNI-ROYAL, 0402): 5.1kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 127 96.52 0)
 			(effects
 				(font
@@ -5080,7 +5080,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/05b35e50c47741f69d8631d18fa1a261.pdf?productCode=C154733"
 			(at 139.7 58.42 0)
 			(effects
 				(font
@@ -5089,7 +5089,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "DMMT5401-7-F (DIODES, SOT-26(SC74R)): Bipolar (BJT) Transistor PNP 150V 200mA 300MHz 300mW Surface Mount SOT-26(SC74R)"
 			(at 139.7 58.42 0)
 			(effects
 				(font

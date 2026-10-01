@@ -3886,7 +3886,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 74.93 121.92 0)
 			(effects
 				(font
@@ -3895,7 +3895,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 74.93 121.92 0)
 			(effects
 				(font
@@ -4029,7 +4029,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0475ac02febf455ca9ddcfb380b0df0d.pdf?productCode=C720477"
 			(at 96.52 218.44 0)
 			(effects
 				(font
@@ -4038,7 +4038,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "TS-1088-AR02016 (XUNPU, SMD,4x3mm): Tactile Switch SPST 160gf 2mm SMD (SMT) Tab 4mm x 3mm Surface Mount"
 			(at 96.52 218.44 0)
 			(effects
 				(font
@@ -4169,7 +4169,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15850"
 			(at 85.09 121.92 0)
 			(effects
 				(font
@@ -4178,7 +4178,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "10uF ±10% 16V Ceramic Capacitor X7R 0805"
+		(property "Description" "CL21A106KAYNNNE (Samsung Electro-Mechanics, 0805): 10uF ±10% 25V Ceramic Capacitor X5R 0805"
 			(at 85.09 121.92 0)
 			(effects
 				(font
@@ -4387,7 +4387,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "MSPM0G3507SRHBR (TI, VQFN-32(5x5)): ARM Cortex-M0+ 32 Bit VQFN-32(5x5) Microcontrollers RoHS"
 			(at 152.4 236.22 0)
 			(effects
 				(font
@@ -4547,7 +4547,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15195"
 			(at 118.11 134.62 0)
 			(effects
 				(font
@@ -4556,7 +4556,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "10nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B103KB5NNNC (Samsung Electro-Mechanics, 0402): 10nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 118.11 134.62 0)
 			(effects
 				(font
@@ -4691,7 +4691,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/b19aead5bee956848397b2fed1f2b97a.pdf?productCode=C844674"
 			(at 139.7 123.19 0)
 			(effects
 				(font
@@ -4700,7 +4700,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100mW 100kΩ Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "TNPW0402100KBEED (VISHAY, 0402): 100mW 100kΩ Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 139.7 123.19 0)
 			(effects
 				(font
@@ -4768,7 +4768,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2161.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/dfb41fb13385a5153365608bd440bf80.pdf?productCode=C110466"
 			(at 95.25 81.28 0)
 			(effects
 				(font
@@ -4777,7 +4777,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Current limited power switch, single channel, SOT-23-5"
+		(property "Description" "AP2171WG-7 (DIODES, SOT-25-5): 1 Active High 1A High Side Switch SOT-25-5 Power Distribution Switches, Load Drivers RoHS"
 			(at 95.25 82.55 0)
 			(effects
 				(font
@@ -4921,7 +4921,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/22b9f14a2a4b1bb65d3169eedf81cd19.pdf?productCode=C53223909"
 			(at 99.06 190.5 0)
 			(effects
 				(font
@@ -4930,7 +4930,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "BL-DT (SHOU HAN, SMD): SMD Navigation Switches, Joystick"
 			(at 99.06 190.5 0)
 			(effects
 				(font
@@ -5070,7 +5070,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25792"
 			(at 118.11 120.65 0)
 			(effects
 				(font
@@ -5079,7 +5079,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF4702TCE (UNI-ROYAL, 0402): 47kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 118.11 120.65 0)
 			(effects
 				(font
@@ -5147,7 +5147,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0475ac02febf455ca9ddcfb380b0df0d.pdf?productCode=C720477"
 			(at 368.3 92.71 0)
 			(effects
 				(font
@@ -5156,7 +5156,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "TS-1088-AR02016 (XUNPU, SMD,4x3mm): Tactile Switch SPST 160gf 2mm SMD (SMT) Tab 4mm x 3mm Surface Mount"
 			(at 368.3 97.79 0)
 			(effects
 				(font
@@ -5223,7 +5223,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C47339"
 			(at 163.83 121.92 0)
 			(effects
 				(font
@@ -5232,7 +5232,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "470nF ±10% 16V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05A474KP5NNNC (Samsung Electro-Mechanics, 0402): 470nF ±10% 10V Ceramic Capacitor X5R 0402"
 			(at 163.83 121.92 0)
 			(effects
 				(font

@@ -242,7 +242,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/df73e86b8822ee2ea9fc0915b8db982b.pdf?productCode=C80500"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -254,7 +254,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "74LVC2G17GW,125 (Nexperia, SOT-363): Schmitt trigger 1.65V~5.5V 1 2 3.6ns@3.3V,50pF SOT-363 Buffers, Drivers, Receivers, Transceivers RoHS"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -555,7 +555,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/741ba14677c88fb4d9f793d97efdadf4.pdf?productCode=C471913"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -567,7 +567,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "AP30P30Q (ALLPOWER, PDFN3333-8): P-Channel 30V 30A 1.5W Surface Mount PDFN3333-8"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -972,7 +972,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0475ac02febf455ca9ddcfb380b0df0d.pdf?productCode=C720477"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -985,7 +985,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "TS-1088-AR02016 (XUNPU, SMD,4x3mm): Tactile Switch SPST 160gf 2mm SMD (SMT) Tab 4mm x 3mm Surface Mount"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1217,7 +1217,7 @@
 				)
 			)
 		)
-		(property "Value" "USB_C_Receptacle_USB2.0_16P"
+		(property "Value" "GT-USB-7010ASV"
 			(at 0 5 90)
 			(layer "F.Fab")
 			(uuid "4bd4003a-976d-40b5-a923-434897f5dda6")
@@ -1228,7 +1228,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.usb.org/sites/default/files/documents/usb_type-c.zip"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/a1d5a66cf718dd88763ab794dba802b2.pdf?productCode=C2988369"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1241,7 +1241,7 @@
 				)
 			)
 		)
-		(property "Description" "USB 2.0-only 16P Type-C Receptacle connector"
+		(property "Description" "GT-USB-7010ASV (G-Switch, SMD): USB-C (USB TYPE-C) Receptacle Connector 16 Position Surface Mount, Right Angle"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1660,7 +1660,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1672,7 +1672,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1826,7 +1826,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "MSPM0G3507SRHBR (TI, VQFN-32(5x5)): ARM Cortex-M0+ 32 Bit VQFN-32(5x5) Microcontrollers RoHS"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -4258,7 +4258,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25905"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4270,7 +4270,7 @@
 				)
 			)
 		)
-		(property "Description" "5.1kΩ 100mW Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF5101TCE (UNI-ROYAL, 0402): 5.1kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4413,7 +4413,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15850"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4425,7 +4425,7 @@
 				)
 			)
 		)
-		(property "Description" "10uF ±10% 16V Ceramic Capacitor X7R 0805"
+		(property "Description" "CL21A106KAYNNNE (Samsung Electro-Mechanics, 0805): 10uF ±10% 25V Ceramic Capacitor X5R 0805"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4567,7 +4567,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/5162155576bfd231c35aa9a893d25c8c.pdf?productCode=C431540"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4580,7 +4580,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "MSK12C02 (SHOU HAN, SMD,8x2.8mm): Slide Switch SPDT 50mA @ 12V Surface Mount, Right Angle 8mm"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5336,7 +5336,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/72cfd1a349d992af3a1c7bc40df24196.pdf?productCode=C632000"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5349,7 +5349,7 @@
 				)
 			)
 		)
-		(property "Description" "250mA Low Quiscent Current LDO, 3.3V output, SOT-89"
+		(property "Description" "MCP1700T-3302E/MB (MICROCHIP, SOT-89-3): 3.3V Positive Fixed SOT-89-3 Voltage Regulators - Linear, Low Drop Out (LDO) Regulators RoHS"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5619,7 +5619,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5631,7 +5631,7 @@
 				)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5774,7 +5774,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5786,7 +5786,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5929,7 +5929,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -5941,7 +5941,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -6083,7 +6083,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25105"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -6095,7 +6095,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF330JTCE (UNI-ROYAL, 0402): 33Ω ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -6235,7 +6235,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/22b9f14a2a4b1bb65d3169eedf81cd19.pdf?productCode=C53223909"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -6247,7 +6247,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "BL-DT (SHOU HAN, SMD): SMD Navigation Switches, Joystick"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -6509,7 +6509,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25741"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -6521,7 +6521,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1003TCE (UNI-ROYAL, 0402): 100kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -6950,7 +6950,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -6962,7 +6962,7 @@
 				)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7105,7 +7105,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C11702"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7117,7 +7117,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1001TCE (UNI-ROYAL, 0402): 1kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7259,7 +7259,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25744"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7271,7 +7271,7 @@
 				)
 			)
 		)
-		(property "Description" "200mW 10kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF1002TCE (UNI-ROYAL, 0402): 10kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7414,7 +7414,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C51721"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7426,7 +7426,7 @@
 				)
 			)
 		)
-		(property "Description" "100mW 3.9kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF3901TCE (UNI-ROYAL, 0402): 3.9kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7569,7 +7569,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/05b35e50c47741f69d8631d18fa1a261.pdf?productCode=C154733"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -7581,7 +7581,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "DMMT5401-7-F (DIODES, SOT-26(SC74R)): Bipolar (BJT) Transistor PNP 150V 200mA 300MHz 300mW Surface Mount SOT-26(SC74R)"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -7926,7 +7926,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25792"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7938,7 +7938,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF4702TCE (UNI-ROYAL, 0402): 47kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8081,7 +8081,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8093,7 +8093,7 @@
 				)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8236,7 +8236,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/8238ae278d43fbd59fd57ef71ae67c27.pdf?productCode=C2290"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8248,7 +8248,7 @@
 				)
 			)
 		)
-		(property "Description" "Emerald Green LED Indication - Discrete 3V 0603"
+		(property "Description" "KT-0603W (Hubei KENTO Elec, 0603): White LED Indication - Discrete 2.6V~3.1V 0603"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8454,7 +8454,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25905"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8466,7 +8466,7 @@
 				)
 			)
 		)
-		(property "Description" "5.1kΩ 100mW Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF5101TCE (UNI-ROYAL, 0402): 5.1kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8896,7 +8896,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8908,7 +8908,7 @@
 				)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9051,7 +9051,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/011ec3e8cb1e825f6961d29bc4db4c7a.pdf?productCode=C2286"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9063,7 +9063,7 @@
 				)
 			)
 		)
-		(property "Description" "Ice Blue LED Indication - Discrete 3.1V 0603"
+		(property "Description" "KT-0603R (Hubei KENTO Elec, 0603): Red 645nm LED Indication - Discrete 2.4V 0603"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9269,7 +9269,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0475ac02febf455ca9ddcfb380b0df0d.pdf?productCode=C720477"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9282,7 +9282,7 @@
 				)
 			)
 		)
-		(property "Description" "Push button switch, generic, two pins"
+		(property "Description" "TS-1088-AR02016 (XUNPU, SMD,4x3mm): Tactile Switch SPST 160gf 2mm SMD (SMT) Tab 4mm x 3mm Surface Mount"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -9536,7 +9536,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4109"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9548,7 +9548,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF2001TCE (UNI-ROYAL, 0402): 2kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9690,7 +9690,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25744"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9702,7 +9702,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1002TCE (UNI-ROYAL, 0402): 10kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9844,7 +9844,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/011ec3e8cb1e825f6961d29bc4db4c7a.pdf?productCode=C2286"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9856,7 +9856,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "KT-0603R (Hubei KENTO Elec, 0603): Red 645nm LED Indication - Discrete 2.4V 0603"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10151,7 +10151,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4109"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10163,7 +10163,7 @@
 				)
 			)
 		)
-		(property "Description" "100mW 200Ω Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF2001TCE (UNI-ROYAL, 0402): 2kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10394,7 +10394,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/b19aead5bee956848397b2fed1f2b97a.pdf?productCode=C844674"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10406,7 +10406,7 @@
 				)
 			)
 		)
-		(property "Description" "100mW 100kΩ Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "TNPW0402100KBEED (VISHAY, 0402): 100mW 100kΩ Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10549,7 +10549,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25741"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10561,7 +10561,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF1003TCE (UNI-ROYAL, 0402): 100kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10674,7 +10674,7 @@
 			)
 		)
 	)
-	(footprint "OwlLogo_Laser_14mm"
+	(footprint "Footprints:OwlLogo_Laser_14mm"
 		(layer "F.Cu")
 		(uuid "9339f99e-5589-445a-8788-704e3675aed6")
 		(at 155.8 66.8)
@@ -12039,7 +12039,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/741ba14677c88fb4d9f793d97efdadf4.pdf?productCode=C471913"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12051,7 +12051,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "AP30P30Q (ALLPOWER, PDFN3333-8): P-Channel 30V 30A 1.5W Surface Mount PDFN3333-8"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12581,7 +12581,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2161.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/dfb41fb13385a5153365608bd440bf80.pdf?productCode=C110466"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12593,7 +12593,7 @@
 				)
 			)
 		)
-		(property "Description" "Current limited power switch, single channel, SOT-23-5"
+		(property "Description" "AP2171WG-7 (DIODES, SOT-25-5): 1 Active High 1A High Side Switch SOT-25-5 Power Distribution Switches, Load Drivers RoHS"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13171,7 +13171,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.onsemi.cn/PowerSolutions/document/CAT24C256-D.PDF"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/aa364b66c07e650f97701dabb6c06961.pdf?productCode=C283445"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13183,7 +13183,7 @@
 				)
 			)
 		)
-		(property "Description" "32 kb CMOS Serial EEPROM, DIP-8/SOIC-8/TSSOP-8/DFN-8"
+		(property "Description" "M24C32-WDW6TP (ST, TSSOP-8): 32Kbit 1MHz I2C TSSOP-8 Memory"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13549,7 +13549,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C51721"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13561,7 +13561,7 @@
 				)
 			)
 		)
-		(property "Description" "100mW 3.9kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF3901TCE (UNI-ROYAL, 0402): 3.9kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13793,7 +13793,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25792"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -13805,7 +13805,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF4702TCE (UNI-ROYAL, 0402): 47kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -13948,7 +13948,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15195"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -13960,7 +13960,7 @@
 				)
 			)
 		)
-		(property "Description" "10nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B103KB5NNNC (Samsung Electro-Mechanics, 0402): 10nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -14385,7 +14385,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C52923"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -14397,7 +14397,7 @@
 				)
 			)
 		)
-		(property "Description" "1uF ±10% 10V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05A105KA5NQNC (Samsung Electro-Mechanics, 0402): 1uF ±10% 25V Ceramic Capacitor X5R 0402"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -14732,7 +14732,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C47339"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -14744,7 +14744,7 @@
 				)
 			)
 		)
-		(property "Description" "470nF ±10% 16V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05A474KP5NNNC (Samsung Electro-Mechanics, 0402): 470nF ±10% 10V Ceramic Capacitor X5R 0402"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -14887,7 +14887,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4109"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -14899,7 +14899,7 @@
 				)
 			)
 		)
-		(property "Description" "100mW 1kΩ 75V Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF2001TCE (UNI-ROYAL, 0402): 2kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -15041,7 +15041,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://aitendo3.sakura.ne.jp/aitendo_data/product_img/ic/inteface/CH340N/ch340n.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/a3b2ca2c7638da2635df3f5b1d90bcc0.pdf?productCode=C2977777"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -15053,7 +15053,7 @@
 				)
 			)
 		)
-		(property "Description" "USB serial converter, 2Mbps, UART, JEITA SOIC-8 (SOP-8)"
+		(property "Description" "CH340N (WCH, SOP-8): 1 USB to serial 2Mbps USB 2.0 SOP-8 Interface Controllers"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)

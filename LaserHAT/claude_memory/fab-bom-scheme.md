@@ -28,6 +28,12 @@ misspelt variants with Rev 1 codes (every 0402 resistor = 47k, wrong ICs), so th
   `from plugins.process import ProcessManager; pm = ProcessManager(pcbnew.LoadBoard(p)); pm.generate_tables(dir, False, True)`
   and read `pm.bom` / `pm.components` (it reads footprint *fields*, DNP via IsDNP, exclude flags via FP attributes).
 
+- 2026-09-30 later: the Rev 1 symbols also carried stale *Description* fields (R15 said "200Ω" with a 2k code) — the user
+  caught it. Now `tools/lcsc_catalog.json` (LCSC MPN/brand/package/description/parameter table/datasheet, refreshed by
+  `tools/lcsc_verify.py --refresh`) feeds Description/Datasheet via stamp_lcsc, and `lcsc_verify.py` compares every
+  R/C/L Value with LCSC's Resistance/Capacitance/Inductance parameter on all three boards (e-stim list included).
+  `tools/sync_check.py board sch` is the read-only F8: parts, fpid, value, DNP, pad nets, paths. Run both before any fab talk.
+
 **Why:** the user said "values need to match for things like resistors!!!" after a bad BOM; keep one source of truth.
 **How to apply:** after editing lcsc_parts.py run `python tools/stamp_lcsc.py` then `tools/jlc_fab.py`; never hand-edit
 the fields. Related: [[hat-manual-routing-handoff]], [[laserhat-user-preferences]].

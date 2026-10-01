@@ -185,7 +185,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/a06ea9d4be5b949922fb059d8a265ac3.pdf?productCode=C3290118"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -197,7 +197,7 @@
 				)
 			)
 		)
-		(property "Description" "750mA 150mW 700mΩ@1.8V 1.1V 2 N-Channel SOT-363 FET, MOSFET Arrays RoHS"
+		(property "Description" "SI3134KDWA-TP (MCC, SOT-363): 20V 750mA 150mW 700mΩ@1.8V 2 N-Channel SOT-363 FET, MOSFET Arrays RoHS"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -500,7 +500,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/47b0f000b8781f6578038fbca26cc49a.pdf?productCode=C2105197"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -512,7 +512,7 @@
 				)
 			)
 		)
-		(property "Description" "1W 10Ω Current Sense Resistor ±50ppm/℃ ±1% 1206 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "ESR18EZPF2R00 (ROHM, 1206): 500mW 2Ω 200V Thick Film Resistor ±100ppm/℃ ±1% 1206 Chip Resistor - Surface Mount RoHS"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -853,7 +853,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -865,7 +865,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1003,7 +1003,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/46d7760c582640714d605308a25a220a.pdf?productCode=C852624"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -1015,7 +1015,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "RT0402BRD071KL (YAGEO, 0402): 1kΩ 62.5mW 50V Thin Film Resistor ±25ppm/℃ ±0.1% 0402 Chip Resistor - Surface Mount RoHS"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -1153,7 +1153,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25741"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1165,7 +1165,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF1003TCE (UNI-ROYAL, 0402): 100kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1303,7 +1303,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25779"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1315,7 +1315,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF3302TCE (UNI-ROYAL, 0402): 33kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1454,7 +1454,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25783"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -1466,7 +1466,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF3902TCE (UNI-ROYAL, 0402): 39kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -1605,7 +1605,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25744"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1617,7 +1617,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF1002TCE (UNI-ROYAL, 0402): 10kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1755,7 +1755,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25761"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -1767,7 +1767,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF1873TCE (UNI-ROYAL, 0402): 187kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -1906,7 +1906,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25744"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -1918,7 +1918,7 @@
 				)
 			)
 		)
-		(property "Description" "47kΩ ±1% 100mW 0402 Thick Film Resistor AEC-Q200"
+		(property "Description" "0402WGF1002TCE (UNI-ROYAL, 0402): 10kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -2554,7 +2554,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/6fdc07f0c78cd50b7194a475062561ab.pdf?productCode=C503307"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2567,7 +2567,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "SRN4018-100M (BOURNS, SMD,4x4mm): 1.3A 10uH ±20% 1.4A 180mΩ SMD,4x4mm Fixed Inductors RoHS"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2821,7 +2821,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15195"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -2833,7 +2833,7 @@
 				)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B103KB5NNNC (Samsung Electro-Mechanics, 0402): 10nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -2972,7 +2972,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -2984,7 +2984,7 @@
 				)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3123,7 +3123,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.olimex.com/Products/Breadboarding/BB-PWR-3608/resources/MT3608.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/87b648f6991783104e708a12c210cc63.pdf?productCode=C84817"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -3135,7 +3135,7 @@
 				)
 			)
 		)
-		(property "Description" "High Efficiency 1.2MHz 2A Step Up Converter, 2-24V Vin, 28V Vout, 4A current limit, 1.2MHz, SOT23-6"
+		(property "Description" "MT3608 (XI'AN Aerosemi Tech, SOT-23-6): 1.2MHz Boost Adjustable 600mV~28V 2A SOT-23-6 Voltage Regulators - DC DC Switching Regulators RoHS"
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -3478,7 +3478,7 @@
 				)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/55bfae12a21820fec5cd773082090980.pdf?productCode=C274612"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3491,7 +3491,7 @@
 				)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "NDT3055L (onsemi, SOT-223): N-Channel 60V 4A 3W Surface Mount SOT-223"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3744,7 +3744,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/677f227074f0d201058521a10a93c772.pdf?productCode=C221841"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -3757,7 +3757,7 @@
 				)
 			)
 		)
-		(property "Description" "Switch, single pole double throw"
+		(property "Description" "PCM12SMTR (C&K, SMD): Slide Switch SPDT @ 6V Surface Mount Rectangular Columnar"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4172,7 +4172,7 @@
 				)
 			)
 		)
-		(property "Value" "SS14"
+		(property "Value" "DSK14"
 			(at 0 2.1 90)
 			(layer "F.Fab")
 			(uuid "ac0fa776-21bf-42b2-9b18-bdbf4bc37f99")
@@ -4183,7 +4183,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/8e0cf18bd22414395997806812bce7a5.pdf?productCode=C37049"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4196,7 +4196,7 @@
 				)
 			)
 		)
-		(property "Description" "Diode"
+		(property "Description" "DSK14 (MDD(Microdiode Semiconductor), SOD-123FL): Diode Independent 40V 1A Surface Mount SOD-123FL"
 			(at 0 0 90)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4501,7 +4501,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/d9bccfd8e63eb365d58c73057a153ad6.pdf?productCode=C209582"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4514,7 +4514,7 @@
 				)
 			)
 		)
-		(property "Description" "Diode"
+		(property "Description" "KDZVTR2.4B (ROHM, SOD-123FL): Zener Diode Independent 2.4V 1000mW Surface Mount SOD-123FL"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4809,7 +4809,7 @@
 				)
 			)
 		)
-		(property "Value" "SS14"
+		(property "Value" "DSK14"
 			(at 0 2.1 180)
 			(layer "F.Fab")
 			(uuid "ac0fa776-21bf-42b2-9b18-bdbf4bc37f99")
@@ -4820,7 +4820,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/8e0cf18bd22414395997806812bce7a5.pdf?productCode=C37049"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4833,7 +4833,7 @@
 				)
 			)
 		)
-		(property "Description" "Diode"
+		(property "Description" "DSK14 (MDD(Microdiode Semiconductor), SOD-123FL): Diode Independent 40V 1A Surface Mount SOD-123FL"
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5138,7 +5138,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/194a99c672e895c626d5918b68d041da.pdf?productCode=C209583"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5151,7 +5151,7 @@
 				)
 			)
 		)
-		(property "Description" "Diode"
+		(property "Description" "KDZVTR2.7B (ROHM, SOD-123FL): Zener Diode Independent 2.7V 1000mW Surface Mount SOD-123FL"
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5456,7 +5456,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C12891"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -5468,7 +5468,7 @@
 				)
 			)
 		)
-		(property "Description" "22uF ±10% 16V Ceramic Capacitor X5R 1206"
+		(property "Description" "CL31A226KAHNNNE (Samsung Electro-Mechanics, 1206): 22uF ±10% 25V Ceramic Capacitor X5R 1206"
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -5607,7 +5607,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C12891"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -5619,7 +5619,7 @@
 				)
 			)
 		)
-		(property "Description" "22uF ±10% 16V Ceramic Capacitor X5R 1206"
+		(property "Description" "CL31A226KAHNNNE (Samsung Electro-Mechanics, 1206): 22uF ±10% 25V Ceramic Capacitor X5R 1206"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -5872,7 +5872,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.diodes.com/assets/Datasheets/AP2161.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/23e44bd0438242088aee401649a6e930.pdf?productCode=C55940"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -5884,7 +5884,7 @@
 				)
 			)
 		)
-		(property "Description" "Current limited power switch, single channel, SOT-23-5"
+		(property "Description" "TLV2371IDBVR (TI, SOT-23-5): 16mA 1 4.5mV 2.1V/us 84dB 1pA 560uA 3MHz Rail-to-Rail Input, Rail-to-Rail Output SOT-23-5 Instrumentation, Op Amps, Buffer Amps RoHS"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)

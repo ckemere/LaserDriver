@@ -6479,7 +6479,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/8238ae278d43fbd59fd57ef71ae67c27.pdf?productCode=C2290"
 			(at 275.59 127 0)
 			(effects
 				(font
@@ -6488,7 +6488,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Emerald Green LED Indication - Discrete 3V 0603"
+		(property "Description" "KT-0603W (Hubei KENTO Elec, 0603): White LED Indication - Discrete 2.6V~3.1V 0603"
 			(at 275.59 127 0)
 			(effects
 				(font
@@ -6566,7 +6566,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 67.31 177.8 0)
 			(effects
 				(font
@@ -6575,7 +6575,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 67.31 177.8 0)
 			(effects
 				(font
@@ -6644,7 +6644,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C51721"
 			(at 93.98 170.18 0)
 			(effects
 				(font
@@ -6653,7 +6653,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100mW 3.9kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF3901TCE (UNI-ROYAL, 0402): 3.9kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 93.98 170.18 0)
 			(effects
 				(font
@@ -6984,7 +6984,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C51721"
 			(at 101.6 170.18 0)
 			(effects
 				(font
@@ -6993,7 +6993,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100mW 3.9kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF3901TCE (UNI-ROYAL, 0402): 3.9kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 101.6 170.18 0)
 			(effects
 				(font
@@ -7061,7 +7061,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
 			(at 271.78 185.42 0)
 			(effects
 				(font
@@ -7070,7 +7070,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 271.78 185.42 0)
 			(effects
 				(font
@@ -7398,7 +7398,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "https://www.onsemi.cn/PowerSolutions/document/CAT24C256-D.PDF"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/aa364b66c07e650f97701dabb6c06961.pdf?productCode=C283445"
 			(at 81.28 177.8 0)
 			(effects
 				(font
@@ -7407,7 +7407,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "32 kb CMOS Serial EEPROM, DIP-8/SOIC-8/TSSOP-8/DFN-8"
+		(property "Description" "M24C32-WDW6TP (ST, TSSOP-8): 32Kbit 1MHz I2C TSSOP-8 Memory"
 			(at 81.28 177.8 0)
 			(effects
 				(font
@@ -7495,7 +7495,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4109"
 			(at 300.99 140.97 0)
 			(effects
 				(font
@@ -7504,7 +7504,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100mW 200Ω Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF2001TCE (UNI-ROYAL, 0402): 2kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 300.99 140.97 0)
 			(effects
 				(font
@@ -7572,7 +7572,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "http://ww1.microchip.com/downloads/en/DeviceDoc/20001826D.pdf"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/72cfd1a349d992af3a1c7bc40df24196.pdf?productCode=C632000"
 			(at 62.23 110.49 0)
 			(effects
 				(font
@@ -7581,7 +7581,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "250mA Low Quiscent Current LDO, 3.3V output, SOT-89"
+		(property "Description" "MCP1700T-3302E/MB (MICROCHIP, SOT-89-3): 3.3V Positive Fixed SOT-89-3 Voltage Regulators - Linear, Low Drop Out (LDO) Regulators RoHS"
 			(at 62.23 109.22 0)
 			(effects
 				(font
@@ -8043,7 +8043,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" ""
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
 			(at 256.54 185.42 0)
 			(effects
 				(font
@@ -8052,7 +8052,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" ""
+		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 256.54 185.42 0)
 			(effects
 				(font
@@ -8118,7 +8118,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C52923"
 			(at 76.2 113.03 0)
 			(effects
 				(font
@@ -8127,7 +8127,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "1uF ±10% 10V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05A105KA5NQNC (Samsung Electro-Mechanics, 0402): 1uF ±10% 25V Ceramic Capacitor X5R 0402"
 			(at 76.2 113.03 0)
 			(effects
 				(font
@@ -8197,7 +8197,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4109"
 			(at 275.59 140.97 0)
 			(effects
 				(font
@@ -8206,7 +8206,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100mW 1kΩ 75V Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF2001TCE (UNI-ROYAL, 0402): 2kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 275.59 140.97 0)
 			(effects
 				(font
@@ -8276,7 +8276,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25744"
 			(at 148.59 59.69 0)
 			(effects
 				(font
@@ -8285,7 +8285,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "200mW 10kΩ Thick Film Resistor ±100ppm/℃ ±1% 0402 Chip Resistor - Surface Mount RoHS"
+		(property "Description" "0402WGF1002TCE (UNI-ROYAL, 0402): 10kΩ ±1% 62.5mW 0402 Thick Film Resistor"
 			(at 148.59 59.69 0)
 			(effects
 				(font
@@ -8544,7 +8544,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
 			(at 48.26 113.03 0)
 			(effects
 				(font
@@ -8553,7 +8553,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
 			(at 48.26 113.03 0)
 			(effects
 				(font
@@ -8753,7 +8753,7 @@
 				(hide yes)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/011ec3e8cb1e825f6961d29bc4db4c7a.pdf?productCode=C2286"
 			(at 300.99 127 0)
 			(effects
 				(font
@@ -8762,7 +8762,7 @@
 				(hide yes)
 			)
 		)
-		(property "Description" "Ice Blue LED Indication - Discrete 3.1V 0603"
+		(property "Description" "KT-0603R (Hubei KENTO Elec, 0603): Red 645nm LED Indication - Discrete 2.4V 0603"
 			(at 300.99 127 0)
 			(effects
 				(font
