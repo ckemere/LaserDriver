@@ -1,6 +1,6 @@
 # LaserDaughter — JLCPCB order files
 
-- Board: 26.6 × 23.6 mm, **4 layers**, 1.6 mm FR-4
+- Board: 26.6 × 23.6 mm, **2 layers**, 1.6 mm FR-4
 - PCB quote: upload `LaserDaughter_gerbers.zip`
 - Assembly: `LaserDaughter_BOM.csv` + `LaserDaughter_CPL.csv`. 23 placements, 20 unique parts, sides: **Top**
 - Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.

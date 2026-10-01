@@ -41,3 +41,5 @@ Open, optional:
 - Angled pad entries at R7.2, U6.1, U6.4 and R24.1.
 
 Related: [[laserhat-rev2-goals]], [[pcb-workspace-setup]], [[laserhat-user-preferences]], [[laserhat-next-tasks]].
+
+2026-10-01: the laser module sheet is hand-edited too (AO9926B dual FET as Q1, D2/D4 swapped) — `make_laser_daughter.py` is stale like `rev2_migrate.py`; patch the `.kicad_sch` text and sync the board with `pcb_sync.py --keep-tracks` / `sync_check.py`. The user's own Claude session on the laptop also edits CLAUDE.md, lcsc_parts.py and lcsc_catalog.json: pull before touching them.
