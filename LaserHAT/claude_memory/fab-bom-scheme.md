@@ -22,6 +22,12 @@ misspelt variants with Rev 1 codes (every 0402 resistor = 47k, wrong ICs), so th
 - JLC basic parts matter to the user (each extended part adds a loading fee): LEDs are KT-0603 red/white (basic),
   R13 went 3k -> 2k for that reason.
 
+- `lcsc_parts.NON_PARTS` (jumpers, holes, logo, test pads) → symbol exclude-from-BOM + footprint exclude-from-BOM/-pos.
+- To see exactly what the user's Fabrication Toolkit produces: `git clone --depth 1
+  https://github.com/bennymeg/Fabrication-Toolkit`, then in the kicad venv
+  `from plugins.process import ProcessManager; pm = ProcessManager(pcbnew.LoadBoard(p)); pm.generate_tables(dir, False, True)`
+  and read `pm.bom` / `pm.components` (it reads footprint *fields*, DNP via IsDNP, exclude flags via FP attributes).
+
 **Why:** the user said "values need to match for things like resistors!!!" after a bad BOM; keep one source of truth.
 **How to apply:** after editing lcsc_parts.py run `python tools/stamp_lcsc.py` then `tools/jlc_fab.py`; never hand-edit
 the fields. Related: [[hat-manual-routing-handoff]], [[laserhat-user-preferences]].
