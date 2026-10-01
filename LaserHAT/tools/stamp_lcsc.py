@@ -98,7 +98,9 @@ def stamp_schematic(path, table, values, not_fitted=(), hand_fit=(), non_parts=(
             edits.append((s, e, want_dnp))
             changed.add(ref)
         in_bom = sym.child("in_bom")
-        if ref in non_parts and in_bom is not None and _tok(in_bom, 1) != "no":
+        # JLC rejects a BOM designator that is missing from the CPL, so anything JLC does not place
+        # (hand-fitted, DNP, non-parts) must be out of the BOM as well, not just out of the position file
+        if (ref in non_parts or ref in hand_fit or ref in not_fitted) and in_bom is not None and _tok(in_bom, 1) != "no":
             s, e, _ = in_bom.tokens[1]
             edits.append((s, e, "no"))
             changed.add(ref)
@@ -177,6 +179,9 @@ def stamp_board(path, table, values, not_fitted=(), hand_fit=(), non_parts=()):
             want = ref in not_fitted
             if fp.IsDNP() != want:
                 fp.SetDNP(want)
+                changed.add(ref)
+            if not fp.IsExcludedFromBOM():          # JLC: BOM designators must all be in the CPL
+                fp.SetExcludedFromBOM(True)
                 changed.add(ref)
             if ref in hand_fit and not fp.IsExcludedFromPosFiles():
                 fp.SetExcludedFromPosFiles(True)

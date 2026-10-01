@@ -5,7 +5,7 @@
 - Assembly: `EStimDaughter_BOM.csv` + `EStimDaughter_CPL.csv`. 42 placements, 23 unique parts, sides: **Top**
 - Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.
 
-## Hand-fitted (no LCSC number, excluded from the position file; not placed by JLC)
+## Hand-fitted (not in JLC's BOM or CPL; order and solder these ourselves)
 
 - J1: ELECTRODE E1/E2 (PinHeader_1x02_P2.54mm_Horizontal)
 - J8: J8 power/timing (underside) (PinHeader_1x05_P2.54mm_Vertical)

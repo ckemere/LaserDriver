@@ -5,7 +5,7 @@
 - Assembly: `LaserHAT_BOM.csv` + `LaserHAT_CPL.csv`. 42 placements, 28 unique parts, sides: **Top**
 - Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.
 
-## Hand-fitted (no LCSC number, excluded from the position file; not placed by JLC)
+## Hand-fitted (not in JLC's BOM or CPL; order and solder these ourselves)
 
 - J1: GPIO (Samtec_HLE-120-02-xxx-DV-BE-LC_2x20_P2.54mm_Horizontal)
 - J6: BNC TRIGGER IN (BNC_Amphenol_031-5540_031-5539_Dual)

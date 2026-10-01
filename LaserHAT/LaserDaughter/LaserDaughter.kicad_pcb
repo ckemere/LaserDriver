@@ -675,7 +675,7 @@
 			)
 		)
 		(path "/74374760-1b15-42f5-a064-65c7ba5069d4")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.38 -1.38)
 			(end 0 -1.38)
@@ -2362,7 +2362,7 @@
 			)
 		)
 		(path "/02585437-ac38-580a-ab03-e96b8bb3a4af")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.11 -1.11)
 			(end 0 -1.11)
@@ -6295,7 +6295,7 @@
 			)
 		)
 		(path "/b96f87d5-ed70-5cc2-8db6-1624f5190684")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.38 1.38)
 			(end 0 1.38)
@@ -6544,7 +6544,7 @@
 			)
 		)
 		(path "/eb56d591-866a-52d7-89cf-863bc2025755")
-		(attr through_hole exclude_from_pos_files)
+		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start 1.38 -1.27)
 			(end 1.38 -11.54)

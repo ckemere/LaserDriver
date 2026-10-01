@@ -72,13 +72,17 @@ NON_PARTS = {
 # Two different things, two different KiCad flags (stamp_lcsc.py applies both):
 #  * NOT_FITTED -> the symbol's DNP attribute (schematic, shown crossed out; F8 / pcb_sync carry it to
 #    the board; the Fabrication Toolkit's "exclude DNP" drops them from BOM and CPL).
-#  * HAND_FIT   -> populated, but by us: no "LCSC Part #" (so JLC cannot place it) and the footprint
-#    attribute "Exclude from position files" (board only; KiCad symbols have no such flag).  They stay
-#    in the BOM with an empty number, which JLC's upload page shows as "do not place".
+#  * HAND_FIT   -> populated, but by us: no "LCSC Part #", symbol "exclude from BOM" and the footprint
+#    attributes "exclude from BOM" + "exclude from position files".  JLC's upload rejects any BOM
+#    designator that is not in the CPL ("R2,SW8,J1 ... don't exist in the CPL file"), so hand-fitted
+#    and DNP parts must be out of both; jlc_fab.py's README lists them for us instead.
+#    NOT_FITTED parts get "exclude from BOM" too, so the result does not depend on the toolkit's
+#    "Exclude DNP components" checkbox.
 NOT_FITTED = {
     "HAT": {"R1", "R2"},         # ID_SD / ID_SC pull-ups: the Pi has 3.9k on those pins already (HAT spec)
     "LASER": set(),
-    "ESTIM": set(),              # PS1 (DC-DC, replaced by battery packs) is DNP in the module's own generator
+    "ESTIM": {"PS1"},            # DC-DC replaced by battery packs: DNP comes from the module's own generator,
+                                 # the board attribute "exclude from BOM" from here
 }
 HAND_FIT = {
     "HAT": {"J1", "J6", "J7", "J8", "J9", "SW8"},    # Pi header, BNCs, module sockets, BACK button
