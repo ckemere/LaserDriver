@@ -4019,7 +4019,7 @@
 		(sheetname "/")
 		(sheetfile "LaserDriver.kicad_sch")
 		(zone_connect 1)
-		(attr exclude_from_pos_files allow_soldermask_bridges)
+		(attr exclude_from_pos_files exclude_from_bom allow_soldermask_bridges)
 		(fp_rect
 			(start -0.15 -0.75)
 			(end 0.15 0.75)
@@ -4821,6 +4821,20 @@
 				)
 			)
 		)
+		(pad "" smd roundrect
+			(at -3.675 -1.1 270)
+			(size 1.05 0.7)
+			(layers "F.Cu" "F.Mask" "F.Paste")
+			(roundrect_rratio 0.25)
+			(uuid "4f726b64-b59d-4010-b629-0784804d4cf5")
+		)
+		(pad "" smd roundrect
+			(at -3.675 1.1 270)
+			(size 1.05 0.7)
+			(layers "F.Cu" "F.Mask" "F.Paste")
+			(roundrect_rratio 0.25)
+			(uuid "104a8fc4-2a6a-4fce-b68d-ee0698c63a96")
+		)
 		(pad "" np_thru_hole circle
 			(at -1.5 0 270)
 			(size 0.85 0.85)
@@ -4834,6 +4848,20 @@
 			(drill 0.85)
 			(layers "*.Mask")
 			(uuid "c867f804-1f7f-421b-b0b3-fb00c3e6cb9e")
+		)
+		(pad "" smd roundrect
+			(at 3.675 -1.1 270)
+			(size 1.05 0.7)
+			(layers "F.Cu" "F.Mask" "F.Paste")
+			(roundrect_rratio 0.25)
+			(uuid "58a85b23-45e2-470d-8dcb-ea3099dc3b9c")
+		)
+		(pad "" smd roundrect
+			(at 3.675 1.1 270)
+			(size 1.05 0.7)
+			(layers "F.Cu" "F.Mask" "F.Paste")
+			(roundrect_rratio 0.25)
+			(uuid "fd1c1c4a-6cee-4989-a062-c07b63b4cc9c")
 		)
 		(pad "1" smd roundrect
 			(at -2.25 -1.95 270)
@@ -4864,34 +4892,6 @@
 			(pinfunction "C")
 			(pintype "passive+no_connect")
 			(uuid "44f9f2ca-b315-4cd0-ba46-4a27b9faad69")
-		)
-		(pad "SH" smd roundrect
-			(at -3.675 -1.1 270)
-			(size 1.05 0.7)
-			(layers "F.Cu" "F.Mask" "F.Paste")
-			(roundrect_rratio 0.25)
-			(uuid "4f726b64-b59d-4010-b629-0784804d4cf5")
-		)
-		(pad "SH" smd roundrect
-			(at -3.675 1.1 270)
-			(size 1.05 0.7)
-			(layers "F.Cu" "F.Mask" "F.Paste")
-			(roundrect_rratio 0.25)
-			(uuid "104a8fc4-2a6a-4fce-b68d-ee0698c63a96")
-		)
-		(pad "SH" smd roundrect
-			(at 3.675 -1.1 270)
-			(size 1.05 0.7)
-			(layers "F.Cu" "F.Mask" "F.Paste")
-			(roundrect_rratio 0.25)
-			(uuid "58a85b23-45e2-470d-8dcb-ea3099dc3b9c")
-		)
-		(pad "SH" smd roundrect
-			(at 3.675 1.1 270)
-			(size 1.05 0.7)
-			(layers "F.Cu" "F.Mask" "F.Paste")
-			(roundrect_rratio 0.25)
-			(uuid "fd1c1c4a-6cee-4989-a062-c07b63b4cc9c")
 		)
 		(embedded_fonts no)
 		(model "${KIPRJMOD}/Footprints.3dshapes/SW_SPDT_Shouhan_MSK12C02.step"
@@ -12410,7 +12410,7 @@
 		(sheetname "/")
 		(sheetfile "LaserDriver.kicad_sch")
 		(zone_connect 1)
-		(attr exclude_from_pos_files allow_soldermask_bridges)
+		(attr exclude_from_pos_files exclude_from_bom allow_soldermask_bridges)
 		(fp_rect
 			(start -1.225 -0.75)
 			(end 1.225 0.75)
@@ -13782,7 +13782,7 @@
 				)
 			)
 		)
-		(property "Value" "47k 1%"
+		(property "Value" "47k"
 			(at 0 1.17 90)
 			(layer "F.Fab")
 			(uuid "d1dd4877-823f-4d65-8ead-dfccdab81ac8")
@@ -14146,7 +14146,7 @@
 		(sheetname "/")
 		(sheetfile "LaserDriver.kicad_sch")
 		(zone_connect 1)
-		(attr exclude_from_pos_files allow_soldermask_bridges)
+		(attr exclude_from_pos_files exclude_from_bom allow_soldermask_bridges)
 		(fp_rect
 			(start -0.15 -0.75)
 			(end 0.15 0.75)

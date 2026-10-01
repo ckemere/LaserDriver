@@ -1142,7 +1142,7 @@
 				)
 			)
 		)
-		(property "Value" "100k 1%"
+		(property "Value" "100k"
 			(at 0 1.17 0)
 			(layer "F.Fab")
 			(uuid "e7619c5d-2ee8-4613-97ce-c465cc3f0f3c")
@@ -1292,7 +1292,7 @@
 				)
 			)
 		)
-		(property "Value" "33k 1%"
+		(property "Value" "33k"
 			(at 0 1.17 0)
 			(layer "F.Fab")
 			(uuid "e7619c5d-2ee8-4613-97ce-c465cc3f0f3c")
@@ -1443,7 +1443,7 @@
 				)
 			)
 		)
-		(property "Value" "39k 1%"
+		(property "Value" "39k"
 			(at 0 1.17 270)
 			(layer "F.Fab")
 			(uuid "e7619c5d-2ee8-4613-97ce-c465cc3f0f3c")
@@ -1594,7 +1594,7 @@
 				)
 			)
 		)
-		(property "Value" "10k 1%"
+		(property "Value" "10k"
 			(at 0 1.17 90)
 			(layer "F.Fab")
 			(uuid "e7619c5d-2ee8-4613-97ce-c465cc3f0f3c")
@@ -1744,7 +1744,7 @@
 				)
 			)
 		)
-		(property "Value" "187k 1%"
+		(property "Value" "187k"
 			(at 0 1.17 180)
 			(layer "F.Fab")
 			(uuid "e7619c5d-2ee8-4613-97ce-c465cc3f0f3c")
@@ -2098,7 +2098,7 @@
 		)
 		(path "/0b2388b4-d81b-4b7e-b79c-1cd2039f5154")
 		(zone_connect 1)
-		(attr exclude_from_pos_files dnp allow_soldermask_bridges)
+		(attr exclude_from_pos_files exclude_from_bom dnp allow_soldermask_bridges)
 		(fp_rect
 			(start -0.15 -0.75)
 			(end 0.15 0.75)
@@ -5799,7 +5799,7 @@
 			)
 		)
 		(path "/c9c39273-e2ca-4a0d-b3a4-a355c4142b3e")
-		(attr exclude_from_pos_files)
+		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
 			(end 0 0.95)

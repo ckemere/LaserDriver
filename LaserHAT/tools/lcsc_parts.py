@@ -55,8 +55,16 @@ HAT = {
 
 # Schematic Value strings that stamp_lcsc.py sets so the BOM reads the same as the part ordered.
 VALUES = {
-    "HAT": {"U1": "M24C32-WDW6TP", "R13": "2k", "U5": "AP2171W"},
-    "LASER": {},
+    "HAT": {"U1": "M24C32-WDW6TP", "R13": "2k", "U5": "AP2171W",
+            "R3": "47k"},                                     # same part as R21: one BOM line, not "47k 1%" + "47k"
+    "LASER": {"R1": "100k", "R2": "33k", "R3": "39k", "R4": "10k", "R5": "187k"},   # all 1 % (the LCSC code says so)
+}
+
+# Not parts: no BOM line, no placement (symbol "exclude from BOM" + footprint exclude-from-BOM/-position-files)
+NON_PARTS = {
+    "HAT": {"JP1", "JP4", "JP5", "MH1", "MH2", "MH3", "MH4", "G1"},
+    "LASER": {"J4", "TP1"},
+    "ESTIM": set(),      # the module's generator already sets these on TP1/TP2
 }
 
 # Two different things, two different KiCad flags (stamp_lcsc.py applies both):

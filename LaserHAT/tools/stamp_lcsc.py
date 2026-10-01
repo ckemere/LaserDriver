@@ -37,7 +37,7 @@ def _tok(node, i):
     return node.tokens[i][2].strip('"')
 
 
-def stamp_schematic(path, table, values, not_fitted=(), hand_fit=()):
+def stamp_schematic(path, table, values, not_fitted=(), hand_fit=(), non_parts=()):
     txt = open(path).read()
     root = parse(txt)
     edits = []          # (start, end, replacement)
@@ -57,6 +57,11 @@ def stamp_schematic(path, table, values, not_fitted=(), hand_fit=()):
         if dnp is not None and want_dnp is not None and _tok(dnp, 1) != want_dnp:
             s, e, _ = dnp.tokens[1]
             edits.append((s, e, want_dnp))
+            changed.add(ref)
+        in_bom = sym.child("in_bom")
+        if ref in non_parts and in_bom is not None and _tok(in_bom, 1) != "no":
+            s, e, _ = in_bom.tokens[1]
+            edits.append((s, e, "no"))
             changed.add(ref)
         if ref in hand_fit:              # populated by us: JLC must not see a part number
             for p in lcsc:
@@ -107,7 +112,7 @@ def _span_with_ws(txt, node):
     return (s, node.end, "")
 
 
-def stamp_board(path, table, values, not_fitted=(), hand_fit=()):
+def stamp_board(path, table, values, not_fitted=(), hand_fit=(), non_parts=()):
     import pcbnew
     lock = os.path.join(os.path.dirname(path), "~" + os.path.basename(path) + ".lck")
     if os.path.exists(lock):
@@ -117,6 +122,10 @@ def stamp_board(path, table, values, not_fitted=(), hand_fit=()):
     for fp in board.GetFootprints():
         ref = fp.GetReference()
         fields = fp.GetFieldsText()
+        if ref in non_parts and not (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()):
+            fp.SetExcludedFromBOM(True)
+            fp.SetExcludedFromPosFiles(True)
+            changed.add(ref)
         if ref in not_fitted or ref in hand_fit:
             want = ref in not_fitted
             if fp.IsDNP() != want:
@@ -159,9 +168,10 @@ def main(names):
         sheets, board, table = BOARDS[name]
         values = lcsc_parts.VALUES.get(name, {})
         nf, hf = lcsc_parts.NOT_FITTED.get(name, set()), lcsc_parts.HAND_FIT.get(name, set())
+        np_ = lcsc_parts.NON_PARTS.get(name, set())
         for sh in sheets:
-            stamp_schematic(os.path.join(ROOT, sh), table, values, nf, hf)
-        stamp_board(os.path.join(ROOT, board), table, values, nf, hf)
+            stamp_schematic(os.path.join(ROOT, sh), table, values, nf, hf, np_)
+        stamp_board(os.path.join(ROOT, board), table, values, nf, hf, np_)
 
 
 if __name__ == "__main__":
