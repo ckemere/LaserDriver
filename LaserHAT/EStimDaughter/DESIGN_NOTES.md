@@ -4,6 +4,9 @@ Plug-in isolated biphasic constant-current stimulator. Interface is frozen by
 `LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md` (§7 is the agreed contract).
 The circuit is kbest rev E (`../biphasic_stim/DESIGN_NOTES.md`) with the changes below.
 
+> The autorouting scripts mentioned in the history (`tools/route_pcb.py`, `build_pcb.py`, `fixroute.py`, the
+> `route/` intermediates) were removed on 2026-10-01; the board has been hand-routed since M4c.
+
 ## Interface (HAT coordinates, top view)
 
 | HAT line | MCU | Module use |

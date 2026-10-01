@@ -14,4 +14,4 @@ mkdir -p "$MEM" && cp LaserHAT/claude_memory/*.md "$MEM"/ && rm "$MEM"/README.md
 
 Then fix `pcb-workspace-setup.md` in the installed copy for the machine (tool paths). Or just tell the session
 "read LaserHAT/claude_memory/ first". The design facts themselves live in `LaserHAT/CLAUDE.md`, `REV2_NOTES.md`,
-`EStimDaughter/DESIGN_NOTES.md`, `EStimDaughter/LAYOUT_HANDOFF.md` and `estim_interface/ESTIM_MODULE_SPEC.md`.
+`EStimDaughter/DESIGN_NOTES.md` and `estim_interface/ESTIM_MODULE_SPEC.md`.

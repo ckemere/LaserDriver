@@ -11,7 +11,7 @@ misspelt variants with Rev 1 codes (every 0402 resistor = 47k, wrong ICs), so th
 
 - `tools/lcsc_parts.py` is the only source of codes (each verified against LCSC/JLC with
   `EStimDaughter/tools/lcsc_check.py` / `jlc_search.py`: MPN, package, value). `tools/stamp_lcsc.py` writes them
-  into every symbol (text patch) and footprint (pcbnew); `make_laser_daughter.py` stamps its output; `jlc_fab.py`
+  into every symbol (text patch) and footprint (pcbnew); (the laser generator is gone; stamp after hand edits); `jlc_fab.py`
   warns on drift.
 - **DNP (symbol attribute) = not populated** (`lcsc_parts.NOT_FITTED`, e.g. HAT R1/R2 ID pull-ups), plus exclude-from-BOM
   so the result does not depend on the toolkit's "Exclude DNP" checkbox.

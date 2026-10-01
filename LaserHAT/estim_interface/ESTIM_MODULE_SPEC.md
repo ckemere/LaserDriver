@@ -103,7 +103,7 @@ Existing firmware already has an "EStim mode" (paired monophasic pulses on the S
 
 - `../REV2_NOTES.md`: the whole Rev 2 change list, including the MCU pin map.
 - `../LaserDaughter/`: the laser module (schematic and PCB) as a worked example of the interface.
-- `../tools/daughter_layout.py`, `../tools/build_daughter_pcb.sh`: how the laser module PCB is built and aligned.
+- `../LaserDaughter/LaserDaughter.kicad_pcb`: the laser module, hand-routed in the same coordinate frame (J1/J3 at the HAT's J8/J9 positions).
 - `../bnc_daughter_io.kicad_sch`: the HAT-side sheet with J8/J9.
 
 ---
@@ -131,7 +131,7 @@ Module outline: x 101.0–127.5, y 76.0–112.5 (26.5 × 36.5 mm, 12.5 mm past t
 There are usually two Claude Code sessions: one owning the HAT (`LaserHAT/`, session name `laserhat-87` on the Ubuntu machine as of 2026-09-29) and one owning the module layout. They coordinate by:
 
 1. **Direct messages** between sessions (Claude Code's session messaging; both must be running with Remote Control enabled) for quick questions.
-2. **Git** for anything that must survive: decisions go into this spec (§7), `EStimDaughter/DESIGN_NOTES.md` and `EStimDaughter/LAYOUT_HANDOFF.md`; a session that changes the contract edits §7 in the same commit.
+2. **Git** for anything that must survive: decisions go into this spec (§7) and `EStimDaughter/DESIGN_NOTES.md`; a session that changes the contract edits §7 in the same commit.
 3. **`LaserHAT/claude_memory/`** for session context (install per its README).
 
 Don't edit the other session's board file (`LaserDriver.kicad_pcb` is the HAT's, `EStimDaughter/EStimDaughter.kicad_pcb` the module's); ask.

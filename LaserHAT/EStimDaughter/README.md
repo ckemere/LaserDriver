@@ -2,7 +2,7 @@
 
 Isolated, charge-balanced, biphasic constant-current stimulator on a plug-in daughter board for the LaserHAT Rev 2
 (Raspberry Pi HAT with an MSPM0G3507). It is one of the HAT's two daughter boards; the other is the laser-diode module.
-Interface per `LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md` (§7 = the agreed contract). Layout hand-off: `LAYOUT_HANDOFF.md`.
+Interface per `LaserHAT/estim_interface/ESTIM_MODULE_SPEC.md` (§7 = the agreed contract). The board is hand-routed (rev M4c).
 
 > Imported into `LaserHAT/EStimDaughter/` from `kbest/estim_module` (kbest commit `9200766`). It was renamed to match `LaserDaughter/`, with the project files and script paths updated. The kbest repo remains the history: `DESIGN_NOTES.md`'s references to `../biphasic_stim` (rev E, the circuit this module derives from) point there.
 
@@ -113,7 +113,7 @@ Extended parts:
 - Capacitors: 1 µF 50 V (0603 and 0805), 4.7 µF (0603), 2.2 nF (0402).
 
 **Panelization notes**
-- The board is **4 layers** (a 2-layer attempt on 2026-09-29 was abandoned); assembly is **single-sided** since M3 (the 23.5 mm outline of M1/M2 could not be routed single-sided: `../SMA_VS_BNC_STUDY.md`).
+- The board is **4 layers** (a 2-layer attempt on 2026-09-29 was abandoned); assembly is **single-sided** since M3 (the 23.5 mm outline of M1/M2 could not be routed single-sided; the SMA-connector study of 2026-09-28 was dropped).
 - Copper comes within 0.3 mm of the edge. Prefer tab routing with mouse bites to V-scoring.
 - Leave a routed gap (not a V-score) along the south edge, where J1 overhangs. J1 is hand-fitted after depanelizing.
 - Put fiducials and tooling holes on the panel rails.

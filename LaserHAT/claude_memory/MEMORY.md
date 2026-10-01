@@ -1,6 +1,6 @@
 - [PCB workspace setup](pcb-workspace-setup.md) — work only in the launched checkout, branch pcb-rev2, commit only when asked; per-machine tool paths
 - [LaserHAT Rev 2 goals](laserhat-rev2-goals.md) — fix issue #3 (keep OLED bonnet); split the analog stage onto laser/estim daughterboards
-- [HAT board status](hat-manual-routing-handoff.md) — HAT is hand-routed & committed; NEVER run build_hat_pcb.sh; check .lck files; keep-out to y 112.5 still to do
+- [HAT board status](hat-manual-routing-handoff.md) — HAT is hand-routed & committed; no generators or builders exist any more (removed 2026-10-01); check .lck files; path_check/sync_check after scripted edits
 - [User preferences](laserhat-user-preferences.md) — user hand-routes; Claude checks/tidies/proposes; batteries not converter; µV noise matters; minimal silk
 - [E-stim module status](estim-module-status.md) — rev M4 (I2C DAC, RELEASE line, 26.5 x 36.5 mm single-sided) placed, not routed; decisions and what was rejected
 - [Next tasks](laserhat-next-tasks.md) — hand-route M4; HAT keep-out; battery connector decision; fab after routing

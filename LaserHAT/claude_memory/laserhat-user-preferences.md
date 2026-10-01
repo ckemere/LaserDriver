@@ -36,7 +36,7 @@ Preferences shown during the Rev 2 HAT work (2026-09-25 to 2026-09-29):
 
 **How to apply:**
 - Verify every edit with DRC, against the project rules.
-- Back up the board to `stash/` first.
+- Make sure the board is committed first (git is the backup; `stash/` is gone).
 - Report what changed and what was left for the user.
 
 Related: [[hat-manual-routing-handoff]], [[pcb-workspace-setup]].

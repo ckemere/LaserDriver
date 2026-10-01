@@ -8,16 +8,16 @@
 
 | Board | Size | Layers | Assembled sides | Placements / unique parts | Extended parts | Hand-fit |
 |---|---|---|---|---|---|---|
-| `LaserHAT` | 65 × 57 mm | 2 | Top only | 44 / 29 | 15 | Pi header J1 (Samtec HLE-120-02-xxx-DV-BE), 2 module sockets, BACK button. BNCs J6/J7 are **DNP**: Amphenol 031-5540 / 031-5431 right-angle, or the vertical 031-5539 (dual footprint). |
-| `LaserDaughter` | 26.5 × 23.5 mm | 2 | Top only | 23 / 20 | 13 | J1/J3 pin headers (underside), J5 RED shunt header |
-| `EStimDaughter` | 26.5 × 36.5 mm (rev M3: 12.5 mm south overhang) | 4 | Top only | 54 / 29 | 21 | J8/J9 pin headers (underside), J1 electrode header; PS1 DC-DC is DNP |
+| `LaserHAT` | 65 × 57 mm | 2 | Top only | 43 / 29 | 17 | Pi header J1 (Samtec HLE-120-02-xxx-DV-BE), module sockets J8/J9, BNCs J6/J7 (Amphenol 031-5540 / 031-5431 right-angle, or the vertical 031-5539; dual footprint). R1/R2 (ID pull-ups) are DNP. |
+| `LaserDaughter` | 26.5 × 23.5 mm | 2 | Top only | 23 / 20 | 14 | J1/J3 pin headers (underside), J2 laser-diode socket, J5 RED shunt header |
+| `EStimDaughter` | 26.5 × 33 mm (rev M4c: 9 mm south overhang) | 4 | Top only | 42 / 23 | 17 | J8/J9 pin headers (underside), J1 electrode header; PS1 DC-DC is DNP (battery packs) |
 
 The three boards share no extended parts, so across the whole order there are about 45 unique extended parts (the HAT's USB power switch added two). Basic parts carry no per-part fee.
 
 **Before ordering**
 - Check rotations in JLC's placement preview. The CPL is KiCad's own position export; a few packages differ between KiCad and JLC orientation, typically SOT-23-5/6, SOT-223, the USB-C connector and the BL-DT wheel.
 - **HAT Pi header J1** is hand-fitted. Its footprint is a Samtec HLE-120-02-xxx-DV-BE bottom-entry socket. The Rev 1 LCSC number (C42411761, Harwin M20-7812045) doesn't fit it: Harwin's land pattern has its SMD pad rows 7.60 mm apart plus two Ø1.8 mm pegs, while the footprint's rows are 5.82 mm apart. Buy the Samtec part.
-- **LCSC numbers** come from `tools/lcsc_parts.py` for the HAT and laser module, and from the e-stim module's own BOM. The Rev 1 LCSC fields in the HAT and laser schematics were largely wrong. Ignore them.
+- **LCSC numbers** come from `tools/lcsc_parts.py` for the HAT and laser module and from `EStimDaughter/bom_EStimDaughter.csv`; `tools/stamp_lcsc.py` keeps the schematic/footprint fields equal to them and `tools/lcsc_verify.py` checks every value against LCSC. Hand-fitted and DNP parts are excluded from BOM and CPL (JLC rejects BOM lines without a placement). `orders/` holds the archives that were actually uploaded.
 
 ## Panelize or not?
 

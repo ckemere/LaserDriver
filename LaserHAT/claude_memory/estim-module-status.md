@@ -6,7 +6,7 @@ metadata:
 ---
 
 **Where it is (commit `ba12414`, branch pcb-rev2):** schematic final (netcheck OK, ERC 0), board placed only — the
-user hand-routes it (possibly in another Claude session; see `EStimDaughter/LAYOUT_HANDOFF.md`). Fab outputs are
+user hand-routes it (done: rev M4c, 2026-09-29/30). Fab outputs are
 the older M3 set. Contract with the HAT: `estim_interface/ESTIM_MODULE_SPEC.md` §7 (the old QUESTIONS.md log is gone).
 
 **Decisions (2026-09-28/29), in order:**
@@ -39,7 +39,7 @@ the older M3 set. Contract with the HAT: `estim_interface/ESTIM_MODULE_SPEC.md` 
    or batteries. U8 comparator halves swapped (B = TH_P side). Rejected: TMUX7219/6219 WSON-8 (LCSC stock 4 / 0), TS5A22364
    (5 V part), DG636E (±8 V max, would keep the −5 V rail; 32 in stock), ADG6436 ($17.67, 13 in stock).
 
-**How to apply:** don't redo the sims or the routing experiments; don't run `build_pcb.py`/`route_pcb.py` on a
+**How to apply:** don't redo the sims or the routing experiments (the autorouting scripts were deleted 2026-10-01); never rebuild a
 hand-edited board; changes to the contract go into spec §7 in the same commit.
 
 Related: [[laserhat-next-tasks]], [[hat-manual-routing-handoff]], [[laserhat-user-preferences]].

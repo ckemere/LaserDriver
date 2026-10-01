@@ -201,23 +201,26 @@ This is the isolated biphasic constant-current stimulator (rev M4). It was desig
 - **Pulse outputs:** PA7 = TIMA0_CCP1 (EN) and PA12 = TIMA0_CCP3 (CATH, *not* CCP0_CMPL). They are independent edges: CATH leads EN (≥ 1 µs since M4) and changes only while EN is low. EN edge precision is ~0.1 µs.
 - **Fault:** PA6 = TIMA0_FAULT0 (was PA26, also FAULT0), active-low, latched, forcing both CCP1 (EN) and CCP3 (CATH) low. It is armed only after FAULT_n reads high at start-up (module isolated supply up; ~100 ms timeout means "module not ready"), and cleared only between trains. Faults are reported to the Pi.
 
-## Rebuilding
+## Tooling (2026-10-01)
+
+The Rev 1 → Rev 2 generators (`rev2_migrate.py`, `make_laser_daughter.py`, `schlib.py`, `generate_schematics.py`,
+`fix_labels.py`, `merge_template.py`), the board builders (`build_*_pcb.sh` with `hat_layout`, `daughter_layout`,
+`gnd_vias`, `grid_router`, `silk_tidy`, `fix_islands`, `island_via`, `stitch`, `specctra` …), the e-stim autorouting
+scripts (`route_pcb.py`, `build_pcb.py`, `fixroute.py`), the `stash/` backups and the Rev 1 `PCB/` project were
+removed from the tree on 2026-10-01 (they are in git history before that date). The three schematics and boards are
+hand-maintained in KiCad; what remains in `tools/` checks, syncs and exports (`CLAUDE.md` lists it):
 
 ```sh
-python tools/rev2_migrate.py                # HAT schematics (kiutils)
-python tools/make_laser_daughter.py --sync-pcb   # laser module schematic + headless F8 (paths/nets, copper kept)
-python tools/stamp_lcsc.py HAT LASER              # 'LCSC Part #' fields from tools/lcsc_parts.py into schematics + boards (Fabrication Toolkit reads them)
-python tools/path_check.py LaserDaughter/LaserDaughter.kicad_pcb LaserDaughter/LaserDaughter.kicad_sch   # 0 mismatches or F8 will replace parts
-sh tools/build_hat_pcb.sh --route           # HAT PCB (~20 min) - DO NOT run on the hand-routed LaserDriver.kicad_pcb
-sh tools/build_daughter_pcb.sh --route      # laser module PCB (a few min)
-$KICAD_PY tools/jlc_fab.py                  # JLC Gerbers/BOM/CPL/renders -> fab/ (see fab/README.md)
-# e-stim module: EStimDaughter/gen_schematic.py, tools/netcheck.py, then tools/route_pcb.py (see its DESIGN_NOTES.md)
+python tools/stamp_lcsc.py HAT LASER [ESTIM]   # part-number fields, descriptions, DNP / hand-fit / non-part flags
+python tools/lcsc_verify.py [--refresh]        # every Value vs LCSC's catalog, all three boards
+python tools/sync_check.py board.kicad_pcb root.kicad_sch   # read-only F8: parts, footprints, values, DNP, nets, paths
+python tools/path_check.py board.kicad_pcb root.kicad_sch   # footprint path = symbol uuid (F8 keeps placement)
+python tools/pcb_sync.py board.kicad_pcb netlist.net --keep-tracks   # headless F8 when needed
+python tools/jlc_fab.py [LaserHAT|LaserDaughter|EStimDaughter]      # Gerbers / BOM / CPL / renders -> fab/
+# e-stim schematic: EStimDaughter/gen_schematic.py (deterministic UUIDs), then F8 or pcb_sync
 ```
 
-On macOS the scripts were run with the `kicad` micromamba env (kiutils) and KiCad's bundled Python for `pcbnew`; on
-Ubuntu (2026-09-28 onwards) one venv with the system `pcbnew` does both, `kicad-cli` is on PATH, and the e-stim tools
-take `FREEROUTING` / `KICAD_CLI` / `KICAD_FOOTPRINTS` from the environment. The `/Applications/...` paths in the HAT
-tools (`build_*_pcb.sh`, `jlc_fab.py`, `silk_declutter.py`, `pcb_sync.py`, `schlib.py`) are still the macOS ones.
+The history below describes how the Rev 2 boards were first produced (autorouted, then hand-routed by the user).
 
 The PCB flow runs in this order:
 
