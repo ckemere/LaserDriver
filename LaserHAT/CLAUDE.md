@@ -28,8 +28,9 @@ minimal edits (see `REV2_NOTES.md`):
   2026-09-30).  `tools/stamp_lcsc.py` writes them into the `LCSC Part #` field of every symbol and footprint
   (the field the Fabrication Toolkit reads) and removes the misspelt Rev 1 variants; run it after editing
   the table.  Two flags, two meanings: `lcsc_parts.NOT_FITTED` → symbol **DNP** (not populated);
-  `lcsc_parts.HAND_FIT` → no part number + footprint "exclude from position files" (we solder it; it stays
-  in the BOM so JLC's upload shows it as "do not place"); `lcsc_parts.NON_PARTS` (jumpers, holes, logo, test
+  `lcsc_parts.HAND_FIT` → no part number, excluded from BOM **and** position files (JLC rejects any BOM
+  designator missing from the CPL, so "in the BOM but not placed" is not possible); DNP parts are excluded
+  from the BOM as well; `lcsc_parts.NON_PARTS` (jumpers, holes, logo, test
   pads) → excluded from BOM and position files.  `stamp_lcsc.py` applies all three and also writes each
   part's Description/Datasheet from `tools/lcsc_catalog.json` (the Rev 1 sheets carried descriptions of
   parts long replaced — "200Ω" on a 2 k resistor).  **Before any fab export run, in this order:**

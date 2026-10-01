@@ -13,9 +13,11 @@ misspelt variants with Rev 1 codes (every 0402 resistor = 47k, wrong ICs), so th
   `EStimDaughter/tools/lcsc_check.py` / `jlc_search.py`: MPN, package, value). `tools/stamp_lcsc.py` writes them
   into every symbol (text patch) and footprint (pcbnew); `make_laser_daughter.py` stamps its output; `jlc_fab.py`
   warns on drift.
-- **DNP (symbol attribute) = not populated** (`lcsc_parts.NOT_FITTED`, e.g. HAT R1/R2 ID pull-ups).
+- **DNP (symbol attribute) = not populated** (`lcsc_parts.NOT_FITTED`, e.g. HAT R1/R2 ID pull-ups), plus exclude-from-BOM
+  so the result does not depend on the toolkit's "Exclude DNP" checkbox.
 - **Hand-fitted = `lcsc_parts.HAND_FIT`**: no part-number field + footprint "exclude from position files"
-  (board-only flag). They stay in the BOM with an empty number so JLC shows "do not place". Pi header J1, BNCs,
+  (board-only flag) **and exclude-from-BOM**: JLC's upload rejects any BOM designator that is not in the CPL
+  ("R2,SW8,J1 ... don't exist in the CPL file"), so nothing JLC does not place may be in its BOM. Pi header J1, BNCs,
   module sockets/headers, laser-diode socket J2, BACK button.
 - The e-stim board keeps its own list (`EStimDaughter/bom_EStimDaughter.csv`, generator field `LCSC`); stamp_lcsc only
   sets its hand-fit flags.
