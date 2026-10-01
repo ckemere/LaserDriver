@@ -3994,7 +3994,7 @@
 				)
 			)
 		)
-		(property "Value" "USB PWR"
+		(property "Value" "MSK12C02"
 			(at 48.26 78.74 0)
 			(effects
 				(font

@@ -4012,7 +4012,7 @@
 				)
 			)
 		)
-		(property "Value" "FIRE"
+		(property "Value" "TS-1088-AR02016"
 			(at 99.06 220.98 0)
 			(effects
 				(font
@@ -4824,7 +4824,7 @@
 		(at 96.52 208.28 0)
 		(unit 1)
 		(exclude_from_sim no)
-		(in_bom no)
+		(in_bom yes)
 		(on_board yes)
 		(dnp no)
 		(fields_autoplaced yes)
@@ -4837,7 +4837,7 @@
 				)
 			)
 		)
-		(property "Value" "BACK"
+		(property "Value" "EVQP7A01P"
 			(at 99.06 210.82 0)
 			(effects
 				(font
@@ -4845,7 +4845,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Button_Switch_THT:SW_Tactile_SPST_Angled_PTS645Vx39-2LFS"
+		(property "Footprint" "Button_Switch_SMD:SW_SPST_EVQP7A"
 			(at 96.52 208.28 0)
 			(effects
 				(font
@@ -4871,7 +4871,7 @@
 				)
 			)
 		)
-		(property "LCSC Part #" "C285519"
+		(property "LCSC Part #" "C79167"
 			(at 96.52 208.28 0)
 			(effects
 				(font
@@ -4913,7 +4913,7 @@
 				)
 			)
 		)
-		(property "Value" "BL-DT (LCSC C53223909)"
+		(property "Value" "BL-DT"
 			(at 101.6 193.04 0)
 			(effects
 				(font
@@ -5139,7 +5139,7 @@
 				)
 			)
 		)
-		(property "Value" "BSL"
+		(property "Value" "TS-1088-AR02016"
 			(at 368.3 92.71 0)
 			(effects
 				(font

@@ -3733,7 +3733,7 @@
 				)
 			)
 		)
-		(property "Value" "SW_SPDT"
+		(property "Value" "PCM12SMTR"
 			(at 0 4.25 270)
 			(layer "F.Fab")
 			(uuid "5a6b77c1-e7a7-4822-87cf-035ca0c5b768")

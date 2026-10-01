@@ -46,8 +46,8 @@ HAT = {
     "U8": "C80500",      # 74LVC2G17GW,125 (Nexperia)
     "J5": "C2988369",    # G-Switch GT-USB-7010ASV (matches the footprint; Rev 1 field pointed elsewhere)
     "SW6": "C720477",    # TS-1088 (BSL)
-    "SW8": "C285519",    # C&K PTS645VK39-2LFS: right-angle 6 mm tactile, PC-pin version matching the
-                         # PTS645Vx39-2LFS footprint (2 signal pins + 2 bracket holes), 2.6 N; JLC places THT
+    "SW8": "C79167",     # Panasonic EVQP7A01P: side-actuated SMD light-touch switch 3.6 x 3.5 mm, 2.2 N
+                         # (BACK button on the south edge; replaced the THT PTS645 right-angle switch 2026-09-30)
     "SW7": "C53223909",  # SHOUHAN BL-DT thumbwheel
     "SW9": "C720477",    # TS-1088 (FIRE), same as SW6
     "SW10": "C431540",   # SHOU HAN MSK12C02 right-angle slide switch (USB power; gate drive only)
@@ -59,9 +59,14 @@ HAT = {
 VALUES = {
     "HAT": {"U1": "M24C32-WDW6TP", "R13": "2k", "U5": "AP2171W",
             "R3": "47k",                                      # same part as R21: one BOM line, not "47k 1%" + "47k"
-            "J5": "GT-USB-7010ASV"},                          # the receptacle ordered, not the generic symbol name
+            "J5": "GT-USB-7010ASV",                           # the receptacle ordered, not the generic symbol name
+            # JLC's BOM matcher groups by Value: same part -> same Value (the function names stay on the silkscreen)
+            "D5": "KT-0603W", "D7": "KT-0603R", "D9": "KT-0603R",
+            "SW6": "TS-1088-AR02016", "SW9": "TS-1088-AR02016", "SW10": "MSK12C02", "SW7": "BL-DT",
+            "SW8": "EVQP7A01P"},
     "LASER": {"R1": "100k", "R2": "33k", "R3": "39k", "R4": "10k", "R5": "187k",   # all 1 % (the LCSC code says so)
-              "D1": "DSK14", "D3": "DSK14"},                                     # the part ordered (SS14 SOD-123FL equivalent)
+              "D1": "DSK14", "D3": "DSK14",                                      # the part ordered (SS14 SOD-123FL equivalent)
+              "SW5": "PCM12SMTR"},
 }
 
 # Not parts: no BOM line, no placement (symbol "exclude from BOM" + footprint exclude-from-BOM/-position-files)

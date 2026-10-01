@@ -53,7 +53,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "25V"
   },
-  "jlc_stock": 595643,
+  "jlc_stock": 595633,
   "jlc_type": "base"
  },
  "C137973": {
@@ -80,13 +80,13 @@
   "desc": "100nF ±10% 50V Ceramic Capacitor X7R 0603",
   "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23ccee80ee542e7cf156a772bb589942.pdf?productCode=C14663",
   "price": 0.0124,
-  "lcsc_stock": 7667800,
+  "lcsc_stock": 7667750,
   "params": {
    "Capacitance": "100nF",
    "Tolerance": "±10%",
    "Voltage Rating": "50V"
   },
-  "jlc_stock": 54491215,
+  "jlc_stock": 54485049,
   "jlc_type": "base"
  },
  "C15195": {
@@ -118,7 +118,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "16V"
   },
-  "jlc_stock": 21825736,
+  "jlc_stock": 21825716,
   "jlc_type": "base"
  },
  "C1546": {
@@ -134,7 +134,7 @@
    "Tolerance": "±5%",
    "Voltage Rating": "50V"
   },
-  "jlc_stock": 3226221,
+  "jlc_stock": 3226201,
   "jlc_type": "base"
  },
  "C154733": {
@@ -162,7 +162,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "25V"
   },
-  "jlc_stock": 5001886,
+  "jlc_stock": 5001876,
   "jlc_type": "base"
  },
  "C1852027": {
@@ -274,7 +274,7 @@
   "price": 0.0076,
   "lcsc_stock": 3065000,
   "params": {},
-  "jlc_stock": 4852724,
+  "jlc_stock": 4852714,
   "jlc_type": "base"
  },
  "C2290": {
@@ -337,7 +337,7 @@
    "Voltage Rating": "50V",
    "Tolerance": "±1%"
   },
-  "jlc_stock": 21829411,
+  "jlc_stock": 21828801,
   "jlc_type": "base"
  },
  "C25761": {
@@ -422,7 +422,7 @@
    "Voltage Rating": "50V",
    "Tolerance": "±1%"
   },
-  "jlc_stock": 15525931,
+  "jlc_stock": 15525621,
   "jlc_type": "base"
  },
  "C25905": {
@@ -476,20 +476,6 @@
   "lcsc_stock": 6475,
   "params": {},
   "jlc_stock": 7772,
-  "jlc_type": "expand"
- },
- "C285519": {
-  "mpn": "PTS645VK392LFS",
-  "brand": "C&K",
-  "package": "Through Hole",
-  "desc": "Tactile Switch SPST 260gf PC Pin Through Hole, Right Angle",
-  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/562a3ff7cc4a11dfb85e5324391a4dcf.pdf?productCode=C285519",
-  "price": 0.5108,
-  "lcsc_stock": 6569,
-  "params": {
-   "Voltage Rating": "12V"
-  },
-  "jlc_stock": 6569,
   "jlc_type": "expand"
  },
  "C2867465": {
@@ -547,9 +533,9 @@
   "desc": "1 USB to serial 2Mbps USB 2.0 SOP-8 Interface Controllers ",
   "pdf": "https://datasheet.lcsc.com/datasheet/pdf/a3b2ca2c7638da2635df3f5b1d90bcc0.pdf?productCode=C2977777",
   "price": 0.6264,
-  "lcsc_stock": 46888,
+  "lcsc_stock": 46887,
   "params": {},
-  "jlc_stock": 47044,
+  "jlc_stock": 47043,
   "jlc_type": "expand"
  },
  "C2988369": {
@@ -579,7 +565,7 @@
    "Tolerance": "±10%",
    "Voltage Rating": "50V"
   },
-  "jlc_stock": 12550615,
+  "jlc_stock": 12549505,
   "jlc_type": "base"
  },
  "C3290118": {
@@ -818,7 +804,7 @@
   "params": {
    "Voltage Rating": "12V"
   },
-  "jlc_stock": 788197,
+  "jlc_stock": 788205,
   "jlc_type": "base"
  },
  "C726584": {
@@ -835,6 +821,20 @@
    "Voltage Rating": "50V"
   },
   "jlc_stock": 1182548,
+  "jlc_type": "expand"
+ },
+ "C79167": {
+  "mpn": "EVQP7A01P",
+  "brand": "PANASONIC",
+  "package": "SMD,3.6x3.5mm",
+  "desc": "Tactile Switch SPST 2.2N 1.35mm PC Pin 3.5mm x 3.55mm Surface Mount, Right Angle",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/cd320ad03a58425f96262c3c41d4790e.pdf?productCode=C79167",
+  "price": 0.1971,
+  "lcsc_stock": 8695,
+  "params": {
+   "Voltage Rating": "12V"
+  },
+  "jlc_stock": 9013,
   "jlc_type": "expand"
  },
  "C80500": {
@@ -925,7 +925,7 @@
    "Voltage Rating": "75V",
    "Tolerance": "±0.1%"
   },
-  "jlc_stock": 1709043,
+  "jlc_stock": 1707031,
   "jlc_type": "expand"
  }
 }

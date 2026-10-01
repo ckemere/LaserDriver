@@ -31,14 +31,14 @@ All coordinates are in **mm, KiCad board coordinates of the HAT**: x to the righ
 | South (y > 99.5) | HAT bottom edge at y = 100; the module may overhang it to y = 112.5. Below the overhang, ≈ 24 mm under the module's surface, are the plugs of the Pi's USB-C power (x ≈ 103–112) and micro-HDMI0 (x ≈ 122–131) cables (overmoulds ≤ 9 mm above the Pi). Nothing may hang below the HAT plane there. Cables may exit south. |
 | West (x < 101) | HAT left edge at x = 100. It is now a straight edge; the display flex-cable slot was removed on 2026-09-27. Cables or switches may exit here. |
 | Accessible edges | **West and south edges only** (the south edge is now 12.5 mm beyond the HAT and clear of the BACK-button thumb zone), but see the HAT's UI thumb-access zones below. Put the electrode connector, any switches and the compliance/range selectors there. |
-| **HAT UI thumb zones (keep clear)** | Updated 2026-09-26. The HAT's UI moved to edge-operated parts at HAT level, **below** your module: a **thumbwheel on the west edge, y ≈ 80–95**, with the wheel sticking out ~6 mm past x = 100; a **BACK button on the south edge, x ≈ 107–116**, with its plunger ~1.3 mm past y = 100. Don't hang connectors, cables or switches over the HAT edge in those two spans. **Best electrode-connector spots: south edge x ≈ 117–127.5, or west edge y ≈ 95–99.5.** (The FIRE button is on the HAT's east edge, x ≈ 160–164, y ≈ 86–92, outside your outline.) |
+| **HAT UI thumb zones (keep clear)** | Updated 2026-09-26. The HAT's UI moved to edge-operated parts at HAT level, **below** your module: a **thumbwheel on the west edge, y ≈ 80–95**, with the wheel sticking out ~6 mm past x = 100; a **BACK button on the south edge, x ≈ 109–114** (SMD side-actuated EVQP7A since 2026-09-30), with its button ~0.4 mm past y = 100. Don't hang connectors, cables or switches over the HAT edge in those two spans. **Best electrode-connector spots: south edge x ≈ 117–127.5, or west edge y ≈ 95–99.5.** (The FIRE button is on the HAT's east edge, x ≈ 160–164, y ≈ 86–92, outside your outline.) |
 
 **Stack height.** The HAT has **female 1×5 sockets** (KiCad `Connector_PinSocket_2.54mm:PinSocket_1x05_P2.54mm_Vertical`, 8.5 mm body). The module has **male 1×5 pin headers on its underside** (`Connector_PinHeader_2.54mm:PinHeader_1x05_P2.54mm_Vertical`, placed on B.Cu, 2.5 mm plastic). So the module's bottom surface sits **≈ 11 mm above the HAT top surface**.
 
 **Under the module (on the HAT):**
 
 - Thumbwheel SW7 (SHOUHAN BL-DT, 2.5 mm tall) at the west edge, x ≈ 100.7–107, y 81–93.5.
-- Right-angle BACK button SW8 (C&K PTS645, ~3.5 mm tall) at the south edge, x ≈ 106.7–116.3, y 93–100.
+- Side-actuated SMD BACK button SW8 (Panasonic EVQP7A01P, 3.6 × 3.5 mm, ~2.5 mm tall) at the south edge, x ≈ 108.8–114.3, y 96.5–100 (was a C&K PTS645 right-angle THT until 2026-09-30).
 - The two sockets.
 - M2.5 mounting hole MH3 at (103.5, 96.5) with its screw head.
 - Everything else under the module on the HAT is low SMD. Module underside components up to ~6 mm tall are fine, except over the sockets.

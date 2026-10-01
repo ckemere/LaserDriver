@@ -6461,7 +6461,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "5V"
+		(property "Value" "KT-0603W"
 			(at 279.4 129.8574 90)
 			(effects
 				(font
@@ -8735,7 +8735,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "MCU"
+		(property "Value" "KT-0603R"
 			(at 304.8 129.8574 90)
 			(effects
 				(font

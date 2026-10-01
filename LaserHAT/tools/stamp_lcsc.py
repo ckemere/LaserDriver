@@ -91,18 +91,21 @@ def stamp_schematic(path, table, values, not_fitted=(), hand_fit=(), non_parts=(
             if entry.get("pdf"):
                 set_prop("Datasheet", entry["pdf"])
         lcsc = [p for p in props if _tok(p, 1) in VARIANTS]
+        placed = ref in table and ref not in hand_fit and ref not in not_fitted and ref not in non_parts
         dnp = sym.child("dnp")
-        want_dnp = "yes" if ref in not_fitted else "no" if ref in hand_fit else None
+        want_dnp = "yes" if ref in not_fitted else "no" if (ref in hand_fit or placed) else None
         if dnp is not None and want_dnp is not None and _tok(dnp, 1) != want_dnp:
             s, e, _ = dnp.tokens[1]
             edits.append((s, e, want_dnp))
             changed.add(ref)
         in_bom = sym.child("in_bom")
         # JLC rejects a BOM designator that is missing from the CPL, so anything JLC does not place
-        # (hand-fitted, DNP, non-parts) must be out of the BOM as well, not just out of the position file
-        if (ref in non_parts or ref in hand_fit or ref in not_fitted) and in_bom is not None and _tok(in_bom, 1) != "no":
+        # (hand-fitted, DNP, non-parts) must be out of the BOM as well, not just out of the position file;
+        # a machine-placed part gets the flags cleared again (it may have been hand-fitted before)
+        want_bom = "no" if (ref in non_parts or ref in hand_fit or ref in not_fitted) else "yes" if placed else None
+        if in_bom is not None and want_bom is not None and _tok(in_bom, 1) != want_bom:
             s, e, _ = in_bom.tokens[1]
-            edits.append((s, e, "no"))
+            edits.append((s, e, want_bom))
             changed.add(ref)
         if ref in hand_fit:              # populated by us: JLC must not see a part number
             for p in lcsc:
@@ -175,6 +178,12 @@ def stamp_board(path, table, values, not_fitted=(), hand_fit=(), non_parts=()):
             fp.SetExcludedFromBOM(True)
             fp.SetExcludedFromPosFiles(True)
             changed.add(ref)
+        if ref in table and ref not in hand_fit and ref not in not_fitted and ref not in non_parts:
+            if fp.IsDNP() or fp.IsExcludedFromBOM() or fp.IsExcludedFromPosFiles():   # machine-placed: clear
+                fp.SetDNP(False)
+                fp.SetExcludedFromBOM(False)
+                fp.SetExcludedFromPosFiles(False)
+                changed.add(ref)
         if ref in not_fitted or ref in hand_fit:
             want = ref in not_fitted
             if fp.IsDNP() != want:

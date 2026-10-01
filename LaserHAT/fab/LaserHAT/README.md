@@ -2,7 +2,7 @@
 
 - Board: 65.1 × 57.0 mm, **2 layers**, 1.6 mm FR-4
 - PCB quote: upload `LaserHAT_gerbers.zip`
-- Assembly: `LaserHAT_BOM.csv` + `LaserHAT_CPL.csv`. 42 placements, 28 unique parts, sides: **Top**
+- Assembly: `LaserHAT_BOM.csv` + `LaserHAT_CPL.csv`. 43 placements, 29 unique parts, sides: **Top**
 - Check part rotations in JLC's placement preview; KiCad and JLC orientations differ for some packages.
 
 ## Hand-fitted (not in JLC's BOM or CPL; order and solder these ourselves)
@@ -18,4 +18,4 @@
 - R1: 3.9k (R_0402_1005Metric)
 - R2: 3.9k (R_0402_1005Metric)
 
-Not parts (jumpers, holes, logo, test pads, padless footprints): G1, JP1, JP4, JP5, MH1, MH2, MH3, MH4, SW8
+Not parts (jumpers, holes, logo, test pads, padless footprints): G1, JP1, JP4, JP5, MH1, MH2, MH3, MH4
