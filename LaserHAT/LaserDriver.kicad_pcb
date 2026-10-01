@@ -5873,7 +5873,7 @@
 		(path "/212bfd25-f831-4b85-926b-000000000003/9a791b2d-f5b3-5462-9d60-287a2bbbf140")
 		(sheetname "/MSPM0 Controller/")
 		(sheetfile "mspm0_controller.kicad_sch")
-		(attr through_hole)
+		(attr smd)
 		(fp_line
 			(start -7.49 -1.91)
 			(end -6.48 -1.91)
