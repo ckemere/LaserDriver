@@ -2,15 +2,25 @@
 #define BOARD_H
 
 /*
- * LaserHAT board pin map for MSPM0G3507SRHBR (U7, VQFN-32).
+ * LaserHAT **Rev 2** pin map for the MSPM0G3507SRHBR (U7, VQFN-32).
  *
- * Centralizes the pin assignments so peripheral modules can be written
- * without depending on the SysConfig-generated ti_msp_dl_config.h.
+ * Source of truth: LaserHAT/CLAUDE.md ("Rev 2 MCU pin map") and the HAT
+ * schematic netlist.  The Rev 1 map (buttons on PA3..PA6, PWM on
+ * PA21/PA22, trigger on PA19) is gone; git tag `firmware-rev1` has it.
  *
  * Pin masks use the bare bit-position convention (1U << n).  PINCM
- * indices are the IOMUX register indices used to configure the pin.
- * Function codes come from the device header (mspm0g350x.h) and select
- * the alternate peripheral function on that PINCM.
+ * indices and function codes are in mcu.h.
+ *
+ * Pins the firmware deliberately leaves at their reset default
+ * (PINCM PC = unconnected, high-impedance):
+ *   PA0/PA1   I2C0 SDA/SCL — shared with the Pi's I2C bus (OLED bonnet,
+ *             R19/R20 pull-ups to the Pi's 3V3).  Driving them would
+ *             break the Pi's bus.
+ *   PA2       ROSC — 100 k 0.1 % to GND for the SYSOSC frequency
+ *             correction loop (analog function, enabled in sysctl.c).
+ *   PA15      DB_DAC (J9.3) — module setpoint / RELEASE; no module yet.
+ *   PA17/PA22 DB_ADC_A/B (J9.4/J9.5) — module analog / I2C; no module yet.
+ *   PA19/PA20 SWDIO/SWCLK — dedicated debug pins in Rev 2 (Pi GPIO25/24).
  */
 
 #include <stdint.h>
@@ -19,65 +29,77 @@
 /* All used pins are on GPIOA on this board. */
 #define BOARD_GPIO_PORT             GPIOA
 
-/* ----- PWM bridge: laser side (PA21) ----- */
-#define BOARD_PWM_LASER_PIN         (1u << 21)
-#define BOARD_PWM_LASER_PINCM       IOMUX_PINCM46
-#define BOARD_PWM_LASER_GPIO_FUNC   IOMUX_PINCM46_PF_GPIOA_DIO21
-#define BOARD_PWM_LASER_PWM_FUNC    IOMUX_PINCM46_PF_TIMA0_CCP0
+/* ----- Module header J8: PWM_A (PA7) = EN / laser switch, TIMA0_CCP1 ----- */
+#define BOARD_PWM_A_PIN             (1u << 7)
+#define BOARD_PWM_A_PINCM           IOMUX_PINCM14
+#define BOARD_PWM_A_PWM_FUNC        IOMUX_PINCM14_PF_TIMA0_CCP1
 
-/* ----- PWM bridge: dummy side (PA22) ----- */
-#define BOARD_PWM_DUMMY_PIN         (1u << 22)
-#define BOARD_PWM_DUMMY_PINCM       IOMUX_PINCM47
-#define BOARD_PWM_DUMMY_GPIO_FUNC   IOMUX_PINCM47_PF_GPIOA_DIO22
-#define BOARD_PWM_DUMMY_PWM_FUNC    IOMUX_PINCM47_PF_TIMA0_CCP0_CMPL
+/* ----- Module header J8: PWM_B (PA12) = CATH / dummy switch, TIMA0_CCP3 ----- */
+#define BOARD_PWM_B_PIN             (1u << 12)
+#define BOARD_PWM_B_PINCM           IOMUX_PINCM34
+#define BOARD_PWM_B_PWM_FUNC        IOMUX_PINCM34_PF_TIMA0_CCP3
 
-/* ----- BUTTON1..4 (PA3..PA6) — pressed: pin -> +3V3, PULL_DOWN ----- */
-#define BOARD_BUTTON1_PIN           (1u << 3)
-#define BOARD_BUTTON1_PINCM         IOMUX_PINCM8
+/* ----- Module header J8.3: DB_GPIO (PA6) = FAULT_n, active low ----- */
+/* Input with pull-up: the laser module leaves it open, the e-stim module
+ * drives it.  TIMA0_FAULT0 (PF 4) is not armed in the bring-up build. */
+#define BOARD_FAULT_N_PIN           (1u << 6)
+#define BOARD_FAULT_N_PINCM         IOMUX_PINCM11
 
-#define BOARD_BUTTON2_PIN           (1u << 4)
-#define BOARD_BUTTON2_PINCM         IOMUX_PINCM9
-
-#define BOARD_BUTTON3_PIN           (1u << 5)
-#define BOARD_BUTTON3_PINCM         IOMUX_PINCM10
-
-#define BOARD_BUTTON4_PIN           (1u << 6)
-#define BOARD_BUTTON4_PINCM         IOMUX_PINCM11
-
+/* ----- Buttons: active LOW (commons on GND), internal pull-ups -----
+ * Bit order in the firmware's button mask (and EVT_BUTTON / RSP_STATUS):
+ *   bit 0  BUTTON1  PA21  SW8  BACK  (south edge)
+ *   bit 1  BUTTON2  PA14  SW7  wheel push = SELECT
+ *   bit 2  BUTTON3  PA16  SW7  wheel roll (contact D)
+ *   bit 3  BUTTON4  PA13  SW7  wheel roll (contact B)
+ *   bit 4  BUTTON5  PA23  SW9  FIRE  (east edge)
+ *   bit 5  BSL      PA18  SW6  active HIGH (ROM BSL invoke; read-only here)
+ */
+#define BOARD_BUTTON1_PIN           (1u << 21)
+#define BOARD_BUTTON1_PINCM         IOMUX_PINCM46
+#define BOARD_BUTTON2_PIN           (1u << 14)
+#define BOARD_BUTTON2_PINCM         IOMUX_PINCM36
+#define BOARD_BUTTON3_PIN           (1u << 16)
+#define BOARD_BUTTON3_PINCM         IOMUX_PINCM38
+#define BOARD_BUTTON4_PIN           (1u << 13)
+#define BOARD_BUTTON4_PINCM         IOMUX_PINCM35
+#define BOARD_BUTTON5_PIN           (1u << 23)
+#define BOARD_BUTTON5_PINCM         IOMUX_PINCM53
 #define BOARD_BUTTON_MASK           (BOARD_BUTTON1_PIN | BOARD_BUTTON2_PIN | \
-                                     BOARD_BUTTON3_PIN | BOARD_BUTTON4_PIN)
+                                     BOARD_BUTTON3_PIN | BOARD_BUTTON4_PIN | \
+                                     BOARD_BUTTON5_PIN)
 
-/* ----- BNC trigger input (PA14) — external TTL pulse, rising edge ----- */
-#define BOARD_BNC_TRIGGER_PIN       (1u << 14)
-#define BOARD_BNC_TRIGGER_PINCM     IOMUX_PINCM36
+#define BOARD_BSL_PIN               (1u << 18)
+#define BOARD_BSL_PINCM             IOMUX_PINCM40
 
-/* ----- Pi trigger input (PA19, ex-SWDIO) — Pi GPIO 24 drives it ----- */
-/* Boots as SWDIO; firmware reclaims as a GPIO input after the boot
- * blink so SWD reflashing still works (NRST restores the default mux).
- * Mux function 1 = plain GPIO; the GPIOA peripheral name is DIO19. */
-#define BOARD_PI_TRIGGER_PIN        (1u << 19)
-#define BOARD_PI_TRIGGER_PINCM      IOMUX_PINCM41
-#define BOARD_PI_TRIGGER_GPIO_FUNC  ((uint32_t)0x00000001u)
+/* ----- Status LED D7 (PA24), anode on the pin: HIGH = on ----- */
+#define BOARD_LED_PIN               (1u << 24)
+#define BOARD_LED_PINCM             IOMUX_PINCM54
 
-/* ----- STIM_MIRROR LED (PA13) ----- */
-#define BOARD_STIM_MIRROR_PIN       (1u << 13)
-#define BOARD_STIM_MIRROR_PINCM     IOMUX_PINCM35
-#define BOARD_STIM_MIRROR_GPIO_FUNC IOMUX_PINCM35_PF_GPIOA_DIO13
+/* ----- MCU_STIM_OUT (PA25) -> U8 Schmitt buffer -> J7 "STIM OUT" BNC + D9 ----- */
+#define BOARD_STIM_OUT_PIN          (1u << 25)
+#define BOARD_STIM_OUT_PINCM        IOMUX_PINCM55
 
-/* ----- DAC OUT (PA15) — output disconnected at IOMUX; DAC drives pin via VREF mux ----- */
-#define BOARD_DAC_OUT_PIN           (1u << 15)
-#define BOARD_DAC_OUT_PINCM         IOMUX_PINCM37
+/* ----- MCU_STIM_IN (PA26) <- U8 <- J6 "TRIG IN" BNC (1 k series, 100 k pull-down) ----- */
+#define BOARD_STIM_IN_PIN           (1u << 26)
+#define BOARD_STIM_IN_PINCM         IOMUX_PINCM59
 
-/* ----- UART0 TX (PA10) / RX (PA11) ----- */
-#define BOARD_UART_TX_PIN           (1u << 10)
-#define BOARD_UART_TX_PINCM         IOMUX_PINCM21
-#define BOARD_UART_TX_FUNC          IOMUX_PINCM21_PF_UART0_TX
+/* ----- PI_TRIGGER (PA27) <- Pi GPIO26 (J1.37), rising edge ----- */
+#define BOARD_PI_TRIGGER_PIN        (1u << 27)
+#define BOARD_PI_TRIGGER_PINCM      IOMUX_PINCM60
 
-#define BOARD_UART_RX_PIN           (1u << 11)
-#define BOARD_UART_RX_PINCM         IOMUX_PINCM22
-#define BOARD_UART_RX_FUNC          IOMUX_PINCM22_PF_UART0_RX
+/* ----- UART1 <-> Pi: PA8 TX -> GPIO15 (RXD), PA9 RX <- GPIO14 (TXD) ----- */
+#define BOARD_PI_UART_TX_PINCM      IOMUX_PINCM19
+#define BOARD_PI_UART_TX_FUNC       IOMUX_PINCM19_PF_UART1_TX
+#define BOARD_PI_UART_RX_PINCM      IOMUX_PINCM20
+#define BOARD_PI_UART_RX_FUNC       IOMUX_PINCM20_PF_UART1_RX
 
-/* ----- VREF+ (PA23) ----- */
-#define BOARD_VREF_POS_PINCM        IOMUX_PINCM48
+/* ----- UART0 <-> CH340N (USB-C J5): PA10 TX, PA11 RX; also the ROM BSL port ----- */
+#define BOARD_USB_UART_TX_PINCM     IOMUX_PINCM21
+#define BOARD_USB_UART_TX_FUNC      IOMUX_PINCM21_PF_UART0_TX
+#define BOARD_USB_UART_RX_PINCM     IOMUX_PINCM22
+#define BOARD_USB_UART_RX_FUNC      IOMUX_PINCM22_PF_UART0_RX
+
+/* ----- Spare pins (no copper): driven low ----- */
+#define BOARD_SPARE_PINS            ((1u << 3) | (1u << 4) | (1u << 5))
 
 #endif /* BOARD_H */

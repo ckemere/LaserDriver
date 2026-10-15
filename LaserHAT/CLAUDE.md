@@ -83,7 +83,9 @@ parts, footprint ids, values, DNP, pad nets, paths) → 0 differences.
 - PWM_A/B and FAULT must stay on one TIMA timer (shared timebase + hardware fault kill).
 - Pi header vs Rev 1: SWD swapped (GPIO24 = SWCLK, GPIO25 = SWDIO); NRST ↔ MCU_POWER_EN swapped
   (GPIO23 = NRST, GPIO18 = MCU_POWER_EN); trigger is GPIO26 → PA27.  Flash Rev 2 with
-  `make flash HAT_REV=2` (Firmware/Makefile.gcc; `Pi/power_cycle.py` reads LASERHAT_*_PIN).
+  `make flash` (Rev 2 is the default since 2026-10-14; `HAT_REV=1` for the old board; `Pi/power_cycle.py` reads LASERHAT_*_PIN).
+- **Firmware is Rev 2 since 2026-10-14** (`Firmware/board.h`, bring-up build: buttons, LED, J8 PWM, BNCs, both UARTs;
+  module lines PA15/PA17/PA22 untouched, TIMA0 fault not armed).  Rev 1 firmware = git tag `firmware-rev1`.
 - OLED bonnet (Adafruit 4567) runs only on 3.3 V and ties header pins 1/17 together itself.
 - J8/J9 pad positions and pinout are frozen (module contract, spec §7).
 

@@ -48,7 +48,7 @@ RSP_STATUS      = 0x81  # i u16, r u32, h u32, btn u8, phase u8, tick u32,
                          # mode u8, estim_dur u32, estim_ipi u32
 EVT_PULSE_START = 0x82  # tick u32
 EVT_PULSE_END   = 0x83  # tick u32
-EVT_BUTTON      = 0x84  # mask u8, edges u8
+EVT_BUTTON      = 0x84  # mask u8, edges u8 (bits: 0 BACK, 1 SELECT, 2/3 wheel, 4 FIRE, 5 BSL)
 
 # Phase byte values in RSP_STATUS (ASCII 'W' / 'T').
 PHASE_WAITING   = ord("W")
@@ -73,6 +73,9 @@ RSP_LEN = {RSP_STATUS: _STATUS.size, EVT_PULSE_START: 4, EVT_PULSE_END: 4,
 
 # Field ranges, for validating a decoded STATUS (false-sync rejection).
 INTENSITY_MIN, INTENSITY_MAX = 1, 320
+# Rev 2 HAT: bit 0 BACK (SW8), bit 1 SELECT (wheel push), bit 2 / 3 wheel roll,
+# bit 4 FIRE (SW9), bit 5 the BSL switch SW6 (bring-up only).
+BUTTON_MASK_MAX = 0x3F
 TICKS_MIN, TICKS_MAX = 1, 10_000_000
 ESTIM_TICKS_MIN, ESTIM_TICKS_MAX = 1, 1000
 
@@ -134,7 +137,7 @@ def status_in_range(fields: dict) -> bool:
     return (INTENSITY_MIN <= fields["intensity"] <= INTENSITY_MAX
             and TICKS_MIN <= fields["ramp_ticks"] <= TICKS_MAX
             and TICKS_MIN <= fields["hold_ticks"] <= TICKS_MAX
-            and fields["button_mask"] <= 0x0F
+            and fields["button_mask"] <= BUTTON_MASK_MAX
             and fields["phase"] in ("W", "T")
             and fields["mode"] in (MODE_LASER, MODE_ESTIM)
             and ESTIM_TICKS_MIN <= fields["estim_dur_ticks"] <= ESTIM_TICKS_MAX

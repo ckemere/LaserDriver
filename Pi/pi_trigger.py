@@ -1,7 +1,7 @@
 """Pi-GPIO trigger driver.
 
-Drives Pi GPIO 24, which is wired to MSPM0 PA19 (the Pi-trigger pin
-the firmware reclaimed from SWDIO at boot).  A rising edge there
+Drives Pi GPIO 26, which is wired to MSPM0 PA27 (PI_TRIGGER on the Rev 2
+HAT; Rev 1 used GPIO 24 -> PA19).  A rising edge there
 fires a pulse directly via the MCU's GPIO edge ISR, bypassing UART
 entirely — useful when you need sub-100 µs latency from an external
 event (e.g. an openephys packet) to laser-on.
@@ -19,14 +19,15 @@ Or as a CLI smoke tool:
 
 from __future__ import annotations
 
+import os
 import time
 from typing import Optional
 
 from gpiozero import DigitalOutputDevice
 
 
-# Pi GPIO 24 -> MSPM0 PA19 per LaserHAT/gpio_design.md.
-DEFAULT_PIN = 24
+# Pi GPIO 26 -> MSPM0 PA27 per LaserHAT/CLAUDE.md (Rev 2 pin map).
+DEFAULT_PIN = int(os.environ.get("LASERHAT_TRIGGER_PIN", 26))
 
 # 500 µs is comfortably longer than the MCU's 10 µs TIMG0 tick AND
 # the worst-case Python time.sleep() jitter on Pi OS.  Setting a
@@ -50,7 +51,7 @@ class PiTrigger:
         # close() sets the pin back to input/high-impedance; without
         # this step, the input transition can look like a rising edge
         # to the MCU and fire a spurious pulse.  The MCU also has an
-        # internal pull-down on PA19 as a backstop.
+        # internal pull-down on PA27 as a backstop.
         try:
             self._pin.off()
         finally:

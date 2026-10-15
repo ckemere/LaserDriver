@@ -22,7 +22,7 @@ Wants=dev-ttyS0.device
 Type=simple
 User=kemerelab
 Group=kemerelab
-# Serial port access; gpiozero needs the gpio group for the PA19 trigger pin.
+# Serial port access; gpiozero needs the gpio group for the GPIO 26 trigger pin.
 SupplementaryGroups=dialout gpio
 WorkingDirectory=/home/kemerelab/Code/LaserDriver/Pi
 # systemd creates /run/laserhat (0750, owned by User) and exports it.

@@ -103,13 +103,14 @@ make clean all
 
 ### Flashing the MCU over SWD from the Pi
 
-The HAT brings SWCLK/SWDIO/NRST out to Pi GPIO 25/24/18 (see the
-wiring table at the bottom of this file). OpenOCD on the Pi can drive
+The Rev 2 HAT brings SWCLK/SWDIO/NRST out to Pi GPIO 24/25/23 and the
+MCU's power switch to GPIO 18 (see the wiring table at the bottom of this
+file; Rev 1 had SWD and power/reset swapped — `make flash HAT_REV=1`). OpenOCD on the Pi can drive
 those pins directly via the kernel's libgpiod interface — no external
 debug probe required.
 
 ```bash
-sudo systemctl stop laserhat-broker.service   # frees Pi GPIO 24 (= SWDIO)
+sudo systemctl stop laserhat-broker.service   # frees the UART and GPIO 26
 sudo apt install openocd
 make flash             # builds if needed, then programs and resets
 # `make load` and `make burn` are aliases for the same thing.
@@ -117,19 +118,17 @@ make reset             # just reset the MCU, leave flash contents alone
 sudo systemctl start laserhat-broker.service
 ```
 
-> **Flash with the laser unplugged**, and **stop the broker first**. PA19
-> doubles as SWDIO *and* the Pi-GPIO trigger; the broker holds Pi GPIO 24
-> for the trigger pin, so OpenOCD can't claim SWDIO until it's stopped.
-> `make flash` power-cycles the MCU and halts the core during the boot
-> blink, so PA19 stays SWDIO and the firmware never runs to fire the laser
-> — but if anything attaches SWD to an already-running MCU, the SWD wiggling
-> on PA19 looks like trigger edges. Unplugging the laser makes that moot.
+> **Flash with no module in J8/J9** and **stop the broker first** so the
+> serial port and the trigger GPIO are free.  In Rev 2 the SWD pins
+> (PA19/PA20) are dedicated, so SWD traffic can no longer look like a
+> trigger; `make flash` still power-cycles the MCU and halts the core
+> during the boot blink.
 
 `make flash` does not run an OpenOCD verify pass. The target-side
 CRC algorithm in `ti_mspm0.cfg` / OpenOCD 0.12.0+dev hangs the MCU
 even though the write itself is reliable. Visual confirmation is the
-~4-second STIM_MIRROR boot blink right after the flash command
-finishes.
+~4-second boot blink of the status LED D7 right after the flash
+command finishes, followed by a short blip once a second (heartbeat).
 
 #### What `make flash` actually does
 
@@ -138,20 +137,19 @@ made naive flashing unreliable. Today the rule does three things in
 order:
 
 1. **`power_cycle`** (Pi/power_cycle.py, a prerequisite of the rule).
-   Park Pi GPIOs 14 (UART TX), 24 (SWDIO), 25 (SWCLK) as inputs and
-   assert NRST so the MSP can't be **phantom-powered** through its IO
-   ESD diodes — a HIGH on any of those lines clamps back to the MSP's
-   VDD rail and keeps the chip half-running even after GPIO 23 cuts
-   the P-MOSFET. Then drop GPIO 23 LOW for 500 ms (cap drain), release
-   it, release NRST, and restore each parked pin to the alt-function
-   mode it had before (saved at the start of the cycle so the kernel
-   UART driver continues to own GPIO 14).
+   Park Pi GPIOs 14 (UART TX), 24 (SWCLK), 25 (SWDIO) and 26 (trigger)
+   as inputs and assert NRST (GPIO 23) so the MSP can't be
+   **phantom-powered** through its IO ESD diodes — a HIGH on any of
+   those lines clamps back to the MSP's VDD rail and keeps the chip
+   half-running even after GPIO 18 turns the U5 load switch off. Then
+   drop GPIO 18 LOW for 500 ms (cap drain), release it, release NRST,
+   and restore each parked pin to the alt-function mode it had before
+   (saved at the start of the cycle so the kernel UART driver continues
+   to own GPIO 14).
 
 2. **OpenOCD probes SWD while the MCU is in the boot blink window.**
-   PA19 is in its hardware-default SWDIO function for the ~4 seconds
-   it takes the boot blink to finish. (PA19 reclaim is now opt-in via
-   the `g` UART command — see protocol below — so the next firmware
-   boot also stays SWD-friendly until something asks otherwise.)
+   The core is busy-waiting in the ~4 s boot blink, so a plain halt
+   request lands reliably.
 
 3. **Explicit `init` / `halt` / `flash write_image` / `reset run` /
    `shutdown`**, instead of OpenOCD's higher-level `program ... reset`.
@@ -189,7 +187,7 @@ auto-restores to the configured fallback alt
    without `sudo`. Default on Raspberry Pi OS; verify with `groups`.
    If you're not in it, `sudo usermod -aG gpio $USER && newgrp gpio`.
 2. **No other process holding the SWD pins.** If you've configured
-   GPIO 18/24/25 for anything else in `/boot/firmware/config.txt`,
+   GPIO 18/23/24/25 for anything else in `/boot/firmware/config.txt`,
    `make flash` will fail to claim the lines.
 3. **OpenOCD with the TI MSPM0 target driver.** The Pi OS Bookworm
    `openocd` package (0.12.0+dev) ships `target/ti_mspm0.cfg`, which
@@ -210,7 +208,10 @@ always on a Pi 5.
 
 ### Pi UART (serial console to the MCU)
 
-The Pi's UART is wired straight through to the MCU on GPIO 14/15.
+The Pi's UART is wired straight through to the MCU's UART1 on GPIO 14/15.
+The same binary protocol is also served on UART0 behind the USB-C
+socket (CH340N, `/dev/ttyUSB0` on the Pi or a laptop), so every host tool
+below also works against that device and needs no Pi at all.
 One-time setup so you can talk to the MCU over `/dev/ttyS0`:
 
 ```bash
@@ -261,10 +262,8 @@ guarantees a `CMD_CONFIG` payload never contains the `SYNC` bytes (it nudges
 the ~150 ramp/hold values whose low 16 bits would equal `DE AD`), so the
 MCU's resync on the next `SYNC` is exact.
 
-**PA19** is the Pi-GPIO trigger input from boot — there is no arm command.
-The firmware claims it at the *end* of boot, after the ~4 s blink, so the
-blink is the SWD flashing window (see "Flashing" — flash with the laser
-unplugged, since SWD activity on PA19 looks like trigger edges).
+**PA27** (Pi GPIO 26) is the Pi-GPIO trigger input from boot — there is
+no arm command.  The BNC TRIG IN (J6 → U8 → PA26) fires the same way.
 
 Because the protocol is binary you can't drive it from a terminal like
 `picocom`. Use the round-trip smoke tool — it reuses the Pi-side codec
@@ -290,14 +289,18 @@ sudo usermod -aG dialout $USER && newgrp dialout
 
 ## Where the MCU is wired to the Pi
 
+Rev 2 HAT:
+
 | Pi pin    | Pi GPIO       | HAT signal     | MSPM0 pin |
 | --------- | ------------- | -------------- | --------- |
-| 8         | GPIO 14 (TX)  | `MCU_UART_TX`  | PA10 (RX) |
-| 10        | GPIO 15 (RX)  | `MCU_UART_RX`  | PA11 (TX) |
-| 11        | GPIO 17       | `EINK_BUSY`    | —         |
-| 12        | GPIO 18       | `MSPM0_NRST`   | NRST      |
-| 16        | GPIO 23       | `MCU_POWER_EN` | (3V3 gate) |
-| 18        | GPIO 24       | `MSPM0_SWDIO`  | PA19      |
-| 22        | GPIO 25       | `MSPM0_SWCLK`  | PA20      |
+| 3 / 5     | GPIO 2 / 3    | `I2C_SDA/SCL`  | PA0 / PA1 (OLED bonnet bus; MCU idle) |
+| 8         | GPIO 14 (TX)  | `PI_TXD`       | PA9 (UART1 RX) |
+| 10        | GPIO 15 (RX)  | `PI_RXD`       | PA8 (UART1 TX) |
+| 12        | GPIO 18       | `MCU_POWER_EN` | — (U5 load switch) |
+| 16        | GPIO 23       | `NRST`         | NRST      |
+| 18        | GPIO 24       | `SWCLK`        | PA20      |
+| 22        | GPIO 25       | `SWDIO`        | PA19      |
+| 37        | GPIO 26       | `PI_TRIGGER`   | PA27      |
 
-Full design map: `LaserHAT/gpio_design.md`.
+Full design map: `LaserHAT/CLAUDE.md` (Rev 2 MCU pin map) and
+`LaserHAT/REV2_NOTES.md`.

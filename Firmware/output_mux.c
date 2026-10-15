@@ -3,45 +3,34 @@
 #include "mcu.h"
 
 /*
- * Runtime IOMUX switching between GPIO-safe and TIMA0_CCP0 / CCP0_CMPL
- * on the bridge pins.  Timer init lives in laser_timera.c; this file
- * only owns the per-pulse mux flips.
- */
-
-/*
- * Switch bridge pins to GPIO and lock them to safe output values.
+ * Switch the module PWM pins to GPIO and lock them to safe levels.
  * (CRITICAL — SAFE OUTPUT IS LASER OFF.)
  *
- * Sequence:
- *   1. Pre-load DOUT before touching IOMUX so each pin drives the right
- *      level the instant it switches to GPIO.
- *   2. Switch PA21 (laser, CCP0) to GPIO first so the laser path is
- *      defined LOW while PA22 is still PWM-complemented.
- *   3. Switch PA22 (dummy, CCP0_CMPL) to GPIO HIGH last.
+ *   1. Pre-load DOUT so each pin drives the right level the instant it
+ *      becomes a GPIO.
+ *   2. Switch PA7 (A, CCP1) to GPIO first so the laser path is defined
+ *      LOW while PA12 is still the PWM complement.
+ *   3. Switch PA12 (B, CCP3) to GPIO HIGH last.
  */
 void laser_pins_to_gpio_safe(void)
 {
-    BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_PWM_LASER_PIN;   /* PA21 = 0 */
-    BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_PWM_DUMMY_PIN;   /* PA22 = 1 */
+    BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_PWM_A_PIN;   /* PA7  = 0 */
+    BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_PWM_B_PIN;   /* PA12 = 1 */
 
-    IOMUX->SECCFG.PINCM[BOARD_PWM_LASER_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | BOARD_PWM_LASER_GPIO_FUNC;
-    IOMUX->SECCFG.PINCM[BOARD_PWM_DUMMY_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | BOARD_PWM_DUMMY_GPIO_FUNC;
+    IOMUX->SECCFG.PINCM[BOARD_PWM_A_PINCM] =
+        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_PF_GPIO;
+    IOMUX->SECCFG.PINCM[BOARD_PWM_B_PINCM] =
+        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_PF_GPIO;
 }
 
 /*
- * Switch bridge pins to TIMA0 peripheral function.
- *
- * Sequence:
- *   1. Switch PA22 (dummy, CCP0_CMPL) first — complement output drives
- *      while the laser pin is still GPIO-HIGH, maintaining current path.
- *   2. Switch PA21 (laser, CCP0) second — laser now follows PWM.
+ * Switch the module PWM pins to TIMA0: B (complement) first so a current
+ * path exists while A is still GPIO-LOW, then A follows the PWM.
  */
 void laser_pins_to_pwm(void)
 {
-    IOMUX->SECCFG.PINCM[BOARD_PWM_DUMMY_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | BOARD_PWM_DUMMY_PWM_FUNC;
-    IOMUX->SECCFG.PINCM[BOARD_PWM_LASER_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | BOARD_PWM_LASER_PWM_FUNC;
+    IOMUX->SECCFG.PINCM[BOARD_PWM_B_PINCM] =
+        IOMUX_PINCM_PC_CONNECTED | BOARD_PWM_B_PWM_FUNC;
+    IOMUX->SECCFG.PINCM[BOARD_PWM_A_PINCM] =
+        IOMUX_PINCM_PC_CONNECTED | BOARD_PWM_A_PWM_FUNC;
 }

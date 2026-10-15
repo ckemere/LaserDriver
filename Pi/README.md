@@ -9,7 +9,7 @@ the OLED GUI and the web GUI run at the same time.
    MSPM0  <───────────────────────────────>  broker.py ── /run/laserhat/broker.sock
                                                   │              │ (newline-JSON, pub/sub)
                                           owns PiTrigger    ┌─────┴─────┐
-                                          (GPIO 24)      oled_gui.py  web_app.py
+                                          (GPIO 26)      oled_gui.py  web_app.py
 ```
 
 Clients publish commands up (`set` / `trigger` / `trigger_gpio`); the broker
@@ -28,7 +28,7 @@ UART; everything else talks to the broker.
 | `oled_panel.py` | Adafruit 4567 128x32 OLED bonnet driver (SSD1305 over I2C, via adafruit-blinka + Pillow). |
 | `oled_gui.py` | OLED GUI daemon (broker client). |
 | `web_app.py` | Flask web GUI (broker client). |
-| `pi_trigger.py` | `PiTrigger` — drives GPIO 24 → MCU PA19 for the fast (~50–100 µs) trigger. Owned by the broker. |
+| `pi_trigger.py` | `PiTrigger` — drives GPIO 26 → MCU PA27 for the fast (~50–100 µs) trigger. Owned by the broker. |
 | `power_cycle.py` | Power-cycles the MCU for `make flash` (called by the firmware Makefile). |
 | `fake_mcu.py` | PTY that speaks the protocol, for off-hardware testing. |
 
@@ -95,18 +95,21 @@ sudo systemctl start laserhat-broker.service
 
 ### buttons
 
-The OLED bonnet has no onboard buttons; these are LaserHAT's own,
-reported by the MCU over the broker:
+The OLED bonnet has no onboard buttons; these are the Rev 2 HAT's edge
+controls, reported by the MCU over the broker (`EVT_BUTTON` bits):
 
 ```
-+------+
-|  B1  |  trigger a pulse (firmware fires on release)
-+------+
-| OLED |   B2 : cycle selected parameter (i → r → h)
-+------+   B3 / B4 : decrement / increment it
-| B3 B4|
-+------+
+         +--------------------------+
+ wheel   |                          |  B5 FIRE (SW9, east edge):
+ (SW7)  B3/B4 roll : -/+ value      |     fires a pulse (firmware, on press)
+   west  B2 push   : next row       |
+   edge  |                          |
+         +--------------------------+
+          B1 BACK (SW8, south edge): back to the first row
 ```
+
+Bit 5 of the mask is the BSL switch SW6 (bring-up only; it is a reset-time
+switch for the ROM bootloader and does nothing while the firmware runs).
 
 Step sizes and ranges live in `params.py` (shared with the web UI).
 
@@ -131,5 +134,6 @@ The Adafruit 4567 bonnet plugs onto the 40-pin header and talks I2C:
 
 SSD1305 at I2C address `0x3C`. Confirm with `i2cdetect -y 1`.
 
-(GPIO 24 → MCU PA19 is the fast trigger; GPIO 23 → MCU power-enable for
-flashing — both on the broker/firmware side, not the panel.)
+(GPIO 26 → MCU PA27 is the fast trigger; GPIO 18 → MCU power-enable and
+GPIO 23 → NRST for flashing; GPIO 24/25 = SWCLK/SWDIO; GPIO 14/15 = the
+MCU's UART1 — all on the broker/firmware side, not the panel.)

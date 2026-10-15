@@ -11,7 +11,7 @@ Routes:
     GET  /api/state         current MCU state as JSON (from the broker's cache)
     POST /api/set/<knob>    body { "value": N } where knob in {i, r, h}
     POST /api/trigger       fire a pulse via the UART trigger command
-    POST /api/trigger_gpio  fire a pulse via Pi GPIO 24 -> MSPM0 PA19 edge
+    POST /api/trigger_gpio  fire a pulse via Pi GPIO 26 -> MSPM0 PA27 edge
     GET  /api/healthz       cheap liveness check
 
 The app binds 0.0.0.0:8080 by default; override via PORT env var.  The
@@ -119,10 +119,9 @@ def create_app(client: HatClient) -> Flask:
 
     @app.route("/api/trigger_gpio", methods=["POST"])
     def api_trigger_gpio():
-        """GPIO-path trigger (rising edge on Pi GPIO 24 -> MSPM0 PA19).
+        """GPIO-path trigger (rising edge on Pi GPIO 26 -> MSPM0 PA27).
         Bypasses UART for the trigger itself; firmware fires the pulse
-        from its GPIO edge ISR.  The broker owns the PiTrigger pin and
-        arms PA19 once (lazily) — no per-trigger re-arm here."""
+        from its GPIO edge ISR.  The broker owns the PiTrigger pin."""
         ok = app.config["client"].trigger_gpio()
         return jsonify(ok=ok, path="gpio")
 

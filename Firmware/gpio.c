@@ -2,128 +2,93 @@
 #include "board.h"
 #include "mcu.h"
 
-/*
- * PINCM indices for every pin not otherwise claimed by the application.
- * SysConfig generates the equivalent list; mirrored here so the unused
- * pins still get put into a defined output-low state instead of
- * floating inputs.
- */
-static const uint8_t kUnusedPincm[] = {
-    IOMUX_PINCM1,  IOMUX_PINCM2,  IOMUX_PINCM7,  IOMUX_PINCM14,
-    IOMUX_PINCM19, IOMUX_PINCM20, IOMUX_PINCM34,
-    IOMUX_PINCM38, IOMUX_PINCM39, IOMUX_PINCM40, IOMUX_PINCM54,
-    IOMUX_PINCM55, IOMUX_PINCM59, IOMUX_PINCM60,
+/* Spare pins (no copper on the HAT): defined output-low state. */
+static const uint8_t kSparePincm[] = {
+    IOMUX_PINCM8, IOMUX_PINCM9, IOMUX_PINCM10,          /* PA3..PA5 */
 };
 
-/* Matching pin bit masks for the DOUT and DOE registers.
- * PA4..PA6 (BUTTON2..4) and PA14 (BNC trigger) are now used. */
-#define UNUSED_PIN_MASK \
-    ((1u << 0)  | (1u << 1)  | (1u << 2)  | (1u << 7)  | \
-     (1u << 8)  | (1u << 9)  | (1u << 12) | \
-     (1u << 16) | (1u << 17) | (1u << 18) | (1u << 24) | \
-     (1u << 25) | (1u << 26) | (1u << 27))
+#define PINCM_GPIO_OUT   (IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_PF_GPIO)
+#define PINCM_GPIO_IN    (IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE | \
+                          IOMUX_PINCM_PF_GPIO)
+#define PINCM_GPIO_IN_PU (PINCM_GPIO_IN | IOMUX_PINCM_PIPU_ENABLE)
+#define PINCM_GPIO_IN_PD (PINCM_GPIO_IN | IOMUX_PINCM_PIPD_ENABLE)
 
-/* IOMUX function code 1 is "GPIO" on every PINCM. */
-#define PINCM_FUNC_GPIO         ((uint32_t) 0x00000001u)
+/* GPIO interrupt polarity: 2 bits per DIO, 01 = rising edge. */
+#define POL_RISE(dio_in_half)   (0x1u << (2u * (dio_in_half)))
+#define POL_MASK(dio_in_half)   (0x3u << (2u * (dio_in_half)))
 
 void laser_gpio_enable_power_and_reset(void)
 {
-    /* RSTCTL: pulse the peripheral reset bit, then release. */
     GPIOA->GPRCM.RSTCTL =
         (GPIO_RSTCTL_KEY_UNLOCK_W | GPIO_RSTCTL_RESETSTKYCLR_CLR |
          GPIO_RSTCTL_RESETASSERT_ASSERT);
-
-    /* Enable the GPIOA peripheral bus clock. */
     GPIOA->GPRCM.PWREN =
         (GPIO_PWREN_KEY_UNLOCK_W | GPIO_PWREN_ENABLE_ENABLE);
 }
 
 void laser_gpio_init(void)
 {
-    /* ----- Unused pins: driven LOW outputs ----- */
-    for (unsigned i = 0; i < sizeof(kUnusedPincm) / sizeof(kUnusedPincm[0]); i++) {
-        IOMUX->SECCFG.PINCM[kUnusedPincm[i]] =
-            IOMUX_PINCM_PC_CONNECTED | PINCM_FUNC_GPIO;
+    /* ----- Spare pins: driven LOW outputs ----- */
+    for (unsigned i = 0; i < sizeof(kSparePincm) / sizeof(kSparePincm[0]); i++) {
+        IOMUX->SECCFG.PINCM[kSparePincm[i]] = PINCM_GPIO_OUT;
     }
-    BOARD_GPIO_PORT->DOUTCLR31_0 = UNUSED_PIN_MASK;
-    BOARD_GPIO_PORT->DOESET31_0  = UNUSED_PIN_MASK;
 
-    /* ----- UART0 TX/RX peripheral functions ----- */
-    IOMUX->SECCFG.PINCM[BOARD_UART_TX_PINCM] =
-        BOARD_UART_TX_FUNC | IOMUX_PINCM_PC_CONNECTED;
-    IOMUX->SECCFG.PINCM[BOARD_UART_RX_PINCM] =
-        BOARD_UART_RX_FUNC | IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE;
+    /* ----- UART1 (Pi) and UART0 (USB-C) peripheral functions ----- */
+    IOMUX->SECCFG.PINCM[BOARD_PI_UART_TX_PINCM] =
+        BOARD_PI_UART_TX_FUNC | IOMUX_PINCM_PC_CONNECTED;
+    IOMUX->SECCFG.PINCM[BOARD_PI_UART_RX_PINCM] =
+        BOARD_PI_UART_RX_FUNC | IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE;
+    IOMUX->SECCFG.PINCM[BOARD_USB_UART_TX_PINCM] =
+        BOARD_USB_UART_TX_FUNC | IOMUX_PINCM_PC_CONNECTED;
+    IOMUX->SECCFG.PINCM[BOARD_USB_UART_RX_PINCM] =
+        BOARD_USB_UART_RX_FUNC | IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE;
 
-    /* ----- Bridge pins (digital outputs; PWM mux switched at runtime) ----- */
-    IOMUX->SECCFG.PINCM[BOARD_PWM_LASER_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | PINCM_FUNC_GPIO;
-    IOMUX->SECCFG.PINCM[BOARD_PWM_DUMMY_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | PINCM_FUNC_GPIO;
+    /* ----- Module PWM pins: GPIO outputs (TIMA0 mux switched at runtime) ----- */
+    IOMUX->SECCFG.PINCM[BOARD_PWM_A_PINCM] = PINCM_GPIO_OUT;
+    IOMUX->SECCFG.PINCM[BOARD_PWM_B_PINCM] = PINCM_GPIO_OUT;
 
-    /* ----- BUTTON1..4: digital inputs with internal pull-down ----- */
-    const uint32_t button_pincm_cfg =
-        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE |
-        IOMUX_PINCM_PIPD_ENABLE  | PINCM_FUNC_GPIO;
-    IOMUX->SECCFG.PINCM[BOARD_BUTTON1_PINCM] = button_pincm_cfg;
-    IOMUX->SECCFG.PINCM[BOARD_BUTTON2_PINCM] = button_pincm_cfg;
-    IOMUX->SECCFG.PINCM[BOARD_BUTTON3_PINCM] = button_pincm_cfg;
-    IOMUX->SECCFG.PINCM[BOARD_BUTTON4_PINCM] = button_pincm_cfg;
+    /* ----- FAULT_n: input with pull-up (open on the laser module) ----- */
+    IOMUX->SECCFG.PINCM[BOARD_FAULT_N_PINCM] = PINCM_GPIO_IN_PU;
 
-    /* ----- STIM_MIRROR LED: digital output ----- */
-    IOMUX->SECCFG.PINCM[BOARD_STIM_MIRROR_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | PINCM_FUNC_GPIO;
+    /* ----- BUTTON1..5: inputs with pull-up (pressed = LOW) ----- */
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON1_PINCM] = PINCM_GPIO_IN_PU;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON2_PINCM] = PINCM_GPIO_IN_PU;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON3_PINCM] = PINCM_GPIO_IN_PU;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON4_PINCM] = PINCM_GPIO_IN_PU;
+    IOMUX->SECCFG.PINCM[BOARD_BUTTON5_PINCM] = PINCM_GPIO_IN_PU;
 
-    /* ----- BNC trigger: digital input, rising-edge interrupt ----- */
-    /* Enable the internal pull-DOWN so a released/unterminated line idles
-     * LOW instead of floating; otherwise noise on an open BNC can look
-     * like a rising edge and fire the laser.  Active-high, matching the
-     * Pi-trigger input (PA19) armed in laser_gpio_arm_pi_trigger(). */
-    IOMUX->SECCFG.PINCM[BOARD_BNC_TRIGGER_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE |
-        IOMUX_PINCM_PIPD_ENABLE  | PINCM_FUNC_GPIO;
-    /* POLARITY15_0: each DIO gets a 2-bit field (RISE=01).  PA14 → bits 28-29. */
-    BOARD_GPIO_PORT->POLARITY15_0 =
-        (BOARD_GPIO_PORT->POLARITY15_0 & ~(0x3u << 28)) | (0x1u << 28);
-    /* Clear any latched interrupt, then unmask PA14 at the GPIOA peripheral.
-     * The Pi-trigger input (PA19) gets added to IMASK later by
-     * laser_gpio_arm_pi_trigger() once boot is past the SWD-needed window. */
-    BOARD_GPIO_PORT->CPU_INT.ICLR  = BOARD_BNC_TRIGGER_PIN;
-    BOARD_GPIO_PORT->CPU_INT.IMASK = BOARD_BNC_TRIGGER_PIN;
+    /* ----- BSL switch SW6 (PA18): input with pull-down (pressed = HIGH) ----- */
+    IOMUX->SECCFG.PINCM[BOARD_BSL_PINCM] = PINCM_GPIO_IN_PD;
+
+    /* ----- LED and STIM_OUT: outputs ----- */
+    IOMUX->SECCFG.PINCM[BOARD_LED_PINCM]      = PINCM_GPIO_OUT;
+    IOMUX->SECCFG.PINCM[BOARD_STIM_OUT_PINCM] = PINCM_GPIO_OUT;
+
+    /* ----- STIM_IN (BNC via U8) and PI_TRIGGER (Pi GPIO26): inputs ----- */
+    /* Pull-downs so an undriven line idles LOW: U8 normally drives PA26,
+     * but PA27 floats whenever the Pi releases GPIO26 (e.g. at Python
+     * process exit), and a float-to-high transition would look like a
+     * trigger edge. */
+    IOMUX->SECCFG.PINCM[BOARD_STIM_IN_PINCM]    = PINCM_GPIO_IN_PD;
+    IOMUX->SECCFG.PINCM[BOARD_PI_TRIGGER_PINCM] = PINCM_GPIO_IN_PD;
+    BOARD_GPIO_PORT->POLARITY31_16 =
+        (BOARD_GPIO_PORT->POLARITY31_16 & ~(POL_MASK(26u - 16u) | POL_MASK(27u - 16u)))
+        | POL_RISE(26u - 16u) | POL_RISE(27u - 16u);
+    BOARD_GPIO_PORT->CPU_INT.ICLR  = BOARD_STIM_IN_PIN | BOARD_PI_TRIGGER_PIN;
+    BOARD_GPIO_PORT->CPU_INT.IMASK = BOARD_STIM_IN_PIN | BOARD_PI_TRIGGER_PIN;
 
     /* Pre-load DOUT before enabling output direction so each pin drives
      * the right level on the same cycle the output enable lands.
-     *   PA21 = 0   (laser path OFF, critical safety default)
-     *   PA22 = 1   (dummy current path conducting)
-     *   PA13 = 1   (STIM_MIRROR LED on for boot-blink phase)
+     *   PA7  PWM_A = 0   (laser / EN switch OFF — safety default)
+     *   PA12 PWM_B = 1   (dummy switch conducting)
+     *   PA24 LED   = 1   (on for the boot blink)
+     *   PA25 STIM_OUT = 0
+     *   PA3..5 spare = 0
      */
-    BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_PWM_LASER_PIN;
-    BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_PWM_DUMMY_PIN | BOARD_STIM_MIRROR_PIN;
+    BOARD_GPIO_PORT->DOUTCLR31_0 =
+        BOARD_PWM_A_PIN | BOARD_STIM_OUT_PIN | BOARD_SPARE_PINS;
+    BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_PWM_B_PIN | BOARD_LED_PIN;
     BOARD_GPIO_PORT->DOESET31_0  =
-        BOARD_PWM_LASER_PIN | BOARD_PWM_DUMMY_PIN | BOARD_STIM_MIRROR_PIN;
-}
-
-void laser_gpio_arm_pi_trigger(void)
-{
-    /* Canonical SWDIO<->GPIO arming rationale: board.h (PA19 block) and
-     * README.md (UART protocol).
-     * Switch PA19's PINCM from boot-default SWDIO to plain GPIO input.
-     * Function code 1 = GPIO.  Enable INENA so we can read the level,
-     * and enable the internal pull-DOWN so the line idles LOW when the
-     * Pi releases GPIO 24 (e.g. at Python process exit).  Without this,
-     * gpiozero closing the line lets it float and the input transition
-     * looks like a rising edge to our ISR -> spurious pulse fires. */
-    IOMUX->SECCFG.PINCM[BOARD_PI_TRIGGER_PINCM] =
-        IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE |
-        IOMUX_PINCM_PIPD_ENABLE  | BOARD_PI_TRIGGER_GPIO_FUNC;
-
-    /* POLARITY31_16: each DIO again gets a 2-bit field (RISE=01).
-     * PA19 sits at index 19, so within the upper-half register that's
-     * (19-16) * 2 = bits 6-7. */
-    BOARD_GPIO_PORT->POLARITY31_16 =
-        (BOARD_GPIO_PORT->POLARITY31_16 & ~(0x3u << 6)) | (0x1u << 6);
-
-    /* Clear any latched edge, then OR PA19 into the existing IMASK so
-     * the BNC trigger's mask isn't disturbed. */
-    BOARD_GPIO_PORT->CPU_INT.ICLR  = BOARD_PI_TRIGGER_PIN;
-    BOARD_GPIO_PORT->CPU_INT.IMASK |= BOARD_PI_TRIGGER_PIN;
+        BOARD_PWM_A_PIN | BOARD_PWM_B_PIN | BOARD_LED_PIN |
+        BOARD_STIM_OUT_PIN | BOARD_SPARE_PINS;
 }

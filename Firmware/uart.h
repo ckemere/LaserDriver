@@ -6,37 +6,42 @@
 #include "mcu.h"
 
 /*
- * UART0 register-level driver.
+ * Register-level UART driver for the two ports of the Rev 2 HAT:
  *
- * Configures UART0 for 115200 8N1 from BUSCLK = 32 MHz (IBRD=17,
- * FBRD=23, oversampling 16x → 115210 actual).  Enables the RX
- * interrupt at the peripheral.  Pin mux for PA10/PA11 is handled by
- * laser_gpio_init().
+ *   UART1 (PA8/PA9)   -> the Pi's UART (GPIO14/15)      `g_uart_pi`
+ *   UART0 (PA10/PA11) -> CH340N on the USB-C socket J5  `g_uart_usb`
+ *                        (also the ROM bootloader's port)
  *
- * RX side: the UART0 IRQ pushes received bytes into a small ring
- * buffer; main loop drains it byte-by-byte via laser_uart_rx_pop()
- * and feeds them to the binary frame decoder (see framing.h).
+ * Both run 115200 8N1 from BUSCLK = 32 MHz (IBRD=17, FBRD=23, 16x
+ * oversampling -> 115210 actual) and speak the same binary protocol; the
+ * main loop runs one frame decoder per port.
  *
- * TX side: simple blocking polled writes.  At 115200 each byte takes
- * ~87 µs; a frame is well under 32 bytes so a single polled write
- * fits in <3 ms.
+ * RX: the port's IRQ pushes bytes into a 256-byte ring; the main loop
+ * drains it with uart_rx_pop().  TX: blocking polled writes (a frame is
+ * < 32 bytes, < 3 ms).  Pin mux is done in gpio.c.
  */
 
-void laser_uart_init(void);
+#define UART_RX_BUF_SIZE   256u
 
-/* Pop one byte from the RX ring buffer.  Returns true if a byte was
- * available and stored in *out, false if the ring is empty. */
-bool laser_uart_rx_pop(uint8_t *out);
+typedef struct {
+    UART_Regs         *regs;
+    volatile uint8_t   rx_buf[UART_RX_BUF_SIZE];
+    volatile uint32_t  rx_head;   /* written by the ISR */
+    volatile uint32_t  rx_tail;   /* written by main */
+} UartPort;
 
-/* Blocking TX of a single byte, or a byte buffer (used to push one
- * encoded wire frame). */
-void laser_uart_tx_byte(uint8_t byte);
-void laser_uart_tx_buf(const uint8_t *buf, uint32_t len);
+extern UartPort g_uart_pi;    /* UART1 */
+extern UartPort g_uart_usb;   /* UART0 */
 
-/* Read the IRQ index register, clearing the pending source. */
-static inline uint32_t laser_uart_iidx(void)
-{
-    return UART0->CPU_INT.IIDX;
-}
+/* Bind `p` to `regs`, then reset, clock and configure it (115200 8N1, RX
+ * interrupt unmasked at the peripheral; NVIC enable is the caller's). */
+void uart_init(UartPort *p, UART_Regs *regs);
+
+/* Pop one byte from the port's RX ring.  false when empty. */
+bool uart_rx_pop(UartPort *p, uint8_t *out);
+
+/* Blocking TX. */
+void uart_tx_byte(UartPort *p, uint8_t byte);
+void uart_tx_buf(UartPort *p, const uint8_t *buf, uint32_t len);
 
 #endif /* UART_H */

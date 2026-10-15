@@ -15,7 +15,7 @@ MCU now holds the values it sent.  That echo is the integrity check — the
 wire protocol has no CRC.  A decoded STATUS is range-checked to reject a
 rare false sync.
 
-The broker owns the GPIO trigger pin; PA19 is a trigger from boot, so there
+The broker owns the GPIO trigger pin (GPIO 26 -> PA27); it is a trigger from boot, so there
 is no arming step.
 
 IPC is newline-delimited JSON.  Client -> broker:
@@ -253,7 +253,7 @@ class Broker:
     def trigger_gpio(self) -> bool:
         if self._gpio is None:
             return False
-        self._gpio.fire()                 # PA19 is a trigger from boot; no arm
+        self._gpio.fire()                 # PA27 is a trigger from boot; no arm
         return True
 
     def stop(self) -> None:

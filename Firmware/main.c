@@ -4,7 +4,6 @@
 #include "gpio.h"
 #include "pwm_timer.h"
 #include "tick_timers.h"
-#include "dac.h"
 #include "uart.h"
 #include "protocol.h"
 #include "framing.h"
@@ -12,40 +11,46 @@
 #include <stdint.h>
 
 /* -----------------------------------------------------------------------
- * Architecture
+ * LaserHAT Rev 2 bring-up firmware
  *
- * TIMG0_IRQHandler (100 kHz) is the *only* place pulse timing lives.
- * It advances the state machine and drives the PWM / GPIO outputs.
- * Nothing else - main loop, UART parser, future GPIO edge ISRs - is
- * allowed to touch the pulse state.  This isolates pulse timing from
- * everything else: UART parsing can take as long as it likes without
- * shifting a single PWM-duty write.
+ * Scope: the HAT alone (no laser / e-stim module plugged in).  It brings
+ * up everything on the HAT the Pi and the user can see:
+ *
+ *   - the five edge buttons (SW7 thumbwheel roll/roll/push, SW8 BACK,
+ *     SW9 FIRE), debounced, reported as EVT_BUTTON; FIRE fires a pulse;
+ *   - the status LED D7 (boot blink, 1 Hz heartbeat when idle, solid on
+ *     during a pulse);
+ *   - the module PWM lines on J8 (TIMA0 CCP1/CCP3, visible on a scope);
+ *   - STIM OUT (J7 BNC + D9) mirrors the pulse envelope, TRIG IN (J6)
+ *     and the Pi's GPIO26 fire a pulse;
+ *   - the binary protocol on *both* UARTs: UART1 to the Pi (GPIO14/15)
+ *     and UART0 to the USB-C CH340N, so the smoke test also runs from a
+ *     laptop with no Pi.
+ *
+ * Architecture (unchanged from Rev 1)
+ *
+ * TIMG0_IRQHandler (100 kHz) is the *only* place pulse timing lives.  It
+ * advances the state machine and drives the PWM / GPIO outputs.  Nothing
+ * else - main loop, UART parsers, GPIO edge ISR - touches the pulse state.
  *
  * Triggers are mediated through three volatile flags consumed (and
  * cleared) by the tick ISR at the start of each tick:
  *
- *   g_uart_trigger_pending      set by the UART parser on 't'
- *   g_button_trigger_pending    set by main loop on BUTTON1 release
+ *   g_uart_trigger_pending      set by a CMD_TRIGGER on either port
+ *   g_button_trigger_pending    set by main loop on a FIRE press
  *   g_hw_trigger_pending        set by the BNC / Pi-GPIO edge ISR
  *                               (GROUP1_IRQHandler)
  *
  * Pulse events (EVT_PULSE_START / EVT_PULSE_END) are emitted from the
  * main loop on PulseEvent records the ISR fills at the WAITING<->TRIGGERED
- * edges, so the blocking UART frame writes stay out of interrupt context.
- * Events are emitted for *every* pulse regardless of trigger source: the
- * host is a broker that reads all typed frames and routes them by type, so
- * there's no per-source ACK gating to get wrong.
+ * edges, so the blocking UART writes stay out of interrupt context.
+ * Events go to both ports; a command's RSP_STATUS goes back to the port
+ * it came from.
  *
- * Wire protocol is binary, magic-word framed; see protocol.h / framing.h
- * and the host mirror Pi/protocol.py.  The UART RX ISR still just pushes
- * bytes into a ring; the main loop feeds them to a frame decoder.
- *
- * Config edits arrive in main (parser) and are read by the ISR at
- * latch time.  Each parser command writes a single g_config_live field
- * with one aligned store (atomic on M0+), and the ISR copies the struct
- * field-by-field at latch time, so no field is ever torn.  The latch is
- * the consistency point: a pulse uses whatever fields are live when it
- * triggers.
+ * Config edits arrive in main (parser) and are read by the ISR at latch
+ * time.  Each parser command writes a single g_config_live field with one
+ * aligned store (atomic on M0+), and the ISR copies the struct
+ * field-by-field at latch time, so no field is ever torn.
  * ----------------------------------------------------------------------- */
 
 #define PWM_PERIOD_COUNTS       320u
@@ -75,9 +80,6 @@ static volatile PulseConfig g_config_live = {
 static PulseConfig g_config_active;          /* ISR-only */
 static uint32_t    g_active_ticks_per_step;  /* derived at latch time */
 
-/* Boot-side init: applied once at the analog current limit. */
-#define DAC_SETPOINT            500u
-
 typedef struct {
     uint32_t pulse_dur_ticks;
     uint32_t ipi_ticks;
@@ -93,16 +95,21 @@ static volatile uint8_t g_mode = MODE_LASER;
 static          uint8_t g_mode_active;      /* ISR-only, latched at trigger */
 
 /*
- * Button debounce: require the pin to be stable for this many polls
- * before accepting a state change.  Main loop polls at the
- * housekeeping rate (1 kHz), so 10 polls = 10 ms.
+ * Button debounce: the pin must be stable for this many 1 kHz polls
+ * before a state change is accepted (10 polls = 10 ms).
  */
 #define DEBOUNCE_TICKS            10u
-#define NUM_BUTTONS                4u
+#define NUM_BUTTONS                6u   /* 5 edge buttons + the BSL switch */
+#define BUTTON_FIRE_BIT            4u   /* BUTTON5 = SW9 FIRE */
+
+/* Idle heartbeat on D7: 50 ms on every second (in 10 us ticks). */
+#define HEARTBEAT_PERIOD_TICKS 100000u
+#define HEARTBEAT_ON_TICKS       5000u
 
 /*
- * Power-on boot blink: 20 toggles of STIM_MIRROR at ~5 Hz before any
- * timer starts.  Pure busy-wait.  ~100 ms at 32 MHz BUSCLK ≈ 3.2 M cycles.
+ * Power-on boot blink: 20 flashes of D7 at ~2.5 Hz before any timer
+ * starts (~4 s).  Pure busy-wait; this is also the window in which
+ * `make flash` halts the core.  ~100 ms at 32 MHz ≈ 3.2 M cycles.
  */
 #define BOOT_BLINK_FLASHES      20u
 #define BOOT_BLINK_HALF_CYCLES  3200000u
@@ -117,15 +124,15 @@ typedef enum {
 } OverallPhase;
 
 /* Pulse shape: ramp the duty up to `intensity` over the ramp window, hold
- * at full for the hold window, then switch off.  There is no ramp-down or
- * trailing-low phase — the laser turns off at the end of HOLD_HIGH. */
+ * at full for the hold window, then switch off. */
 typedef enum {
     LASER_IDLE,
     LASER_RAMP_UP,
     LASER_HOLD_HIGH,
 } LaserPhase;
 
-/* EStim pulse pair: PA13 HIGH for dur, LOW for ipi, HIGH for dur, then off. */
+/* EStim pulse pair (bring-up: only mirrored on D7 / STIM OUT; the J8
+ * lines stay safe until the module firmware per spec §7 lands). */
 typedef enum {
     ESTIM_IDLE,
     ESTIM_PULSE1,
@@ -142,7 +149,7 @@ typedef struct {
 } MachineState;
 
 typedef enum {
-    BTN_IDLE,       /* pin LOW (released) */
+    BTN_IDLE,       /* released */
     BTN_PRESSED,    /* confirmed pressed */
 } BtnPhase;
 
@@ -150,8 +157,6 @@ typedef enum {
  * Cross-context globals
  * ----------------------------------------------------------------------- */
 
-/* Pulse state — written only by TIMG0 ISR.  Main only reads .overall
- * (one word, atomic on M0+) for the ? response. */
 static volatile MachineState g_state = {
     .overall = OVERALL_WAITING,
     .laser   = LASER_IDLE,
@@ -159,15 +164,10 @@ static volatile MachineState g_state = {
 };
 static volatile uint32_t     g_isr_ticks = 0u;
 
-/* Trigger-source flags.  All bool reads/writes are atomic on M0+. */
 static volatile bool g_uart_trigger_pending   = false;
 static volatile bool g_button_trigger_pending = false;
 static volatile bool g_hw_trigger_pending     = false;
 
-/* Per-pulse event record handed from the ISR (which fills it at a phase
- * transition) to the main loop's blocking UART TX path (which drains it).
- * Write the payload (tick) *before* setting .pending, so a reader that
- * observes .pending is guaranteed to also see the matching tick. */
 typedef struct {
     uint32_t tick;
     bool     pending;
@@ -181,10 +181,6 @@ static BtnPhase g_btn_phase[NUM_BUTTONS];
 static uint16_t g_btn_debounce[NUM_BUTTONS];
 static uint8_t  g_btn_mask = 0u;   /* bit n = button (n+1) debounced-pressed */
 
-/* Button-change event, produced by poll_buttons and drained by the main
- * loop's frame TX (both run in the 1 kHz housekeeping block, so no
- * cross-context volatility is needed).  .edges is the just-pressed
- * (rising) bits; .mask is the full debounced state. */
 typedef struct {
     uint8_t mask;
     uint8_t edges;
@@ -192,17 +188,6 @@ typedef struct {
 } ButtonEvent;
 static ButtonEvent g_btn_event = { 0u, 0u, false };
 
-/* PA19 (SWDIO) stays in its boot-default SWDIO function through the boot
- * blink, then the firmware claims it as the Pi-GPIO trigger input (see the
- * end of main()).  The blink is the SWD window: a `make flash` power-cycles
- * the MCU and OpenOCD halts the core during the blink, so PA19 stays SWDIO
- * for flashing.  Flash with the laser unplugged — once PA19 is a live
- * trigger, SWD activity on it would look like trigger edges.
- * Canonical rationale: board.h (PA19 block) and README.md. */
-
-/* Set by TIMG6_IRQHandler at 1 kHz; cleared by main when it actually
- * runs housekeeping work.  TIMG0 ticks also wake main from WFI, but
- * main sees no flag and re-WFIs immediately. */
 static volatile bool g_housekeeping_due = false;
 
 /* -----------------------------------------------------------------------
@@ -221,9 +206,6 @@ static void delay_cycles(uint32_t cycles)
 
 static inline void latch_config_from_live(void)
 {
-    /* Called from ISR.  Each live field is written by the parser with a
-     * single aligned store (atomic on M0+), so copying them here can never
-     * read a torn field. */
     g_config_active.ramp_ticks = g_config_live.ramp_ticks;
     g_config_active.hold_ticks = g_config_live.hold_ticks;
     g_config_active.intensity  = g_config_live.intensity;
@@ -240,14 +222,12 @@ static inline void latch_config_from_live(void)
 
 static inline void state_machine_tick(void)
 {
-    /* --- Combine trigger sources --- */
     bool trigger = g_uart_trigger_pending || g_button_trigger_pending
                    || g_hw_trigger_pending;
     g_uart_trigger_pending   = false;
     g_button_trigger_pending = false;
     g_hw_trigger_pending     = false;
 
-    /* --- Overall + laser phases --- */
     switch (g_state.overall) {
         case OVERALL_WAITING:
             if (trigger) {
@@ -329,20 +309,19 @@ static inline void state_machine_tick(void)
 
 static inline void set_output_from_state(void)
 {
-    /* Derive the desired output from the current state. */
+    static uint32_t heartbeat = 0u;      /* ISR-only */
+
     bool     pwm    = false;   /* true = PWM mux, false = GPIO-safe */
     uint16_t duty   = 0u;      /* only meaningful when pwm */
-    bool     mirror = false;   /* STIM_MIRROR (PA13) on */
+    bool     active = false;   /* pulse envelope: D7 + STIM OUT */
 
     if (g_state.overall == OVERALL_WAITING) {
-        /* defaults: gpio-safe, mirror off */
+        /* gpio-safe, outputs off */
     } else if (g_mode_active == MODE_ESTIM) {
-        /* EStim: PA13 tracks the pulse pair; laser pins always stay safe. */
-        mirror = (g_state.estim == ESTIM_PULSE1 || g_state.estim == ESTIM_PULSE2);
+        active = (g_state.estim == ESTIM_PULSE1 || g_state.estim == ESTIM_PULSE2);
     } else {
         switch (g_state.laser) {
             case LASER_IDLE:
-                /* gpio-safe, mirror off */
                 break;
 
             case LASER_RAMP_UP:
@@ -350,13 +329,13 @@ static inline void set_output_from_state(void)
                     pwm  = true;
                     duty = (uint16_t)g_state.ramp_step;
                 }
-                mirror = true;
+                active = true;
                 break;
 
             case LASER_HOLD_HIGH:
                 pwm    = true;
                 duty   = g_config_active.intensity;
-                mirror = true;
+                active = true;
                 break;
 
             default:
@@ -364,11 +343,15 @@ static inline void set_output_from_state(void)
         }
     }
 
-    /* Apply unconditionally every tick.  These are all plain register
-     * stores (no read-modify-write), so re-asserting the same value is
-     * cheap, and doing it every 10 us makes the safe laser-output state
-     * self-healing: if anything ever perturbed the IOMUX/GPIO, the next
-     * tick restores it. */
+    /* Idle heartbeat so the user can see the MCU is alive. */
+    if (++heartbeat >= HEARTBEAT_PERIOD_TICKS) {
+        heartbeat = 0u;
+    }
+    bool led = active || (g_state.overall == OVERALL_WAITING &&
+                          heartbeat < HEARTBEAT_ON_TICKS);
+
+    /* Apply unconditionally every tick: plain register stores, so the
+     * safe module-pin state is self-healing within 10 us. */
     if (pwm) {
         laser_pins_to_pwm();
         laser_timera_set_duty(duty);
@@ -376,10 +359,15 @@ static inline void set_output_from_state(void)
         laser_pins_to_gpio_safe();
     }
 
-    if (mirror) {
-        laser_gpio_stim_mirror_set();
+    if (active) {
+        laser_gpio_stim_out_set();
     } else {
-        laser_gpio_stim_mirror_clear();
+        laser_gpio_stim_out_clear();
+    }
+    if (led) {
+        laser_gpio_led_set();
+    } else {
+        laser_gpio_led_clear();
     }
 }
 
@@ -412,12 +400,12 @@ static void poll_buttons(void)
                 g_btn_debounce[n] = 0u;
                 if (raw_pressed) {
                     g_btn_mask |= (uint8_t)(1u << n);
-                } else {
-                    g_btn_mask &= (uint8_t)~(1u << n);
-                    if (n == 0u) {
-                        /* BUTTON1 release fires a pulse. */
+                    if (n == BUTTON_FIRE_BIT) {
+                        /* FIRE press fires a pulse. */
                         g_button_trigger_pending = true;
                     }
+                } else {
+                    g_btn_mask &= (uint8_t)~(1u << n);
                 }
             }
         } else {
@@ -425,8 +413,6 @@ static void poll_buttons(void)
         }
     }
 
-    /* Report any change in the debounced mask so clients can react to
-     * presses without polling.  edges = bits that just went pressed. */
     if (g_btn_mask != old_mask) {
         g_btn_event.mask    = g_btn_mask;
         g_btn_event.edges   = (uint8_t)(g_btn_mask & (uint8_t)~old_mask);
@@ -435,37 +421,34 @@ static void poll_buttons(void)
 }
 
 /* -----------------------------------------------------------------------
- * UART protocol — magic-word framed binary (SYNC | TYPE | payload)
- *
- * Command frames (host -> MCU) are decoded here; response/event frames
- * (MCU -> host) are encoded and sent.  See protocol.h for the type/field
- * map and Pi/protocol.py for the host mirror.  The RX ISR pushes bytes
- * into a ring; this code feeds them to the frame decoder.
+ * UART protocol — magic-word framed binary (SYNC | TYPE | payload), one
+ * decoder per port.  See protocol.h and Pi/protocol.py.
  *
  *   CMD_CONFIG  i,r,h  -> RSP_STATUS    (status-as-ack)
  *   CMD_TRIGGER        -> RSP_STATUS, then EVT_PULSE_START/_END
  *   CMD_QUERY          -> RSP_STATUS
  *   (async)            -> EVT_BUTTON on any debounced button change
- *
- * Every command is answered with RSP_STATUS, so the host confirms the
- * resulting state end-to-end — that echo is the integrity check; there is
- * no CRC.  The host guarantees a CMD_CONFIG payload never contains the SYNC
- * bytes, so the decoder's resync is exact.
  * ----------------------------------------------------------------------- */
 
-static FrameDecoder g_rx_decoder;
+static FrameDecoder g_rx_pi;
+static FrameDecoder g_rx_usb;
 
-/* Encode one frame and push it out the UART (blocking). */
-static void tx_frame(uint8_t type, const uint8_t *payload, size_t len)
+static void tx_frame(UartPort *port, uint8_t type, const uint8_t *payload, size_t len)
 {
     uint8_t wire[3u + PROTO_MAX_PAYLOAD];
     size_t  n = frame_encode(type, payload, len, wire, sizeof wire);
     if (n != 0u) {
-        laser_uart_tx_buf(wire, (uint32_t)n);
+        uart_tx_buf(port, wire, (uint32_t)n);
     }
 }
 
-static void emit_status(void)
+static void tx_frame_all(uint8_t type, const uint8_t *payload, size_t len)
+{
+    tx_frame(&g_uart_pi,  type, payload, len);
+    tx_frame(&g_uart_usb, type, payload, len);
+}
+
+static void emit_status(UartPort *port)
 {
     StatusPayload s = {
         .intensity        = g_config_live.intensity,
@@ -479,7 +462,7 @@ static void emit_status(void)
         .estim_dur_ticks  = g_estim_config_live.pulse_dur_ticks,
         .estim_ipi_ticks  = g_estim_config_live.ipi_ticks,
     };
-    tx_frame(RSP_STATUS, (const uint8_t *)&s, sizeof s);
+    tx_frame(port, RSP_STATUS, (const uint8_t *)&s, sizeof s);
 }
 
 static void apply_estim_config(const uint8_t *payload)
@@ -493,50 +476,39 @@ static void apply_estim_config(const uint8_t *payload)
     g_estim_config_live.ipi_ticks       = c->ipi_ticks;
 }
 
-static void emit_pulse_event(uint8_t type, uint32_t tick)
-{
-    /* Payload is a bare little-endian u32. */
-    tx_frame(type, (const uint8_t *)&tick, sizeof tick);
-}
-
 static void apply_config(const uint8_t *payload)
 {
-    /* The decoder guarantees CMD_CONFIG_LEN bytes; read them through the
-     * packed struct (the compiler emits byte-wise access, safe on M0+).
-     * Apply only if every field is in range — config is atomic.  Each store
-     * is a single aligned write; the ISR snapshots the struct at latch time,
-     * so no IRQ bracketing is needed. */
     const ConfigPayload *c = (const ConfigPayload *)payload;
     if (c->intensity < INTENSITY_MIN || c->intensity > INTENSITY_MAX ||
         c->ramp_ticks < RAMP_TICKS_MIN || c->ramp_ticks > RAMP_TICKS_MAX ||
         c->hold_ticks < HOLD_TICKS_MIN || c->hold_ticks > HOLD_TICKS_MAX) {
-        return;   /* out of range: leave config unchanged; the STATUS echo
-                   * shows the host its CONFIG didn't take. */
+        return;   /* out of range: unchanged; the STATUS echo shows it */
     }
     g_config_live.intensity  = c->intensity;
     g_config_live.ramp_ticks = c->ramp_ticks;
     g_config_live.hold_ticks = c->hold_ticks;
 }
 
-static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
+static void process_frame(UartPort *port, uint8_t type,
+                          const uint8_t *payload, size_t len)
 {
     switch (type) {
         case CMD_CONFIG:
             if (len == CMD_CONFIG_LEN) {
                 apply_config(payload);
             }
-            emit_status();
+            emit_status(port);
             break;
 
         case CMD_TRIGGER:
             if (g_state.overall == OVERALL_WAITING) {
                 g_uart_trigger_pending = true;
             }
-            emit_status();
+            emit_status(port);
             break;
 
         case CMD_QUERY:
-            emit_status();
+            emit_status(port);
             break;
 
         case CMD_SET_MODE:
@@ -544,23 +516,17 @@ static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
                 uint8_t m = payload[0];
                 if (m == MODE_LASER || m == MODE_ESTIM) {
                     g_mode = m;
-                    if (m == MODE_ESTIM) {
-                        laser_dac_disable();
-                        laser_pins_to_gpio_safe();
-                    } else {
-                        laser_dac_write12(DAC_SETPOINT);
-                        laser_dac_enable();
-                    }
+                    laser_pins_to_gpio_safe();
                 }
             }
-            emit_status();
+            emit_status(port);
             break;
 
         case CMD_ESTIM_CONFIG:
             if (len == CMD_ESTIM_CONFIG_LEN) {
                 apply_estim_config(payload);
             }
-            emit_status();
+            emit_status(port);
             break;
 
         default:
@@ -568,39 +534,35 @@ static void process_frame(uint8_t type, const uint8_t *payload, size_t len)
     }
 }
 
-static void drain_uart(void)
+static void drain_uart(UartPort *port, FrameDecoder *dec)
 {
     uint8_t b;
-    while (laser_uart_rx_pop(&b)) {
+    while (uart_rx_pop(port, &b)) {
         uint8_t type;
         uint8_t payload[PROTO_MAX_PAYLOAD];
         size_t  len;
-        if (frame_decoder_push(&g_rx_decoder, b, &type,
-                               payload, sizeof payload, &len)) {
-            process_frame(type, payload, len);
+        if (frame_decoder_push(dec, b, &type, payload, sizeof payload, &len)) {
+            process_frame(port, type, payload, len);
         }
     }
 }
 
 static void emit_pending_events(void)
 {
-    /* The ISR fills each pulse record's tick before setting .pending, so
-     * reading .pending first guarantees the matching tick is visible.
-     * Pulse events are emitted for every trigger source. */
     if (g_pulse_start_evt.pending) {
         uint32_t tick = g_pulse_start_evt.tick;
         g_pulse_start_evt.pending = false;
-        emit_pulse_event(EVT_PULSE_START, tick);
+        tx_frame_all(EVT_PULSE_START, (const uint8_t *)&tick, sizeof tick);
     }
     if (g_pulse_end_evt.pending) {
         uint32_t tick = g_pulse_end_evt.tick;
         g_pulse_end_evt.pending = false;
-        emit_pulse_event(EVT_PULSE_END, tick);
+        tx_frame_all(EVT_PULSE_END, (const uint8_t *)&tick, sizeof tick);
     }
     if (g_btn_event.pending) {
         uint8_t p[2] = { g_btn_event.mask, g_btn_event.edges };
         g_btn_event.pending = false;
-        tx_frame(EVT_BUTTON, p, sizeof p);
+        tx_frame_all(EVT_BUTTON, p, sizeof p);
     }
 }
 
@@ -614,34 +576,28 @@ int main(void)
     laser_gpio_enable_power_and_reset();
     laser_gpio_init();
 
-    /* Boot indicator before any timer runs. */
+    /* Boot indicator on D7 before any timer runs — also the window in
+     * which `make flash` halts the core over SWD. */
     for (uint32_t n = 0u; n < BOOT_BLINK_FLASHES; n++) {
-        laser_gpio_stim_mirror_set();
+        laser_gpio_led_set();
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
-        laser_gpio_stim_mirror_clear();
+        laser_gpio_led_clear();
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
     }
-
-    /* The blink above is the SWD flashing window — PA19 is still SWDIO
-     * here.  We claim PA19 as the trigger input at the very end of init
-     * (just before the main loop) so OpenOCD has the whole blink + init to
-     * connect and halt. */
 
     laser_timera_init();
     laser_timerg_init_tick();
     laser_timerg_init_housekeeping();
-    laser_dac_init();
-    laser_dac_write12(DAC_SETPOINT);
-    laser_dac_enable();
-    laser_uart_init();
-    frame_decoder_init(&g_rx_decoder);
+    uart_init(&g_uart_pi,  UART1);
+    uart_init(&g_uart_usb, UART0);
+    frame_decoder_init(&g_rx_pi);
+    frame_decoder_init(&g_rx_usb);
 
     laser_pins_to_gpio_safe();
     laser_timera_start();
 
-    /* TIMG0 ISR now runs the state machine; gets the highest NVIC
-     * priority (numerically 0 on M0+).  TIMG6 housekeeping runs at a
-     * lower priority so it can never delay a pulse tick. */
+    /* TIMG0 runs the state machine at the highest priority; TIMG6
+     * housekeeping lower so it can never delay a pulse tick. */
     NVIC_SetPriority(TIMG0_INT_IRQn, 0);
     NVIC_SetPriority(TIMG6_INT_IRQn, 3);
     NVIC_EnableIRQ(TIMG0_INT_IRQn);
@@ -649,25 +605,21 @@ int main(void)
     laser_timerg_start_tick();
     laser_timerg_start_housekeeping();
 
+    NVIC_ClearPendingIRQ(UART1_INT_IRQn);
+    NVIC_EnableIRQ(UART1_INT_IRQn);
     NVIC_ClearPendingIRQ(UART0_INT_IRQn);
     NVIC_EnableIRQ(UART0_INT_IRQn);
 
-    /* GPIOA IRQ (shared GROUP1 vector) for the BNC trigger edge.
-     * Higher priority than housekeeping so a trigger reaches the ISR
-     * before the next 1 kHz housekeeping wake. */
+    /* GPIOA IRQ (shared GROUP1 vector) for the BNC and Pi trigger edges. */
     NVIC_SetPriority(GPIOA_INT_IRQn, 1);
     NVIC_ClearPendingIRQ(GPIOA_INT_IRQn);
     NVIC_EnableIRQ(GPIOA_INT_IRQn);
 
-    /* Claim PA19 as the Pi-GPIO trigger input now that the SWD flashing
-     * window (boot blink + init) has passed.  PA19 has an internal pull-down,
-     * so a released line idles low and can't self-trigger. */
-    laser_gpio_arm_pi_trigger();
-
     while (1) {
         if (g_housekeeping_due) {
             g_housekeeping_due = false;
-            drain_uart();
+            drain_uart(&g_uart_pi,  &g_rx_pi);
+            drain_uart(&g_uart_usb, &g_rx_usb);
             poll_buttons();
             emit_pending_events();
         }
@@ -682,48 +634,13 @@ void TIMG6_IRQHandler(void)
     }
 }
 
-/* MSPM0G3507 routes GPIOA (and several other peripherals) through the
- * shared INT_GROUP1 vector; the startup file names the handler
- * GROUP1_IRQHandler.  We're the only GROUP1 source in use, so a single
- * MIS check is enough. */
+/* GPIOA shares the INT_GROUP1 vector; we're the only GROUP1 source. */
 void GROUP1_IRQHandler(void)
 {
     uint32_t mis = GPIOA->CPU_INT.MIS;
-    uint32_t fired_mask = mis & (BOARD_BNC_TRIGGER_PIN | BOARD_PI_TRIGGER_PIN);
+    uint32_t fired_mask = mis & (BOARD_STIM_IN_PIN | BOARD_PI_TRIGGER_PIN);
     if (fired_mask) {
         GPIOA->CPU_INT.ICLR = fired_mask;
         g_hw_trigger_pending = true;
     }
 }
-
-/*
- * Copyright (c) 2021, Texas Instruments Incorporated
- * All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * *  Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * *  Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- *
- * *  Neither the name of Texas Instruments Incorporated nor the names of
- *    its contributors may be used to endorse or promote products derived
- *    from this software without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
- * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
- * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
- * EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
- * PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
- * OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
- * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
- * OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
- * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */

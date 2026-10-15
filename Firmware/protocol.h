@@ -36,7 +36,9 @@
                                      mode u8, estim_dur u32, estim_ipi u32 */
 #define EVT_PULSE_START   0x82u   /* tick u32 */
 #define EVT_PULSE_END     0x83u   /* tick u32 */
-#define EVT_BUTTON        0x84u   /* mask u8, edges u8 */
+#define EVT_BUTTON        0x84u   /* mask u8, edges u8 — bit 0 BACK (SW8), bit 1 SELECT
+                                     (wheel push), bits 2/3 wheel roll, bit 4 FIRE (SW9),
+                                     bit 5 BSL switch (SW6); Rev 2 HAT */
 
 /* Phase byte values in RSP_STATUS (ASCII 'W' / 'T'). */
 #define PHASE_WAITING     0x57u

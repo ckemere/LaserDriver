@@ -134,8 +134,8 @@
 
   <div class="card hidden" data-panel="estim">
     <div style="font-size: 13px; color: var(--muted); margin-bottom: 10px;">
-      EStim — pair of pulses on STIM_MIRROR (PA13). Laser outputs and constant-current
-      driver are disabled in this mode.
+      EStim — pair of pulses mirrored on the LED / STIM OUT only (bring-up build). The
+      module PWM lines on J8 stay safe in this mode.
     </div>
     <div class="row">
       <label>pulse dur</label>
@@ -161,8 +161,8 @@
     <button id="trigger-gpio" class="trigger trigger-gpio">TRIGGER (GPIO)</button>
     <div class="trigger-note">
       UART path waits for byte send + parse + state-machine tick (~300–700 µs,
-      with scheduler jitter).  GPIO path drives Pi GPIO 24 high so the MCU's
-      PA19 edge ISR fires the pulse directly (~50–100 µs, deterministic).
+      with scheduler jitter).  GPIO path drives Pi GPIO 26 high so the MCU's
+      PA27 edge ISR fires the pulse directly (~50–100 µs, deterministic).
     </div>
   </div>
 
@@ -171,10 +171,12 @@
       hardware buttons (live, debounced by the MCU)
     </div>
     <div class="buttons">
-      <span class="btn-pill" id="btn1">B1 trigger</span>
-      <span class="btn-pill" id="btn2">B2</span>
-      <span class="btn-pill" id="btn3">B3</span>
-      <span class="btn-pill" id="btn4">B4</span>
+      <span class="btn-pill" id="btn1">B1 BACK</span>
+      <span class="btn-pill" id="btn2">B2 SELECT</span>
+      <span class="btn-pill" id="btn3">B3 wheel</span>
+      <span class="btn-pill" id="btn4">B4 wheel</span>
+      <span class="btn-pill" id="btn5">B5 FIRE</span>
+      <span class="btn-pill" id="btn6">BSL</span>
     </div>
   </div>
 
@@ -255,7 +257,7 @@ async function refresh() {
     $("trigger").disabled      = s.phase === "T";
     $("trigger-gpio").disabled = s.phase === "T";
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 6; i++) {
       const el = $("btn" + (i + 1));
       const lit = (s.button_mask & (1 << i)) !== 0;
       el.classList.toggle("lit", lit);

@@ -1,13 +1,15 @@
 ---
 name: laserhat-next-tasks
-description: "Status 2026-10-01: all three Rev 2 boards ordered from JLC (fab/orders/); next = bring-up, then merge pcb-rev2 into main; Rev 2 firmware pin map still to write"
+description: "Status 2026-10-14: boards arrived; Rev 2 bring-up firmware written (HAT only, no modules); next = flash and run Firmware/TESTING.md, then module firmware, then merge pcb-rev2 into main"
 metadata:
   type: project
 ---
 
-0. **2026-10-01: HAT, laser module and e-stim module ordered** (archives in `fab/orders/`). When the hardware
-   works, merge `pcb-rev2` into `main`. Bring-up needs the Rev 2 firmware pin map (`Firmware/` is still Rev 1 apart
-   from `make flash HAT_REV=2`): buttons active-low on PA13/14/16/21/23, PWM on PA7/PA12 (TIMA0), FAULT PA6, UART1 to the Pi.
+0. **2026-10-14: boards arrived (ordered 2026-10-01, archives in `fab/orders/`).  Rev 2 bring-up firmware committed**
+   (`Firmware/`, HAT alone: buttons, LED, J8 PWM, BNCs, both UARTs; Pi side moved to GPIO26 trigger / GPIO18 power /
+   GPIO23 NRST; Rev 1 firmware = tag `firmware-rev1`).  Next: the user flashes and walks `Firmware/TESTING.md`; then
+   module firmware (laser: DAC setpoint + ADC readback; e-stim: spec §7 sequencing, bit-banged I²C, TIMA0 fault);
+   Pi header socket HLE-120-02-F-DV-BE ordered from Mouser.  When the hardware works, merge `pcb-rev2` into `main`.
 1. **Route `EStimDaughter/EStimDaughter.kicad_pcb` by hand** (the user, possibly with a second Claude session working
    — done, rev M4c). Then DRC with the project rules, `tools/netcheck.py`, `tools/jlc_fab.py`.
 2. **HAT:** e-stim outline (y 76–109, the M4c board) drawn on User.Drawings 2026-09-30 — done. Optionally the BNC

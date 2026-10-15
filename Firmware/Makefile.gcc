@@ -62,19 +62,20 @@ OPENOCD_TARGET     ?= target/ti_mspm0.cfg
 # Override on Pi 5: make flash OPENOCD_GPIOCHIP=4
 OPENOCD_GPIOCHIP   ?= 0
 # Pi GPIOs for SWD, reset and MCU power enable differ between HAT revisions:
-#   Rev 1: SWCLK 25, SWDIO 24, NRST 18, POWER_EN 23 (default)
-#   Rev 2: SWCLK 24, SWDIO 25, NRST 23, POWER_EN 18   ->  make flash HAT_REV=2
-HAT_REV            ?= 1
-ifeq ($(HAT_REV),2)
-OPENOCD_SWCLK      ?= 24
-OPENOCD_SWDIO      ?= 25
-OPENOCD_SRST       ?= 23
-PI_POWER_PIN       ?= 18
-else
+#   Rev 2: SWCLK 24, SWDIO 25, NRST 23, POWER_EN 18 (default; this firmware)
+#   Rev 1: SWCLK 25, SWDIO 24, NRST 18, POWER_EN 23  ->  make flash HAT_REV=1
+#          (the Rev 1 firmware itself is git tag `firmware-rev1`)
+HAT_REV            ?= 2
+ifeq ($(HAT_REV),1)
 OPENOCD_SWCLK      ?= 25
 OPENOCD_SWDIO      ?= 24
 OPENOCD_SRST       ?= 18
 PI_POWER_PIN       ?= 23
+else
+OPENOCD_SWCLK      ?= 24
+OPENOCD_SWDIO      ?= 25
+OPENOCD_SRST       ?= 23
+PI_POWER_PIN       ?= 18
 endif
 OPENOCD_GPIO_ARGS  := \
     -c "adapter gpio swclk -chip $(OPENOCD_GPIOCHIP) $(OPENOCD_SWCLK)" \
@@ -114,9 +115,9 @@ clean:
 # Flash the freshly-built ELF to the MCU over SWD via OpenOCD.
 # `load` and `burn` are aliases.
 #
-# Sequence: power_cycle.py brings the MCU up at fresh boot with PA19
-# in its SWDIO default, the kernel UART driver is parked so it can't
-# phantom-power the chip, and NRST is released.  OpenOCD then runs
+# Sequence: power_cycle.py brings the MCU up at fresh boot, the kernel
+# UART driver is parked so it can't phantom-power the chip, and NRST is
+# released.  OpenOCD then runs
 # an explicit init / halt / flash write / reset sequence — rather
 # than `program ... reset`, which triggers an automatic reset+halt
 # inside init that we've observed timing out (the MCU is in the
@@ -125,8 +126,8 @@ clean:
 #
 # No verify step: the target-side CRC algorithm in ti_mspm0.cfg /
 # OpenOCD 0.12.0+dev hangs the MCU, but the write itself is reliable.
-# Visual confirmation of a successful flash is the ~4-second
-# STIM_MIRROR boot blink right after this rule finishes.
+# Visual confirmation of a successful flash is the ~4-second boot
+# blink of the status LED D7 right after this rule finishes.
 flash load burn: $(TARGET_ELF) power_cycle
 	$(OPENOCD) -f $(OPENOCD_INTERFACE) $(OPENOCD_GPIO_ARGS) \
 	    -f $(OPENOCD_TARGET) \

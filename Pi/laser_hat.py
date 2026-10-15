@@ -29,7 +29,7 @@ class State:
     intensity: int          # 1..320
     ramp_ticks: int         # 100 kHz ticks
     hold_ticks: int
-    button_mask: int        # 4 bits, bit n = button n+1 pressed
+    button_mask: int        # 6 bits, bit n = button n+1 pressed (see protocol.py)
     phase: str              # 'W' (waiting) or 'T' (triggered)
     tick: int               # MSPM0 isr_ticks at the time of query
     mode: int = 0           # 0 = LASER, 1 = ESTIM
@@ -37,7 +37,7 @@ class State:
     estim_ipi_ticks: int = proto.ESTIM_TICKS_MIN
 
     def button(self, n: int) -> bool:
-        """True if button n (1..4) is pressed."""
+        """True if button n (1..6) is pressed."""
         return bool(self.button_mask & (1 << (n - 1)))
 
     @classmethod

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Power-cycle the LaserHAT's MSPM0 via Pi GPIO 23 (MCU_POWER_EN).
+"""Power-cycle the LaserHAT's MSPM0 via Pi GPIO 18 (MCU_POWER_EN, Rev 2 HAT).
 
 Uses Raspberry Pi OS's stock `pinctrl` tool — pre-installed on every
 recent Pi OS image, works the same on Pi 4 / Pi 5, doesn't care about
@@ -7,18 +7,19 @@ lgpio / RPi.GPIO.
 
 The trick that makes this actually reset the MCU: every Pi GPIO that
 connects to an MSP IO pin must be parked at a non-driving state before
-GPIO 23 cuts the rail, otherwise the MSP's IO ESD diodes clamp the
+GPIO 18 cuts the rail, otherwise the MSP's IO ESD diodes clamp the
 signal back to VDD and phantom-power the chip just enough to keep it
 half-running.  The biggest culprit in practice is Pi GPIO 14 (UART
 TX), which the kernel UART driver normally idles HIGH.
 
 Pins parked during the cycle:
     GPIO 14 (UART TX -> PA11 RX)  set to INPUT  (high-Z)
-    GPIO 18 (NRST)                drive LOW    (asserted)
-    GPIO 24 (SWDIO -> PA19)       set to INPUT
-    GPIO 25 (SWCLK -> PA20)       set to INPUT
+    GPIO 23 (NRST)                drive LOW    (asserted)
+    GPIO 24 (SWCLK -> PA20)       set to INPUT
+    GPIO 25 (SWDIO -> PA19)       set to INPUT
+    GPIO 26 (PI_TRIGGER -> PA27)  set to INPUT
 
-After the rail is restored, GPIO 18 (NRST) is released back to HIGH so
+After the rail is restored, GPIO 23 (NRST) is released back to HIGH so
 the MCU comes out of reset, and the UART/SWD pins are left as inputs
 — the kernel UART driver will reclaim GPIO 14/15 the next time
 something opens /dev/ttyS0, and OpenOCD reclaims 18/24/25 itself at
@@ -41,13 +42,13 @@ import sys
 import time
 
 
-# Rev 1 HAT wiring by default.  The Rev 2 HAT swaps them (power 18, NRST 23);
-# `make flash HAT_REV=2` sets these environment variables.
-POWER_PIN = int(os.environ.get("LASERHAT_POWER_PIN", 23))   # MCU_POWER_EN -> load-switch enable
-NRST_PIN  = int(os.environ.get("LASERHAT_NRST_PIN", 18))    # MSPM0 NRST
+# Rev 2 HAT wiring by default (power 18, NRST 23).  Rev 1 had them swapped;
+# `make flash HAT_REV=1` sets these environment variables for it.
+POWER_PIN = int(os.environ.get("LASERHAT_POWER_PIN", 18))   # MCU_POWER_EN -> U5 load-switch enable
+NRST_PIN  = int(os.environ.get("LASERHAT_NRST_PIN", 23))    # MSPM0 NRST
 # Pins to park (mode + drive state) so they can't phantom-power the MSP
 # through its IO ESD diodes during the brief power-off window.
-QUIET_PINS = [14, 24, 25]   # UART TX, SWDIO, SWCLK
+QUIET_PINS = [14, 24, 25, 26]   # UART TX, SWCLK, SWDIO, PI_TRIGGER
 
 # If we capture GPIO 14 in plain-input mode, that probably means a
 # previous power_cycle left it parked instead of restoring the kernel

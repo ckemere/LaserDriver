@@ -2,35 +2,36 @@
 #define PWM_TIMER_H
 
 #include <stdint.h>
+#include "mcu.h"
 
 /*
- * TIMA0 register-level driver — laser bridge PWM.
+ * TIMA0 register-level driver — module PWM on J8 (Rev 2).
  *
- * Configures TIMA0 for 100 kHz edge-aligned UP-counting PWM with
- * complementary CC0 / CC0_CMPL outputs:
+ * 100 kHz edge-aligned UP-counting PWM, BUSCLK = 32 MHz, period = 320:
  *
- *   BUSCLK = 32 MHz, prescale = 0, divide = 1, period = 320 counts
+ *   CCP1 (PA7,  PWM_A): HIGH at counter zero, LOW at counter == CC1
+ *                       -> duty = CC1 / 320 (CC1 = 320 -> 100 %)
+ *   CCP3 (PA12, PWM_B): LOW at zero, HIGH at counter == CC3, with
+ *                       CC3 == CC1 -> the complement of CCP1 (no deadband),
+ *                       i.e. the dummy switch conducts while the laser
+ *                       switch is off.
  *
- * UP mode (INIT_VAL_HIGH on CC0):
- *   - CCP0 goes HIGH at counter zero
- *   - CCP0 goes LOW at counter == CC0
- *   - Laser duty = CC0 / 320; CC0 = 0 -> ~0 %, CC0 = 320 -> 100 %
- *   - CCP0_CMPL (PA22) is the hardware complement
+ * CC writes latch at the next counter-zero event, so a duty update never
+ * glitches mid-period.  Pin-mux switching between GPIO-safe and PWM is in
+ * output_mux.c; this module only configures the timer.
  *
- * Pin-mux switching between GPIO-safe and PWM still lives in
- * laser_pwm_control.c; this module only configures the timer itself.
+ * The e-stim module uses the same two pins as independent EN / CATH
+ * edges (spec §7); that mode is not part of the bring-up build.
  */
 
 void laser_timera_init(void);
 void laser_timera_start(void);
 
-/* Hot-path duty update.  Inline so the state machine doesn't pay a
- * call overhead per tick. */
-#include "mcu.h"
+/* Hot-path duty update (called from the tick ISR). */
 static inline void laser_timera_set_duty(uint32_t step)
 {
-    /* CC_01[0] = CC0 register; UP mode -> duty = step / period. */
-    TIMA0->COUNTERREGS.CC_01[0] = step;
+    TIMA0->COUNTERREGS.CC_01[1] = step;   /* CC1: PWM_A duty */
+    TIMA0->COUNTERREGS.CC_23[1] = step;   /* CC3: PWM_B complement */
 }
 
 #endif /* PWM_TIMER_H */

@@ -64,42 +64,57 @@ already in the repo under `sdk/` — no additional downloads needed.
 |---|---|
 | `board.h` | Pin map (PINCMs, masks, function codes) |
 | `sysctl.c/h` | Clock tree, MFPCLK, BOR threshold |
-| `gpio.c/h` | GPIOA power, IOMUX init, button/LED inlines |
-| `output_mux.c/h` | Runtime IOMUX flips between GPIO-safe and TIMA0 |
-| `pwm_timer.c/h` | TIMA0 100 kHz complementary PWM |
-| `tick_timers.c/h` | TIMG0 100 kHz state-machine tick |
-| `dac.c/h` | DAC0 + internal VREF (2.5 V) |
-| `uart.c/h` | UART0 at 115200 8N1, RX ring buffer + blocking TX (`_tx_buf`) |
+| `gpio.c/h` | GPIOA power, IOMUX init, button/LED/STIM_OUT inlines |
+| `output_mux.c/h` | Runtime IOMUX flips between GPIO-safe and TIMA0 on PA7/PA12 |
+| `pwm_timer.c/h` | TIMA0 100 kHz PWM on CCP1 (PA7) with CCP3 (PA12) as its complement |
+| `tick_timers.c/h` | TIMG0 100 kHz state-machine tick, TIMG6 1 kHz housekeeping |
+| `dac.c/h` | DAC0 + internal VREF (2.5 V) — compiled, not used by the bring-up build |
+| `uart.c/h` | UART1 (Pi) + UART0 (USB-C) at 115200 8N1, one RX ring per port, blocking TX |
 | `protocol.h` | Binary wire protocol map (message types + field layout); mirror of `Pi/protocol.py` |
 | `framing.c/h` | Magic-word frame encode/decode (`SYNC \| TYPE \| payload`, no CRC) |
-| `main.c` | State machine, boot sequence, IRQ handlers, binary frame dispatch, `main` |
+| `main.c` | State machine, boot sequence, IRQ handlers, binary frame dispatch on both ports, `main` |
 
 Each peripheral module exposes an `_init()` (and where useful `_start()`)
 plus inline hot-path helpers. None of them include any `dl_*.h` driverlib
 header — only the bare device header `<ti/devices/msp/msp.h>`.
 
-## Pin map (U7, VQFN-32)
+## Pin map (U7, VQFN-32) — **Rev 2 HAT** (since 2026-10-14)
+
+The firmware targets the Rev 2 HAT only; the Rev 1 firmware is git tag
+`firmware-rev1`.  Authoritative map: `LaserHAT/CLAUDE.md` ("Rev 2 MCU pin
+map"); `board.h` mirrors it.
 
 | MCU pin | Net | Used by |
 |---|---|---|
-| PA3  | BUTTON1 | input, PULL_DOWN, active-high |
-| PA10 | UART0 TX | UART module |
-| PA11 | UART0 RX | UART module |
-| PA13 | STIM_MIRROR LED | mirrors laser-on; blinks during boot |
-| PA15 | DAC0 OUT | analog current setpoint |
-| PA19 | SWDIO | debug |
-| PA20 | SWCLK | debug |
-| PA21 | PWM_LASER | TIMA0_CCP0 (laser bridge) |
-| PA22 | PWM_DUMMY | TIMA0_CCP0_CMPL (dummy bridge) |
+| PA0/PA1 | I2C_SDA/SCL | Pi's I2C bus (OLED bonnet) — **left at reset default, never driven** |
+| PA2  | ROSC | 100 k 0.1 % for the SYSOSC frequency-correction loop (`sysctl.c`) |
+| PA6  | DB_GPIO = FAULT_n (J8.3) | input, pull-up; TIMA0_FAULT0 not armed yet |
+| PA7  | DB_PWM_A (J8.5) | TIMA0_CCP1, laser switch / EN; GPIO LOW when idle |
+| PA8/PA9 | PI_RXD/PI_TXD | **UART1** ↔ Pi GPIO15/14 (`/dev/ttyS0`) |
+| PA10/PA11 | MCU_UART_TX/RX | **UART0** ↔ CH340N on USB-C (and the ROM BSL) |
+| PA12 | DB_PWM_B (J8.4) | TIMA0_CCP3, dummy switch / CATH; complement of A, GPIO HIGH when idle |
+| PA13 / PA14 / PA16 | BUTTON4 / 2 / 3 | SW7 thumbwheel roll / push / roll, active low |
+| PA15, PA17, PA22 | DB_DAC, DB_ADC_A/B (J9) | module lines — left at reset default in the bring-up build |
+| PA18 | BSL_INVOKE | SW6, active high (ROM samples it at reset); read into button bit 5 |
+| PA19 / PA20 | SWDIO / SWCLK | ← Pi GPIO25 / GPIO24 |
+| PA21 | BUTTON1 | SW8 BACK, active low |
+| PA23 | BUTTON5 | SW9 FIRE, active low — fires a pulse on press |
+| PA24 | LED_MCU | D7: boot blink, 1 Hz heartbeat, solid during a pulse |
+| PA25 | MCU_STIM_OUT | → U8 → J7 BNC + D9; HIGH for the pulse envelope |
+| PA26 | MCU_STIM_IN | ← U8 ← J6 BNC; rising edge = trigger |
+| PA27 | PI_TRIGGER | ← Pi GPIO26; rising edge = trigger |
+| NRST | GPIO23 | ← Pi GPIO23 (R3 47 k, C3 10 n) |
 
-Full design map in `LaserHAT/gpio_design.md`.
+Pi side: GPIO18 = MCU_POWER_EN (U5), GPIO23 = NRST, GPIO24 = SWCLK,
+GPIO25 = SWDIO, GPIO26 = trigger, GPIO14/15 = UART.
 
 ## CRITICAL: Laser diode safety
 
-The MCU must boot with PA21 LOW (laser path OFF) and PA22 HIGH (dummy
-path conducting). `laser_gpio_init()` pre-loads DOUT bits before
+The MCU must boot with PA7 LOW (laser switch OFF) and PA12 HIGH (dummy
+switch conducting). `laser_gpio_init()` pre-loads DOUT bits before
 enabling outputs; `laser_pins_to_gpio_safe()` is called explicitly
 after `laser_timera_init()` so the IOMUX state at boot is unambiguous.
+PA0/PA1 must never be configured as outputs: they sit on the Pi's I2C bus.
 
 ## ISR and state-machine style
 
@@ -121,9 +136,9 @@ void TIMG0_IRQHandler(void)
 This is deliberate: keeping the whole machine in the highest-priority
 tick ISR means UART parsing, button polling, and housekeeping (all in
 `main`) can take as long as they like without shifting a PWM-duty
-write. The other ISRs stay minimal — `UART0_IRQHandler` pushes one RX
-byte into a ring; `TIMG6_IRQHandler` sets a housekeeping flag;
-`GROUP1_IRQHandler` sets the hardware-trigger flag. Flags shared
+write. The other ISRs stay minimal — `UART1_IRQHandler` / `UART0_IRQHandler`
+push one RX byte into their port's ring; `TIMG6_IRQHandler` sets a
+housekeeping flag; `GROUP1_IRQHandler` sets the hardware-trigger flag. Flags shared
 between an ISR and `main` are `volatile`.
 
 State is fully captured in `MachineState`. Within the tick ISR,

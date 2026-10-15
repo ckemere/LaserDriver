@@ -5,11 +5,13 @@ Broker-client design: does NOT open the serial port, runs alongside the
 web GUI.  Button presses arrive as EVT_BUTTON broadcasts; state arrives
 as broadcast snapshots — no polling.
 
-Button mapping (LaserHAT hardware buttons, reported by MCU):
-    B1  trigger pulse — firmware fires on release.
-    B2  cycle selected row (laser: i→r→h→[mode]; estim: dur→IPI→[mode])
-    B3  decrement selected value  (on [mode] row: no-op on −)
-    B4  increment selected value  (on [mode] row: toggle LASER↔ESTIM)
+Button mapping (Rev 2 HAT edge controls, reported by the MCU):
+    B5  FIRE (SW9)       — the firmware fires a pulse on press; nothing to do here
+    B2  SELECT (wheel push) — cycle selected row (laser: i→r→h→[mode]; estim: dur→IPI→[mode])
+    B3  wheel roll       — decrement selected value  (on [mode] row: switch to LASER)
+    B4  wheel roll       — increment selected value  (on [mode] row: switch to ESTIM)
+    B1  BACK (SW8)       — jump back to the first row
+  If the wheel turns out to roll the "wrong" way, swap B3/B4 below.
 
 Display layout (128×32, font 8px → 4 rows):
     Row 0  header: "LaserHAT[L|E]"  +  IP (right-aligned if it fits)
@@ -44,8 +46,8 @@ POLL_INTERVAL = 0.05         # seconds between state reads
 SETTLE_GAP    = 0.15         # render after this much quiet time
 IP_CHECK_GAP  = 30.0         # poll IP this often
 
-# Button bits in State.button_mask / EVT_BUTTON edges.
-B1, B2, B3, B4 = 0b0001, 0b0010, 0b0100, 0b1000
+# Button bits in State.button_mask / EVT_BUTTON edges (see Pi/protocol.py).
+B1, B2, B3, B4, B5 = 0b00001, 0b00010, 0b00100, 0b01000, 0b10000
 
 # Sentinel object for the mode-toggle row in the selection cycle.
 _MODE_ITEM = object()
@@ -195,6 +197,8 @@ def main() -> int:
 
         with ui_lock:
             ui["last_press"] = time.monotonic()
+            if edges & B1:
+                ui["selected"] = 0
             if edges & B2:
                 ui["selected"] = (ui["selected"] + 1) % len(items)
             # Clamp in case mode just switched and shrunk the item list.
