@@ -9,7 +9,10 @@ metadata:
    (`Firmware/`, HAT alone: buttons, LED, J8 PWM, BNCs, both UARTs; Pi side moved to GPIO26 trigger / GPIO18 power /
    GPIO23 NRST; Rev 1 firmware = tag `firmware-rev1`).  Next: the user flashes and walks `Firmware/TESTING.md`; then
    module firmware (laser: DAC setpoint + ADC readback; e-stim: spec §7 sequencing, bit-banged I²C, TIMA0 fault);
-   Pi header socket HLE-120-02-F-DV-BE ordered from Mouser.  When the hardware works, merge `pcb-rev2` into `main`.
+   Pi header socket HLE-120-02-F-DV-BE ordered from Mouser.  **Delivery = tag:** `main` (C broker, Debian package,
+   `.github/workflows/pi-deploy.yml`) was merged into `pcb-rev2` on 2026-10-14; pushing a `v*` tag builds the debs and
+   the golden Raspberry Pi OS images with this firmware (first Rev 2 tag: `v0.2.0-rc1`); on the Pi `sudo laserhat-flash`
+   programs the MCU with the Rev 2 pins in `Firmware/openocd/pi-swd.cfg`.  When the hardware works, merge `pcb-rev2` into `main`.
 1. **Route `EStimDaughter/EStimDaughter.kicad_pcb` by hand** (the user, possibly with a second Claude session working
    — done, rev M4c). Then DRC with the project rules, `tools/netcheck.py`, `tools/jlc_fab.py`.
 2. **HAT:** e-stim outline (y 76–109, the M4c board) drawn on User.Drawings 2026-09-30 — done. Optionally the BNC
