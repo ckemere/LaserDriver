@@ -103,7 +103,7 @@ U8, a TLV1702 dual comparator running from the ±V rails (36 V, rail-to-rail inp
 | Top SMT (45) | U1 ISO7741F (SSOP-16), U9 ISO1640 (SOIC-8), U2 TLV76050 (SOT-23), U4 DAC60501Z (VSSOP-10), U5 OPA2192 (VSSOP-8), U6 ADG1436 (LFCSP-16 4 × 4 mm), U7 DG419BDQ (MSOP-8), U8 TLV1702 (VSSOP-8), D2 (SOD-323), 34 passives, plus two bare test pads TP1 ISENSE / TP2 GND_ISO |
 | Bottom SMT | **none** (single-sided assembly, JLC Economic tier) |
 | Through-hole, hand-soldered | **J8, J9**: male 1×5 0.1" headers on the **underside**, into the HAT sockets. **J1**: 1×2 0.1" right-angle electrode header on the south edge. Its plastic body overhangs the edge by about 2.5 mm and its pins by about 9 mm. |
-| **DNP** | **PS1**, the isolated 5 V → ±15 V DC-DC (SIP, pins 1 2 4 5 6 on 0.1", 10 mm tall, top side). Fit one of: RECOM **RB-0515D/HP** (Mouser; verified drop-in), Mornsun A0515S-1WR3, or LCSC C5369388 (YLPTEC). Solder it or use a machined-pin SIP socket. Alternatively leave it empty and wire two battery packs: + → **+V**, centre tap → **0V**, − → **−V** (up to ±18 V; draw about 10 mA per rail). |
+| **DNP** | **PS1**, the isolated 5 V → ±15 V DC-DC (SIP, pins 1 2 4 5 6 on 0.1", 10 mm tall, top side). Fit one of: RECOM **RB-0515D/HP** (Mouser 919-RB-0515D/HP; verified drop-in), Mornsun A0515S-1WR3, or LCSC C5369388 (YLPTEC). Solder it or use a machined-pin SIP socket. Alternatively leave it empty and wire two battery packs: + → **+V**, centre tap → **0V**, − → **−V** (up to ±18 V; draw about 10 mA per rail). |
 | LCSC parts | 29 unique (M1: 25; M2 adds LM393DGKR C34440 and the 12 k / 27 k / 110 k 0402 resistors). Stock checked 2026-09-26 for the M1 set; re-run `tools/lcsc_check.py` before ordering. |
 
 Extended parts:
