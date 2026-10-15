@@ -21,7 +21,9 @@
  *   - the status LED D7 (boot blink, 1 Hz heartbeat when idle, solid
  *     during a pulse, 5 Hz blink while a module fault is latched);
  *   - LASER mode: TIMA0 PWM on J8 (CCP1 = laser switch, CCP3 = dummy
- *     switch complement), DAC0 on J9.3 sets the module's current (IREF),
+ *     switch complement), DAC0 on J9.3 sets the module's current (IREF)
+ *     for the duration of a pulse and is zero between pulses (the module's
+ *     cascode Q1 must not carry dummy current continuously, REV2_NOTES),
  *     ADC1 reads the photodiode (J9.4) and the compliance rail (J9.5);
  *   - ESTIM mode (spec §7): EN / CATH / RELEASE driven as GPIOs from the
  *     tick ISR (10 µs grid) — RELEASE + CATH, EN pulse, CATH low in the
@@ -108,8 +110,9 @@ static EstimConfig g_estim_config_active;   /* ISR-only */
 static volatile uint8_t g_mode = MODE_LASER;
 static          uint8_t g_mode_active;      /* ISR-only, latched at trigger */
 
-/* Module setpoints (main-owned; the laser one is applied to DAC0 directly,
- * the e-stim one is written to the module's DAC between trains). */
+/* Module setpoints (main-owned; the laser one is written to DAC0 by the
+ * tick ISR at pulse start and zeroed at pulse end, the e-stim one is
+ * written to the module's DAC between trains). */
 static volatile uint16_t g_laser_dac = LASER_DAC_DEFAULT;
 static volatile uint16_t g_estim_dac = ESTIM_DAC_DEFAULT;
 static volatile bool     g_estim_dac_pending = true;
@@ -283,6 +286,9 @@ static inline void latch_config_from_live(void)
 
 static inline void abort_to_waiting(void)
 {
+    if (g_mode_active == MODE_LASER) {
+        laser_dac_write12(0u);          /* no dummy current between pulses */
+    }
     g_state.laser     = LASER_IDLE;
     g_state.estim     = ESTIM_IDLE;
     g_state.ramp_step = 0u;
@@ -323,6 +329,8 @@ static inline void state_machine_tick(void)
                 } else {
                     g_state.laser     = LASER_RAMP_UP;
                     g_state.ramp_step = 0u;
+                    laser_dac_write12(g_laser_dac);   /* IREF up; the first
+                                                         ramp step is dummy-only */
                 }
                 g_pulse_start_evt.tick    = g_isr_ticks;
                 g_pulse_start_evt.pending = true;
@@ -523,7 +531,7 @@ static void enter_mode(uint8_t mode)
 
     if (mode == MODE_LASER) {
         module_laser_pins();            /* PA15 DAC, PA17/PA22 ADC */
-        laser_dac_write12(g_laser_dac);
+        laser_dac_write12(0u);          /* setpoint goes out at pulse start */
         laser_dac_enable();
     } else {
         laser_dac_disable();
@@ -666,7 +674,7 @@ static void poll_buttons(void)
  *   CMD_QUERY           -> RSP_STATUS
  *   CMD_SET_MODE        -> RSP_STATUS    (refused while a pulse runs)
  *   CMD_ESTIM_CONFIG    -> RSP_STATUS
- *   CMD_LASER_CURRENT   -> RSP_STATUS    (DAC0 code, applied at once in laser mode)
+ *   CMD_LASER_CURRENT   -> RSP_STATUS    (DAC0 code for the next pulse; mid-pulse: now)
  *   CMD_ESTIM_CURRENT   -> RSP_STATUS    (module DAC code, written between trains)
  *   CMD_CLEAR_FAULT     -> RSP_STATUS
  *   (async)             -> EVT_BUTTON on any debounced button change,
@@ -782,9 +790,15 @@ static void process_frame(UartPort *port, uint8_t type,
                 uint16_t code = ((const DacPayload *)payload)->dac;
                 if (code <= LASER_DAC_MAX) {
                     g_laser_dac = code;
-                    if (g_mode == MODE_LASER) {
+                    /* Mid-pulse: take effect now.  Masked so the tick ISR
+                     * cannot end the pulse (and zero DAC0) between the
+                     * check and the write. */
+                    __asm volatile ("cpsid i" ::: "memory");
+                    if (g_mode == MODE_LASER &&
+                        g_state.overall == OVERALL_TRIGGERED) {
                         laser_dac_write12(code);
                     }
+                    __asm volatile ("cpsie i" ::: "memory");
                 }
             }
             emit_status(port);
@@ -876,7 +890,7 @@ int main(void)
     frame_decoder_init(&g_rx_pi);
     frame_decoder_init(&g_rx_usb);
 
-    enter_mode(MODE_LASER);             /* gpio-safe pins, DAC0 at the default setpoint */
+    enter_mode(MODE_LASER);             /* gpio-safe pins, DAC0 at zero until a pulse */
     laser_timera_start();
 
     /* TIMG0 runs the state machine at the highest priority; TIMG6

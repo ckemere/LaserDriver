@@ -86,7 +86,7 @@ parts, footprint ids, values, DNP, pad nets, paths) → 0 differences.
   `make flash` (Rev 2 is the default since 2026-10-14; `HAT_REV=1` for the old board; `Pi/power_cycle.py` reads LASERHAT_*_PIN).
 - **Firmware is Rev 2 since 2026-10-14** (`Firmware/board.h`; HAT bring-up build = tag `v0.2.0-rc1`).  The same day
   the module firmware followed: LASER mode = TIMA0 PWM + DAC0 setpoint on J9.3 (`CMD_LASER_CURRENT`, VDDA ref, default
-  ≈100 mA) + ADC1 readback of J9.4/J9.5; ESTIM mode = spec §7 sequencing on EN/CATH/RELEASE as GPIOs, DAC60501 over
+  ≈100 mA; DAC0 is zero between pulses, per the Q1 cascode rule) + ADC1 readback of J9.4/J9.5; ESTIM mode = spec §7 sequencing on EN/CATH/RELEASE as GPIOs, DAC60501 over
   bit-banged I²C (`CMD_ESTIM_CURRENT`), FAULT_n GPIO-IRQ kill + latch (`EVT_FAULT`, `CMD_CLEAR_FAULT`).  Boot blink is
   ~2 s (was 4 s; it only mattered on Rev 1, where SWDIO became the trigger after it).  Rev 1 firmware = tag `firmware-rev1`.
 - OLED bonnet (Adafruit 4567) runs only on 3.3 V and ties header pins 1/17 together itself.

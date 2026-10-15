@@ -109,24 +109,54 @@ journalctl -u laserhat-broker.service -f        # "serving …", no "UART read e
 
 ## 10. Laser module (MCU powered down while plugging it in; laser diode last)
 With the broker stopped, HAT powered, **no diode in J2 yet** (the dummy
-load takes the current):
-- [ ] J9.3 (DB_DAC) reads ≈ 0.98 V with the default `current` (DAC code
-      1216 ≈ 100 mA): `python3 Pi/laser_hat.py query` shows `laser_dac=1216`;
-      `python3 Pi/laser_hat.py current 2432` doubles the voltage (≈ 1.96 V);
+load takes the current).  Everything up to the diode can be checked with a
+multimeter; a scope is only needed to look at the PWM steering itself.
+
+**Static (no pulse):**
+- [ ] LASER_V (across C9, or D1's cathode) is 5 V or ≈ 12 V with SW5, and
+      J9.5 (DB_ADC_B, the R1/R2 tap) reads ≈ 1.24 V / ≈ 2.98 V.
+      `python3 Pi/laser_hat.py query` shows `adc_comp` ≈ 1540 / ≈ 3700 and
+      the web page "compliance … V" agrees.  `adc_pd` moves when light hits
+      the photodiode.
+- [ ] J9.3 (DB_DAC) reads **0 V** between pulses: the setpoint is only put on
+      DAC0 while a pulse runs (the module's Q1 must not carry the dummy
+      current continuously).  `query` still shows `laser_dac=1216`;
       `current 4000` is refused (echo keeps the old code; max 3650 ≈ 300 mA).
-- [ ] `adc_comp` tracks the module's LASER_V: ≈ 1540 at 5 V, ≈ 3700 at 12 V
-      (SW5); the web page shows it as "compliance … V".  `adc_pd` moves when
-      light hits the photodiode.
-- [ ] Trigger with a scope on Rs1 (2 Ω sense): the current follows the PWM
-      duty ramp and reaches ≈ `laser_dac × 0.082 mA` at full intensity,
-      i.e. ≈ 100 mA at the default.  `python3 Pi/laser_hat.py config 320 200000 200000`
-      makes the ramp/hold 2 s each for easy viewing.
+
+**Long pulse for the meter** (the current sink runs with the laser leg open
+for 1/320 of each PWM period, so Rs1 sees ≈ all of it):
+- [ ] `python3 Pi/laser_hat.py config 1 1 10000000` (intensity 1/320, 100 s
+      hold), then `trigger`.  During the pulse (D7 solid, STIM OUT high):
+      J9.3 ≈ 0.98 V (code 1216), IREF (the R4/C11 node) ≈ 0.20 V, and
+      **≈ 0.20 V across Rs1 = 100 mA**.  `current 2432` mid-pulse doubles
+      all three (1.96 V / 0.40 V / 200 mA).  Dissipation at the 5 V setting
+      is ≈ 0.2 W, fine for 100 s; **at 12 V use `config 1 1 500000`
+      (5 s)** — the dummy leg would put ≈ 0.9 W into Q1 at 100 mA.
+      `config 320 8000 10000` restores the defaults.
+- [ ] Scope on Rs1 with the defaults: the current follows the PWM duty ramp
+      (in the dummy leg between the on-slices with no diode fitted) and the
+      sink turns off at pulse end.  `config 320 200000 200000` makes the
+      ramp/hold 2 s each for easy viewing.
 - [ ] Then the diode: start with `current 600` (≈ 50 mA), raise in steps;
       the OLED `ld:` row and the web "current" row show mA.
 - [ ] FAULT_n is open on this module → `module` flags stay 0, D7 never
       blinks at 5 Hz.
 
 ## 11. E-stim module (no electrodes connected; load = 10 kΩ across the output)
+**With a multimeter only (nothing on J1):** the isolated rails and the
+whole amplitude chain can be checked without a load; only the pulse itself
+needs the 10 kΩ and a scope.
+- [ ] Against TP2 (GND_ISO): PS1 pin 6 ≈ +15 V, pin 4 ≈ −15 V, +5V_ISO (U2
+      output / C7) ≈ 5 V.  J8.3 (FAULT_n, against HAT GND) ≈ 3.3 V with the
+      isolated side up, 0 V with it down; `query` `module` = 0x00 / 0x01.
+- [ ] `mode estim`, then `estim-current 820`: U4 pin 2 (VSET_P, the R10 end)
+      ≈ 0.25 V against TP2 and VSET_N (U5 pin 7, the R11 end) ≈ −0.25 V;
+      `estim-current 4095` → ≈ 1.25 V / −1.25 V.  1.0 V instead of 0.25 V
+      means the GAIN register was not written (power-on ×2 gain, ×2 ref).
+- [ ] With J1 open, `trigger`: the detector sees an open electrode on the
+      first EN edge, so `EVT_FAULT` appears, D7 blinks at 5 Hz and
+      `clear-fault` restores it — the fault path tested without a load.
+
 - [ ] Plug the module in with the HAT unpowered, power the HAT, start the
       broker: `module` shows `FAULT_n low` (0x01) until the isolated side is
       powered (packs / converter), then 0x00.

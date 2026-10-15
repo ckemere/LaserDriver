@@ -125,8 +125,11 @@ PA0/PA1 must never be configured as outputs: they sit on the Pi's I2C bus.
 J8/J9 (`module.c`):
 
 - **LASER:** PA7/PA12 flip between GPIO-safe and TIMA0 PWM per tick; DAC0
-  drives J9.3 with `g_laser_dac` (default 1216 ≈ 100 mA; `CMD_LASER_CURRENT`,
-  max 3650 ≈ 300 mA); ADC1 samples J9.4/J9.5 every 10 ms from housekeeping.
+  drives J9.3 with `g_laser_dac` **for the duration of a pulse only** (written
+  at trigger, zeroed at pulse end: the module's cascode Q1 must not carry the
+  dummy current continuously, REV2_NOTES "Q1 is a cascode"; default 1216 ≈
+  100 mA; `CMD_LASER_CURRENT`, max 3650 ≈ 300 mA, applied at once if a pulse
+  is running); ADC1 samples J9.4/J9.5 every 10 ms from housekeeping.
 - **ESTIM (spec §7):** PA7 = EN, PA12 = CATH (idle LOW), PA15 = RELEASE are
   driven as GPIOs by the tick ISR: PRE (RELEASE + CATH high, 10 µs) → PULSE1
   (EN) → gap (CATH low) → PULSE2 (EN) → POST (RELEASE high 200 µs) → RESET

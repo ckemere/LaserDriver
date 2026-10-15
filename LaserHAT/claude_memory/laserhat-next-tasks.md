@@ -1,10 +1,15 @@
 ---
 name: laserhat-next-tasks
-description: "Status 2026-10-14: HAT bring-up firmware works on hardware (v0.2.0-rc1); module firmware (laser DAC/ADC, e-stim spec §7, fault latch) committed, untested on modules; next = user tests TESTING.md steps 10-11, then merge pcb-rev2 into main"
+description: "Status 2026-10-15: HAT firmware works on hardware; module firmware in v0.2.0-rc3 (laser DAC zero between pulses, e-stim spec §7, fault latch), untested on modules; next = user tests TESTING.md steps 10-11 (multimeter checks added), then merge pcb-rev2 into main"
 metadata:
   type: project
 ---
 
+0b. **2026-10-15:** rc2 held the laser DAC at the setpoint continuously; the module's cascode rule (REV2_NOTES "Q1 is a
+   cascode": no dummy current between pulses) says it must be zero between pulses.  Fixed in `v0.2.0-rc3` (DAC0 written at
+   trigger, zeroed at pulse end; `current` mid-pulse applies at once).  TESTING.md 10/11 now have multimeter-only checks
+   (laser: `config 1 1 10000000` long pulse, Rs1 0.20 V = 100 mA; e-stim: rails vs TP2, VSET_P = 0.25 V at code 820).
+   PS1 for the e-stim module ordered from Mouser (919-RB-0515D/HP).
 0a. **2026-10-14 evening: the user flashed v0.2.0-rc1 and reported "Success!" (HAT alone).**  Module firmware then
    written (LASER: DAC0 setpoint `CMD_LASER_CURRENT` + ADC1 readback; ESTIM: spec §7 GPIO sequencing, bit-banged
    I²C DAC60501 `CMD_ESTIM_CURRENT`, FAULT_n GPIO-IRQ latch `EVT_FAULT`/`CMD_CLEAR_FAULT`; STATUS = 34 bytes; boot

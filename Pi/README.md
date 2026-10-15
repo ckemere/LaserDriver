@@ -165,7 +165,7 @@ sudo systemctl start laserhat-broker.service
 ```
 
 **Modules.** With the laser module in J8/J9 the laser rows are intensity /
-ramp / hold / **current** (DAC code; the GUIs show mA) and the web page shows
+ramp / hold / **current** (DAC code; the GUIs show mA; it reaches the module only while a pulse runs) and the web page shows
 the module's compliance rail and photodiode readings.  In e-stim mode the rows
 are pulse dur / IPI / **amplitude** (DAC code; shown in µA); the amplitude is
 written to the module's DAC between trains and the row shows `!` until the

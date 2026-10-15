@@ -257,7 +257,9 @@ Host -> MCU                              MCU -> Host
 ```
 
 Defaults at boot: `i=320 r=8000 h=10000`, laser mode, `laser_dac=1216`
-(≈100 mA), `estim_dac=0`.  **Every command is answered with `RSP_STATUS`**
+(≈100 mA), `estim_dac=0`.  DAC0 (J9.3) carries `laser_dac` only while a
+pulse runs and reads 0 V between pulses (no dummy current between pulses;
+the module's Q1 is not rated for it continuously).  **Every command is answered with `RSP_STATUS`**
 (status-as-ack) — so the host confirms the resulting state end-to-end; that
 echo is the integrity check.  `CMD_CONFIG` sets all three stim parameters at
 once (atomic; out-of-range leaves the config unchanged, which the echo
