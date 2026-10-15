@@ -1,0 +1,26 @@
+# LaserHAT wired-network profile (NetworkManager keyfile).
+#
+# Fixes eth0 at 192.168.17.10/24 with NO gateway (never-default), so the
+# wired port is a lab point-to-point link to the recording rig and the
+# wifi interface keeps providing the default route / internet via DHCP.
+#
+# Installed to /etc/NetworkManager/system-connections/ — must be mode
+# 0600 root:root or NetworkManager refuses to load it.
+
+[connection]
+id=laserhat-eth0
+uuid=6fed94b1-9b93-44c7-818e-3cd1c77ffc69
+type=ethernet
+interface-name=eth0
+autoconnect=true
+autoconnect-priority=100
+
+[ethernet]
+
+[ipv4]
+method=manual
+address1=192.168.17.10/24
+never-default=true
+
+[ipv6]
+method=disabled

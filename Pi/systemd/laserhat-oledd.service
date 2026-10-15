@@ -1,0 +1,41 @@
+# LaserHAT OLED panel daemon — the compiled SSD1305 driver (oledd.c).
+#
+# Owns /dev/i2c-1 + the panel and needs nothing else: it starts at boot
+# before the broker or any network, immediately showing hostname, the
+# wired/wifi IP addresses (or WAITING) and the heartbeat dot.  The OLED
+# GUI connects to /run/laserhat-oled/oled.sock and takes over the body
+# rows when it comes up.
+#
+# Installed by the laserhat package; the 'laserhat' system user is
+# created in the package postinst.
+
+[Unit]
+Description=LaserHAT OLED panel daemon (SSD1305, owns the display)
+# Start as early in boot as possible — the panel is the boot indicator.
+# No default dependencies (those would hold it until basic.target), and
+# no local-fs.target either (that waits on the boot-partition fsck):
+# oledd needs only the already-mounted rootfs, /run, and the I2C
+# modules from modules-load — and it retries the device open anyway,
+# so udev/permission timing doesn't matter.
+DefaultDependencies=no
+After=systemd-modules-load.service
+Conflicts=shutdown.target
+Before=shutdown.target
+
+[Service]
+Type=simple
+User=laserhat
+Group=laserhat
+# /dev/i2c-1 is root:i2c; /dev/gpiochip* (panel reset line) is root:gpio.
+SupplementaryGroups=i2c gpio
+RuntimeDirectory=laserhat-oled
+RuntimeDirectoryMode=0755
+Environment=LASERHAT_OLED_SOCK=/run/laserhat-oled/oled.sock
+ExecStart=/usr/bin/laserhat-oledd
+Restart=always
+RestartSec=2
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=sysinit.target

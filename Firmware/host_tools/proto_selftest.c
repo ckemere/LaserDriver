@@ -72,17 +72,27 @@ int main(int argc, char **argv)
         print_hex((const uint8_t *)&c, sizeof c);
         return 0;
     }
-    if (argc == 8 && strcmp(argv[1], "status") == 0) {
+    if (argc == 11 && strcmp(argv[1], "status") == 0) {
         StatusPayload s;
-        s.intensity   = (uint16_t)strtoul(argv[2], NULL, 10);
-        s.ramp_ticks  = (uint32_t)strtoul(argv[3], NULL, 10);
-        s.hold_ticks  = (uint32_t)strtoul(argv[4], NULL, 10);
-        s.button_mask = (uint8_t)strtoul(argv[5], NULL, 10);
-        s.phase       = (uint8_t)strtoul(argv[6], NULL, 10);
-        s.tick        = (uint32_t)strtoul(argv[7], NULL, 10);
+        s.intensity       = (uint16_t)strtoul(argv[2], NULL, 10);
+        s.ramp_ticks      = (uint32_t)strtoul(argv[3], NULL, 10);
+        s.hold_ticks      = (uint32_t)strtoul(argv[4], NULL, 10);
+        s.button_mask     = (uint8_t)strtoul(argv[5], NULL, 10);
+        s.phase           = (uint8_t)strtoul(argv[6], NULL, 10);
+        s.tick            = (uint32_t)strtoul(argv[7], NULL, 10);
+        s.mode            = (uint8_t)strtoul(argv[8], NULL, 10);
+        s.estim_dur_ticks = (uint32_t)strtoul(argv[9], NULL, 10);
+        s.estim_ipi_ticks = (uint32_t)strtoul(argv[10], NULL, 10);
         print_hex((const uint8_t *)&s, sizeof s);
         return 0;
     }
-    fprintf(stderr, "usage: %s encode|decode|config|status ...\n", argv[0]);
+    if (argc == 4 && strcmp(argv[1], "estim") == 0) {
+        EstimConfigPayload e;
+        e.pulse_dur_ticks = (uint32_t)strtoul(argv[2], NULL, 10);
+        e.ipi_ticks       = (uint32_t)strtoul(argv[3], NULL, 10);
+        print_hex((const uint8_t *)&e, sizeof e);
+        return 0;
+    }
+    fprintf(stderr, "usage: %s encode|decode|config|status|estim ...\n", argv[0]);
     return 2;
 }

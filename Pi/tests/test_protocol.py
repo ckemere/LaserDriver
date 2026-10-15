@@ -36,6 +36,7 @@ def test_status_roundtrip():
     assert p.unpack_status(payload) == {
         "intensity": 200, "ramp_ticks": 8000, "hold_ticks": 10000,
         "button_mask": 0b1010, "phase": "T", "tick": 123456,
+        "mode": p.MODE_LASER, "estim_dur_ticks": 10, "estim_ipi_ticks": 10,
     }
 
 

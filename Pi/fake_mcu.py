@@ -33,7 +33,9 @@ class FakeMCU:
         self._lock = threading.Lock()
         self._t0 = time.monotonic()
         self.state = {"intensity": 320, "ramp_ticks": 8000, "hold_ticks": 10000,
-                      "button_mask": 0, "phase": "W"}
+                      "button_mask": 0, "phase": "W",
+                      "mode": proto.MODE_LASER,
+                      "estim_dur_ticks": 10, "estim_ipi_ticks": 10}
 
     def _tick(self) -> int:
         return int((time.monotonic() - self._t0) * 100_000) & 0xFFFFFFFF
@@ -48,7 +50,8 @@ class FakeMCU:
             s["intensity"], s["ramp_ticks"], s["hold_ticks"],
             s["button_mask"],
             proto.PHASE_WAITING if s["phase"] == "W" else proto.PHASE_TRIGGERED,
-            self._tick()))
+            self._tick(),
+            s["mode"], s["estim_dur_ticks"], s["estim_ipi_ticks"]))
 
     def _do_pulse(self) -> None:
         self.state["phase"] = "T"
@@ -73,6 +76,16 @@ class FakeMCU:
                 threading.Thread(target=self._do_pulse, daemon=True).start()
             self._send_status()
         elif mtype == proto.CMD_QUERY:
+            self._send_status()
+        elif mtype == proto.CMD_SET_MODE and len(payload) == 1:
+            if payload[0] in (proto.MODE_LASER, proto.MODE_ESTIM):
+                self.state["mode"] = payload[0]
+            self._send_status()          # status-as-ack (echoes result)
+        elif mtype == proto.CMD_ESTIM_CONFIG and len(payload) == 8:
+            dur, ipi = proto._ESTIM_CONFIG.unpack(payload)
+            if (proto.ESTIM_TICKS_MIN <= dur <= proto.ESTIM_TICKS_MAX
+                    and proto.ESTIM_TICKS_MIN <= ipi <= proto.ESTIM_TICKS_MAX):
+                self.state.update(estim_dur_ticks=dur, estim_ipi_ticks=ipi)
             self._send_status()
 
     def run(self) -> None:
