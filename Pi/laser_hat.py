@@ -35,10 +35,39 @@ class State:
     mode: int = 0           # 0 = LASER, 1 = ESTIM
     estim_dur_ticks: int = proto.ESTIM_TICKS_MIN   # 100 kHz ticks (10–10000 µs)
     estim_ipi_ticks: int = proto.ESTIM_TICKS_MIN
+    laser_dac: int = proto.LASER_DAC_DEFAULT       # DAC0 code (laser module current)
+    estim_dac: int = proto.ESTIM_DAC_DEFAULT       # DAC60501 code (e-stim amplitude)
+    module: int = 0         # MODULE_* flag bits (see protocol.py)
+    adc_pd: int = 0         # photodiode ADC code (laser mode)
+    adc_comp: int = 0       # compliance-rail ADC code (laser mode)
 
     def button(self, n: int) -> bool:
         """True if button n (1..6) is pressed."""
         return bool(self.button_mask & (1 << (n - 1)))
+
+    @property
+    def fault_latched(self) -> bool:
+        return bool(self.module & proto.MODULE_FAULT_LATCHED)
+
+    @property
+    def fault_n_low(self) -> bool:
+        return bool(self.module & proto.MODULE_FAULT_N_LOW)
+
+    @property
+    def estim_ready(self) -> bool:
+        return bool(self.module & proto.MODULE_ESTIM_READY)
+
+    @property
+    def laser_ma(self) -> float:
+        return proto.laser_dac_to_ma(self.laser_dac)
+
+    @property
+    def estim_ua(self) -> float:
+        return proto.estim_dac_to_ua(self.estim_dac)
+
+    @property
+    def compliance_v(self) -> float:
+        return proto.comp_to_volts(self.adc_comp)
 
     @classmethod
     def from_status_payload(cls, payload: bytes) -> "State":
@@ -105,6 +134,13 @@ def _main() -> int:
     sp.add_argument("intensity", type=int)
     sp.add_argument("ramp", type=int)
     sp.add_argument("hold", type=int)
+    sp = sub.add_parser("mode", help="switch module mode")
+    sp.add_argument("mode", choices=["laser", "estim"])
+    sp = sub.add_parser("current", help="laser module current setpoint (DAC code, ~0.082 mA each)")
+    sp.add_argument("dac", type=int)
+    sp = sub.add_parser("estim-current", help="e-stim module amplitude (DAC code, ~0.12 µA each)")
+    sp.add_argument("dac", type=int)
+    sub.add_parser("clear-fault", help="clear a latched module fault")
 
     args = p.parse_args()
     uart = LaserUART(args.device, args.baud)
@@ -127,6 +163,19 @@ def _main() -> int:
         r = proto.avoid_magic(args.ramp)
         h = proto.avoid_magic(args.hold)
         uart.send(proto.CMD_CONFIG, proto._CONFIG.pack(args.intensity, r, h))
+        print(wait_status() or "no response")
+    elif args.cmd == "mode":
+        uart.send(proto.CMD_SET_MODE, bytes([proto.MODE_ESTIM if args.mode == "estim"
+                                             else proto.MODE_LASER]))
+        print(wait_status() or "no response")
+    elif args.cmd == "current":
+        uart.send(proto.CMD_LASER_CURRENT, proto._DAC.pack(args.dac))
+        print(wait_status() or "no response")
+    elif args.cmd == "estim-current":
+        uart.send(proto.CMD_ESTIM_CURRENT, proto._DAC.pack(args.dac))
+        print(wait_status() or "no response")
+    elif args.cmd == "clear-fault":
+        uart.send(proto.CMD_CLEAR_FAULT)
         print(wait_status() or "no response")
     elif args.cmd == "watch":
         names = {v: k for k, v in vars(proto).items()

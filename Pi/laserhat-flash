@@ -11,14 +11,15 @@
 #   1. stop the broker (it holds the UART and the GPIO 26 trigger line)
 #      and the GUIs that depend on it
 #   2. power-cycle the MCU (power_cycle.py: GPIO 18 power, GPIO 23 NRST);
-#      the firmware then sits in its ~4 s boot blink
+#      the firmware then sits in its ~2 s boot blink
 #   3. OpenOCD over SWD (GPIO 24 SWCLK, GPIO 25 SWDIO, pi-swd.cfg): halt
-#      inside that window, erase + write, reset run
+#      (Rev 2's SWD pins are dedicated, so any moment works; the fresh
+#      reset just makes it predictable), erase + write, reset run
 #   4. restart the broker + GUIs (every one that is enabled or was running)
 #
 # Flash with no module in J8/J9.  A blank MCU is inert.
 #
-# Success looks like the ~4 s boot blink of the status LED D7 after the
+# Success looks like the ~2 s boot blink of the status LED D7 after the
 # write, then a short blip once a second.
 
 set -eu
@@ -91,4 +92,4 @@ openocd -f "$FW_DIR/pi-swd.cfg" \
     -c "reset run" \
     -c "shutdown"
 
-echo "flashed; watch for the ~4 s boot blink on the status LED D7"
+echo "flashed; watch for the ~2 s boot blink on the status LED D7"

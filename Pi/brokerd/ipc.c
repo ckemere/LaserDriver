@@ -4,7 +4,9 @@
  *   client -> broker   {"cmd": "set", "knob": "i", "value": 320}
  *                      {"cmd": "trigger"}  {"cmd": "trigger_gpio"}
  *                      {"cmd": "query"}    {"cmd": "set_mode", "mode": "estim"}
+ *                      {"cmd": "clear_fault"}
  *                      {"cmd": "stats"}    (brokerd only: trigger counters)
+ *   knobs: i r h ld (laser pulse + DAC code), ed ei sd (e-stim timing + DAC code)
  *   broker -> client   {"type": "state", ...}  {"type": "event", ...}
  *                      {"type": "reply", "cmd": ..., "ok": ...}
  *
@@ -158,6 +160,8 @@ static void dispatch(const char *line, char *out, size_t cap)
             if (strcmp(mf->str, "estim") == 0) mode = MODE_ESTIM;
         }
         reply_ok(out, cap, cmd, mcu_set_mode(mode));
+    } else if (strcmp(cmd, "clear_fault") == 0) {
+        reply_ok(out, cap, cmd, mcu_clear_fault());
     } else if (strcmp(cmd, "stats") == 0) {
         snprintf(out, cap, "{\"type\":\"reply\",\"cmd\":\"stats\",\"ok\":true");
         size_t n = strlen(out);

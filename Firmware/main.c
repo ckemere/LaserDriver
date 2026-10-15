@@ -4,6 +4,9 @@
 #include "gpio.h"
 #include "pwm_timer.h"
 #include "tick_timers.h"
+#include "dac.h"
+#include "adc.h"
+#include "module.h"
 #include "uart.h"
 #include "protocol.h"
 #include "framing.h"
@@ -11,16 +14,21 @@
 #include <stdint.h>
 
 /* -----------------------------------------------------------------------
- * LaserHAT Rev 2 bring-up firmware
- *
- * Scope: the HAT alone (no laser / e-stim module plugged in).  It brings
- * up everything on the HAT the Pi and the user can see:
+ * LaserHAT Rev 2 firmware — HAT + laser module + e-stim module
  *
  *   - the five edge buttons (SW7 thumbwheel roll/roll/push, SW8 BACK,
  *     SW9 FIRE), debounced, reported as EVT_BUTTON; FIRE fires a pulse;
- *   - the status LED D7 (boot blink, 1 Hz heartbeat when idle, solid on
- *     during a pulse);
- *   - the module PWM lines on J8 (TIMA0 CCP1/CCP3, visible on a scope);
+ *   - the status LED D7 (boot blink, 1 Hz heartbeat when idle, solid
+ *     during a pulse, 5 Hz blink while a module fault is latched);
+ *   - LASER mode: TIMA0 PWM on J8 (CCP1 = laser switch, CCP3 = dummy
+ *     switch complement), DAC0 on J9.3 sets the module's current (IREF),
+ *     ADC1 reads the photodiode (J9.4) and the compliance rail (J9.5);
+ *   - ESTIM mode (spec §7): EN / CATH / RELEASE driven as GPIOs from the
+ *     tick ISR (10 µs grid) — RELEASE + CATH, EN pulse, CATH low in the
+ *     gap, EN pulse, RELEASE held ~200 µs then dropped for 200 µs;
+ *     amplitude = DAC60501 on the module over bit-banged I2C (J9.4/J9.5)
+ *     between trains; FAULT_n (J8.3) falling edge kills the outputs
+ *     within a few µs and latches a fault until CMD_CLEAR_FAULT;
  *   - STIM OUT (J7 BNC + D9) mirrors the pulse envelope, TRIG IN (J6)
  *     and the Pi's GPIO26 fire a pulse;
  *   - the binary protocol on *both* UARTs: UART1 to the Pi (GPIO14/15)
@@ -31,7 +39,9 @@
  *
  * TIMG0_IRQHandler (100 kHz) is the *only* place pulse timing lives.  It
  * advances the state machine and drives the PWM / GPIO outputs.  Nothing
- * else - main loop, UART parsers, GPIO edge ISR - touches the pulse state.
+ * else - main loop, UART parsers, GPIO edge ISR - touches the pulse state;
+ * the one exception is the FAULT_n edge in GROUP1_IRQHandler, which may
+ * force the outputs off and set the fault latch (the tick then aborts).
  *
  * Triggers are mediated through three volatile flags consumed (and
  * cleared) by the tick ISR at the start of each tick:
@@ -41,16 +51,15 @@
  *   g_hw_trigger_pending        set by the BNC / Pi-GPIO edge ISR
  *                               (GROUP1_IRQHandler)
  *
- * Pulse events (EVT_PULSE_START / EVT_PULSE_END) are emitted from the
- * main loop on PulseEvent records the ISR fills at the WAITING<->TRIGGERED
- * edges, so the blocking UART writes stay out of interrupt context.
- * Events go to both ports; a command's RSP_STATUS goes back to the port
- * it came from.
+ * Pulse events (EVT_PULSE_START / EVT_PULSE_END / EVT_FAULT) are emitted
+ * from the main loop on records the ISRs fill, so the blocking UART
+ * writes stay out of interrupt context.  Events go to both ports; a
+ * command's RSP_STATUS goes back to the port it came from.
  *
  * Config edits arrive in main (parser) and are read by the ISR at latch
- * time.  Each parser command writes a single g_config_live field with one
- * aligned store (atomic on M0+), and the ISR copies the struct
- * field-by-field at latch time, so no field is ever torn.
+ * time.  Each parser command writes a single live field with one aligned
+ * store (atomic on M0+), and the ISR copies the struct field-by-field at
+ * latch time, so no field is ever torn.
  * ----------------------------------------------------------------------- */
 
 #define PWM_PERIOD_COUNTS       320u
@@ -65,6 +74,11 @@
 #define RAMP_TICKS_MAX     10000000u    /* ~100 s */
 #define HOLD_TICKS_MIN            1u
 #define HOLD_TICKS_MAX     10000000u
+
+/* E-stim sequencing around the pulse pair (spec §7), in 10 µs ticks. */
+#define ESTIM_PRE_TICKS           1u    /* RELEASE + CATH lead EN by >= 1 µs */
+#define ESTIM_POST_TICKS         20u    /* RELEASE stays high ~200 µs after the pair */
+#define ESTIM_RESET_TICKS        20u    /* RELEASE low >= 200 µs (electrode reset) */
 
 typedef struct {
     uint32_t ramp_ticks;
@@ -94,6 +108,24 @@ static EstimConfig g_estim_config_active;   /* ISR-only */
 static volatile uint8_t g_mode = MODE_LASER;
 static          uint8_t g_mode_active;      /* ISR-only, latched at trigger */
 
+/* Module setpoints (main-owned; the laser one is applied to DAC0 directly,
+ * the e-stim one is written to the module's DAC between trains). */
+static volatile uint16_t g_laser_dac = LASER_DAC_DEFAULT;
+static volatile uint16_t g_estim_dac = ESTIM_DAC_DEFAULT;
+static volatile bool     g_estim_dac_pending = true;
+static volatile bool     g_estim_ready = false;   /* DAC60501 GAIN init acked */
+static volatile bool     g_i2c_error   = false;   /* last DAC write NACKed */
+
+/* Fault handling.  Armed once FAULT_n has been high for 2 ms (module ready
+ * or absent); the latch is set by the FAULT_n edge ISR or by the tick ISR
+ * seeing FAULT_n low mid-train, and cleared only by CMD_CLEAR_FAULT. */
+static volatile bool g_fault_armed   = false;
+static volatile bool g_fault_latched = false;
+
+/* Laser-mode readbacks (main-owned). */
+static volatile uint16_t g_adc_pd   = 0u;
+static volatile uint16_t g_adc_comp = 0u;
+
 /*
  * Button debounce: the pin must be stable for this many 1 kHz polls
  * before a state change is accepted (10 polls = 10 ms).
@@ -102,16 +134,22 @@ static          uint8_t g_mode_active;      /* ISR-only, latched at trigger */
 #define NUM_BUTTONS                6u   /* 5 edge buttons + the BSL switch */
 #define BUTTON_FIRE_BIT            4u   /* BUTTON5 = SW9 FIRE */
 
-/* Idle heartbeat on D7: 50 ms on every second (in 10 us ticks). */
+/* Idle heartbeat on D7: 50 ms on every second (in 10 us ticks); fault
+ * indication: 5 Hz square wave. */
 #define HEARTBEAT_PERIOD_TICKS 100000u
 #define HEARTBEAT_ON_TICKS       5000u
+#define FAULT_BLINK_HALF_TICKS  10000u
 
 /*
- * Power-on boot blink: 20 flashes of D7 at ~2.5 Hz before any timer
- * starts (~4 s).  Pure busy-wait; this is also the window in which
- * `make flash` halts the core.  ~100 ms at 32 MHz ≈ 3.2 M cycles.
+ * Power-on boot blink: 10 flashes of D7 at ~2.5 Hz before any timer
+ * starts (~2 s).  Pure busy-wait.  It is a "just (re)booted" indicator;
+ * since Rev 2 keeps PA19/PA20 as dedicated SWD pins it is no longer the
+ * only window in which `make flash` can attach (Rev 1 reclaimed SWDIO as
+ * a GPIO after the blink).  It still gives OpenOCD, launched right after
+ * the power-cycle, a busy-waiting core to halt rather than one in WFI.
+ * ~100 ms at 32 MHz ≈ 3.2 M cycles per half period.
  */
-#define BOOT_BLINK_FLASHES      20u
+#define BOOT_BLINK_FLASHES      10u
 #define BOOT_BLINK_HALF_CYCLES  3200000u
 
 /* -----------------------------------------------------------------------
@@ -131,13 +169,15 @@ typedef enum {
     LASER_HOLD_HIGH,
 } LaserPhase;
 
-/* EStim pulse pair (bring-up: only mirrored on D7 / STIM OUT; the J8
- * lines stay safe until the module firmware per spec §7 lands). */
+/* EStim pulse pair with the RELEASE envelope of spec §7. */
 typedef enum {
     ESTIM_IDLE,
-    ESTIM_PULSE1,
-    ESTIM_INTERPULSE,
-    ESTIM_PULSE2,
+    ESTIM_PRE,          /* RELEASE high, CATH high; EN still low */
+    ESTIM_PULSE1,       /* EN high (cathodic) */
+    ESTIM_INTERPULSE,   /* EN low, CATH low */
+    ESTIM_PULSE2,       /* EN high (anodic) */
+    ESTIM_POST,         /* EN low, RELEASE still high */
+    ESTIM_RESET,        /* RELEASE low: electrode shorted / amplifier re-centred */
 } EstimPhase;
 
 typedef struct {
@@ -171,10 +211,11 @@ static volatile bool g_hw_trigger_pending     = false;
 typedef struct {
     uint32_t tick;
     bool     pending;
-} PulseEvent;
+} TickEvent;
 
-static volatile PulseEvent g_pulse_start_evt = { 0u, false };
-static volatile PulseEvent g_pulse_end_evt   = { 0u, false };
+static volatile TickEvent g_pulse_start_evt = { 0u, false };
+static volatile TickEvent g_pulse_end_evt   = { 0u, false };
+static volatile TickEvent g_fault_evt       = { 0u, false };
 
 /* Button state — owned by main loop. */
 static BtnPhase g_btn_phase[NUM_BUTTONS];
@@ -201,6 +242,26 @@ static void delay_cycles(uint32_t cycles)
 }
 
 /* -----------------------------------------------------------------------
+ * Fault kill — callable from any ISR: plain register stores only.
+ * ----------------------------------------------------------------------- */
+
+static inline void fault_kill_outputs(void)
+{
+    laser_pins_to_gpio_safe();      /* EN / PWM_A low, CATH / PWM_B idle */
+    module_release_clear();         /* RELEASE low (no effect in laser mode) */
+}
+
+static inline void fault_latch(void)
+{
+    fault_kill_outputs();
+    if (!g_fault_latched) {
+        g_fault_latched     = true;
+        g_fault_evt.tick    = g_isr_ticks;
+        g_fault_evt.pending = true;
+    }
+}
+
+/* -----------------------------------------------------------------------
  * State machine — runs entirely inside TIMG0_IRQHandler
  * ----------------------------------------------------------------------- */
 
@@ -220,6 +281,16 @@ static inline void latch_config_from_live(void)
     g_mode_active = g_mode;
 }
 
+static inline void abort_to_waiting(void)
+{
+    g_state.laser     = LASER_IDLE;
+    g_state.estim     = ESTIM_IDLE;
+    g_state.ramp_step = 0u;
+    g_state.overall   = OVERALL_WAITING;
+    g_pulse_end_evt.tick    = g_isr_ticks;
+    g_pulse_end_evt.pending = true;
+}
+
 static inline void state_machine_tick(void)
 {
     bool trigger = g_uart_trigger_pending || g_button_trigger_pending
@@ -228,14 +299,27 @@ static inline void state_machine_tick(void)
     g_button_trigger_pending = false;
     g_hw_trigger_pending     = false;
 
+    /* Backstop for the FAULT_n edge interrupt: low mid-train = fault. */
+    if (g_state.overall == OVERALL_TRIGGERED && g_fault_armed &&
+        !laser_gpio_fault_n_high()) {
+        fault_latch();
+    }
+    if (g_fault_latched && g_state.overall == OVERALL_TRIGGERED) {
+        abort_to_waiting();
+        return;
+    }
+
     switch (g_state.overall) {
         case OVERALL_WAITING:
-            if (trigger) {
+            /* E-stim trains need the module's isolated side up (FAULT_n
+             * high; also high with no module at all, via the pull-up). */
+            if (trigger && !g_fault_latched &&
+                (g_mode != MODE_ESTIM || laser_gpio_fault_n_high())) {
                 latch_config_from_live();
                 g_state.overall    = OVERALL_TRIGGERED;
                 g_state.tick_count = 0u;
                 if (g_mode_active == MODE_ESTIM) {
-                    g_state.estim = ESTIM_PULSE1;
+                    g_state.estim = ESTIM_PRE;
                 } else {
                     g_state.laser     = LASER_RAMP_UP;
                     g_state.ramp_step = 0u;
@@ -249,6 +333,13 @@ static inline void state_machine_tick(void)
             g_state.tick_count++;
             if (g_mode_active == MODE_ESTIM) {
                 switch (g_state.estim) {
+                    case ESTIM_PRE:
+                        if (g_state.tick_count >= ESTIM_PRE_TICKS) {
+                            g_state.tick_count = 0u;
+                            g_state.estim      = ESTIM_PULSE1;
+                        }
+                        break;
+
                     case ESTIM_PULSE1:
                         if (g_state.tick_count >= g_estim_config_active.pulse_dur_ticks) {
                             g_state.tick_count = 0u;
@@ -265,10 +356,22 @@ static inline void state_machine_tick(void)
 
                     case ESTIM_PULSE2:
                         if (g_state.tick_count >= g_estim_config_active.pulse_dur_ticks) {
-                            g_state.estim   = ESTIM_IDLE;
-                            g_state.overall = OVERALL_WAITING;
-                            g_pulse_end_evt.tick    = g_isr_ticks;
-                            g_pulse_end_evt.pending = true;
+                            g_state.tick_count = 0u;
+                            g_state.estim      = ESTIM_POST;
+                        }
+                        break;
+
+                    case ESTIM_POST:
+                        if (g_state.tick_count >= ESTIM_POST_TICKS) {
+                            g_state.tick_count = 0u;
+                            g_state.estim      = ESTIM_RESET;
+                        }
+                        break;
+
+                    case ESTIM_RESET:
+                        if (g_state.tick_count >= ESTIM_RESET_TICKS) {
+                            g_state.tick_count = 0u;
+                            abort_to_waiting();     /* normal end of the pair */
                         }
                         break;
 
@@ -291,11 +394,7 @@ static inline void state_machine_tick(void)
                     case LASER_HOLD_HIGH:
                         if (g_state.tick_count >= g_config_active.hold_ticks) {
                             g_state.tick_count = 0u;
-                            g_state.ramp_step  = 0u;
-                            g_state.laser      = LASER_IDLE;
-                            g_state.overall    = OVERALL_WAITING;
-                            g_pulse_end_evt.tick    = g_isr_ticks;
-                            g_pulse_end_evt.pending = true;
+                            abort_to_waiting();     /* normal end of the pulse */
                         }
                         break;
 
@@ -311,14 +410,25 @@ static inline void set_output_from_state(void)
 {
     static uint32_t heartbeat = 0u;      /* ISR-only */
 
-    bool     pwm    = false;   /* true = PWM mux, false = GPIO-safe */
+    bool     pwm    = false;   /* true = PWM mux, false = GPIO-safe (laser) */
     uint16_t duty   = 0u;      /* only meaningful when pwm */
-    bool     active = false;   /* pulse envelope: D7 + STIM OUT */
+    bool     active = false;   /* stimulus on: D7 + STIM OUT */
+    bool     en = false, cath = false, release = false;   /* e-stim lines */
+    bool     estim_drive = false;   /* drive EN/CATH/RELEASE as GPIOs this tick */
 
     if (g_state.overall == OVERALL_WAITING) {
         /* gpio-safe, outputs off */
     } else if (g_mode_active == MODE_ESTIM) {
-        active = (g_state.estim == ESTIM_PULSE1 || g_state.estim == ESTIM_PULSE2);
+        estim_drive = true;
+        switch (g_state.estim) {
+            case ESTIM_PRE:        release = true; cath = true;            break;
+            case ESTIM_PULSE1:     release = true; cath = true; en = true; active = true; break;
+            case ESTIM_INTERPULSE: release = true;                         break;
+            case ESTIM_PULSE2:     release = true; en = true; active = true; break;
+            case ESTIM_POST:       release = true;                         break;
+            case ESTIM_RESET:                                              break;
+            default:               estim_drive = false;                    break;
+        }
     } else {
         switch (g_state.laser) {
             case LASER_IDLE:
@@ -343,20 +453,37 @@ static inline void set_output_from_state(void)
         }
     }
 
-    /* Idle heartbeat so the user can see the MCU is alive. */
+    if (g_fault_latched) {
+        pwm = false; estim_drive = false; active = false;
+    }
+
+    /* D7: solid while stimulating, 5 Hz while a fault is latched, 1 Hz
+     * heartbeat blip when idle. */
     if (++heartbeat >= HEARTBEAT_PERIOD_TICKS) {
         heartbeat = 0u;
     }
-    bool led = active || (g_state.overall == OVERALL_WAITING &&
-                          heartbeat < HEARTBEAT_ON_TICKS);
+    bool led;
+    if (active) {
+        led = true;
+    } else if (g_fault_latched) {
+        led = (heartbeat / FAULT_BLINK_HALF_TICKS) & 1u;
+    } else {
+        led = (g_state.overall == OVERALL_WAITING && heartbeat < HEARTBEAT_ON_TICKS);
+    }
 
     /* Apply unconditionally every tick: plain register stores, so the
      * safe module-pin state is self-healing within 10 us. */
-    if (pwm) {
+    if (estim_drive) {
+        /* Pins are in their GPIO mux in ESTIM mode (never switched to TIMA0). */
+        if (release) { module_release_set(); } else { module_release_clear(); }
+        if (cath)    { laser_gpio_estim_cath_set(); } else { laser_gpio_estim_cath_clear(); }
+        if (en)      { laser_gpio_estim_en_set(); }   else { laser_gpio_estim_en_clear(); }
+    } else if (pwm) {
         laser_pins_to_pwm();
         laser_timera_set_duty(duty);
     } else {
         laser_pins_to_gpio_safe();
+        module_release_clear();
     }
 
     if (active) {
@@ -378,6 +505,116 @@ void TIMG0_IRQHandler(void)
         state_machine_tick();
         set_output_from_state();
     }
+}
+
+/* -----------------------------------------------------------------------
+ * Mode switch (main loop, only while WAITING)
+ * ----------------------------------------------------------------------- */
+
+static void enter_mode(uint8_t mode)
+{
+    g_mode = mode;
+    laser_pins_set_b_idle_high(mode == MODE_LASER);
+    laser_pins_to_gpio_safe();
+    g_estim_ready = false;
+    g_i2c_error   = false;
+    g_adc_pd   = 0u;
+    g_adc_comp = 0u;
+
+    if (mode == MODE_LASER) {
+        module_laser_pins();            /* PA15 DAC, PA17/PA22 ADC */
+        laser_dac_write12(g_laser_dac);
+        laser_dac_enable();
+    } else {
+        laser_dac_disable();
+        module_estim_pins();            /* PA15 RELEASE, PA17/PA22 I2C */
+        g_estim_dac_pending = true;     /* (re)program the module DAC when it is up */
+    }
+}
+
+/* -----------------------------------------------------------------------
+ * Housekeeping (1 kHz, main loop): fault arming, e-stim DAC, ADC readback
+ * ----------------------------------------------------------------------- */
+
+#define ESTIM_RETRY_MS   100u
+#define ADC_PERIOD_MS     10u
+
+static void module_housekeeping(void)
+{
+    static uint8_t  fault_high_ms = 0u;
+    static uint8_t  estim_retry_ms = 0u;
+    static uint8_t  adc_ms = 0u;
+    static bool     adc_busy = false;
+
+    bool fn_high = laser_gpio_fault_n_high();
+    if (fn_high) {
+        if (fault_high_ms < 255u) {
+            fault_high_ms++;
+        }
+    } else {
+        fault_high_ms = 0u;
+        g_estim_ready = false;          /* isolated side down: DAC forgets its GAIN */
+    }
+    if (!g_fault_armed && fault_high_ms >= 2u) {
+        g_fault_armed = true;
+        laser_gpio_fault_irq_enable();
+    }
+
+    if (g_mode == MODE_ESTIM) {
+        adc_busy = false;
+        /* Module DAC traffic only between trains and only with the module
+         * powered (FAULT_n high for >= 2 ms covers the 250 µs of spec §7). */
+        if (g_state.overall == OVERALL_WAITING && fn_high && fault_high_ms >= 2u) {
+            if (!g_estim_ready) {
+                if (estim_retry_ms == 0u) {
+                    if (module_estim_dac_init()) {
+                        g_estim_ready       = true;
+                        g_i2c_error         = false;
+                        g_estim_dac_pending = true;
+                    } else {
+                        g_i2c_error    = true;
+                        estim_retry_ms = ESTIM_RETRY_MS;
+                    }
+                } else {
+                    estim_retry_ms--;
+                }
+            }
+            if (g_estim_ready && g_estim_dac_pending) {
+                if (module_estim_dac_write(g_estim_dac)) {
+                    g_estim_dac_pending = false;
+                    g_i2c_error         = false;
+                } else {
+                    g_i2c_error    = true;
+                    g_estim_ready  = false;
+                    estim_retry_ms = ESTIM_RETRY_MS;
+                }
+            }
+        }
+    } else {
+        /* Laser readbacks every ADC_PERIOD_MS: start one tick, read the next. */
+        if (adc_busy) {
+            uint16_t pd, comp;
+            if (laser_adc_read(&pd, &comp)) {
+                g_adc_pd   = pd;
+                g_adc_comp = comp;
+                adc_busy   = false;
+            }
+        } else if (++adc_ms >= ADC_PERIOD_MS) {
+            adc_ms = 0u;
+            laser_adc_start();
+            adc_busy = true;
+        }
+    }
+}
+
+static uint8_t module_flags(void)
+{
+    uint8_t f = 0u;
+    if (!laser_gpio_fault_n_high()) { f |= MODULE_FAULT_N_LOW; }
+    if (g_fault_latched)            { f |= MODULE_FAULT_LATCHED; }
+    if (g_estim_ready)              { f |= MODULE_ESTIM_READY; }
+    if (g_i2c_error)                { f |= MODULE_I2C_ERROR; }
+    return f;
 }
 
 /* -----------------------------------------------------------------------
@@ -424,10 +661,16 @@ static void poll_buttons(void)
  * UART protocol — magic-word framed binary (SYNC | TYPE | payload), one
  * decoder per port.  See protocol.h and Pi/protocol.py.
  *
- *   CMD_CONFIG  i,r,h  -> RSP_STATUS    (status-as-ack)
- *   CMD_TRIGGER        -> RSP_STATUS, then EVT_PULSE_START/_END
- *   CMD_QUERY          -> RSP_STATUS
- *   (async)            -> EVT_BUTTON on any debounced button change
+ *   CMD_CONFIG  i,r,h   -> RSP_STATUS    (status-as-ack)
+ *   CMD_TRIGGER         -> RSP_STATUS, then EVT_PULSE_START/_END
+ *   CMD_QUERY           -> RSP_STATUS
+ *   CMD_SET_MODE        -> RSP_STATUS    (refused while a pulse runs)
+ *   CMD_ESTIM_CONFIG    -> RSP_STATUS
+ *   CMD_LASER_CURRENT   -> RSP_STATUS    (DAC0 code, applied at once in laser mode)
+ *   CMD_ESTIM_CURRENT   -> RSP_STATUS    (module DAC code, written between trains)
+ *   CMD_CLEAR_FAULT     -> RSP_STATUS
+ *   (async)             -> EVT_BUTTON on any debounced button change,
+ *                          EVT_FAULT when a module fault latches
  * ----------------------------------------------------------------------- */
 
 static FrameDecoder g_rx_pi;
@@ -461,6 +704,11 @@ static void emit_status(UartPort *port)
         .mode             = g_mode,
         .estim_dur_ticks  = g_estim_config_live.pulse_dur_ticks,
         .estim_ipi_ticks  = g_estim_config_live.ipi_ticks,
+        .laser_dac        = g_laser_dac,
+        .estim_dac        = g_estim_dac,
+        .module           = module_flags(),
+        .adc_pd           = g_adc_pd,
+        .adc_comp         = g_adc_comp,
     };
     tx_frame(port, RSP_STATUS, (const uint8_t *)&s, sizeof s);
 }
@@ -514,9 +762,9 @@ static void process_frame(UartPort *port, uint8_t type,
         case CMD_SET_MODE:
             if (len == CMD_SET_MODE_LEN) {
                 uint8_t m = payload[0];
-                if (m == MODE_LASER || m == MODE_ESTIM) {
-                    g_mode = m;
-                    laser_pins_to_gpio_safe();
+                if ((m == MODE_LASER || m == MODE_ESTIM) && m != g_mode &&
+                    g_state.overall == OVERALL_WAITING) {
+                    enter_mode(m);
                 }
             }
             emit_status(port);
@@ -526,6 +774,35 @@ static void process_frame(UartPort *port, uint8_t type,
             if (len == CMD_ESTIM_CONFIG_LEN) {
                 apply_estim_config(payload);
             }
+            emit_status(port);
+            break;
+
+        case CMD_LASER_CURRENT:
+            if (len == CMD_DAC_LEN) {
+                uint16_t code = ((const DacPayload *)payload)->dac;
+                if (code <= LASER_DAC_MAX) {
+                    g_laser_dac = code;
+                    if (g_mode == MODE_LASER) {
+                        laser_dac_write12(code);
+                    }
+                }
+            }
+            emit_status(port);
+            break;
+
+        case CMD_ESTIM_CURRENT:
+            if (len == CMD_DAC_LEN) {
+                uint16_t code = ((const DacPayload *)payload)->dac;
+                if (code <= ESTIM_DAC_MAX) {
+                    g_estim_dac         = code;
+                    g_estim_dac_pending = true;
+                }
+            }
+            emit_status(port);
+            break;
+
+        case CMD_CLEAR_FAULT:
+            g_fault_latched = false;
             emit_status(port);
             break;
 
@@ -559,6 +836,11 @@ static void emit_pending_events(void)
         g_pulse_end_evt.pending = false;
         tx_frame_all(EVT_PULSE_END, (const uint8_t *)&tick, sizeof tick);
     }
+    if (g_fault_evt.pending) {
+        FaultPayload f = { .module = module_flags(), .tick = g_fault_evt.tick };
+        g_fault_evt.pending = false;
+        tx_frame_all(EVT_FAULT, (const uint8_t *)&f, sizeof f);
+    }
     if (g_btn_event.pending) {
         uint8_t p[2] = { g_btn_event.mask, g_btn_event.edges };
         g_btn_event.pending = false;
@@ -576,8 +858,7 @@ int main(void)
     laser_gpio_enable_power_and_reset();
     laser_gpio_init();
 
-    /* Boot indicator on D7 before any timer runs — also the window in
-     * which `make flash` halts the core over SWD. */
+    /* Boot indicator on D7 before any timer runs. */
     for (uint32_t n = 0u; n < BOOT_BLINK_FLASHES; n++) {
         laser_gpio_led_set();
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
@@ -588,12 +869,14 @@ int main(void)
     laser_timera_init();
     laser_timerg_init_tick();
     laser_timerg_init_housekeeping();
+    laser_dac_init();
+    laser_adc_init();
     uart_init(&g_uart_pi,  UART1);
     uart_init(&g_uart_usb, UART0);
     frame_decoder_init(&g_rx_pi);
     frame_decoder_init(&g_rx_usb);
 
-    laser_pins_to_gpio_safe();
+    enter_mode(MODE_LASER);             /* gpio-safe pins, DAC0 at the default setpoint */
     laser_timera_start();
 
     /* TIMG0 runs the state machine at the highest priority; TIMG6
@@ -610,8 +893,10 @@ int main(void)
     NVIC_ClearPendingIRQ(UART0_INT_IRQn);
     NVIC_EnableIRQ(UART0_INT_IRQn);
 
-    /* GPIOA IRQ (shared GROUP1 vector) for the BNC and Pi trigger edges. */
-    NVIC_SetPriority(GPIOA_INT_IRQn, 1);
+    /* GPIOA IRQ (shared GROUP1 vector): the BNC / Pi trigger edges and the
+     * FAULT_n kill, at the top priority so a fault is acted on within a
+     * few µs (it cannot pre-empt a running tick ISR, which is ~2 µs). */
+    NVIC_SetPriority(GPIOA_INT_IRQn, 0);
     NVIC_ClearPendingIRQ(GPIOA_INT_IRQn);
     NVIC_EnableIRQ(GPIOA_INT_IRQn);
 
@@ -621,6 +906,7 @@ int main(void)
             drain_uart(&g_uart_pi,  &g_rx_pi);
             drain_uart(&g_uart_usb, &g_rx_usb);
             poll_buttons();
+            module_housekeeping();
             emit_pending_events();
         }
         __WFI();
@@ -638,6 +924,13 @@ void TIMG6_IRQHandler(void)
 void GROUP1_IRQHandler(void)
 {
     uint32_t mis = GPIOA->CPU_INT.MIS;
+
+    if (mis & BOARD_FAULT_N_PIN) {
+        /* FAULT_n fell: outputs off first, then latch and report. */
+        GPIOA->CPU_INT.ICLR = BOARD_FAULT_N_PIN;
+        fault_latch();
+    }
+
     uint32_t fired_mask = mis & (BOARD_STIM_IN_PIN | BOARD_PI_TRIGGER_PIN);
     if (fired_mask) {
         GPIOA->CPU_INT.ICLR = fired_mask;

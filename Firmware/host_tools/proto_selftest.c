@@ -72,7 +72,7 @@ int main(int argc, char **argv)
         print_hex((const uint8_t *)&c, sizeof c);
         return 0;
     }
-    if (argc == 11 && strcmp(argv[1], "status") == 0) {
+    if (argc == 16 && strcmp(argv[1], "status") == 0) {
         StatusPayload s;
         s.intensity       = (uint16_t)strtoul(argv[2], NULL, 10);
         s.ramp_ticks      = (uint32_t)strtoul(argv[3], NULL, 10);
@@ -83,7 +83,25 @@ int main(int argc, char **argv)
         s.mode            = (uint8_t)strtoul(argv[8], NULL, 10);
         s.estim_dur_ticks = (uint32_t)strtoul(argv[9], NULL, 10);
         s.estim_ipi_ticks = (uint32_t)strtoul(argv[10], NULL, 10);
+        s.laser_dac       = (uint16_t)strtoul(argv[11], NULL, 10);
+        s.estim_dac       = (uint16_t)strtoul(argv[12], NULL, 10);
+        s.module          = (uint8_t)strtoul(argv[13], NULL, 10);
+        s.adc_pd          = (uint16_t)strtoul(argv[14], NULL, 10);
+        s.adc_comp        = (uint16_t)strtoul(argv[15], NULL, 10);
         print_hex((const uint8_t *)&s, sizeof s);
+        return 0;
+    }
+    if (argc == 3 && strcmp(argv[1], "dac") == 0) {
+        DacPayload d;
+        d.dac = (uint16_t)strtoul(argv[2], NULL, 10);
+        print_hex((const uint8_t *)&d, sizeof d);
+        return 0;
+    }
+    if (argc == 4 && strcmp(argv[1], "fault") == 0) {
+        FaultPayload f;
+        f.module = (uint8_t)strtoul(argv[2], NULL, 10);
+        f.tick   = (uint32_t)strtoul(argv[3], NULL, 10);
+        print_hex((const uint8_t *)&f, sizeof f);
         return 0;
     }
     if (argc == 4 && strcmp(argv[1], "estim") == 0) {
@@ -93,6 +111,6 @@ int main(int argc, char **argv)
         print_hex((const uint8_t *)&e, sizeof e);
         return 0;
     }
-    fprintf(stderr, "usage: %s encode|decode|config|status|estim ...\n", argv[0]);
+    fprintf(stderr, "usage: %s encode|decode|config|status|estim|dac|fault ...\n", argv[0]);
     return 2;
 }

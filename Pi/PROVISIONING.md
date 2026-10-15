@@ -148,7 +148,7 @@ The command stops the broker and GUIs (which frees the UART and the GPIO 26
 trigger line), power-cycles the MCU (GPIO 18 power, GPIO 23 NRST) into its
 boot window, writes `/usr/lib/laserhat/firmware/laserhat-mcu.elf` with
 OpenOCD over SWD on GPIO 24 (SWCLK) / GPIO 25 (SWDIO), and restarts the
-services. A successful flash ends with the ~4 s boot blink on the status LED
+services. A successful flash ends with the ~2 s boot blink on the status LED
 D7, followed by a 1 Hz heartbeat blip, and the OLED/web then show the MCU as
 alive.  These are the Rev 2 HAT pins; a Rev 1 board (SWD and power/reset
 swapped) needs `make flash HAT_REV=1` from the source tree instead.

@@ -14,7 +14,9 @@ adafruit-blinka — stdlib only.
 
 Button mapping (Rev 2 HAT edge controls, reported by the MCU):
     B5  FIRE (SW9)       — the firmware fires a pulse on press; nothing to do here
-    B2  SELECT (wheel push) — cycle selected row (laser: i→r→h→[mode]; estim: dur→IPI→[mode])
+    B2  SELECT (wheel push) — cycle selected row (laser: i→r→h→ld→[mode];
+                           estim: dur→IPI→sd→[mode]); on a latched fault the
+                           push also clears it
     B3  wheel roll       — decrement selected value  (on [mode] row: switch to LASER)
     B4  wheel roll       — increment selected value  (on [mode] row: switch to ESTIM)
     B1  BACK (SW8)       — jump back to the first row
@@ -27,9 +29,11 @@ Display layout (oledd cells: 21 columns × 4 rows):
     Row 2  ├  3-row scrolling window over the selectable items
     Row 3  ┘  phase chip (WAIT/TRIG) pinned to bottom-right corner
 
-In LASER mode the selectable items are: i, r, h, [mode]
-In ESTIM mode the selectable items are: dur (ed), IPI (ei), [mode]
-The window scrolls so the selected item is always visible.
+In LASER mode the selectable items are: i, r, h, ld (current, mA), [mode]
+In ESTIM mode the selectable items are: dur (ed), IPI (ei), sd (amplitude, µA), [mode]
+The window scrolls so the selected item is always visible.  The chip shows
+FAULT (inverted) while a module fault is latched, and the e-stim rows show
+"!" after the amplitude until the module's DAC has acknowledged (ready).
 """
 
 from __future__ import annotations
@@ -40,6 +44,7 @@ import sys
 import threading
 import time
 
+import protocol as proto
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
 from params import ESTIM_PARAMS, PARAMS
@@ -132,6 +137,8 @@ def _value_for(state: State, name: str) -> int:
         "h":  state.hold_ticks,
         "ed": state.estim_dur_ticks,
         "ei": state.estim_ipi_ticks,
+        "ld": state.laser_dac,
+        "sd": state.estim_dac,
     }[name]
 
 
@@ -142,6 +149,8 @@ def _set_for(client: HatClient, name: str):
         "h":  client.set_hold,
         "ed": client.set_estim_dur,
         "ei": client.set_estim_ipi,
+        "ld": client.set_laser_dac,
+        "sd": client.set_estim_dac,
     }[name]
 
 
@@ -151,6 +160,8 @@ _FMT = {
     "h":  lambda v: f"{v}({v/100:.0f}ms)",
     "ed": lambda v: f"{v * 10}us",
     "ei": lambda v: f"{v * 10}us",
+    "ld": lambda v: f"{proto.laser_dac_to_ma(v):.0f}mA",
+    "sd": lambda v: f"{proto.estim_dac_to_ua(v):.0f}uA",
 }
 
 
@@ -175,11 +186,18 @@ def compose(state: State, selected: int) -> tuple[str, list[str], str, bool]:
             mode_str = "ESTIM" if state.mode == 1 else "LASER"
             rows.append(f"{prefix}[mode:{mode_str}]")
         else:
-            rows.append(
-                f"{prefix}{item.name}:{_FMT[item.name](_value_for(state, item.name))}")
+            text = f"{prefix}{item.name}:{_FMT[item.name](_value_for(state, item.name))}"
+            if item.name == "sd" and not state.estim_ready:
+                text += "!"        # module DAC not programmed yet (no ack)
+            rows.append(text)
 
-    chip = "TRIG" if state.phase == "T" else "WAIT"
-    return tag, rows, chip, state.phase == "T"
+    if state.fault_latched:
+        chip, inverted = "FAULT", True
+    elif state.phase == "T":
+        chip, inverted = "TRIG", True
+    else:
+        chip, inverted = "WAIT", False
+    return tag, rows, chip, inverted
 
 
 def render(panel: OledClient, state: State, selected: int) -> None:
@@ -200,6 +218,9 @@ def main() -> int:
     def handle_button(edges: int, client: HatClient) -> None:
         st = client.get_state()
         items = _items_for(st) if st is not None else list(PARAMS) + [_MODE_ITEM]
+
+        if edges & B2 and st is not None and st.fault_latched:
+            client.clear_fault()        # wheel push acknowledges a module fault
 
         with ui_lock:
             ui["last_press"] = time.monotonic()
@@ -254,11 +275,12 @@ def main() -> int:
         selected = ui["selected"]
     render(panel, state, selected)
 
-    last_painted_key = (
-        state.intensity, state.ramp_ticks, state.hold_ticks,
-        state.phase, selected,
-        state.mode, state.estim_dur_ticks, state.estim_ipi_ticks,
-    )
+    def paint_key(st: State, sel: int):
+        return (st.intensity, st.ramp_ticks, st.hold_ticks, st.phase, sel,
+                st.mode, st.estim_dur_ticks, st.estim_ipi_ticks,
+                st.laser_dac, st.estim_dac, st.module)
+
+    last_painted_key = paint_key(state, selected)
 
     while True:
         now = time.monotonic()
@@ -281,11 +303,7 @@ def main() -> int:
             time.sleep(POLL_INTERVAL)
             continue
 
-        key = (
-            state.intensity, state.ramp_ticks, state.hold_ticks,
-            state.phase, selected,
-            state.mode, state.estim_dur_ticks, state.estim_ipi_ticks,
-        )
+        key = paint_key(state, selected)
         if key != last_painted_key and (now - last_press_at) >= SETTLE_GAP:
             render(panel, state, selected)
             last_painted_key = key

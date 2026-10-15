@@ -40,6 +40,15 @@
                   font-size: 12px; font-weight: 600; letter-spacing: 0.05em; }
     .phase-W { background: #e8e8e8; color: #444; }
     .phase-T { background: var(--accent); color: white; }
+    .phase-F { background: #000; color: #ff5260; border: 1px solid #ff5260; }
+    .module-line { font-size: 13px; color: var(--muted); display: flex; gap: 14px;
+                   flex-wrap: wrap; align-items: center; }
+    .module-line .flag { font-family: ui-monospace, monospace; padding: 2px 8px;
+                         border-radius: 6px; border: 1px solid var(--border); }
+    .module-line .flag.bad { background: var(--accent); color: white; border-color: var(--accent); }
+    .module-line .flag.good { background: var(--ok); color: white; border-color: var(--ok); }
+    .module-line button { padding: 4px 10px; border-radius: 6px; border: 1px solid var(--border);
+                          background: var(--card); color: var(--fg); cursor: pointer; }
 
     .card { background: var(--card); border: 1px solid var(--border);
             border-radius: 10px; padding: 16px; margin-bottom: 16px; }
@@ -130,12 +139,27 @@
       <span class="value" id="val-h">—</span>
       <span class="unit" id="unit-h">ticks</span>
     </div>
+
+    <div class="row">
+      <label>current</label>
+      <button data-knob="ld" data-dir="-1">−</button>
+      <input class="step-input" data-knob="ld" id="step-ld" type="number" value="{{ params['ld'].step }}" min="1" max="{{ params['ld'].maximum }}">
+      <button data-knob="ld" data-dir="+1">+</button>
+      <span class="value" id="val-ld">—</span>
+      <span class="unit" id="unit-ld">mA (DAC code)</span>
+    </div>
+
+    <div class="module-line">
+      <span>laser module:</span>
+      <span>compliance <b id="val-comp">—</b> V</span>
+      <span>photodiode <b id="val-pd">—</b> V</span>
+    </div>
   </div>
 
   <div class="card hidden" data-panel="estim">
     <div style="font-size: 13px; color: var(--muted); margin-bottom: 10px;">
-      EStim — pair of pulses mirrored on the LED / STIM OUT only (bring-up build). The
-      module PWM lines on J8 stay safe in this mode.
+      EStim — biphasic pair on J8 (EN / CATH) with RELEASE on J9.3; the amplitude is
+      written to the module's DAC between trains over J9.4/J9.5.
     </div>
     <div class="row">
       <label>pulse dur</label>
@@ -154,6 +178,29 @@
       <span class="value" id="val-ei">—</span>
       <span class="unit" id="unit-ei">µs</span>
     </div>
+
+    <div class="row">
+      <label>amplitude</label>
+      <button data-knob="sd" data-dir="-1">−</button>
+      <input class="step-input" data-knob="sd" id="step-sd" type="number" value="{{ estim_params['sd'].step }}" min="1" max="{{ estim_params['sd'].maximum }}">
+      <button data-knob="sd" data-dir="+1">+</button>
+      <span class="value" id="val-sd">—</span>
+      <span class="unit" id="unit-sd">µA (DAC code)</span>
+    </div>
+
+    <div class="module-line">
+      <span>e-stim module:</span>
+      <span class="flag" id="flag-ready">DAC ready</span>
+      <span class="flag" id="flag-fn">FAULT_n</span>
+      <span class="flag" id="flag-i2c">I2C</span>
+    </div>
+  </div>
+
+  <div class="card module-line" id="fault-card">
+    <span>module fault:</span>
+    <span class="flag" id="flag-latched">none</span>
+    <button id="clear-fault">clear fault</button>
+    <span style="font-size:12px">A FAULT_n edge on J8.3 locks EN/CATH/RELEASE off and refuses triggers until cleared.</span>
   </div>
 
   <div class="trigger-row">
@@ -228,6 +275,12 @@ function applyMode(mode) {
 
 let lastState = null;
 
+function setFlag(id, cls, text) {
+  const el = $(id);
+  el.className = "flag" + (cls ? " " + cls : "");
+  el.textContent = text;
+}
+
 async function refresh() {
   try {
     const resp = await fetch("/api/state");
@@ -245,17 +298,31 @@ async function refresh() {
     $("val-h").textContent = s.hold_ticks;
     $("unit-h").textContent = `ticks (${(s.hold_ticks/100).toFixed(1)} ms)`;
 
+    // Laser module
+    $("val-ld").textContent = s.laser_dac;
+    $("unit-ld").textContent = `${s.laser_ma.toFixed(1)} mA (DAC code)`;
+    $("val-comp").textContent = s.compliance_v.toFixed(2);
+    $("val-pd").textContent = s.pd_volts.toFixed(3);
+
     // EStim params (ticks → µs: 1 tick = 10 µs)
     $("val-ed").textContent = s.estim_dur_ticks * 10;
     $("val-ei").textContent = s.estim_ipi_ticks * 10;
+    $("val-sd").textContent = s.estim_dac;
+    $("unit-sd").textContent = `${s.estim_ua.toFixed(1)} µA (DAC code)`;
+    setFlag("flag-ready", s.estim_ready ? "good" : "", s.estim_ready ? "DAC ready" : "DAC not ready");
+    setFlag("flag-fn", s.fault_n_low ? "bad" : "good", s.fault_n_low ? "FAULT_n low" : "FAULT_n high");
+    setFlag("flag-i2c", s.i2c_error ? "bad" : "", s.i2c_error ? "I2C NACK" : "I2C ok");
+    setFlag("flag-latched", s.fault_latched ? "bad" : "", s.fault_latched ? "LATCHED" : "none");
+    $("clear-fault").disabled = !s.fault_latched;
 
     $("tick").textContent = s.tick;
 
     const phaseEl = $("phase");
-    phaseEl.textContent = s.phase === "T" ? "TRIG" : "WAIT";
-    phaseEl.className = `phase-pill phase-${s.phase}`;
-    $("trigger").disabled      = s.phase === "T";
-    $("trigger-gpio").disabled = s.phase === "T";
+    const ph = s.fault_latched ? "F" : s.phase;
+    phaseEl.textContent = ph === "F" ? "FAULT" : (ph === "T" ? "TRIG" : "WAIT");
+    phaseEl.className = `phase-pill phase-${ph}`;
+    $("trigger").disabled      = s.phase === "T" || s.fault_latched;
+    $("trigger-gpio").disabled = s.phase === "T" || s.fault_latched;
 
     for (let i = 0; i < 6; i++) {
       const el = $("btn" + (i + 1));
@@ -284,6 +351,8 @@ document.querySelectorAll("button[data-knob]").forEach(btn => {
       h: lastState.hold_ticks,
       ed: lastState.estim_dur_ticks,
       ei: lastState.estim_ipi_ticks,
+      ld: lastState.laser_dac,
+      sd: lastState.estim_dac,
     };
     const current = currentMap[knob];
     if (current === undefined) return;
@@ -301,6 +370,12 @@ $("trigger").addEventListener("click", async () => {
 
 $("trigger-gpio").addEventListener("click", async () => {
   await postTrigger("gpio");
+  refresh();
+});
+
+$("clear-fault").addEventListener("click", async () => {
+  const resp = await fetch("/api/clear_fault", { method: "POST" });
+  if (!resp.ok) $("err").textContent = "clear fault failed";
   refresh();
 });
 

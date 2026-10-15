@@ -37,7 +37,33 @@ def test_status_roundtrip():
         "intensity": 200, "ramp_ticks": 8000, "hold_ticks": 10000,
         "button_mask": 0b1010, "phase": "T", "tick": 123456,
         "mode": p.MODE_LASER, "estim_dur_ticks": 10, "estim_ipi_ticks": 10,
+        "laser_dac": p.LASER_DAC_DEFAULT, "estim_dac": 0, "module": 0,
+        "adc_pd": 0, "adc_comp": 0,
     }
+
+
+def test_module_fields_roundtrip():
+    wire = p.pack_status(1, 1, 1, 0, "W", 0, p.MODE_ESTIM, 50, 20,
+                         laser_dac=3650, estim_dac=4095,
+                         module=p.MODULE_FAULT_LATCHED | p.MODULE_ESTIM_READY,
+                         adc_pd=123, adc_comp=3700)
+    (mtype, payload), = p.StreamDecoder().feed(wire)
+    f = p.unpack_status(payload)
+    assert (f["laser_dac"], f["estim_dac"], f["adc_pd"], f["adc_comp"]) == (3650, 4095, 123, 3700)
+    assert f["module"] & p.MODULE_FAULT_LATCHED and f["module"] & p.MODULE_ESTIM_READY
+    assert p.status_in_range(f)
+    f["laser_dac"] = p.LASER_DAC_MAX + 1
+    assert not p.status_in_range(f)
+
+    fault = p.encode_frame(p.EVT_FAULT, p._FAULT.pack(p.MODULE_FAULT_LATCHED, 99))
+    (mtype, payload), = p.StreamDecoder().feed(fault)
+    assert mtype == p.EVT_FAULT and p.unpack_fault(payload) == (p.MODULE_FAULT_LATCHED, 99)
+
+    assert p.unpack_dac(p.pack_laser_current(1216)[3:]) == 1216
+    assert p.laser_ma_to_dac(300) <= p.LASER_DAC_MAX
+    assert abs(p.laser_dac_to_ma(3650) - 300) < 2
+    assert abs(p.estim_dac_to_ua(4095) - 502) < 1
+    assert abs(p.comp_to_volts(3700) - 12.0) < 0.2
 
 
 # --- magic avoidance for CONFIG -----------------------------------------
@@ -100,4 +126,5 @@ def test_status_range_check_rejects_garbage():
         p.pack_status(200, 8000, 10000, 1, "W", 5)[3:]))
     assert not p.status_in_range({
         "intensity": 9999, "ramp_ticks": 1, "hold_ticks": 1,
-        "button_mask": 0, "phase": "W", "tick": 0})
+        "button_mask": 0, "phase": "W", "tick": 0,
+        "mode": p.MODE_LASER, "estim_dur_ticks": 1, "estim_ipi_ticks": 1})

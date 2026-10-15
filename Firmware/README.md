@@ -121,13 +121,13 @@ sudo systemctl start laserhat-broker.service
 > **Flash with no module in J8/J9** and **stop the broker first** so the
 > serial port and the trigger GPIO are free.  In Rev 2 the SWD pins
 > (PA19/PA20) are dedicated, so SWD traffic can no longer look like a
-> trigger; `make flash` still power-cycles the MCU and halts the core
-> during the boot blink.
+> trigger and the debug port is reachable at any time; `make flash` still
+> power-cycles the MCU so OpenOCD meets a freshly reset core.
 
 `make flash` does not run an OpenOCD verify pass. The target-side
 CRC algorithm in `ti_mspm0.cfg` / OpenOCD 0.12.0+dev hangs the MCU
 even though the write itself is reliable. Visual confirmation is the
-~4-second boot blink of the status LED D7 right after the flash
+~2-second boot blink of the status LED D7 right after the flash
 command finishes, followed by a short blip once a second (heartbeat).
 
 #### What `make flash` actually does
@@ -147,16 +147,19 @@ order:
    (saved at the start of the cycle so the kernel UART driver continues
    to own GPIO 14).
 
-2. **OpenOCD probes SWD while the MCU is in the boot blink window.**
-   The core is busy-waiting in the ~4 s boot blink, so a plain halt
-   request lands reliably.
+2. **OpenOCD probes SWD right after the power-cycle.**  The core is
+   then busy-waiting in the ~2 s boot blink, so a plain halt request
+   lands reliably.  (On the Rev 1 HAT this window was essential: the
+   firmware reclaimed SWDIO as its trigger input once the blink ended.
+   Rev 2 keeps PA19/PA20 as SWD, so the window is a convenience, not a
+   requirement.)
 
 3. **Explicit `init` / `halt` / `flash write_image` / `reset run` /
    `shutdown`**, instead of OpenOCD's higher-level `program ... reset`.
    The shorthand tries to halt-on-reset using DEMCR vector catch, and
    that latch doesn't engage reliably on MSPM0 — halt times out and
-   init fails. Halting a freely-running CPU (i.e. one in the boot
-   blink busy-wait) via a plain DAP halt request works every time.
+   init fails. Halting a freely-running CPU (one in the boot blink
+   busy-wait) via a plain DAP halt request works every time.
 
 The OpenOCD config (`openocd/pi-swd.cfg`) uses
 `reset_config srst_only srst_nogate` — NRST is wired but OpenOCD does
@@ -240,21 +243,32 @@ payload length is implied by the type — no length field, no byte-stuffing,
 (mirrored in `Pi/protocol.py`):
 
 ```
-Host -> MCU                          MCU -> Host
-  CMD_CONFIG  i u16,                   RSP_STATUS  i,r,h,buttons,phase,tick
-              r u32 (10 µs ticks),     EVT_PULSE_START  tick
-              h u32 (10 µs ticks)      EVT_PULSE_END    tick
-  CMD_TRIGGER                          EVT_BUTTON       mask, edges
-  CMD_QUERY
+Host -> MCU                              MCU -> Host
+  CMD_CONFIG        i u16,                 RSP_STATUS  i,r,h,buttons,phase,tick,
+                    r u32 (10 µs ticks),               mode,estim_dur,estim_ipi,
+                    h u32 (10 µs ticks)                laser_dac,estim_dac,module,
+  CMD_TRIGGER                                          adc_pd,adc_comp   (34 bytes)
+  CMD_QUERY                                EVT_PULSE_START  tick
+  CMD_SET_MODE      mode u8 (0 laser/1 estim) EVT_PULSE_END  tick
+  CMD_ESTIM_CONFIG  dur u32, ipi u32 (ticks) EVT_BUTTON     mask, edges
+  CMD_LASER_CURRENT dac u16 (0..3650)        EVT_FAULT      module flags, tick
+  CMD_ESTIM_CURRENT dac u16 (0..4095)
+  CMD_CLEAR_FAULT
 ```
 
-Defaults at boot: `i=320 r=8000 h=10000`.  **Every command is answered with
-`RSP_STATUS`** (status-as-ack) — so the host confirms the resulting state
-end-to-end; that echo is the integrity check.  `CMD_CONFIG` sets all three
-stim parameters at once (atomic; out-of-range leaves the config unchanged,
-which the echo reveals).  A trigger also emits `EVT_PULSE_START` when the
-pulse begins and `EVT_PULSE_END` when it returns to idle; button edges
-arrive unsolicited as `EVT_BUTTON`.
+Defaults at boot: `i=320 r=8000 h=10000`, laser mode, `laser_dac=1216`
+(≈100 mA), `estim_dac=0`.  **Every command is answered with `RSP_STATUS`**
+(status-as-ack) — so the host confirms the resulting state end-to-end; that
+echo is the integrity check.  `CMD_CONFIG` sets all three stim parameters at
+once (atomic; out-of-range leaves the config unchanged, which the echo
+reveals), and the same rule applies to the DAC codes.  A trigger also emits
+`EVT_PULSE_START` when the pulse begins and `EVT_PULSE_END` when it returns
+to idle; button edges arrive unsolicited as `EVT_BUTTON`; a module fault
+(FAULT_n on J8.3) arrives as `EVT_FAULT` and shows in the `module` flags
+(bit 0 FAULT_n low, bit 1 latched, bit 2 e-stim DAC ready, bit 3 I2C NACK)
+until `CMD_CLEAR_FAULT`.  Scaling: laser current ≈ `laser_dac × 0.0822 mA`,
+e-stim amplitude ≈ `estim_dac × 0.123 µA`, compliance rail ≈
+`adc_comp × 3.3/4095 × 133/33 V` (see `Pi/protocol.py`).
 
 No CRC is needed: every command's `RSP_STATUS` echo verifies the values
 end-to-end, decoded `STATUS`/event fields are range-checked, and the host

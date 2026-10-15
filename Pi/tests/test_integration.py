@@ -91,6 +91,14 @@ def run(broker_cmd=python_broker) -> int:
         if client.set_intensity(9999):
             failures.append("out-of-range intensity wrongly accepted")
 
+        # module knobs: laser DAC code round-trips, fault clear acks.
+        if not client.set_laser_dac(1500):
+            failures.append("set_laser_dac not acked ok")
+        if not _wait(lambda: getattr(client.get_state(), "laser_dac", None) == 1500):
+            failures.append("laser_dac edit did not reflect in state")
+        if not client.clear_fault():
+            failures.append("clear_fault not acked ok")
+
         # trigger -> ACK ok, and pulse_start/pulse_end events propagate.
         del events[:]
         if not client.trigger():
@@ -115,7 +123,7 @@ def run(broker_cmd=python_broker) -> int:
         for f in failures:
             print("FAIL:", f)
         return 1
-    print("integration OK: alive, set+mirror, range-reject, pulse events")
+    print("integration OK: alive, set+mirror, range-reject, module knobs, pulse events")
     return 0
 
 

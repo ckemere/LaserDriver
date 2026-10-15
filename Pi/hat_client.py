@@ -35,6 +35,11 @@ def _state_from_msg(msg: dict) -> Optional[State]:
         mode=msg.get("mode", 0),
         estim_dur_ticks=msg.get("estim_dur_ticks", 1),
         estim_ipi_ticks=msg.get("estim_ipi_ticks", 1),
+        laser_dac=msg.get("laser_dac") or 0,
+        estim_dac=msg.get("estim_dac") or 0,
+        module=msg.get("module", 0),
+        adc_pd=msg.get("adc_pd", 0),
+        adc_comp=msg.get("adc_comp", 0),
     )
 
 
@@ -133,6 +138,17 @@ class HatClient:
 
     def set_estim_ipi(self, ticks: int) -> bool:
         return self._command({"cmd": "set", "knob": "ei", "value": ticks}).get("ok", False)
+
+    def set_laser_dac(self, code: int) -> bool:
+        """Laser module current setpoint (DAC0 code, protocol.laser_dac_to_ma)."""
+        return self._command({"cmd": "set", "knob": "ld", "value": code}).get("ok", False)
+
+    def set_estim_dac(self, code: int) -> bool:
+        """E-stim module amplitude (DAC60501 code, protocol.estim_dac_to_ua)."""
+        return self._command({"cmd": "set", "knob": "sd", "value": code}).get("ok", False)
+
+    def clear_fault(self) -> bool:
+        return self._command({"cmd": "clear_fault"}).get("ok", False)
 
     def trigger(self) -> bool:
         return self._command({"cmd": "trigger"}).get("ok", False)

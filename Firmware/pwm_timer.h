@@ -21,7 +21,8 @@
  * output_mux.c; this module only configures the timer.
  *
  * The e-stim module uses the same two pins as independent EN / CATH
- * edges (spec §7); that mode is not part of the bring-up build.
+ * edges (spec §7); in ESTIM mode they stay in their GPIO mux and the tick
+ * ISR drives them directly (10 µs grid), so this timer idles.
  */
 
 void laser_timera_init(void);

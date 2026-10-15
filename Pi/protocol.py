@@ -15,10 +15,10 @@ implies.  There is no length field, no byte-stuffing, and no CRC:
   * Integrity is end-to-end — every command is answered with RSP_STATUS
     (the "status-as-ack"), so the broker confirms the MCU actually holds
     the values it sent; STATUS / event fields are range-checked on receipt.
-  * The MCU's only inbound payload is CMD_CONFIG (bounded i/r/h, no
-    full-range field), and the broker guarantees a CONFIG payload never
-    contains the SYNC bytes (see avoid_magic), so the MCU's resync is
-    exact without a CRC.
+  * The MCU's inbound payloads are bounded (CONFIG i/r/h, the DAC codes
+    <= 0x0FFF, mode, e-stim ticks), and the broker guarantees a CONFIG
+    payload never contains the SYNC bytes (see avoid_magic), so the MCU's
+    resync is exact without a CRC.
 
 Pure stdlib.
 """
@@ -40,15 +40,20 @@ MAGIC16 = SYNC[0] | (SYNC[1] << 8)
 CMD_CONFIG        = 0x01    # i u16, r u32, h u32
 CMD_TRIGGER       = 0x02    # —
 CMD_QUERY         = 0x03    # —
-CMD_SET_MODE      = 0x04    # mode u8 (MODE_LASER / MODE_ESTIM)
+CMD_SET_MODE      = 0x04    # mode u8 (MODE_LASER / MODE_ESTIM); refused mid-pulse
 CMD_ESTIM_CONFIG  = 0x05    # pulse_dur_ticks u32, ipi_ticks u32
+CMD_LASER_CURRENT = 0x06    # dac u16: DAC0 code -> laser module IREF (0..LASER_DAC_MAX)
+CMD_ESTIM_CURRENT = 0x07    # dac u16: e-stim module DAC60501 code (0..ESTIM_DAC_MAX)
+CMD_CLEAR_FAULT   = 0x08    # — clear the latched module fault
 
 # MCU -> Host (responses + events), high bit set.
 RSP_STATUS      = 0x81  # i u16, r u32, h u32, btn u8, phase u8, tick u32,
-                         # mode u8, estim_dur u32, estim_ipi u32
+                         # mode u8, estim_dur u32, estim_ipi u32,
+                         # laser_dac u16, estim_dac u16, module u8, adc_pd u16, adc_comp u16
 EVT_PULSE_START = 0x82  # tick u32
 EVT_PULSE_END   = 0x83  # tick u32
 EVT_BUTTON      = 0x84  # mask u8, edges u8 (bits: 0 BACK, 1 SELECT, 2/3 wheel, 4 FIRE, 5 BSL)
+EVT_FAULT       = 0x85  # module u8 (flags), tick u32 — a module fault latched
 
 # Phase byte values in RSP_STATUS (ASCII 'W' / 'T').
 PHASE_WAITING   = ord("W")
@@ -58,18 +63,30 @@ PHASE_TRIGGERED = ord("T")
 MODE_LASER = 0x00
 MODE_ESTIM = 0x01
 
+# Module flag bits (STATUS.module and the EVT_FAULT payload).
+MODULE_FAULT_N_LOW   = 0x01   # J8.3 FAULT_n low now: e-stim fault, or isolated side unpowered
+MODULE_FAULT_LATCHED = 0x02   # outputs locked off, triggers refused until CMD_CLEAR_FAULT
+MODULE_ESTIM_READY   = 0x04   # e-stim DAC60501 acknowledged its GAIN init
+MODULE_I2C_ERROR     = 0x08   # the last e-stim DAC write was not acknowledged
+MODULE_FLAGS_MASK    = 0x0F
+
 _CONFIG       = struct.Struct("<HII")       # i, r, h
-_STATUS       = struct.Struct("<HIIBBIBII") # i, r, h, btn, phase, tick, mode, estim_dur, estim_ipi
+# i, r, h, btn, phase, tick, mode, estim_dur, estim_ipi,
+# laser_dac, estim_dac, module, adc_pd, adc_comp
+_STATUS       = struct.Struct("<HIIBBIBIIHHBHH")
 _ESTIM_CONFIG = struct.Struct("<II")        # pulse_dur_ticks, ipi_ticks
+_DAC          = struct.Struct("<H")         # dac code
+_FAULT        = struct.Struct("<BI")        # module flags, tick
 _U16 = struct.Struct("<H")
 _U32 = struct.Struct("<I")
 
 # Payload length by type, per direction (decoders only accept their inbound
 # set; an out-of-direction type is treated as unknown -> resync).
 CMD_LEN = {CMD_CONFIG: 10, CMD_TRIGGER: 0, CMD_QUERY: 0,
-           CMD_SET_MODE: 1, CMD_ESTIM_CONFIG: 8}
+           CMD_SET_MODE: 1, CMD_ESTIM_CONFIG: 8,
+           CMD_LASER_CURRENT: 2, CMD_ESTIM_CURRENT: 2, CMD_CLEAR_FAULT: 0}
 RSP_LEN = {RSP_STATUS: _STATUS.size, EVT_PULSE_START: 4, EVT_PULSE_END: 4,
-           EVT_BUTTON: 2}
+           EVT_BUTTON: 2, EVT_FAULT: _FAULT.size}
 
 # Field ranges, for validating a decoded STATUS (false-sync rejection).
 INTENSITY_MIN, INTENSITY_MAX = 1, 320
@@ -78,6 +95,46 @@ INTENSITY_MIN, INTENSITY_MAX = 1, 320
 BUTTON_MASK_MAX = 0x3F
 TICKS_MIN, TICKS_MAX = 1, 10_000_000
 ESTIM_TICKS_MIN, ESTIM_TICKS_MAX = 1, 1000
+
+# DAC / ADC code ranges and their physical scaling (mirror of protocol.h).
+LASER_DAC_MAX = 3650          # ~300 mA, the laser module's design maximum
+LASER_DAC_DEFAULT = 1216      # ~100 mA
+ESTIM_DAC_MAX = 4095          # 502 µA full scale
+ESTIM_DAC_DEFAULT = 0
+ADC_CODE_MAX = 4095
+# Laser module: V_DAC = code/4096 * 3.3 V (VDDA ref), IREF = V_DAC * 10/49 over
+# 2 ohm (REV2_NOTES "Laser module") -> 0.0822 mA per code.
+LASER_MA_PER_CODE = 3.3 / 4096 * 10 / 49 / 2 * 1000
+# E-stim module: DAC60501 at 0..1.25 V over R14 2.49 k -> 0.1226 µA per code.
+ESTIM_UA_PER_CODE = 1.25 / 4096 / 2490 * 1e6
+# ADC: 12-bit against VDDA 3.3 V; the compliance divider is R1/R2 = 100 k / 33 k.
+ADC_VOLTS_PER_CODE = 3.3 / 4095
+COMP_DIVIDER = (100 + 33) / 33
+
+
+def laser_dac_to_ma(code: int) -> float:
+    return code * LASER_MA_PER_CODE
+
+
+def laser_ma_to_dac(ma: float) -> int:
+    return max(0, min(LASER_DAC_MAX, round(ma / LASER_MA_PER_CODE)))
+
+
+def estim_dac_to_ua(code: int) -> float:
+    return code * ESTIM_UA_PER_CODE
+
+
+def estim_ua_to_dac(ua: float) -> int:
+    return max(0, min(ESTIM_DAC_MAX, round(ua / ESTIM_UA_PER_CODE)))
+
+
+def adc_to_volts(code: int) -> float:
+    return code * ADC_VOLTS_PER_CODE
+
+
+def comp_to_volts(code: int) -> float:
+    """Compliance rail (LASER_V) from the ADC_B reading."""
+    return code * ADC_VOLTS_PER_CODE * COMP_DIVIDER
 
 
 # --- frame encode --------------------------------------------------------
@@ -106,21 +163,42 @@ def pack_estim_config(dur_ticks: int, ipi_ticks: int) -> bytes:
     return encode_frame(CMD_ESTIM_CONFIG, _ESTIM_CONFIG.pack(dur_ticks, ipi_ticks))
 
 
+def pack_laser_current(dac: int) -> bytes:
+    return encode_frame(CMD_LASER_CURRENT, _DAC.pack(dac))
+
+
+def pack_estim_current(dac: int) -> bytes:
+    return encode_frame(CMD_ESTIM_CURRENT, _DAC.pack(dac))
+
+
 def pack_status(intensity: int, ramp: int, hold: int, button_mask: int,
                 phase: str, tick: int, mode: int = MODE_LASER,
-                estim_dur_ticks: int = 10, estim_ipi_ticks: int = 10) -> bytes:
+                estim_dur_ticks: int = 10, estim_ipi_ticks: int = 10,
+                laser_dac: int = LASER_DAC_DEFAULT, estim_dac: int = ESTIM_DAC_DEFAULT,
+                module: int = 0, adc_pd: int = 0, adc_comp: int = 0) -> bytes:
     phase_byte = PHASE_WAITING if phase == "W" else PHASE_TRIGGERED
     return encode_frame(RSP_STATUS, _STATUS.pack(
         intensity, ramp, hold, button_mask, phase_byte, tick,
-        mode, estim_dur_ticks, estim_ipi_ticks))
+        mode, estim_dur_ticks, estim_ipi_ticks,
+        laser_dac, estim_dac, module, adc_pd, adc_comp))
 
 
 def unpack_config(payload: bytes) -> Tuple[int, int, int]:
     return _CONFIG.unpack(payload)
 
 
+def unpack_dac(payload: bytes) -> int:
+    return _DAC.unpack(payload)[0]
+
+
+def unpack_fault(payload: bytes) -> Tuple[int, int]:
+    """(module flags, tick) of an EVT_FAULT."""
+    return _FAULT.unpack(payload)
+
+
 def unpack_status(payload: bytes) -> dict:
-    i, r, h, btn, phase, tick, mode, estim_dur, estim_ipi = _STATUS.unpack(payload)
+    (i, r, h, btn, phase, tick, mode, estim_dur, estim_ipi,
+     laser_dac, estim_dac, module, adc_pd, adc_comp) = _STATUS.unpack(payload)
     return {
         "intensity": i, "ramp_ticks": r, "hold_ticks": h,
         "button_mask": btn,
@@ -129,6 +207,11 @@ def unpack_status(payload: bytes) -> dict:
         "mode": mode,
         "estim_dur_ticks": estim_dur,
         "estim_ipi_ticks": estim_ipi,
+        "laser_dac": laser_dac,
+        "estim_dac": estim_dac,
+        "module": module,
+        "adc_pd": adc_pd,
+        "adc_comp": adc_comp,
     }
 
 
@@ -141,7 +224,12 @@ def status_in_range(fields: dict) -> bool:
             and fields["phase"] in ("W", "T")
             and fields["mode"] in (MODE_LASER, MODE_ESTIM)
             and ESTIM_TICKS_MIN <= fields["estim_dur_ticks"] <= ESTIM_TICKS_MAX
-            and ESTIM_TICKS_MIN <= fields["estim_ipi_ticks"] <= ESTIM_TICKS_MAX)
+            and ESTIM_TICKS_MIN <= fields["estim_ipi_ticks"] <= ESTIM_TICKS_MAX
+            and 0 <= fields.get("laser_dac", 0) <= LASER_DAC_MAX
+            and 0 <= fields.get("estim_dac", 0) <= ESTIM_DAC_MAX
+            and 0 <= fields.get("module", 0) <= MODULE_FLAGS_MASK
+            and 0 <= fields.get("adc_pd", 0) <= ADC_CODE_MAX
+            and 0 <= fields.get("adc_comp", 0) <= ADC_CODE_MAX)
 
 
 # --- stream decode (Pi inbound = responses/events) ----------------------

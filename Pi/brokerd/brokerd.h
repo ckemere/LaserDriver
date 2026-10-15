@@ -30,6 +30,7 @@ void mcu_start(void);                          /* reader + poller threads */
 bool mcu_set_knob(const char *knob, long long value);
 bool mcu_set_mode(int mode);
 bool mcu_trigger_uart(void);
+bool mcu_clear_fault(void);
 void mcu_query(void);
 
 /* Current state as one JSON line (with trailing newline). */

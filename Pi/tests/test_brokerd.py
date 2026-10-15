@@ -161,8 +161,15 @@ def test_json_edge_cases():
         assert _wait(lambda: c.get_state().mode == 1)
         assert c.set_estim_dur(25)
         assert _wait(lambda: c.get_state().estim_dur_ticks == 25)
+        assert c.set_estim_dac(820)
+        assert _wait(lambda: c.get_state().estim_dac == 820)
+        assert not c.set_estim_dac(5000)               # out of range: echo differs
         assert not c.set_mode("bogus")
         assert c.set_mode("laser")
+        assert c.set_laser_dac(2000)
+        assert _wait(lambda: c.get_state().laser_dac == 2000)
+        assert not c.set_laser_dac(4000)               # above LASER_DAC_MAX
+        assert c.clear_fault()                         # nothing latched -> ok
 
         # malformed JSON over the raw socket
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)

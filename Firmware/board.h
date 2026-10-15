@@ -18,9 +18,14 @@
  *             break the Pi's bus.
  *   PA2       ROSC — 100 k 0.1 % to GND for the SYSOSC frequency
  *             correction loop (analog function, enabled in sysctl.c).
- *   PA15      DB_DAC (J9.3) — module setpoint / RELEASE; no module yet.
- *   PA17/PA22 DB_ADC_A/B (J9.4/J9.5) — module analog / I2C; no module yet.
  *   PA19/PA20 SWDIO/SWCLK — dedicated debug pins in Rev 2 (Pi GPIO25/24).
+ *
+ * The three J9 module lines change role with the mode (module.c):
+ *   PA15      DB_DAC (J9.3):   LASER = DAC0_OUT setpoint (analog, PINCM at
+ *             reset default); ESTIM = RELEASE, push-pull GPIO output.
+ *   PA17/PA22 DB_ADC_A/B (J9.4/J9.5): LASER = ADC1.2 photodiode / ADC1.8
+ *             compliance divider (analog); ESTIM = bit-banged I2C SDA / SCL,
+ *             open-drain GPIO (pull-ups on the module).
  */
 
 #include <stdint.h>
@@ -41,9 +46,31 @@
 
 /* ----- Module header J8.3: DB_GPIO (PA6) = FAULT_n, active low ----- */
 /* Input with pull-up: the laser module leaves it open, the e-stim module
- * drives it.  TIMA0_FAULT0 (PF 4) is not armed in the bring-up build. */
+ * drives it (low = fault / isolated side not ready, spec §7).  A falling
+ * edge raises the GROUP1 GPIO interrupt, which kills EN / CATH / RELEASE
+ * and latches a fault (main.c); the pin stays a plain GPIO so its level
+ * can also be polled. */
 #define BOARD_FAULT_N_PIN           (1u << 6)
 #define BOARD_FAULT_N_PINCM         IOMUX_PINCM11
+
+/* ----- Module header J9: DB_DAC (PA15), DB_ADC_A (PA17), DB_ADC_B (PA22) ----- */
+#define BOARD_DAC_PIN               (1u << 15)
+#define BOARD_DAC_PINCM             IOMUX_PINCM37    /* DAC0_OUT / e-stim RELEASE */
+#define BOARD_ADC_A_PIN             (1u << 17)
+#define BOARD_ADC_A_PINCM           IOMUX_PINCM39    /* ADC1.2 photodiode / e-stim SDA */
+#define BOARD_ADC_B_PIN             (1u << 22)
+#define BOARD_ADC_B_PINCM           IOMUX_PINCM47    /* ADC1.8 compliance / e-stim SCL */
+#define BOARD_ADC_PD_CHANNEL        2u               /* ADC1 channel on PA17 */
+#define BOARD_ADC_COMP_CHANNEL      8u               /* ADC1 channel on PA22 */
+
+/* E-stim module aliases for the same pins (spec §7 names). */
+#define BOARD_ESTIM_EN_PIN          BOARD_PWM_A_PIN  /* J8.5 EN   = PA7 */
+#define BOARD_ESTIM_CATH_PIN        BOARD_PWM_B_PIN  /* J8.4 CATH = PA12 */
+#define BOARD_ESTIM_RELEASE_PIN     BOARD_DAC_PIN    /* J9.3 RELEASE = PA15 */
+#define BOARD_ESTIM_SDA_PIN         BOARD_ADC_A_PIN  /* J9.4 SDA = PA17 */
+#define BOARD_ESTIM_SDA_PINCM       BOARD_ADC_A_PINCM
+#define BOARD_ESTIM_SCL_PIN         BOARD_ADC_B_PIN  /* J9.5 SCL = PA22 */
+#define BOARD_ESTIM_SCL_PINCM       BOARD_ADC_B_PINCM
 
 /* ----- Buttons: active LOW (commons on GND), internal pull-ups -----
  * Bit order in the firmware's button mask (and EVT_BUTTON / RSP_STATUS):

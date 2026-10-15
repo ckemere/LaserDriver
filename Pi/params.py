@@ -15,7 +15,7 @@ from dataclasses import dataclass
 
 @dataclass(frozen=True)
 class ParamSpec:
-    name: str        # firmware knob letter: 'i' / 'r' / 'h'
+    name: str        # broker knob: 'i' / 'r' / 'h' / 'ld' (laser), 'ed' / 'ei' / 'sd' (e-stim)
     label: str       # human-readable name
     step: int        # +/- increment applied by the GUIs
     minimum: int
@@ -26,6 +26,8 @@ PARAMS: list[ParamSpec] = [
     ParamSpec("i", "intensity", step=8,   minimum=1, maximum=320),
     ParamSpec("r", "ramp",      step=200, minimum=1, maximum=10_000_000),
     ParamSpec("h", "hold",      step=500, minimum=1, maximum=10_000_000),
+    # Laser module current: DAC0 code, 0.0822 mA each (step ~5 mA, max ~300 mA).
+    ParamSpec("ld", "current",  step=61,  minimum=0, maximum=3650),
 ]
 
 PARAMS_BY_NAME: dict[str, ParamSpec] = {p.name: p for p in PARAMS}
@@ -34,6 +36,8 @@ PARAMS_BY_NAME: dict[str, ParamSpec] = {p.name: p for p in PARAMS}
 ESTIM_PARAMS: list[ParamSpec] = [
     ParamSpec("ed", "pulse dur", step=10, minimum=1, maximum=1000),
     ParamSpec("ei", "IPI",       step=10, minimum=1, maximum=1000),
+    # E-stim amplitude: DAC60501 code, 0.1226 µA each (step ~10 µA, max 502 µA).
+    ParamSpec("sd", "amplitude", step=82, minimum=0, maximum=4095),
 ]
 
 ESTIM_PARAMS_BY_NAME: dict[str, ParamSpec] = {p.name: p for p in ESTIM_PARAMS}

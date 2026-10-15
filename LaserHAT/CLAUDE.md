@@ -63,7 +63,7 @@ parts, footprint ids, values, DNP, pad nets, paths) → 0 differences.
 | 3 | NRST | GPIO23 net | reset ← Pi GPIO23 (J1.16), R3 47k / C3 10n, JP4 RTS_NRST |
 | 6 / 32 | PA2 / VCORE | ROSC / VCORE | R4 100k 0.1 % / C4 |
 | 7, 8, 9 | PA3–PA5 | — | spare |
-| 10 | PA6 | DB_GPIO | J8.3 FAULT_n → **TIMA0_FAULT0** (hardware PWM kill); J8 pins 3/5 swapped 2026-09-29 |
+| 10 | PA6 | DB_GPIO | J8.3 FAULT_n → **TIMA0_FAULT0**-capable pin; the firmware uses it as a falling-edge GPIO IRQ that kills EN/CATH/RELEASE (the e-stim lines are GPIO-driven, so the timer's own kill would not reach them); J8 pins 3/5 swapped 2026-09-29 |
 | 11 | PA7 | DB_PWM_A | J8.5 EN, **TIMA0_CCP1** |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | **UART1** TX/RX ↔ Pi GPIO15/14 |
 | 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 ↔ CH340N (BSL) — fixed |
@@ -84,8 +84,11 @@ parts, footprint ids, values, DNP, pad nets, paths) → 0 differences.
 - Pi header vs Rev 1: SWD swapped (GPIO24 = SWCLK, GPIO25 = SWDIO); NRST ↔ MCU_POWER_EN swapped
   (GPIO23 = NRST, GPIO18 = MCU_POWER_EN); trigger is GPIO26 → PA27.  Flash Rev 2 with
   `make flash` (Rev 2 is the default since 2026-10-14; `HAT_REV=1` for the old board; `Pi/power_cycle.py` reads LASERHAT_*_PIN).
-- **Firmware is Rev 2 since 2026-10-14** (`Firmware/board.h`, bring-up build: buttons, LED, J8 PWM, BNCs, both UARTs;
-  module lines PA15/PA17/PA22 untouched, TIMA0 fault not armed).  Rev 1 firmware = git tag `firmware-rev1`.
+- **Firmware is Rev 2 since 2026-10-14** (`Firmware/board.h`; HAT bring-up build = tag `v0.2.0-rc1`).  The same day
+  the module firmware followed: LASER mode = TIMA0 PWM + DAC0 setpoint on J9.3 (`CMD_LASER_CURRENT`, VDDA ref, default
+  ≈100 mA) + ADC1 readback of J9.4/J9.5; ESTIM mode = spec §7 sequencing on EN/CATH/RELEASE as GPIOs, DAC60501 over
+  bit-banged I²C (`CMD_ESTIM_CURRENT`), FAULT_n GPIO-IRQ kill + latch (`EVT_FAULT`, `CMD_CLEAR_FAULT`).  Boot blink is
+  ~2 s (was 4 s; it only mattered on Rev 1, where SWDIO became the trigger after it).  Rev 1 firmware = tag `firmware-rev1`.
 - OLED bonnet (Adafruit 4567) runs only on 3.3 V and ties header pins 1/17 together itself.
 - J8/J9 pad positions and pinout are frozen (module contract, spec §7).
 

@@ -29,11 +29,16 @@ CASES = [
     (p.CMD_CONFIG, p._CONFIG.pack(1, 1, 10_000_000)),
     (p.CMD_SET_MODE, bytes([p.MODE_ESTIM])),
     (p.CMD_ESTIM_CONFIG, p._ESTIM_CONFIG.pack(500, 2000)),
+    (p.CMD_LASER_CURRENT, p._DAC.pack(3650)),
+    (p.CMD_ESTIM_CURRENT, p._DAC.pack(4095)),
+    (p.CMD_CLEAR_FAULT, b""),
     (p.RSP_STATUS, p._STATUS.pack(200, 8000, 10000, 0b1010,
                                   p.PHASE_TRIGGERED, 123456,
-                                  p.MODE_ESTIM, 500, 2000)),
+                                  p.MODE_ESTIM, 500, 2000,
+                                  1216, 820, 0x06, 123, 3700)),
     (p.EVT_PULSE_START, p._U32.pack(0xDEADBEEF)),
     (p.EVT_BUTTON, bytes([0b0101, 0b0100])),
+    (p.EVT_FAULT, p._FAULT.pack(0x03, 42)),
 ]
 
 
@@ -73,11 +78,14 @@ def main():
          p._CONFIG.pack(320, 8000, 10000).hex()),
         ("status " + c("status", "200", "8000", "10000", "10",
                        str(p.PHASE_TRIGGERED), "123456",
-                       str(p.MODE_ESTIM), "500", "2000"),
+                       str(p.MODE_ESTIM), "500", "2000",
+                       "1216", "820", "6", "123", "3700"),
          p._STATUS.pack(200, 8000, 10000, 10, p.PHASE_TRIGGERED, 123456,
-                        p.MODE_ESTIM, 500, 2000).hex()),
+                        p.MODE_ESTIM, 500, 2000, 1216, 820, 6, 123, 3700).hex()),
         ("estim " + c("estim", "500", "2000"),
          p._ESTIM_CONFIG.pack(500, 2000).hex()),
+        ("dac " + c("dac", "3650"), p._DAC.pack(3650).hex()),
+        ("fault " + c("fault", "3", "42"), p._FAULT.pack(3, 42).hex()),
     ]
     for label_got, want in struct_cases:
         label, got = label_got.split(" ", 1)

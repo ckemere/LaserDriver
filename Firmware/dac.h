@@ -5,14 +5,19 @@
 #include "mcu.h"
 
 /*
- * DAC0 + internal VREF register-level driver.
+ * DAC0 register-level driver — the laser module's current setpoint on
+ * J9.3 (PA15, DAC0_OUT).
  *
- * VREF is configured to drive its 2.5 V buffered output, sourced from
- * LFCLK with no sample-and-hold. DAC0 references VEREFP/VEREFN, 12-bit
- * binary, output amplifier on, FIFO and sample-timer disabled.
+ * Reference = VDDA (the MCU's 3.3 V rail), 12-bit binary, output buffer
+ * on, FIFO and sample timer off: V_OUT = code / 4096 x 3.3 V.  The laser
+ * module divides that by R3/R4 (39 k / 10 k) into IREF across the 2 ohm
+ * sense resistor, so I = code x 0.0822 mA (REV2_NOTES "Laser module").
+ * VDDA rather than the internal 2.5 V VREF so the full 300 mA design range
+ * is reachable (2.5 V would stop at ~255 mA).
  *
- * After laser_dac_init() the DAC output stage is ready; call
- * laser_dac_write12() with the desired code and then laser_dac_enable().
+ * laser_dac_init() once at boot; laser_dac_enable() / _disable() when the
+ * mode changes (PA15 is the e-stim RELEASE GPIO in the other mode, see
+ * module.c); laser_dac_write12() any time.
  */
 
 void laser_dac_init(void);

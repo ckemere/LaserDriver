@@ -84,7 +84,11 @@ the MCU tick), or put a scope on the output.
 The JSON socket works exactly like `broker.py`'s (see that file's docstring) with one
 addition: `{"cmd": "stats"}` returns the trigger counters (`udp_rx`,
 `udp_fired`, `udp_duplicate`, `udp_denied`, `latency_last_ns`,
-`latency_max_ns`, …).
+`latency_max_ns`, …).  Knobs: `i r h` (laser pulse), `ld` (laser DAC code),
+`ed ei` (e-stim timing), `sd` (e-stim DAC code); `{"cmd": "clear_fault"}`
+clears a latched module fault.  State lines carry `laser_dac`, `estim_dac`,
+`module` (flag bits, see `Pi/protocol.py`), `adc_pd`, `adc_comp`; a fault
+arrives as `{"type": "event", "event": "fault", "module": .., "tick": ..}`.
 
 ## Latency tuning checklist (Pi 4)
 

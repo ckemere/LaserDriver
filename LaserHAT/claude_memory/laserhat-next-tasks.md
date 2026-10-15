@@ -1,10 +1,15 @@
 ---
 name: laserhat-next-tasks
-description: "Status 2026-10-14: boards arrived; Rev 2 bring-up firmware written (HAT only, no modules); next = flash and run Firmware/TESTING.md, then module firmware, then merge pcb-rev2 into main"
+description: "Status 2026-10-14: HAT bring-up firmware works on hardware (v0.2.0-rc1); module firmware (laser DAC/ADC, e-stim spec §7, fault latch) committed, untested on modules; next = user tests TESTING.md steps 10-11, then merge pcb-rev2 into main"
 metadata:
   type: project
 ---
 
+0a. **2026-10-14 evening: the user flashed v0.2.0-rc1 and reported "Success!" (HAT alone).**  Module firmware then
+   written (LASER: DAC0 setpoint `CMD_LASER_CURRENT` + ADC1 readback; ESTIM: spec §7 GPIO sequencing, bit-banged
+   I²C DAC60501 `CMD_ESTIM_CURRENT`, FAULT_n GPIO-IRQ latch `EVT_FAULT`/`CMD_CLEAR_FAULT`; STATUS = 34 bytes; boot
+   blink 4 s → 2 s).  Not yet run with a module; `Firmware/TESTING.md` steps 10–11 are the plan.  Still open: the
+   wheel roll direction (B3/B4), whether SWD attaches outside the boot blink (then shorten it further).
 0. **2026-10-14: boards arrived (ordered 2026-10-01, archives in `fab/orders/`).  Rev 2 bring-up firmware committed**
    (`Firmware/`, HAT alone: buttons, LED, J8 PWM, BNCs, both UARTs; Pi side moved to GPIO26 trigger / GPIO18 power /
    GPIO23 NRST; Rev 1 firmware = tag `firmware-rev1`).  Next: the user flashes and walks `Firmware/TESTING.md`; then
@@ -20,7 +25,8 @@ metadata:
    gets a HAT pull-up (the laser module leaves J8.3 open).
 3. **Battery packs:** decide on a keyed JST-PH 3-pin connector (+V / 0V / −V) beside PS1, reverse-polarity Schottkys,
    and a switch; 4S Li-ion is the target (5S exceeds the OPA2192's ±18 V).
-4. **Firmware** for e-stim mode per spec §7: bit-banged I²C on PA17/PA22, RELEASE on PA15, latched TIMA0 fault.
+4. **Firmware** for e-stim mode per spec §7 — done 2026-10-14 (GPIO-IRQ fault latch instead of TIMA0 FAULT0, since the
+   e-stim lines are GPIO-driven); needs hardware confirmation.
 
 **Why:** the M4 design is final on paper; the layout and the firmware are what remains before ordering.
 **How to apply:** all three boards are hand-routed — never rebuild one; check `.lck` files before writing boards.

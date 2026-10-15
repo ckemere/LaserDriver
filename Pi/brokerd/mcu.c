@@ -42,6 +42,11 @@ typedef struct {
     uint8_t  mode;
     uint32_t estim_dur_ticks;
     uint32_t estim_ipi_ticks;
+    uint16_t laser_dac;
+    uint16_t estim_dac;
+    uint8_t  module;                /* MODULE_* flags */
+    uint16_t adc_pd;
+    uint16_t adc_comp;
 } McuState;
 
 static int g_fd = -1;
@@ -141,22 +146,26 @@ static void state_json_locked(char *buf, size_t cap)
 {
     const McuState *s = &g_state;
     char i[16] = "null", r[16] = "null", h[16] = "null", ed[16] = "null",
-         ei[16] = "null";
+         ei[16] = "null", ld[16] = "null", sd[16] = "null";
     if (s->have_status) {
         snprintf(i, sizeof i, "%u", s->intensity);
         snprintf(r, sizeof r, "%u", s->ramp_ticks);
         snprintf(h, sizeof h, "%u", s->hold_ticks);
         snprintf(ed, sizeof ed, "%u", s->estim_dur_ticks);
         snprintf(ei, sizeof ei, "%u", s->estim_ipi_ticks);
+        snprintf(ld, sizeof ld, "%u", s->laser_dac);
+        snprintf(sd, sizeof sd, "%u", s->estim_dac);
     }
     const char *alive = s->mcu_alive ? "true" : "false";
     snprintf(buf, cap,
              "{\"type\":\"state\",\"ok\":%s,\"mcu_alive\":%s,"
              "\"intensity\":%s,\"ramp_ticks\":%s,\"hold_ticks\":%s,"
              "\"button_mask\":%u,\"phase\":\"%c\",\"tick\":%u,\"mode\":%u,"
-             "\"estim_dur_ticks\":%s,\"estim_ipi_ticks\":%s}\n",
+             "\"estim_dur_ticks\":%s,\"estim_ipi_ticks\":%s,"
+             "\"laser_dac\":%s,\"estim_dac\":%s,\"module\":%u,"
+             "\"adc_pd\":%u,\"adc_comp\":%u}\n",
              alive, alive, i, r, h, s->button_mask, s->phase, s->tick,
-             s->mode, ed, ei);
+             s->mode, ed, ei, ld, sd, s->module, s->adc_pd, s->adc_comp);
 }
 
 void mcu_state_json(char *buf, size_t cap)
@@ -185,7 +194,12 @@ static bool status_in_range(const StatusPayload *p)
         && (p->phase == PHASE_WAITING || p->phase == PHASE_TRIGGERED)
         && (p->mode == MODE_LASER || p->mode == MODE_ESTIM)
         && p->estim_dur_ticks >= ESTIM_DUR_MIN && p->estim_dur_ticks <= ESTIM_DUR_MAX
-        && p->estim_ipi_ticks >= ESTIM_IPI_MIN && p->estim_ipi_ticks <= ESTIM_IPI_MAX;
+        && p->estim_ipi_ticks >= ESTIM_IPI_MIN && p->estim_ipi_ticks <= ESTIM_IPI_MAX
+        && p->laser_dac <= LASER_DAC_MAX
+        && p->estim_dac <= ESTIM_DAC_MAX
+        && p->module <= MODULE_FLAGS_MASK
+        && p->adc_pd <= ADC_CODE_MAX
+        && p->adc_comp <= ADC_CODE_MAX;
 }
 
 static void apply_status(const StatusPayload *p)
@@ -205,6 +219,11 @@ static void apply_status(const StatusPayload *p)
     n.mode            = p->mode;
     n.estim_dur_ticks = p->estim_dur_ticks;
     n.estim_ipi_ticks = p->estim_ipi_ticks;
+    n.laser_dac       = p->laser_dac;
+    n.estim_dac       = p->estim_dac;
+    n.module          = p->module;
+    n.adc_pd          = p->adc_pd;
+    n.adc_comp        = p->adc_comp;
     bool changed = memcmp(&n, &g_state, sizeof n) != 0;
     g_state = n;
     atomic_store(&g_alive_flag, true);
@@ -255,6 +274,23 @@ static void on_button(const uint8_t *payload)
     pthread_mutex_unlock(&g_state_mu);
 }
 
+static void on_fault(const uint8_t *payload)
+{
+    FaultPayload f;
+    memcpy(&f, payload, sizeof f);
+    char line[128];
+    snprintf(line, sizeof line,
+             "{\"type\":\"event\",\"event\":\"fault\",\"module\":%u,\"tick\":%u}\n",
+             f.module, f.tick);
+    pthread_mutex_lock(&g_state_mu);
+    g_state.module = f.module;
+    g_state.phase  = 'W';               /* the firmware aborts the pulse */
+    atomic_store(&g_pulse_flag, false);
+    ipc_broadcast(line);
+    broadcast_state_locked();
+    pthread_mutex_unlock(&g_state_mu);
+}
+
 static void handle_frame(uint8_t type, const uint8_t *payload)
 {
     switch (type) {
@@ -275,6 +311,7 @@ static void handle_frame(uint8_t type, const uint8_t *payload)
         case EVT_PULSE_START: on_pulse('T', "pulse_start", payload); break;
         case EVT_PULSE_END:   on_pulse('W', "pulse_end", payload);   break;
         case EVT_BUTTON:      on_button(payload);                     break;
+        case EVT_FAULT:       on_fault(payload);                      break;
         default: break;
     }
 }
@@ -294,6 +331,7 @@ static int rsp_len(uint8_t type)
         case EVT_PULSE_START: return 4;
         case EVT_PULSE_END:   return 4;
         case EVT_BUTTON:      return 2;
+        case EVT_FAULT:       return (int)EVT_FAULT_LEN;
         default:              return -1;
     }
 }
@@ -461,14 +499,28 @@ bool mcu_set_knob(const char *knob, long long value)
     bool estim = strcmp(knob, "ed") == 0 || strcmp(knob, "ei") == 0;
     bool laser = strcmp(knob, "i") == 0 || strcmp(knob, "r") == 0
               || strcmp(knob, "h") == 0;
-    if (!estim && !laser) {
+    bool dac   = strcmp(knob, "ld") == 0 || strcmp(knob, "sd") == 0;
+    if (!estim && !laser && !dac) {
         return false;
     }
     /* Values that don't fit the wire field are rejected before sending,
      * as struct.pack does in broker.py. */
-    long long max = strcmp(knob, "i") == 0 ? 0xFFFFLL : 0xFFFFFFFFLL;
+    long long max = (strcmp(knob, "i") == 0 || dac) ? 0xFFFFLL : 0xFFFFFFFFLL;
     if (value < 0 || value > max) {
         return false;
+    }
+
+    if (dac) {
+        /* Module DAC codes go on their own; the echo shows whether the
+         * firmware accepted the value (out of range -> unchanged). */
+        DacPayload p = { (uint16_t)value };
+        StatusPayload echo;
+        if (knob[0] == 'l') {
+            return command(CMD_LASER_CURRENT, &p, sizeof p, &echo)
+                && echo.laser_dac == p.dac;
+        }
+        return command(CMD_ESTIM_CURRENT, &p, sizeof p, &echo)
+            && echo.estim_dac == p.dac;
     }
 
     pthread_mutex_lock(&g_state_mu);
@@ -519,6 +571,13 @@ bool mcu_set_mode(int mode)
 bool mcu_trigger_uart(void)
 {
     return command(CMD_TRIGGER, NULL, 0, NULL);
+}
+
+bool mcu_clear_fault(void)
+{
+    StatusPayload echo;
+    return command(CMD_CLEAR_FAULT, NULL, 0, &echo)
+        && !(echo.module & MODULE_FAULT_LATCHED);
 }
 
 void mcu_query(void)

@@ -13,8 +13,9 @@ static const uint8_t kSparePincm[] = {
 #define PINCM_GPIO_IN_PU (PINCM_GPIO_IN | IOMUX_PINCM_PIPU_ENABLE)
 #define PINCM_GPIO_IN_PD (PINCM_GPIO_IN | IOMUX_PINCM_PIPD_ENABLE)
 
-/* GPIO interrupt polarity: 2 bits per DIO, 01 = rising edge. */
+/* GPIO interrupt polarity: 2 bits per DIO, 01 = rising edge, 10 = falling. */
 #define POL_RISE(dio_in_half)   (0x1u << (2u * (dio_in_half)))
+#define POL_FALL(dio_in_half)   (0x2u << (2u * (dio_in_half)))
 #define POL_MASK(dio_in_half)   (0x3u << (2u * (dio_in_half)))
 
 void laser_gpio_enable_power_and_reset(void)
@@ -47,8 +48,11 @@ void laser_gpio_init(void)
     IOMUX->SECCFG.PINCM[BOARD_PWM_A_PINCM] = PINCM_GPIO_OUT;
     IOMUX->SECCFG.PINCM[BOARD_PWM_B_PINCM] = PINCM_GPIO_OUT;
 
-    /* ----- FAULT_n: input with pull-up (open on the laser module) ----- */
+    /* ----- FAULT_n: input with pull-up (open on the laser module), falling
+     * edge selected now, interrupt masked until the module is ready ----- */
     IOMUX->SECCFG.PINCM[BOARD_FAULT_N_PINCM] = PINCM_GPIO_IN_PU;
+    BOARD_GPIO_PORT->POLARITY15_0 =
+        (BOARD_GPIO_PORT->POLARITY15_0 & ~POL_MASK(6u)) | POL_FALL(6u);
 
     /* ----- BUTTON1..5: inputs with pull-up (pressed = LOW) ----- */
     IOMUX->SECCFG.PINCM[BOARD_BUTTON1_PINCM] = PINCM_GPIO_IN_PU;

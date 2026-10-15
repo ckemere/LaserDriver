@@ -155,10 +155,23 @@ first** (only one process may own the port):
 sudo systemctl stop laserhat-broker.service
 python3 /usr/lib/laserhat/laser_hat.py query
 python3 /usr/lib/laserhat/laser_hat.py config 100 2000 500   # i r h
+python3 /usr/lib/laserhat/laser_hat.py current 1216          # laser DAC code (~100 mA)
+python3 /usr/lib/laserhat/laser_hat.py mode estim            # or: laser
+python3 /usr/lib/laserhat/laser_hat.py estim-current 820     # e-stim DAC code (~100 µA)
+python3 /usr/lib/laserhat/laser_hat.py clear-fault
 python3 /usr/lib/laserhat/laser_hat.py trigger
 python3 /usr/lib/laserhat/laser_hat.py watch                 # print frames, Ctrl-C
 sudo systemctl start laserhat-broker.service
 ```
+
+**Modules.** With the laser module in J8/J9 the laser rows are intensity /
+ramp / hold / **current** (DAC code; the GUIs show mA) and the web page shows
+the module's compliance rail and photodiode readings.  In e-stim mode the rows
+are pulse dur / IPI / **amplitude** (DAC code; shown in µA); the amplitude is
+written to the module's DAC between trains and the row shows `!` until the
+module has acknowledged it.  A FAULT_n edge from the module locks the outputs
+and shows **FAULT** on the OLED chip and the web header; the wheel push or the
+web "clear fault" button clears it.
 
 ### buttons
 
@@ -170,6 +183,7 @@ controls, reported by the MCU over the broker (`EVT_BUTTON` bits):
  wheel   |                          |  B5 FIRE (SW9, east edge):
  (SW7)  B3/B4 roll : -/+ value      |     fires a pulse (firmware, on press)
    west  B2 push   : next row       |
+   edge           (clears a fault)  |
    edge  |                          |
          +--------------------------+
           B1 BACK (SW8, south edge): back to the first row

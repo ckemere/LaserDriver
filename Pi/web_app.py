@@ -9,7 +9,9 @@ it can run at the same time as the OLED GUI (both are broker clients).
 Routes:
     GET  /                  the single page
     GET  /api/state         current MCU state as JSON (from the broker's cache)
-    POST /api/set/<knob>    body { "value": N } where knob in {i, r, h}
+    POST /api/set/<knob>    body { "value": N } where knob in {i, r, h, ld, ed, ei, sd}
+    POST /api/set_mode      body { "mode": "laser" | "estim" }
+    POST /api/clear_fault   clear a latched module fault
     POST /api/trigger       fire a pulse via the UART trigger command
     POST /api/trigger_gpio  fire a pulse via Pi GPIO 26 -> MSPM0 PA27 edge
     GET  /api/healthz       cheap liveness check
@@ -27,6 +29,7 @@ from typing import Optional
 
 from flask import Flask, jsonify, render_template, request
 
+import protocol as proto
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
 from params import ESTIM_PARAMS_BY_NAME, PARAMS_BY_NAME
@@ -86,6 +89,19 @@ def _state_dict(state: Optional[State]) -> dict:
         "mode":            state.mode,
         "estim_dur_ticks": state.estim_dur_ticks,
         "estim_ipi_ticks": state.estim_ipi_ticks,
+        "laser_dac":       state.laser_dac,
+        "laser_ma":        round(proto.laser_dac_to_ma(state.laser_dac), 1),
+        "estim_dac":       state.estim_dac,
+        "estim_ua":        round(proto.estim_dac_to_ua(state.estim_dac), 1),
+        "module":          state.module,
+        "fault_n_low":     state.fault_n_low,
+        "fault_latched":   state.fault_latched,
+        "estim_ready":     state.estim_ready,
+        "i2c_error":       bool(state.module & proto.MODULE_I2C_ERROR),
+        "adc_pd":          state.adc_pd,
+        "pd_volts":        round(proto.adc_to_volts(state.adc_pd), 3),
+        "adc_comp":        state.adc_comp,
+        "compliance_v":    round(proto.comp_to_volts(state.adc_comp), 2),
     }
 
 
@@ -127,6 +143,8 @@ def create_app(client: HatClient) -> Flask:
             "h":  app.config["client"].set_hold,
             "ed": app.config["client"].set_estim_dur,
             "ei": app.config["client"].set_estim_ipi,
+            "ld": app.config["client"].set_laser_dac,
+            "sd": app.config["client"].set_estim_dac,
         }.get(knob)
         if setter is None:
             return jsonify(ok=False, error="unknown_knob"), 400
@@ -158,6 +176,11 @@ def create_app(client: HatClient) -> Flask:
             return jsonify(ok=False, error="unknown_mode"), 400
         ok = app.config["client"].set_mode(mode)
         return jsonify(ok=ok, mode=mode)
+
+    @app.route("/api/clear_fault", methods=["POST"])
+    def api_clear_fault():
+        ok = app.config["client"].clear_fault()
+        return jsonify(ok=ok)
 
     @app.route("/api/healthz")
     def api_healthz():

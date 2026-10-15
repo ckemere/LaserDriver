@@ -23,7 +23,7 @@ of `mcu.h`). The only external dependency is the compiler itself.
 ```
 mcu.h                    self-contained device header (~150 lines)
 cmsis/                   minimal CMSIS Cortex-M0+ (7 files)
-hw/                      peripheral register layouts + bit fields (7 files)
+hw/                      peripheral register layouts + bit fields (8 files)
 startup/                 startup_mspm0g350x_{gcc,ticlang}.c
 linker/                  mspm0g3507.{lds,cmd}
 main.c                   state machine, boot, IRQ handlers, frame dispatch
@@ -68,7 +68,9 @@ already in the repo under `sdk/` — no additional downloads needed.
 | `output_mux.c/h` | Runtime IOMUX flips between GPIO-safe and TIMA0 on PA7/PA12 |
 | `pwm_timer.c/h` | TIMA0 100 kHz PWM on CCP1 (PA7) with CCP3 (PA12) as its complement |
 | `tick_timers.c/h` | TIMG0 100 kHz state-machine tick, TIMG6 1 kHz housekeeping |
-| `dac.c/h` | DAC0 + internal VREF (2.5 V) — compiled, not used by the bring-up build |
+| `dac.c/h` | DAC0 on PA15 (VDDA reference): the laser module's current setpoint |
+| `adc.c/h` | ADC1 channels 2 / 8 (PA17 / PA22): photodiode + compliance-rail readback in laser mode |
+| `module.c/h` | J9 pin roles per mode; e-stim RELEASE, bit-banged I2C, DAC60501 writes |
 | `uart.c/h` | UART1 (Pi) + UART0 (USB-C) at 115200 8N1, one RX ring per port, blocking TX |
 | `protocol.h` | Binary wire protocol map (message types + field layout); mirror of `Pi/protocol.py` |
 | `framing.c/h` | Magic-word frame encode/decode (`SYNC \| TYPE \| payload`, no CRC) |
@@ -88,18 +90,19 @@ map"); `board.h` mirrors it.
 |---|---|---|
 | PA0/PA1 | I2C_SDA/SCL | Pi's I2C bus (OLED bonnet) — **left at reset default, never driven** |
 | PA2  | ROSC | 100 k 0.1 % for the SYSOSC frequency-correction loop (`sysctl.c`) |
-| PA6  | DB_GPIO = FAULT_n (J8.3) | input, pull-up; TIMA0_FAULT0 not armed yet |
-| PA7  | DB_PWM_A (J8.5) | TIMA0_CCP1, laser switch / EN; GPIO LOW when idle |
+| PA6  | DB_GPIO = FAULT_n (J8.3) | input, pull-up; falling-edge GROUP1 IRQ (armed once high for 2 ms) kills EN/CATH/RELEASE and latches a fault |
+| PA7  | DB_PWM_A (J8.5) | TIMA0_CCP1 laser switch (LASER); e-stim EN as GPIO (ESTIM); LOW when idle |
 | PA8/PA9 | PI_RXD/PI_TXD | **UART1** ↔ Pi GPIO15/14 (`/dev/ttyS0`) |
 | PA10/PA11 | MCU_UART_TX/RX | **UART0** ↔ CH340N on USB-C (and the ROM BSL) |
-| PA12 | DB_PWM_B (J8.4) | TIMA0_CCP3, dummy switch / CATH; complement of A, GPIO HIGH when idle |
+| PA12 | DB_PWM_B (J8.4) | TIMA0_CCP3 dummy switch, complement of A, HIGH when idle (LASER); e-stim CATH as GPIO, LOW when idle (ESTIM) |
 | PA13 / PA14 / PA16 | BUTTON4 / 2 / 3 | SW7 thumbwheel roll / push / roll, active low |
-| PA15, PA17, PA22 | DB_DAC, DB_ADC_A/B (J9) | module lines — left at reset default in the bring-up build |
+| PA15 | DB_DAC (J9.3) | LASER: DAC0_OUT setpoint (VDDA ref); ESTIM: RELEASE push-pull output |
+| PA17 / PA22 | DB_ADC_A / DB_ADC_B (J9.4 / J9.5) | LASER: ADC1.2 photodiode / ADC1.8 compliance divider; ESTIM: bit-banged I2C SDA / SCL (open-drain) |
 | PA18 | BSL_INVOKE | SW6, active high (ROM samples it at reset); read into button bit 5 |
 | PA19 / PA20 | SWDIO / SWCLK | ← Pi GPIO25 / GPIO24 |
 | PA21 | BUTTON1 | SW8 BACK, active low |
 | PA23 | BUTTON5 | SW9 FIRE, active low — fires a pulse on press |
-| PA24 | LED_MCU | D7: boot blink, 1 Hz heartbeat, solid during a pulse |
+| PA24 | LED_MCU | D7: ~2 s boot blink, 1 Hz heartbeat, solid during a pulse, 5 Hz while a fault is latched |
 | PA25 | MCU_STIM_OUT | → U8 → J7 BNC + D9; HIGH for the pulse envelope |
 | PA26 | MCU_STIM_IN | ← U8 ← J6 BNC; rising edge = trigger |
 | PA27 | PI_TRIGGER | ← Pi GPIO26; rising edge = trigger |
@@ -112,9 +115,32 @@ GPIO25 = SWDIO, GPIO26 = trigger, GPIO14/15 = UART.
 
 The MCU must boot with PA7 LOW (laser switch OFF) and PA12 HIGH (dummy
 switch conducting). `laser_gpio_init()` pre-loads DOUT bits before
-enabling outputs; `laser_pins_to_gpio_safe()` is called explicitly
+enabling outputs; `enter_mode(MODE_LASER)` calls `laser_pins_to_gpio_safe()`
 after `laser_timera_init()` so the IOMUX state at boot is unambiguous.
 PA0/PA1 must never be configured as outputs: they sit on the Pi's I2C bus.
+
+## Modes and the module lines
+
+`CMD_SET_MODE` (only while idle) calls `enter_mode()`, which re-purposes
+J8/J9 (`module.c`):
+
+- **LASER:** PA7/PA12 flip between GPIO-safe and TIMA0 PWM per tick; DAC0
+  drives J9.3 with `g_laser_dac` (default 1216 ≈ 100 mA; `CMD_LASER_CURRENT`,
+  max 3650 ≈ 300 mA); ADC1 samples J9.4/J9.5 every 10 ms from housekeeping.
+- **ESTIM (spec §7):** PA7 = EN, PA12 = CATH (idle LOW), PA15 = RELEASE are
+  driven as GPIOs by the tick ISR: PRE (RELEASE + CATH high, 10 µs) → PULSE1
+  (EN) → gap (CATH low) → PULSE2 (EN) → POST (RELEASE high 200 µs) → RESET
+  (RELEASE low 200 µs).  The amplitude (`CMD_ESTIM_CURRENT`) goes to the
+  module's DAC60501 over bit-banged I2C on PA17/PA22 from housekeeping, only
+  while idle and only after FAULT_n has been high ≥ 2 ms (GAIN init first,
+  `MODULE_ESTIM_READY`).  Triggers are refused while FAULT_n is low.
+- **Fault:** FAULT_n (PA6) falling edge → `GROUP1_IRQHandler` forces
+  EN/CATH/RELEASE off and latches (`MODULE_FAULT_LATCHED`, `EVT_FAULT`); the
+  tick ISR also latches if it sees FAULT_n low mid-train and aborts to
+  WAITING.  `CMD_CLEAR_FAULT` clears.  The interrupt is armed only after
+  FAULT_n has been high for 2 ms (an unpowered e-stim module idles low).
+  TIMA0's hardware FAULT0 input is not used: in ESTIM mode the pins are
+  GPIOs, so a timer-side kill would not reach them.
 
 ## ISR and state-machine style
 
@@ -138,8 +164,10 @@ tick ISR means UART parsing, button polling, and housekeeping (all in
 `main`) can take as long as they like without shifting a PWM-duty
 write. The other ISRs stay minimal — `UART1_IRQHandler` / `UART0_IRQHandler`
 push one RX byte into their port's ring; `TIMG6_IRQHandler` sets a
-housekeeping flag; `GROUP1_IRQHandler` sets the hardware-trigger flag. Flags shared
-between an ISR and `main` are `volatile`.
+housekeeping flag; `GROUP1_IRQHandler` sets the hardware-trigger flag and,
+for a FAULT_n edge, forces the module outputs off and sets the fault latch
+(the only output writes outside the tick). Flags shared between an ISR and
+`main` are `volatile`.
 
 State is fully captured in `MachineState`. Within the tick ISR,
 `state_machine_tick()` owns transitions; `set_output_from_state()` owns
@@ -165,6 +193,8 @@ Stage only:
 - `pwm_timer.c` / `.h`
 - `tick_timers.c` / `.h`
 - `dac.c` / `.h`
+- `adc.c` / `.h`
+- `module.c` / `.h`
 - `uart.c` / `.h`
 - `protocol.h`
 - `framing.c` / `.h`

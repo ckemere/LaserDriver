@@ -35,7 +35,10 @@ class FakeMCU:
         self.state = {"intensity": 320, "ramp_ticks": 8000, "hold_ticks": 10000,
                       "button_mask": 0, "phase": "W",
                       "mode": proto.MODE_LASER,
-                      "estim_dur_ticks": 10, "estim_ipi_ticks": 10}
+                      "estim_dur_ticks": 10, "estim_ipi_ticks": 10,
+                      "laser_dac": proto.LASER_DAC_DEFAULT,
+                      "estim_dac": proto.ESTIM_DAC_DEFAULT,
+                      "module": 0, "adc_pd": 0, "adc_comp": 0}
 
     def _tick(self) -> int:
         return int((time.monotonic() - self._t0) * 100_000) & 0xFFFFFFFF
@@ -51,7 +54,9 @@ class FakeMCU:
             s["button_mask"],
             proto.PHASE_WAITING if s["phase"] == "W" else proto.PHASE_TRIGGERED,
             self._tick(),
-            s["mode"], s["estim_dur_ticks"], s["estim_ipi_ticks"]))
+            s["mode"], s["estim_dur_ticks"], s["estim_ipi_ticks"],
+            s["laser_dac"], s["estim_dac"], s["module"],
+            s["adc_pd"], s["adc_comp"]))
 
     def _do_pulse(self) -> None:
         self.state["phase"] = "T"
@@ -64,6 +69,12 @@ class FakeMCU:
         """Test hook: simulate a debounced button change."""
         self.state["button_mask"] = mask
         self._send(proto.EVT_BUTTON, bytes([mask, edges]))
+
+    def fault(self) -> None:
+        """Test hook: simulate a latched module fault."""
+        self.state["module"] |= proto.MODULE_FAULT_LATCHED
+        self.state["phase"] = "W"
+        self._send(proto.EVT_FAULT, proto._FAULT.pack(self.state["module"], self._tick()))
 
     def handle(self, mtype: int, payload: bytes) -> None:
         if mtype == proto.CMD_CONFIG and len(payload) == 10:
@@ -78,9 +89,25 @@ class FakeMCU:
         elif mtype == proto.CMD_QUERY:
             self._send_status()
         elif mtype == proto.CMD_SET_MODE and len(payload) == 1:
-            if payload[0] in (proto.MODE_LASER, proto.MODE_ESTIM):
+            if payload[0] in (proto.MODE_LASER, proto.MODE_ESTIM) and self.state["phase"] == "W":
                 self.state["mode"] = payload[0]
+                # The real e-stim module reports ready once its DAC acks.
+                ready = proto.MODULE_ESTIM_READY if payload[0] == proto.MODE_ESTIM else 0
+                self.state["module"] = (self.state["module"] & proto.MODULE_FAULT_LATCHED) | ready
             self._send_status()          # status-as-ack (echoes result)
+        elif mtype == proto.CMD_LASER_CURRENT and len(payload) == 2:
+            code = proto.unpack_dac(payload)
+            if code <= proto.LASER_DAC_MAX:
+                self.state["laser_dac"] = code
+            self._send_status()
+        elif mtype == proto.CMD_ESTIM_CURRENT and len(payload) == 2:
+            code = proto.unpack_dac(payload)
+            if code <= proto.ESTIM_DAC_MAX:
+                self.state["estim_dac"] = code
+            self._send_status()
+        elif mtype == proto.CMD_CLEAR_FAULT:
+            self.state["module"] &= ~proto.MODULE_FAULT_LATCHED
+            self._send_status()
         elif mtype == proto.CMD_ESTIM_CONFIG and len(payload) == 8:
             dur, ipi = proto._ESTIM_CONFIG.unpack(payload)
             if (proto.ESTIM_TICKS_MIN <= dur <= proto.ESTIM_TICKS_MAX

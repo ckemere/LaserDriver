@@ -14,14 +14,16 @@
  *   - module PWM pins PA7 (A) / PA12 (B) as GPIO outputs, A low / B high
  *     (laser switch off, dummy switch on); the TIMA0 mux is flipped at
  *     runtime by output_mux.c
- *   - FAULT_n (PA6) input with pull-up
+ *   - FAULT_n (PA6) input with pull-up; falling-edge IRQ armed at runtime
+ *     (laser_gpio_fault_irq_enable) once the module reports ready
  *   - BUTTON1..5 inputs with pull-ups (active low); BSL (PA18) input with
  *     pull-down (active high)
  *   - LED (PA24) output, on for the boot blink; STIM_OUT (PA25) output low
  *   - STIM_IN (PA26) and PI_TRIGGER (PA27) inputs with rising-edge IRQ
  *
- * PA0/PA1 (Pi I2C), PA2 (ROSC), PA15/PA17/PA22 (module analog lines) and
- * PA19/PA20 (SWD) are deliberately left at their reset default.
+ * PA0/PA1 (Pi I2C), PA2 (ROSC) and PA19/PA20 (SWD) are deliberately left
+ * at their reset default.  PA15/PA17/PA22 (J9 module lines) are owned by
+ * module.c and start at their reset default too (laser mode).
  *
  * laser_gpio_enable_power_and_reset() resets the GPIOA peripheral and
  * enables its bus clock — call before laser_gpio_init().
@@ -52,6 +54,28 @@ static inline bool laser_gpio_fault_n_high(void)
 {
     return (BOARD_GPIO_PORT->DIN31_0 & BOARD_FAULT_N_PIN) != 0u;
 }
+
+/* FAULT_n falling-edge interrupt (shares the GROUP1 vector with the two
+ * trigger inputs).  Enable only once FAULT_n has been high (module ready)
+ * so an unpowered e-stim module at boot does not count as a fault. */
+static inline void laser_gpio_fault_irq_enable(void)
+{
+    BOARD_GPIO_PORT->CPU_INT.ICLR   = BOARD_FAULT_N_PIN;
+    BOARD_GPIO_PORT->CPU_INT.IMASK |= BOARD_FAULT_N_PIN;
+}
+
+static inline void laser_gpio_fault_irq_disable(void)
+{
+    BOARD_GPIO_PORT->CPU_INT.IMASK &= ~BOARD_FAULT_N_PIN;
+    BOARD_GPIO_PORT->CPU_INT.ICLR   = BOARD_FAULT_N_PIN;
+}
+
+/* E-stim EN (PA7) / CATH (PA12) as plain GPIO edges — valid only while the
+ * pins are in their GPIO (not TIMA0) mux, which is the case in ESTIM mode. */
+static inline void laser_gpio_estim_en_set(void)    { BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_ESTIM_EN_PIN; }
+static inline void laser_gpio_estim_en_clear(void)  { BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_ESTIM_EN_PIN; }
+static inline void laser_gpio_estim_cath_set(void)  { BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_ESTIM_CATH_PIN; }
+static inline void laser_gpio_estim_cath_clear(void){ BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_ESTIM_CATH_PIN; }
 
 static inline void laser_gpio_led_set(void)
 {

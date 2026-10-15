@@ -21,10 +21,15 @@ is no arming step.
 IPC is newline-delimited JSON.  Client -> broker:
     {"cmd": "set", "knob": "i", "value": 320}   {"cmd": "trigger"}
     {"cmd": "trigger_gpio"}                      {"cmd": "query"}
+    {"cmd": "set_mode", "mode": "estim"}         {"cmd": "clear_fault"}
+    knobs: i r h (laser pulse), ed ei (e-stim timing), ld (laser DAC code),
+    sd (e-stim DAC code)
 Broker -> client:
-    {"type": "state", "ok": true, "intensity": ..., "phase": "W", ...}
+    {"type": "state", "ok": true, "intensity": ..., "phase": "W", ...,
+     "laser_dac": .., "estim_dac": .., "module": <flags>, "adc_pd": .., "adc_comp": ..}
     {"type": "event", "event": "button", "mask": .., "edges": ..}
     {"type": "event", "event": "pulse_start"|"pulse_end", "tick": ..}
+    {"type": "event", "event": "fault", "module": <flags>, "tick": ..}
     {"type": "reply", "cmd": "set", "ok": true}
 """
 
@@ -53,7 +58,8 @@ POLL_INTERVAL = 0.25                    # s between liveness CMD_QUERY polls
 REPLY_TIMEOUT = 0.5                     # s to wait for a STATUS echo
 LIVENESS_TIMEOUT = 1.5                  # s without a status -> mcu_alive False
 _KNOB_FIELD = {"i": "intensity", "r": "ramp_ticks", "h": "hold_ticks",
-               "ed": "estim_dur_ticks", "ei": "estim_ipi_ticks"}
+               "ed": "estim_dur_ticks", "ei": "estim_ipi_ticks",
+               "ld": "laser_dac", "sd": "estim_dac"}
 
 
 class Broker:
@@ -67,6 +73,8 @@ class Broker:
             "button_mask": 0, "phase": "W", "tick": 0,
             "mode": proto.MODE_LASER,
             "estim_dur_ticks": None, "estim_ipi_ticks": None,
+            "laser_dac": None, "estim_dac": None, "module": 0,
+            "adc_pd": 0, "adc_comp": 0,
         }
         self._state_lock = threading.Lock()
         self._last_status_at = 0.0
@@ -137,6 +145,14 @@ class Broker:
                 self._state["button_mask"] = payload[0]
             self._broadcast({"type": "event", "event": "button",
                              "mask": payload[0], "edges": payload[1]})
+            self._broadcast_state()
+        elif mtype == proto.EVT_FAULT and len(payload) >= 5:
+            flags, tick = proto.unpack_fault(payload)
+            with self._state_lock:
+                self._state["module"] = flags
+                self._state["phase"] = "W"      # the firmware aborts the pulse
+            self._broadcast({"type": "event", "event": "fault",
+                             "module": flags, "tick": tick})
             self._broadcast_state()
 
     def _pulse(self, phase: str, event: str, payload: bytes) -> None:
@@ -222,6 +238,15 @@ class Broker:
                         and echo.get("estim_dur_ticks") == cfg["estim_dur_ticks"]
                         and echo.get("estim_ipi_ticks") == cfg["estim_ipi_ticks"])
 
+        if knob in ("ld", "sd"):
+            try:
+                payload = proto._DAC.pack(value)
+            except Exception:
+                return False
+            cmd = proto.CMD_LASER_CURRENT if knob == "ld" else proto.CMD_ESTIM_CURRENT
+            echo = self._command(cmd, payload)
+            return bool(echo and echo.get(field) == value)
+
         with self._state_lock:
             i = self._state["intensity"]
             r = self._state["ramp_ticks"]
@@ -246,6 +271,10 @@ class Broker:
             return False
         echo = self._command(proto.CMD_SET_MODE, bytes([mode]))
         return bool(echo and echo.get("mode") == mode)
+
+    def clear_fault(self) -> bool:
+        echo = self._command(proto.CMD_CLEAR_FAULT)
+        return bool(echo) and not (echo.get("module", 0) & proto.MODULE_FAULT_LATCHED)
 
     def trigger_uart(self) -> bool:
         return self._command(proto.CMD_TRIGGER) is not None
@@ -326,6 +355,9 @@ class _Handler(socketserver.StreamRequestHandler):
                         "estim": proto.MODE_ESTIM}.get(mode_str, -1)
             return {"type": "reply", "cmd": "set_mode",
                     "ok": broker.set_mode(mode_val)}
+        if cmd == "clear_fault":
+            return {"type": "reply", "cmd": "clear_fault",
+                    "ok": broker.clear_fault()}
         return {"type": "reply", "ok": False, "error": "unknown_cmd"}
 
 

@@ -12,7 +12,7 @@
  *
  * Bit-field definitions and peripheral struct layouts come from the
  * unmodified peripheral headers in hw/ (copies of
- *   sdk/source/ti/devices/msp/peripherals/hw_{gpio,iomux,dac12,vref,
+ *   sdk/source/ti/devices/msp/peripherals/hw_{gpio,iomux,dac12,vref,adc12,
  *                                              uart,gptimer}.h
  *   sdk/source/ti/devices/msp/peripherals/m0p/sysctl/
  *     hw_sysctl_mspm0g1x0x_g3x0x.h  (renamed hw/hw_sysctl.h here)
@@ -63,6 +63,7 @@ typedef enum IRQn
 #include "hw/hw_iomux.h"
 #include "hw/hw_dac12.h"
 #include "hw/hw_vref.h"
+#include "hw/hw_adc12.h"
 #include "hw/hw_uart.h"
 #include "hw/hw_gptimer.h"
 #include "hw/hw_sysctl.h"
@@ -80,6 +81,7 @@ typedef enum IRQn
 #define UART1_BASE     (0x40100000U)
 #define DAC0_BASE      (0x40018000U)
 #define VREF_BASE      (0x40030000U)
+#define ADC1_BASE      (0x40002000U)
 
 #define SYSCTL  ((SYSCTL_Regs  *) SYSCTL_BASE)
 #define IOMUX   ((IOMUX_Regs   *) IOMUX_BASE)
@@ -91,6 +93,7 @@ typedef enum IRQn
 #define UART1   ((UART_Regs    *) UART1_BASE)
 #define DAC0    ((DAC12_Regs   *) DAC0_BASE)
 #define VREF    ((VREF_Regs    *) VREF_BASE)
+#define ADC1    ((ADC12_Regs   *) ADC1_BASE)
 
 /* ---------------------------------------------------------------
  * IOMUX PINCM indices for every GPIOA pin of the VQFN-32 package.
@@ -112,14 +115,14 @@ typedef enum IRQn
 #define IOMUX_PINCM34  (33u)   /* PA12 — DB_PWM_B (J8.4), TIMA0_CCP3 */
 #define IOMUX_PINCM35  (34u)   /* PA13 — BUTTON4 (SW7 wheel roll) */
 #define IOMUX_PINCM36  (35u)   /* PA14 — BUTTON2 (SW7 wheel push) */
-#define IOMUX_PINCM37  (36u)   /* PA15 — DB_DAC (J9.3), DAC0_OUT */
+#define IOMUX_PINCM37  (36u)   /* PA15 — DB_DAC (J9.3), DAC0_OUT / e-stim RELEASE */
 #define IOMUX_PINCM38  (37u)   /* PA16 — BUTTON3 (SW7 wheel roll) */
-#define IOMUX_PINCM39  (38u)   /* PA17 — DB_ADC_A (J9.4), ADC1.2 */
+#define IOMUX_PINCM39  (38u)   /* PA17 — DB_ADC_A (J9.4), ADC1.2 / e-stim I2C SDA */
 #define IOMUX_PINCM40  (39u)   /* PA18 — BSL_INVOKE (SW6, active high) */
 #define IOMUX_PINCM41  (40u)   /* PA19 — SWDIO <- Pi GPIO25 */
 #define IOMUX_PINCM42  (41u)   /* PA20 — SWCLK <- Pi GPIO24 */
 #define IOMUX_PINCM46  (45u)   /* PA21 — BUTTON1 (SW8 BACK) */
-#define IOMUX_PINCM47  (46u)   /* PA22 — DB_ADC_B (J9.5), ADC1.8 */
+#define IOMUX_PINCM47  (46u)   /* PA22 — DB_ADC_B (J9.5), ADC1.8 / e-stim I2C SCL */
 #define IOMUX_PINCM53  (52u)   /* PA23 — BUTTON5 (SW9 FIRE) */
 #define IOMUX_PINCM54  (53u)   /* PA24 — LED_MCU (D7) */
 #define IOMUX_PINCM55  (54u)   /* PA25 — MCU_STIM_OUT -> U8 -> J7 BNC + D9 */
