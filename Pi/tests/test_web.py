@@ -9,6 +9,7 @@ Run:  python3 Pi/tests/test_web.py
 import os
 import subprocess
 import sys
+import tempfile
 import time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -71,6 +72,22 @@ def run(broker_cmd=python_broker) -> int:
         if resp.status_code != 200:
             failures.append(f"trigger_gpio status {resp.status_code}")
 
+        # Safe shutdown: the route drops a request file for the root-side
+        # path unit (never actually halts anything here).
+        with tempfile.TemporaryDirectory() as run_dir:
+            os.environ["LASERHAT_RUN_DIR"] = run_dir
+            try:
+                resp = c.post("/api/power", json={"action": "poweroff"})
+                if resp.status_code != 202 or not resp.get_json().get("ok"):
+                    failures.append(f"power poweroff: {resp.status_code} {resp.get_json()}")
+                if not os.path.exists(os.path.join(run_dir, "poweroff.request")):
+                    failures.append("poweroff.request not created")
+                resp = c.post("/api/power", json={"action": "halt-and-catch-fire"})
+                if resp.status_code != 400:
+                    failures.append(f"bad power action accepted: {resp.status_code}")
+            finally:
+                del os.environ["LASERHAT_RUN_DIR"]
+
         client.close()
     finally:
         broker.terminate(); fake.terminate()
@@ -84,7 +101,7 @@ def run(broker_cmd=python_broker) -> int:
         for f in failures:
             print("FAIL:", f)
         return 1
-    print("web OK: state, set+mirror, range-reject, trigger, trigger_gpio route")
+    print("web OK: state, set+mirror, range-reject, trigger, trigger_gpio route, power")
     return 0
 
 

@@ -1,0 +1,17 @@
+#!/bin/sh
+# Runs as root from laserhat-power.service when laserhat-power.path sees a
+# request file dropped by one of the GUIs (see Pi/power.py).  Consumes the
+# file first so a stale request can never re-trigger after boot.
+set -e
+RUN=/run/laserhat
+if [ -e "$RUN/reboot.request" ]; then
+    rm -f "$RUN/reboot.request" "$RUN/poweroff.request"
+    logger -t laserhat-power "reboot requested from the GUI"
+    exec systemctl reboot
+fi
+if [ -e "$RUN/poweroff.request" ]; then
+    rm -f "$RUN/poweroff.request"
+    logger -t laserhat-power "shutdown requested from the GUI"
+    exec systemctl poweroff
+fi
+exit 0

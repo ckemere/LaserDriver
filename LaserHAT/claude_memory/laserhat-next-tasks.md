@@ -5,6 +5,12 @@ metadata:
   type: project
 ---
 
+0c. **2026-10-19:** e-stim module on the bench: RB-0515D/HP fitted, 5 V on its leads, outputs at ±1.5 V (folded back),
+   nothing loading the rails (40 kΩ to Com, 20 kΩ on +5V_ISO).  Next: feed ±9 V from batteries into pins 6/5/4 and
+   measure the draw (expect ≈9 mA / ≈1.5 mA) → if fine, the converter is faulty (warranty).  Laser module: boost reads
+   11.82 V (nominal R5/R6), 5 V OK; J5 RED is 2.00 mm pitch (Harwin M22-2510205 header + M22-1900005 shunt; issue text
+   drafted, not posted — no GitHub token here).  Suspected SD-card corruption from HAT power cycles → safe shutdown
+   added (`Pi/power.py`, `laserhat-power.path`, OLED `[off]` row, web "shut down"/"reboot"), tag `v0.2.0-rc4`.
 0b. **2026-10-15:** rc2 held the laser DAC at the setpoint continuously; the module's cascode rule (REV2_NOTES "Q1 is a
    cascode": no dummy current between pulses) says it must be zero between pulses.  Fixed in `v0.2.0-rc3` (DAC0 written at
    trigger, zeroed at pulse end; `current` mid-pulse applies at once).  TESTING.md 10/11 now have multimeter-only checks

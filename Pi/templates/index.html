@@ -227,6 +227,14 @@
     </div>
   </div>
 
+  <div class="card module-line" id="power-card">
+    <span>system:</span>
+    <button id="power-off">shut down</button>
+    <button id="power-reboot">reboot</button>
+    <span style="font-size:12px" id="power-note">Halt Linux before cutting 5 V — pulling power mid-write corrupts the SD card.
+      After "shut down": wait for the OLED to go blank and the Pi's green LED to stop, then unplug.</span>
+  </div>
+
   <footer>
     state polls every 500 ms · <code>tick=<span id="tick">—</span></code>
     <span id="err" class="err"></span>
@@ -372,6 +380,24 @@ $("trigger-gpio").addEventListener("click", async () => {
   await postTrigger("gpio");
   refresh();
 });
+
+async function postPower(action) {
+  const verb = action === "reboot" ? "Reboot" : "Shut down";
+  if (!window.confirm(`${verb} the Pi now?`)) return;
+  const resp = await fetch("/api/power", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ action }),
+  });
+  if (!resp.ok) { $("err").textContent = `${verb} request failed`; return; }
+  $("power-off").disabled = true;
+  $("power-reboot").disabled = true;
+  $("power-note").textContent = action === "reboot"
+    ? "Rebooting — this page will stop responding for about a minute."
+    : "Shutting down — unplug when the OLED is blank and the green LED has stopped.";
+}
+$("power-off").addEventListener("click", () => postPower("poweroff"));
+$("power-reboot").addEventListener("click", () => postPower("reboot"));
 
 $("clear-fault").addEventListener("click", async () => {
   const resp = await fetch("/api/clear_fault", { method: "POST" });

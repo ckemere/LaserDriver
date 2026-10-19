@@ -12,6 +12,8 @@ Routes:
     POST /api/set/<knob>    body { "value": N } where knob in {i, r, h, ld, ed, ei, sd}
     POST /api/set_mode      body { "mode": "laser" | "estim" }
     POST /api/clear_fault   clear a latched module fault
+    POST /api/power         body { "action": "poweroff" | "reboot" } — orderly
+                            halt via laserhat-power.path (see power.py)
     POST /api/trigger       fire a pulse via the UART trigger command
     POST /api/trigger_gpio  fire a pulse via Pi GPIO 26 -> MSPM0 PA27 edge
     GET  /api/healthz       cheap liveness check
@@ -29,6 +31,7 @@ from typing import Optional
 
 from flask import Flask, jsonify, render_template, request
 
+import power
 import protocol as proto
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
@@ -181,6 +184,18 @@ def create_app(client: HatClient) -> Flask:
     def api_clear_fault():
         ok = app.config["client"].clear_fault()
         return jsonify(ok=ok)
+
+    @app.route("/api/power", methods=["POST"])
+    def api_power():
+        """Orderly shutdown / reboot.  Drops a request file for the
+        root-owned laserhat-power.path unit; the page then shows what to
+        wait for (OLED blank, ACT LED off) before cutting 5 V."""
+        body = request.get_json(silent=True) or {}
+        action = body.get("action")
+        if action not in power.ACTIONS:
+            return jsonify(ok=False, error="unknown_action"), 400
+        ok = power.request(action)
+        return jsonify(ok=ok, action=action), (202 if ok else 500)
 
     @app.route("/api/healthz")
     def api_healthz():

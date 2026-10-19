@@ -19,6 +19,7 @@ Undo notes are included for every change.
 | `/usr/bin/laserhat-flash` | Programs the MCU over SWD (manual, `sudo`) | Boards arrive blank; see §9 |
 | `/usr/lib/laserhat/firmware/` | `laserhat-mcu.elf`/`.hex`, `pi-swd.cfg`, `VERSION` | MCU firmware built by CI from the same commit as the broker (shared `protocol.h`) |
 | `/usr/lib/laserhat/*.py` (+`templates/`) | OLED GUI, web GUI, protocol, `broker.py` fallback | Single install location, no venv, imports via `WorkingDirectory` |
+| `/usr/lib/laserhat/laserhat-power` + `laserhat-power.path`/`.service` | Safe shutdown / reboot from the GUIs | The GUIs run as `laserhat` and cannot halt the machine; they drop `/run/laserhat/{poweroff,reboot}.request`, the root-owned path unit runs the script, which consumes the file and calls `systemctl poweroff`/`reboot`. No sudo, no polkit rule. Cutting 5 V mid-write corrupts the card. |
 | `/usr/lib/systemd/system/laserhat-*.service`, `oled-gui.service` | Service units | `/usr/lib` (not `/lib`) because `/lib` is a merged-usr **symlink**; a package extracting a real `/lib` directory over it destroys the dynamic-loader path and bricks the OS. The injector refuses any package shipping top-level `/lib`, `/bin` or `/sbin`. |
 | `/etc/NetworkManager/system-connections/laserhat-eth0.nmconnection` | Static wired IP (see §3) | conffile, mode 0600 (NetworkManager refuses looser modes) |
 | `/etc/modules-load.d/laserhat.conf` | Loads `i2c-dev` at boot | The OLED daemon needs `/dev/i2c-1` without waiting for anything to modprobe it |

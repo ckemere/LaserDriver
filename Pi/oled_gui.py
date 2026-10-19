@@ -14,12 +14,17 @@ adafruit-blinka — stdlib only.
 
 Button mapping (Rev 2 HAT edge controls, reported by the MCU):
     B5  FIRE (SW9)       — the firmware fires a pulse on press; nothing to do here
-    B2  SELECT (wheel push) — cycle selected row (laser: i→r→h→ld→[mode];
-                           estim: dur→IPI→sd→[mode]); on a latched fault the
-                           push also clears it
+    B2  SELECT (wheel push) — cycle selected row (laser: i→r→h→ld→[mode]→[off];
+                           estim: dur→IPI→sd→[mode]→[off]); on a latched fault
+                           the push also clears it
     B3  wheel roll       — decrement selected value  (on [mode] row: switch to LASER)
     B4  wheel roll       — increment selected value  (on [mode] row: switch to ESTIM)
-    B1  BACK (SW8)       — jump back to the first row
+    B1  BACK (SW8)       — jump back to the first row (also cancels an armed [off])
+  [off] row: one roll (either way) arms it — the row reads "[off] roll again";
+  a second roll the same way within 5 s requests an orderly shutdown through
+  laserhat-power.path (power.py); the other direction, BACK or 5 s cancels.
+  Then the OLED shows SHUTTING DOWN and goes blank when oledd stops: wait for
+  the Pi's green LED to stop before cutting 5 V.
   If the wheel turns out to roll the "wrong" way, swap B3/B4 below.
 
 Display layout (oledd cells: 21 columns × 4 rows):
@@ -29,8 +34,8 @@ Display layout (oledd cells: 21 columns × 4 rows):
     Row 2  ├  3-row scrolling window over the selectable items
     Row 3  ┘  phase chip (WAIT/TRIG) pinned to bottom-right corner
 
-In LASER mode the selectable items are: i, r, h, ld (current, mA), [mode]
-In ESTIM mode the selectable items are: dur (ed), IPI (ei), sd (amplitude, µA), [mode]
+In LASER mode the selectable items are: i, r, h, ld (current, mA), [mode], [off]
+In ESTIM mode the selectable items are: dur (ed), IPI (ei), sd (amplitude, µA), [mode], [off]
 The window scrolls so the selected item is always visible.  The chip shows
 FAULT (inverted) while a module fault is latched, and the e-stim rows show
 "!" after the amplitude until the module's DAC has acknowledged (ready).
@@ -44,6 +49,7 @@ import sys
 import threading
 import time
 
+import power
 import protocol as proto
 from hat_client import DEFAULT_SOCKET, HatClient
 from laser_hat import State
@@ -59,8 +65,11 @@ DEFAULT_OLED_SOCKET = "/run/laserhat-oled/oled.sock"
 # Button bits in State.button_mask / EVT_BUTTON edges (see Pi/protocol.py).
 B1, B2, B3, B4, B5 = 0b00001, 0b00010, 0b00100, 0b01000, 0b10000
 
-# Sentinel object for the mode-toggle row in the selection cycle.
+# Sentinel objects for the mode-toggle and shutdown rows in the selection cycle.
 _MODE_ITEM = object()
+_OFF_ITEM = object()
+
+OFF_ARM_S = 5.0              # second roll must come within this window
 
 
 # --------------------------------------------------------------- oledd client
@@ -126,8 +135,8 @@ class OledClient:
 def _items_for(state: State) -> list:
     """Ordered selectable items for the current mode (params + mode sentinel)."""
     if state.mode == 1:     # ESTIM
-        return list(ESTIM_PARAMS) + [_MODE_ITEM]
-    return list(PARAMS) + [_MODE_ITEM]
+        return list(ESTIM_PARAMS) + [_MODE_ITEM, _OFF_ITEM]
+    return list(PARAMS) + [_MODE_ITEM, _OFF_ITEM]
 
 
 def _value_for(state: State, name: str) -> int:
@@ -167,10 +176,13 @@ _FMT = {
 
 # --------------------------------------------------------------- render
 
-def compose(state: State, selected: int) -> tuple[str, list[str], str, bool]:
+def compose(state: State, selected: int, off_armed: bool = False,
+            shutting_down: bool = False) -> tuple[str, list[str], str, bool]:
     """Build (tag, rows, chip_label, chip_inverted) for the oledd frame."""
     mode_tag = "E" if state.mode == 1 else "L"
     tag = f"LASERHAT[{mode_tag}]"
+    if shutting_down:
+        return tag, ["SHUTTING DOWN", "wait for blank +", "green LED off"], "OFF", True
 
     # 3-row scrolling window over selectable items.
     items = _items_for(state)
@@ -185,6 +197,9 @@ def compose(state: State, selected: int) -> tuple[str, list[str], str, bool]:
         if item is _MODE_ITEM:
             mode_str = "ESTIM" if state.mode == 1 else "LASER"
             rows.append(f"{prefix}[mode:{mode_str}]")
+        elif item is _OFF_ITEM:
+            rows.append(f"{prefix}[off] roll again" if off_armed
+                        else f"{prefix}[off] shutdown")
         else:
             text = f"{prefix}{item.name}:{_FMT[item.name](_value_for(state, item.name))}"
             if item.name == "sd" and not state.estim_ready:
@@ -200,8 +215,9 @@ def compose(state: State, selected: int) -> tuple[str, list[str], str, bool]:
     return tag, rows, chip, inverted
 
 
-def render(panel: OledClient, state: State, selected: int) -> None:
-    tag, rows, chip, inverted = compose(state, selected)
+def render(panel: OledClient, state: State, selected: int,
+           off_armed: bool = False, shutting_down: bool = False) -> None:
+    tag, rows, chip, inverted = compose(state, selected, off_armed, shutting_down)
     if not panel.send_frame(tag, rows, chip, inverted):
         print("WARNING: oledd not reachable; will retry", file=sys.stderr)
 
@@ -212,18 +228,24 @@ def main() -> int:
     sock = os.environ.get("LASERHAT_SOCK", DEFAULT_SOCKET)
     oled_sock = os.environ.get("LASERHAT_OLED_SOCK", DEFAULT_OLED_SOCKET)
 
-    ui = {"selected": 0, "last_press": 0.0}
+    ui = {"selected": 0, "last_press": 0.0,
+          "off_armed_at": 0.0, "off_dir": 0, "shutting_down": False}
     ui_lock = threading.Lock()
 
     def handle_button(edges: int, client: HatClient) -> None:
         st = client.get_state()
-        items = _items_for(st) if st is not None else list(PARAMS) + [_MODE_ITEM]
+        items = (_items_for(st) if st is not None
+                 else list(PARAMS) + [_MODE_ITEM, _OFF_ITEM])
 
         if edges & B2 and st is not None and st.fault_latched:
             client.clear_fault()        # wheel push acknowledges a module fault
 
         with ui_lock:
             ui["last_press"] = time.monotonic()
+            if ui["shutting_down"]:
+                return
+            if edges & (B1 | B2):
+                ui["off_armed_at"] = 0.0        # leaving the row disarms it
             if edges & B1:
                 ui["selected"] = 0
             if edges & B2:
@@ -233,6 +255,24 @@ def main() -> int:
             ui["selected"] = selected
 
         direction = (-1 if edges & B3 else 0) + (1 if edges & B4 else 0)
+        if direction and items[selected] is _OFF_ITEM:
+            now = time.monotonic()
+            with ui_lock:
+                armed = (ui["off_armed_at"] and
+                         now - ui["off_armed_at"] < OFF_ARM_S and
+                         ui["off_dir"] == direction)
+                if armed:
+                    ui["off_armed_at"] = 0.0
+                    ui["shutting_down"] = power.request("poweroff")
+                    if not ui["shutting_down"]:
+                        print("shutdown request failed (is laserhat-power.path "
+                              "installed?)", file=sys.stderr)
+                elif ui["off_armed_at"] and ui["off_dir"] != direction:
+                    ui["off_armed_at"] = 0.0    # opposite roll cancels
+                else:
+                    ui["off_armed_at"] = now
+                    ui["off_dir"] = direction
+            return
         if direction and st is not None:
             item = items[selected]
             if item is _MODE_ITEM:
@@ -275,10 +315,19 @@ def main() -> int:
         selected = ui["selected"]
     render(panel, state, selected)
 
+    def ui_flags():
+        """(off_armed, shutting_down) — the arm expires on its own."""
+        with ui_lock:
+            armed = bool(ui["off_armed_at"] and
+                         time.monotonic() - ui["off_armed_at"] < OFF_ARM_S)
+            if not armed:
+                ui["off_armed_at"] = 0.0
+            return armed, ui["shutting_down"]
+
     def paint_key(st: State, sel: int):
         return (st.intensity, st.ramp_ticks, st.hold_ticks, st.phase, sel,
                 st.mode, st.estim_dur_ticks, st.estim_ipi_ticks,
-                st.laser_dac, st.estim_dac, st.module)
+                st.laser_dac, st.estim_dac, st.module) + ui_flags()
 
     last_painted_key = paint_key(state, selected)
 
@@ -305,7 +354,8 @@ def main() -> int:
 
         key = paint_key(state, selected)
         if key != last_painted_key and (now - last_press_at) >= SETTLE_GAP:
-            render(panel, state, selected)
+            off_armed, shutting_down = ui_flags()
+            render(panel, state, selected, off_armed, shutting_down)
             last_painted_key = key
 
         time.sleep(POLL_INTERVAL)

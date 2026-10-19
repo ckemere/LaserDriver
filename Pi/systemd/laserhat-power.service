@@ -1,0 +1,8 @@
+# Started by laserhat-power.path.  Runs /usr/lib/laserhat/laserhat-power
+# as root: removes the request file, then systemctl poweroff / reboot.
+[Unit]
+Description=LaserHAT safe shutdown / reboot (from the GUI)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/lib/laserhat/laserhat-power

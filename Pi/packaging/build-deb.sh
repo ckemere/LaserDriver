@@ -16,7 +16,8 @@
 #                                                    kept as a fallback)
 #   /usr/lib/laserhat/firmware/                      MCU firmware built from the
 #                                                    same commit + OpenOCD config
-#   /usr/lib/systemd/system/laserhat-*.service, oled-gui.service
+#   /usr/lib/systemd/system/laserhat-*.service, oled-gui.service,
+#                                                    laserhat-power.path (safe shutdown)
 #   /etc/NetworkManager/system-connections/laserhat-eth0.nmconnection
 #   /etc/modules-load.d/laserhat.conf                (i2c-dev)
 #
@@ -72,6 +73,9 @@ install -m 644 "$PI_DIR/../Firmware/openocd/pi-swd.cfg" "$PKG/usr/lib/laserhat/f
 echo "$VERSION" > "$PKG/usr/lib/laserhat/firmware/VERSION"
 install -m 755 "$PI_DIR/laserhat-flash" "$PKG/usr/bin/laserhat-flash"
 
+# --- safe shutdown from the GUIs (root side; see Pi/power.py) ---------------
+install -m 755 "$PI_DIR/laserhat-power" "$PKG/usr/lib/laserhat/laserhat-power"
+
 # --- Python application -----------------------------------------------------
 mkdir -p "$PKG/usr/lib/laserhat/templates"
 install -m 644 "$PI_DIR"/*.py "$PKG/usr/lib/laserhat/"
@@ -79,7 +83,8 @@ install -m 644 "$PI_DIR"/templates/*.html "$PKG/usr/lib/laserhat/templates/"
 
 # --- systemd units ----------------------------------------------------------
 mkdir -p "$PKG/usr/lib/systemd/system"
-install -m 644 "$PI_DIR"/systemd/*.service "$PKG/usr/lib/systemd/system/"
+install -m 644 "$PI_DIR"/systemd/*.service "$PI_DIR"/systemd/*.path \
+    "$PKG/usr/lib/systemd/system/"
 
 # --- static wired IP (192.168.17.10/24, no gateway) + i2c-dev module --------
 mkdir -p "$PKG/etc/NetworkManager/system-connections" "$PKG/etc/modules-load.d"
@@ -118,7 +123,7 @@ cat > "$PKG/DEBIAN/conffiles" <<EOF
 /etc/modules-load.d/laserhat.conf
 EOF
 
-UNITS="laserhat-oledd.service laserhat-broker.service oled-gui.service laserhat-web.service"
+UNITS="laserhat-oledd.service laserhat-broker.service oled-gui.service laserhat-web.service laserhat-power.path"
 
 cat > "$PKG/DEBIAN/postinst" <<EOF
 #!/bin/sh

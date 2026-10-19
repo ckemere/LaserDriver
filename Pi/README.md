@@ -194,6 +194,26 @@ switch for the ROM bootloader and does nothing while the firmware runs).
 
 Step sizes and ranges live in `params.py` (shared with the web UI).
 
+### shutting down
+
+Cutting 5 V while Linux is writing corrupts the SD card, and a Pi fed
+through the HAT's USB-C goes down with every HAT power cycle.  Halt first:
+
+- **OLED:** push the wheel to the last row, `[off] shutdown`; roll once
+  (the row reads `[off] roll again`) and roll the same way again within
+  5 s.  The other direction, BACK or waiting cancels.
+- **Web:** the "shut down" / "reboot" buttons in the *system* card (with a
+  confirm).  `POST /api/power {"action": "poweroff"|"reboot"}` for scripts.
+- **Shell:** `sudo poweroff`.
+
+The display shows SHUTTING DOWN, then goes blank when oledd stops; wait
+for the Pi's green ACT LED to stop (it blinks ten times, then stays off)
+before unplugging.  The GUIs run as the unprivileged `laserhat` user, so
+they only drop a request file in `/run/laserhat/`; the root-owned
+`laserhat-power.path` unit sees it and runs `systemctl poweroff` /
+`reboot` (`power.py`, `laserhat-power`).  For bench work on the modules,
+power the Pi from its own supply so the HAT can be cycled on its own.
+
 ## Off-hardware testing
 
 ```bash

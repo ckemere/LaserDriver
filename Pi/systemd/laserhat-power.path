@@ -1,0 +1,13 @@
+# Watches for the shutdown / reboot request files that the GUIs (running
+# as the unprivileged `laserhat` user) create in the broker's runtime
+# directory; see Pi/power.py.  Triggers laserhat-power.service (root).
+[Unit]
+Description=LaserHAT safe shutdown request watcher
+
+[Path]
+PathExists=/run/laserhat/poweroff.request
+PathExists=/run/laserhat/reboot.request
+Unit=laserhat-power.service
+
+[Install]
+WantedBy=multi-user.target
