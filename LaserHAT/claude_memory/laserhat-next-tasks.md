@@ -1,15 +1,15 @@
 ---
 name: laserhat-next-tasks
-description: "Status 2026-10-20: firmware version check in v0.2.0-rc6 (MCU had never been reflashed past rc1 -> no laser current); HAT firmware works on hardware; module firmware in v0.2.0-rc3 (laser DAC zero between pulses, e-stim spec §7, fault latch), untested on modules; next = user tests TESTING.md steps 10-11 (multimeter checks added), then merge pcb-rev2 into main"
+description: "Status 2026-10-20: firmware version check in v0.2.0-rc7 (MCU had never been reflashed past rc1 -> no laser current); HAT firmware works on hardware; module firmware in v0.2.0-rc3 (laser DAC zero between pulses, e-stim spec §7, fault latch), untested on modules; next = user tests TESTING.md steps 10-11 (multimeter checks added), then merge pcb-rev2 into main"
 metadata:
   type: project
 ---
 
 0d. **2026-10-20:** no light pulses — the MCU was still on v0.2.0-rc1 (never reflashed; rc1 has no laser
-   DAC set-point).  Added firmware version reporting + validation in `v0.2.0-rc6`: `CMD_GET_VERSION` → `RSP_VERSION`
+   DAC set-point).  Added firmware version reporting + validation in `v0.2.0-rc7` (rc6 failed CI, superseded): `CMD_GET_VERSION` → `RSP_VERSION`
    (`PROTO_VERSION` 2, `version.c` string = deb VERSION), broker probe once per MCU boot (`fw_version`/`fw_proto`/
    `fw_expected`/`fw_ok`, `--fw-version-file`), web banner, OLED `FW!` chip, `laserhat-flash` verifies after writing,
-   `laser_hat.py version`.  Old firmware ignores the command (timeout = "older than rc6 or blank").
+   `laser_hat.py version`.  Old firmware ignores the command (timeout = "older than rc7 or blank").
 0c. **2026-10-19:** e-stim module on the bench: RB-0515D/HP fitted, 5 V on its leads, outputs at ±1.5 V (folded back),
    nothing loading the rails (40 kΩ to Com, 20 kΩ on +5V_ISO).  Next: feed ±9 V from batteries into pins 6/5/4 and
    measure the draw (expect ≈9 mA / ≈1.5 mA) → if fine, the converter is faulty (warranty).  Laser module: boost reads
