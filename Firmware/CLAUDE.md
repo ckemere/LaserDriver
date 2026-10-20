@@ -141,8 +141,13 @@ J8/J9 (`module.c`):
 - **Fault:** FAULT_n (PA6) falling edge → `GROUP1_IRQHandler` forces
   EN/CATH/RELEASE off and latches (`MODULE_FAULT_LATCHED`, `EVT_FAULT`); the
   tick ISR also latches if it sees FAULT_n low mid-train and aborts to
-  WAITING.  `CMD_CLEAR_FAULT` clears.  The interrupt is armed only after
-  FAULT_n has been high for 2 ms (an unpowered e-stim module idles low).
+  WAITING.  `CMD_CLEAR_FAULT` clears.  The interrupt is **one-shot**: armed
+  only after FAULT_n has been high for 2 ms (an unpowered e-stim module idles
+  low), masked by its own handler when it fires, and re-armed 2 ms after
+  FAULT_n is high again *and* the latch has been cleared — so a chattering
+  line (a module whose isolated converter is folding back) cannot starve the
+  tick ISR / main; the tick-ISR backstop still kills a pulse within 10 µs
+  while the interrupt is masked.
   TIMA0's hardware FAULT0 input is not used: in ESTIM mode the pins are
   GPIOs, so a timer-side kill would not reach them.
 

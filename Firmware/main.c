@@ -120,9 +120,16 @@ static volatile bool     g_estim_dac_pending = true;
 static volatile bool     g_estim_ready = false;   /* DAC60501 GAIN init acked */
 static volatile bool     g_i2c_error   = false;   /* last DAC write NACKed */
 
-/* Fault handling.  Armed once FAULT_n has been high for 2 ms (module ready
- * or absent); the latch is set by the FAULT_n edge ISR or by the tick ISR
- * seeing FAULT_n low mid-train, and cleared only by CMD_CLEAR_FAULT. */
+/* Fault handling.  The FAULT_n falling-edge interrupt is one-shot: armed
+ * once FAULT_n has been high for 2 ms (module ready or absent), masked
+ * again by its own handler when it fires, and re-armed only after
+ * CMD_CLEAR_FAULT has cleared the latch *and* the line has been high for
+ * another 2 ms.  A chattering line (e.g. an e-stim module whose converter
+ * is folding back) therefore costs one interrupt per fault instead of
+ * re-firing at top priority and starving the tick ISR and main.  The
+ * latch is set by that handler or by the tick ISR seeing FAULT_n low
+ * mid-train (the backstop that still works while the interrupt is masked),
+ * and cleared only by CMD_CLEAR_FAULT. */
 static volatile bool g_fault_armed   = false;
 static volatile bool g_fault_latched = false;
 
@@ -564,7 +571,9 @@ static void module_housekeeping(void)
         fault_high_ms = 0u;
         g_estim_ready = false;          /* isolated side down: DAC forgets its GAIN */
     }
-    if (!g_fault_armed && fault_high_ms >= 2u) {
+    /* (Re-)arm the one-shot edge interrupt: never while a fault is still
+     * latched (CMD_CLEAR_FAULT first), and only after 2 ms of FAULT_n high. */
+    if (!g_fault_armed && !g_fault_latched && fault_high_ms >= 2u) {
         g_fault_armed = true;
         laser_gpio_fault_irq_enable();
     }
@@ -960,8 +969,13 @@ void GROUP1_IRQHandler(void)
     uint32_t mis = GPIOA->CPU_INT.MIS;
 
     if (mis & BOARD_FAULT_N_PIN) {
-        /* FAULT_n fell: outputs off first, then latch and report. */
+        /* FAULT_n fell: one-shot — mask the edge so a chattering line
+         * cannot re-enter here; housekeeping re-arms after the latch is
+         * cleared and the line has been high for 2 ms.  Outputs off first,
+         * then latch and report. */
         GPIOA->CPU_INT.ICLR = BOARD_FAULT_N_PIN;
+        laser_gpio_fault_irq_disable();
+        g_fault_armed = false;
         fault_latch();
     }
 

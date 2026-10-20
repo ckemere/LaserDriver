@@ -202,10 +202,12 @@ static void state_json_locked(char *buf, size_t cap)
     char fwv[FW_VERSION_CHARS * 2 + 8] = "null", fwp[8] = "null",
          fwe[sizeof g_fw_expected * 2 + 8] = "null";
     if (s->fw_known) {
+        fwv[0] = '\0';                 /* json_put_str appends */
         json_put_str(fwv, sizeof fwv, s->fw_version);
         snprintf(fwp, sizeof fwp, "%u", s->fw_proto);
     }
     if (g_fw_expected[0]) {
+        fwe[0] = '\0';
         json_put_str(fwe, sizeof fwe, g_fw_expected);
     }
     if (s->have_status) {

@@ -166,6 +166,10 @@ needs the 10 kΩ and a scope.
 - [ ] With J1 open, `trigger`: the detector sees an open electrode on the
       first EN edge, so `EVT_FAULT` appears, D7 blinks at 5 Hz and
       `clear-fault` restores it — the fault path tested without a load.
+- [ ] Plugging the module in with the HAT powered (or a module whose
+      converter is folding back, FAULT_n chattering) gives **one**
+      `EVT_FAULT` / FAULT chip; D7 keeps blinking (5 Hz) and the broker stays
+      connected — the edge interrupt is one-shot until `clear-fault`.
 
 - [ ] Plug the module in with the HAT unpowered, power the HAT, start the
       broker: `module` shows `FAULT_n low` (0x01) until the isolated side is
