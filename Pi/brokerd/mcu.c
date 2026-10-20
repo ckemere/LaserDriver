@@ -4,7 +4,9 @@
  *
  *   reader thread   decode frames, mirror state, route STATUS to the
  *                   waiting command (status-as-ack), broadcast events
- *   poller thread   CMD_QUERY every POLL_INTERVAL for state + liveness
+ *   poller thread   CMD_QUERY every POLL_INTERVAL for state + liveness;
+ *                   once per alive period a CMD_GET_VERSION probe, judged
+ *                   against the package's VERSION file (fw_ok in the state)
  *   callers         ipc.c client threads, one command in flight at a time
  */
 
@@ -47,7 +49,15 @@ typedef struct {
     uint8_t  module;                /* MODULE_* flags */
     uint16_t adc_pd;
     uint16_t adc_comp;
+    /* Firmware identity (CMD_GET_VERSION probe, once per alive period). */
+    bool     fw_probed;             /* the probe completed (reply or timeout) */
+    bool     fw_known;              /* an RSP_VERSION arrived */
+    uint8_t  fw_proto;
+    char     fw_version[FW_VERSION_CHARS + 1];
 } McuState;
+
+/* From the package's VERSION file; empty = no expectation. */
+static char g_fw_expected[64];
 
 static int g_fd = -1;
 
@@ -58,12 +68,17 @@ static double          g_last_status_at;
 static atomic_bool g_alive_flag;
 static atomic_bool g_pulse_flag;
 
-/* One command in flight; its STATUS echo is handed over here. */
+/* One command in flight; its reply (the STATUS echo, or RSP_VERSION for
+ * CMD_GET_VERSION) is handed over here.  g_reply_want says which type the
+ * waiting command expects, so a late STATUS cannot satisfy a version
+ * probe or vice versa. */
 static pthread_mutex_t g_cmd_mu = PTHREAD_MUTEX_INITIALIZER;
 static pthread_mutex_t g_reply_mu = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t  g_reply_cv;
 static bool            g_reply_ready;
+static uint8_t         g_reply_want;
 static StatusPayload   g_reply;
+static VersionPayload  g_reply_version;
 
 static pthread_mutex_t g_write_mu = PTHREAD_MUTEX_INITIALIZER;
 
@@ -141,12 +156,58 @@ static int uart_send(uint8_t type, const void *payload, size_t len)
     return 0;
 }
 
+void mcu_set_expected_version_file(const char *path)
+{
+    g_fw_expected[0] = '\0';
+    if (!path) {
+        return;
+    }
+    FILE *f = fopen(path, "r");
+    if (!f) {
+        return;                     /* no file: no expectation */
+    }
+    char line[sizeof g_fw_expected];
+    if (fgets(line, sizeof line, f)) {
+        /* strip surrounding whitespace / the newline */
+        char *b = line, *e;
+        while (*b == ' ' || *b == '\t') b++;
+        e = b + strlen(b);
+        while (e > b && (e[-1] == '\n' || e[-1] == '\r' || e[-1] == ' ' || e[-1] == '\t')) *--e = '\0';
+        snprintf(g_fw_expected, sizeof g_fw_expected, "%s", b);
+    }
+    fclose(f);
+}
+
 /* ----- state ----------------------------------------------------------- */
+/* fw_ok as the GUIs see it: true / false / null (not probed yet). */
+static const char *fw_ok_literal(const McuState *s)
+{
+    if (!s->fw_probed) {
+        return "null";
+    }
+    if (!s->fw_known || s->fw_proto != PROTO_VERSION) {
+        return "false";
+    }
+    if (g_fw_expected[0] && strcmp(g_fw_expected, s->fw_version) != 0) {
+        return "false";
+    }
+    return "true";
+}
+
 static void state_json_locked(char *buf, size_t cap)
 {
     const McuState *s = &g_state;
     char i[16] = "null", r[16] = "null", h[16] = "null", ed[16] = "null",
          ei[16] = "null", ld[16] = "null", sd[16] = "null";
+    char fwv[FW_VERSION_CHARS * 2 + 8] = "null", fwp[8] = "null",
+         fwe[sizeof g_fw_expected * 2 + 8] = "null";
+    if (s->fw_known) {
+        json_put_str(fwv, sizeof fwv, s->fw_version);
+        snprintf(fwp, sizeof fwp, "%u", s->fw_proto);
+    }
+    if (g_fw_expected[0]) {
+        json_put_str(fwe, sizeof fwe, g_fw_expected);
+    }
     if (s->have_status) {
         snprintf(i, sizeof i, "%u", s->intensity);
         snprintf(r, sizeof r, "%u", s->ramp_ticks);
@@ -163,9 +224,11 @@ static void state_json_locked(char *buf, size_t cap)
              "\"button_mask\":%u,\"phase\":\"%c\",\"tick\":%u,\"mode\":%u,"
              "\"estim_dur_ticks\":%s,\"estim_ipi_ticks\":%s,"
              "\"laser_dac\":%s,\"estim_dac\":%s,\"module\":%u,"
-             "\"adc_pd\":%u,\"adc_comp\":%u}\n",
+             "\"adc_pd\":%u,\"adc_comp\":%u,"
+             "\"fw_version\":%s,\"fw_proto\":%s,\"fw_expected\":%s,\"fw_ok\":%s}\n",
              alive, alive, i, r, h, s->button_mask, s->phase, s->tick,
-             s->mode, ed, ei, ld, sd, s->module, s->adc_pd, s->adc_comp);
+             s->mode, ed, ei, ld, sd, s->module, s->adc_pd, s->adc_comp,
+             fwv, fwp, fwe, fw_ok_literal(s));
 }
 
 void mcu_state_json(char *buf, size_t cap)
@@ -177,7 +240,7 @@ void mcu_state_json(char *buf, size_t cap)
 
 static void broadcast_state_locked(void)
 {
-    char line[512];
+    char line[768];
     state_json_locked(line, sizeof line);
     ipc_broadcast(line);
 }
@@ -240,6 +303,11 @@ static void check_liveness(void)
     if (g_state.mcu_alive && g_last_status_at > 0.0
             && now_mono() - g_last_status_at > LIVENESS_TIMEOUT) {
         g_state.mcu_alive = false;
+        /* A reflash / power cycle gets a fresh probe when it returns. */
+        g_state.fw_probed = false;
+        g_state.fw_known  = false;
+        g_state.fw_proto  = 0;
+        g_state.fw_version[0] = '\0';
         atomic_store(&g_alive_flag, false);
         broadcast_state_locked();
     }
@@ -302,9 +370,23 @@ static void handle_frame(uint8_t type, const uint8_t *payload)
             }
             apply_status(&p);
             pthread_mutex_lock(&g_reply_mu);
-            g_reply = p;                /* status-as-ack */
-            g_reply_ready = true;
-            pthread_cond_signal(&g_reply_cv);
+            if (g_reply_want == RSP_STATUS) {
+                g_reply = p;            /* status-as-ack */
+                g_reply_ready = true;
+                pthread_cond_signal(&g_reply_cv);
+            }
+            pthread_mutex_unlock(&g_reply_mu);
+            break;
+        }
+        case RSP_VERSION: {
+            VersionPayload v;
+            memcpy(&v, payload, sizeof v);
+            pthread_mutex_lock(&g_reply_mu);
+            if (g_reply_want == RSP_VERSION) {
+                g_reply_version = v;
+                g_reply_ready = true;
+                pthread_cond_signal(&g_reply_cv);
+            }
             pthread_mutex_unlock(&g_reply_mu);
             break;
         }
@@ -332,6 +414,7 @@ static int rsp_len(uint8_t type)
         case EVT_PULSE_END:   return 4;
         case EVT_BUTTON:      return 2;
         case EVT_FAULT:       return (int)EVT_FAULT_LEN;
+        case RSP_VERSION:     return (int)PROTO_VERSION_LEN;
         default:              return -1;
     }
 }
@@ -422,16 +505,20 @@ static void *reader_loop(void *arg)
     return NULL;
 }
 
-/* ----- command path (STATUS-correlated) -------------------------------- */
-/* Send a command and wait for its STATUS echo.  true + *echo on success. */
-static bool command(uint8_t type, const void *payload, size_t len,
-                    StatusPayload *echo)
+/* ----- command path (reply-correlated) --------------------------------- */
+/* Send a command and wait for the reply type it expects (RSP_STATUS for
+ * everything but CMD_GET_VERSION).  true on success; *echo receives the
+ * STATUS, *version the RSP_VERSION. */
+static bool command_wait(uint8_t type, const void *payload, size_t len,
+                         uint8_t want, StatusPayload *echo,
+                         VersionPayload *version)
 {
     bool ok = false;
     pthread_mutex_lock(&g_cmd_mu);
 
     pthread_mutex_lock(&g_reply_mu);
     g_reply_ready = false;
+    g_reply_want  = want;
     pthread_mutex_unlock(&g_reply_mu);
 
     if (uart_send(type, payload, len) == 0) {
@@ -456,11 +543,54 @@ static bool command(uint8_t type, const void *payload, size_t len,
             if (echo) {
                 *echo = g_reply;
             }
+            if (version) {
+                *version = g_reply_version;
+            }
         }
+        g_reply_want = 0;
         pthread_mutex_unlock(&g_reply_mu);
     }
     pthread_mutex_unlock(&g_cmd_mu);
     return ok;
+}
+
+static bool command(uint8_t type, const void *payload, size_t len,
+                    StatusPayload *echo)
+{
+    return command_wait(type, payload, len, RSP_STATUS, echo, NULL);
+}
+
+/* Ask the MCU which firmware it runs and judge it against the package.
+ * Firmware older than protocol 2 ignores the command, so the timeout is
+ * itself the answer ("old or blank"). */
+static void probe_version(void)
+{
+    VersionPayload v;
+    bool got = command_wait(CMD_GET_VERSION, NULL, 0, RSP_VERSION, NULL, &v);
+
+    pthread_mutex_lock(&g_state_mu);
+    g_state.fw_probed = true;
+    g_state.fw_known  = got;
+    if (got) {
+        g_state.fw_proto = v.proto;
+        memcpy(g_state.fw_version, v.version, FW_VERSION_CHARS);
+        g_state.fw_version[FW_VERSION_CHARS] = '\0';
+    } else {
+        g_state.fw_proto = 0;
+        g_state.fw_version[0] = '\0';
+    }
+    const char *ok = fw_ok_literal(&g_state);
+    if (strcmp(ok, "true") != 0) {
+        fprintf(stderr, "brokerd: MCU firmware %s (proto %u) does not match the "
+                        "package (%s, proto %u): run sudo laserhat-flash\n",
+                got ? g_state.fw_version : "unknown (no reply)", g_state.fw_proto,
+                g_fw_expected[0] ? g_fw_expected : "any", (unsigned)PROTO_VERSION);
+    } else {
+        fprintf(stderr, "brokerd: MCU firmware %s (proto %u) OK\n",
+                g_state.fw_version, g_state.fw_proto);
+    }
+    broadcast_state_locked();
+    pthread_mutex_unlock(&g_state_mu);
 }
 
 static void *poller_loop(void *arg)
@@ -468,6 +598,12 @@ static void *poller_loop(void *arg)
     (void)arg;
     for (;;) {
         command(CMD_QUERY, NULL, 0, NULL);      /* refresh state / liveness */
+        pthread_mutex_lock(&g_state_mu);
+        bool probe = g_state.mcu_alive && !g_state.fw_probed;
+        pthread_mutex_unlock(&g_state_mu);
+        if (probe) {
+            probe_version();
+        }
         usleep((useconds_t)(POLL_INTERVAL * 1e6));
     }
     return NULL;

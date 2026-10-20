@@ -252,9 +252,24 @@ Host -> MCU                              MCU -> Host
   CMD_SET_MODE      mode u8 (0 laser/1 estim) EVT_PULSE_END  tick
   CMD_ESTIM_CONFIG  dur u32, ipi u32 (ticks) EVT_BUTTON     mask, edges
   CMD_LASER_CURRENT dac u16 (0..3650)        EVT_FAULT      module flags, tick
-  CMD_ESTIM_CURRENT dac u16 (0..4095)
-  CMD_CLEAR_FAULT
+  CMD_ESTIM_CURRENT dac u16 (0..4095)        RSP_VERSION    proto u8, reserved u8,
+  CMD_CLEAR_FAULT                                            version char[30] (32 bytes)
+  CMD_GET_VERSION   -> RSP_VERSION (not RSP_STATUS)
 ```
+
+`CMD_GET_VERSION` is the one command not answered with `RSP_STATUS`: it
+returns the firmware's wire-protocol number (`PROTO_VERSION`, 2 for this
+header; builds before v0.2.0-rc6 ignore the command, which is how the broker
+recognises them) and its build version string — the `git describe` of the
+build with the leading `v` dropped and `-` turned into `+`, e.g. `0.2.0+rc6`
+or `0.2.0+rc6+3+g1a2b3c4+dirty`.  The Makefiles bake it in through
+`-DFW_VERSION=...` (`version.c`, rebuilt on every make; override with
+`make FW_VERSION=...`), and `Pi/packaging/build-deb.sh` passes the package
+version so the string equals `/usr/lib/laserhat/firmware/VERSION` byte for
+byte.  The broker probes it once per MCU boot and reports `fw_version` /
+`fw_proto` / `fw_expected` / `fw_ok` in its state; the web page shows a
+banner and the OLED chip reads `FW!` while they disagree, and
+`sudo laserhat-flash` verifies the match after writing.
 
 Defaults at boot: `i=320 r=8000 h=10000`, laser mode, `laser_dac=1216`
 (≈100 mA), `estim_dac=0`.  DAC0 (J9.3) carries `laser_dac` only while a
@@ -293,7 +308,7 @@ python3 host_tools/smoke_test.py /dev/ttyAMA0
 sudo systemctl start laserhat-broker.service
 ```
 
-For ad-hoc pokes there's also `Pi/laser_hat.py query|trigger|config|watch`
+For ad-hoc pokes there's also `Pi/laser_hat.py query|trigger|config|version|watch`
 (same caveat — stop the broker first). Either way you must be in the
 `dialout` group:
 

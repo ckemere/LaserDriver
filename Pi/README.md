@@ -136,8 +136,16 @@ sudo laserhat-flash        # stops/restarts the broker + GUIs around the flash
 ```
 
 Re-run it after upgrading the package so the firmware and broker stay
-matched (`/usr/lib/laserhat/firmware/VERSION`). Developers flashing their own
-build can use `sudo laserhat-flash path/to/main.elf`, or `make flash` from
+matched (`/usr/lib/laserhat/firmware/VERSION`).  The broker checks this
+itself: once the MCU is alive it asks for the firmware's version
+(`CMD_GET_VERSION`) and compares it with the VERSION file — the web page
+shows a red "MCU firmware" banner and the OLED chip reads `FW!` until they
+match (an MCU on a build older than v0.2.0-rc6, or a blank one, never
+answers and counts as a mismatch).  `laserhat-flash` runs the same check
+after writing and ends with `MCU firmware <version> ... OK`, or exits 3/4
+with the reason.  Developers flashing their own
+build can use `sudo laserhat-flash path/to/main.elf` (reported, not judged
+against the package), or `make flash` from
 `Firmware/`. After a `make flash`, restart the stack yourself so it
 reconnects to the freshly booted MCU:
 

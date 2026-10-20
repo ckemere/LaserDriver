@@ -50,7 +50,15 @@ OBJS            := $(BUILD_DIR)/main.o \
                    $(BUILD_DIR)/module.o \
                    $(BUILD_DIR)/uart.o \
                    $(BUILD_DIR)/framing.o \
+                   $(BUILD_DIR)/version.o \
                    $(STARTUP_OBJ)
+
+# Version string reported over the wire (RSP_VERSION); see Makefile.gcc.
+FW_VERSION      ?= $(shell git describe --tags --always --dirty 2>/dev/null \
+                     | sed 's/^v//;s/-/+/g')
+ifeq ($(strip $(FW_VERSION)),)
+FW_VERSION      := unversioned
+endif
 
 # Compiler flags
 CPU_FLAGS       := -mcpu=cortex-m0plus -mthumb
@@ -79,6 +87,12 @@ $(TARGET): $(OBJS) | $(BUILD_DIR)
 
 $(BUILD_DIR)/%.o: $(PROJ_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+$(BUILD_DIR)/version.o: $(PROJ_DIR)/version.c $(PROJ_DIR)/version.h FORCE | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -DFW_VERSION='"$(FW_VERSION)"' -c $< -o $@
+
+FORCE:
+.PHONY: FORCE
 
 $(STARTUP_OBJ): $(STARTUP_SRC) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@

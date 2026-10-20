@@ -13,7 +13,8 @@
  * length TYPE implies.  No length field, no byte-stuffing, no CRC:
  *
  *   - Every command is answered with RSP_STATUS ("status-as-ack"), so the
- *     host confirms end-to-end that the MCU holds the values it sent.
+ *     host confirms end-to-end that the MCU holds the values it sent
+ *     (CMD_GET_VERSION -> RSP_VERSION is the one exception).
  *   - The MCU's inbound payloads are bounded (CMD_CONFIG i/r/h, the two
  *     DAC codes <= 0x0FFF, mode / estim ticks) and the host guarantees a
  *     CONFIG payload never contains the SYNC bytes, so the MCU resyncs
@@ -34,6 +35,10 @@
 #define CMD_LASER_CURRENT 0x06u   /* dac u16: DAC0 code on J9.3 (laser module IREF), 0..LASER_DAC_MAX */
 #define CMD_ESTIM_CURRENT 0x07u   /* dac u16: DAC60501 code (e-stim module amplitude), 0..ESTIM_DAC_MAX */
 #define CMD_CLEAR_FAULT   0x08u   /* (no payload) clear the latched module fault */
+#define CMD_GET_VERSION   0x09u   /* (no payload) -> RSP_VERSION (the one command not
+                                     answered with RSP_STATUS; firmware older than
+                                     protocol 2 ignores it, which is how the host
+                                     tells "old firmware" from "no firmware") */
 
 /* MCU -> Host (responses + events). */
 #define RSP_STATUS        0x81u   /* StatusPayload below (34 bytes) */
@@ -43,6 +48,13 @@
                                      (wheel push), bits 2/3 wheel roll, bit 4 FIRE (SW9),
                                      bit 5 BSL switch (SW6); Rev 2 HAT */
 #define EVT_FAULT         0x85u   /* module u8 (flags below), tick u32 — a fault latched */
+#define RSP_VERSION       0x86u   /* VersionPayload below (32 bytes), answers CMD_GET_VERSION */
+
+/* Wire-protocol version, reported in RSP_VERSION.proto.  Bump it whenever a
+ * payload layout or a message type changes meaning; the broker refuses to
+ * trust a firmware whose number differs from its own.  1 = everything before
+ * CMD_GET_VERSION existed (v0.2.0-rc1..rc5), 2 = this header. */
+#define PROTO_VERSION     2u
 
 /* Phase byte values in RSP_STATUS (ASCII 'W' / 'T'). */
 #define PHASE_WAITING     0x57u
@@ -90,6 +102,9 @@
 
 #define PROTO_STATUS_LEN    34u
 #define EVT_FAULT_LEN        5u
+#define PROTO_VERSION_LEN   32u
+#define FW_VERSION_CHARS    30u  /* VersionPayload.version: NUL-padded, not necessarily
+                                    NUL-terminated when all 30 are used */
 
 /* Largest payload (inbound or outbound) we assemble or accept. */
 #define PROTO_MAX_PAYLOAD   34u
@@ -104,7 +119,8 @@
  * compiler emits byte-wise access for the misaligned members.
  *
  * The _Static_asserts lock these to the lengths above; keep them in sync
- * with Pi/protocol.py (_CONFIG = "<HII", _STATUS = "<HIIBBIBIIHHBHH").
+ * with Pi/protocol.py (_CONFIG = "<HII", _STATUS = "<HIIBBIBIIHHBHH",
+ * _VERSION = "<BB30s").
  */
 typedef struct __attribute__((packed)) {
     uint16_t intensity;
@@ -143,10 +159,22 @@ typedef struct __attribute__((packed)) {
     uint32_t tick;
 } FaultPayload;
 
+/* RSP_VERSION: which firmware is running.  `version` is the build's
+ * `git describe` with the leading "v" dropped and "-" turned into "+"
+ * (e.g. "0.2.0+rc6", "0.2.0+rc6+3+g1a2b3c4"), i.e. the same string the
+ * laserhat Debian package carries in /usr/lib/laserhat/firmware/VERSION,
+ * so the broker can compare the two byte for byte. */
+typedef struct __attribute__((packed)) {
+    uint8_t  proto;                     /* PROTO_VERSION of this firmware */
+    uint8_t  reserved;                  /* 0 */
+    char     version[FW_VERSION_CHARS]; /* NUL-padded */
+} VersionPayload;
+
 _Static_assert(sizeof(ConfigPayload)      == CMD_CONFIG_LEN,      "ConfigPayload layout drift");
 _Static_assert(sizeof(EstimConfigPayload) == CMD_ESTIM_CONFIG_LEN, "EstimConfigPayload layout drift");
 _Static_assert(sizeof(DacPayload)         == CMD_DAC_LEN,          "DacPayload layout drift");
 _Static_assert(sizeof(StatusPayload)      == PROTO_STATUS_LEN,     "StatusPayload layout drift");
 _Static_assert(sizeof(FaultPayload)       == EVT_FAULT_LEN,        "FaultPayload layout drift");
+_Static_assert(sizeof(VersionPayload)     == PROTO_VERSION_LEN,    "VersionPayload layout drift");
 
 #endif /* PROTOCOL_H */

@@ -24,6 +24,10 @@
 
 /* ---- mcu.c ------------------------------------------------------------ */
 int  mcu_open(const char *device, int baud);   /* 0 ok, -1 error (printed) */
+/* The firmware version the installed package ships (one line in
+ * /usr/lib/laserhat/firmware/VERSION); NULL / missing file = accept any
+ * version that speaks PROTO_VERSION.  Call before mcu_start(). */
+void mcu_set_expected_version_file(const char *path);
 void mcu_start(void);                          /* reader + poller threads */
 
 /* Client-facing operations (each blocks for the STATUS echo). */

@@ -32,6 +32,8 @@ CASES = [
     (p.CMD_LASER_CURRENT, p._DAC.pack(3650)),
     (p.CMD_ESTIM_CURRENT, p._DAC.pack(4095)),
     (p.CMD_CLEAR_FAULT, b""),
+    (p.CMD_GET_VERSION, b""),
+    (p.RSP_VERSION, p.pack_version_payload(p.PROTO_VERSION, "0.2.0+rc6+3+g1a2b3c4")),
     (p.RSP_STATUS, p._STATUS.pack(200, 8000, 10000, 0b1010,
                                   p.PHASE_TRIGGERED, 123456,
                                   p.MODE_ESTIM, 500, 2000,
@@ -86,6 +88,8 @@ def main():
          p._ESTIM_CONFIG.pack(500, 2000).hex()),
         ("dac " + c("dac", "3650"), p._DAC.pack(3650).hex()),
         ("fault " + c("fault", "3", "42"), p._FAULT.pack(3, 42).hex()),
+        ("version " + c("version", str(p.PROTO_VERSION), "0.2.0+rc6"),
+         p.pack_version_payload(p.PROTO_VERSION, "0.2.0+rc6").hex()),
     ]
     for label_got, want in struct_cases:
         label, got = label_got.split(" ", 1)

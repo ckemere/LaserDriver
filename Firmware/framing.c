@@ -28,6 +28,7 @@ static int cmd_payload_len(uint8_t type)
         case CMD_LASER_CURRENT: return (int)CMD_DAC_LEN;
         case CMD_ESTIM_CURRENT: return (int)CMD_DAC_LEN;
         case CMD_CLEAR_FAULT:  return 0;
+        case CMD_GET_VERSION:  return 0;
         default:               return -1;
     }
 }

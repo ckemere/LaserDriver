@@ -121,6 +121,30 @@ def test_stream_recovers_after_dropped_byte():
     assert (p.EVT_BUTTON, bytes([2, 2])) in frames
 
 
+def test_version_roundtrip():
+    wire = p.pack_version(p.PROTO_VERSION, "0.2.0+rc6+3+g1a2b3c4")
+    assert len(wire) == 3 + p.RSP_LEN[p.RSP_VERSION] == 3 + 32
+    (mtype, payload), = p.StreamDecoder().feed(wire)
+    assert mtype == p.RSP_VERSION
+    assert p.unpack_version(payload) == (p.PROTO_VERSION, "0.2.0+rc6+3+g1a2b3c4")
+
+
+def test_version_truncates_to_thirty_chars():
+    long = "0.2.0+rc6+123+gabcdef0123456789+dirty"      # 38 chars
+    payload = p.pack_version_payload(1, long)
+    assert len(payload) == 32
+    proto, version = p.unpack_version(payload)
+    assert proto == 1 and version == long[:p.FW_VERSION_CHARS]
+    # exactly 30 characters fill the field with no terminator — still decodes
+    exact = "x" * p.FW_VERSION_CHARS
+    assert p.unpack_version(p.pack_version_payload(2, exact)) == (2, exact)
+
+
+def test_get_version_is_a_command_without_payload():
+    assert p.CMD_LEN[p.CMD_GET_VERSION] == 0
+    assert p.encode_frame(p.CMD_GET_VERSION) == p.SYNC + bytes([p.CMD_GET_VERSION])
+
+
 def test_status_range_check_rejects_garbage():
     assert p.status_in_range(p.unpack_status(
         p.pack_status(200, 8000, 10000, 1, "W", 5)[3:]))

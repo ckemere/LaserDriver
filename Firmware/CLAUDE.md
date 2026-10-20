@@ -74,6 +74,7 @@ already in the repo under `sdk/` — no additional downloads needed.
 | `uart.c/h` | UART1 (Pi) + UART0 (USB-C) at 115200 8N1, one RX ring per port, blocking TX |
 | `protocol.h` | Binary wire protocol map (message types + field layout); mirror of `Pi/protocol.py` |
 | `framing.c/h` | Magic-word frame encode/decode (`SYNC \| TYPE \| payload`, no CRC) |
+| `version.c/h` | `fw_version[]`, the build's `git describe` string (`-DFW_VERSION`, rebuilt every make); reported by `CMD_GET_VERSION` → `RSP_VERSION` with `PROTO_VERSION` |
 | `main.c` | State machine, boot sequence, IRQ handlers, binary frame dispatch on both ports, `main` |
 
 Each peripheral module exposes an `_init()` (and where useful `_start()`)
@@ -201,6 +202,7 @@ Stage only:
 - `uart.c` / `.h`
 - `protocol.h`
 - `framing.c` / `.h`
+- `version.c` / `.h`
 - `board.h`
 - `Makefile`, `Makefile.gcc`
 - `CLAUDE.md`

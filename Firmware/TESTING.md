@@ -18,8 +18,9 @@ and programs the module's DAC over I²C.
 Protocol summary (frame = `SYNC(DE AD) | TYPE | payload`, no CRC):
 `CMD_CONFIG{i,r,h}` / `CMD_TRIGGER` / `CMD_QUERY` / `CMD_SET_MODE` /
 `CMD_ESTIM_CONFIG` / `CMD_LASER_CURRENT` / `CMD_ESTIM_CURRENT` /
-`CMD_CLEAR_FAULT` → every command is answered with `RSP_STATUS`; async
-`EVT_PULSE_START/END`, `EVT_BUTTON`, `EVT_FAULT`.
+`CMD_CLEAR_FAULT` → every command is answered with `RSP_STATUS`
+(`CMD_GET_VERSION` → `RSP_VERSION` instead); async `EVT_PULSE_START/END`,
+`EVT_BUTTON`, `EVT_FAULT`.
 
 ---
 
@@ -42,6 +43,11 @@ make -C Firmware -f Makefile.gcc flash          # +OPENOCD_GPIOCHIP=4 on Pi 5
 ```
 - [ ] ~2 s D7 boot blink right after the command (= flash landed), then a
       short D7 blip once a second (heartbeat).
+- [ ] `python3 ../Pi/laser_hat.py version` prints `proto 2 ... version <the
+      build's git describe>` (e.g. `0.2.0+rc6`).  "no response" = the MCU
+      still runs a build older than v0.2.0-rc6 (the write did not land) or is
+      blank.  On the packaged stack `sudo laserhat-flash` does this check
+      itself and the web page / OLED flag a mismatch (`FW!` chip).
 - [ ] If OpenOCD cannot connect: check SWCLK = GPIO 24, SWDIO = GPIO 25,
       NRST = GPIO 23 (swapped vs Rev 1) and that nothing else holds them.
 
@@ -111,6 +117,10 @@ journalctl -u laserhat-broker.service -f        # "serving …", no "UART read e
 With the broker stopped, HAT powered, **no diode in J2 yet** (the dummy
 load takes the current).  Everything up to the diode can be checked with a
 multimeter; a scope is only needed to look at the PWM steering itself.
+First make sure the MCU runs this firmware (step 2's `version` check, or no
+`FW!` chip / banner on the OLED and web page): a board left on v0.2.0-rc1
+drives the PWM but never puts the set-point on DAC0, so no current flows
+and nothing below reads as expected.
 
 **Static (no pulse):**
 - [ ] LASER_V (across C9, or D1's cathode) is 5 V or ≈ 12 V with SW5, and

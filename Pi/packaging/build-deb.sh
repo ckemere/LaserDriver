@@ -65,7 +65,11 @@ mkdir -p "$PKG/usr/bin"
 # --- MCU firmware + flashing tool --------------------------------------------
 # Built from the same commit as the broker, so both sides share protocol.h.
 # Flashing is manual (sudo laserhat-flash); nothing flashes at boot.
-make -C "$PI_DIR/../Firmware" -f Makefile.gcc BUILD_DIR="$FW_BUILD" all
+# FW_VERSION = the package version, so the string the MCU reports
+# (RSP_VERSION) equals the VERSION file byte for byte and the broker can
+# tell an un-reflashed board from a current one.
+make -C "$PI_DIR/../Firmware" -f Makefile.gcc BUILD_DIR="$FW_BUILD" \
+    FW_VERSION="$VERSION" all
 mkdir -p "$PKG/usr/lib/laserhat/firmware"
 install -m 644 "$FW_BUILD/main.elf" "$PKG/usr/lib/laserhat/firmware/laserhat-mcu.elf"
 install -m 644 "$FW_BUILD/main.hex" "$PKG/usr/lib/laserhat/firmware/laserhat-mcu.hex"

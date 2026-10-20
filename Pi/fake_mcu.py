@@ -25,6 +25,13 @@ import protocol as proto
 
 PULSE_HOLD_S = 0.15
 
+# What CMD_GET_VERSION is answered with (tests override through the
+# environment; FAKE_MCU_NO_VERSION=1 ignores the command like the firmware
+# builds before protocol 2 did).
+FAKE_VERSION = os.environ.get("FAKE_MCU_VERSION", "fake")
+FAKE_PROTO = int(os.environ.get("FAKE_MCU_PROTO", str(proto.PROTO_VERSION)))
+FAKE_NO_VERSION = os.environ.get("FAKE_MCU_NO_VERSION") == "1"
+
 
 class FakeMCU:
     def __init__(self, fd: int):
@@ -114,6 +121,10 @@ class FakeMCU:
                     and proto.ESTIM_TICKS_MIN <= ipi <= proto.ESTIM_TICKS_MAX):
                 self.state.update(estim_dur_ticks=dur, estim_ipi_ticks=ipi)
             self._send_status()
+        elif mtype == proto.CMD_GET_VERSION:
+            if not FAKE_NO_VERSION:      # old firmware: silently ignored
+                self._send(proto.RSP_VERSION,
+                           proto.pack_version_payload(FAKE_PROTO, FAKE_VERSION))
 
     def run(self) -> None:
         while True:

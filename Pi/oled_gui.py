@@ -37,8 +37,10 @@ Display layout (oledd cells: 21 columns × 4 rows):
 In LASER mode the selectable items are: i, r, h, ld (current, mA), [mode], [off]
 In ESTIM mode the selectable items are: dur (ed), IPI (ei), sd (amplitude, µA), [mode], [off]
 The window scrolls so the selected item is always visible.  The chip shows
-FAULT (inverted) while a module fault is latched, and the e-stim rows show
-"!" after the amplitude until the module's DAC has acknowledged (ready).
+FAULT (inverted) while a module fault is latched, FW! (inverted) while the
+broker reports the MCU firmware does not match the package (run
+`sudo laserhat-flash`), and the e-stim rows show "!" after the amplitude
+until the module's DAC has acknowledged (ready).
 """
 
 from __future__ import annotations
@@ -210,6 +212,8 @@ def compose(state: State, selected: int, off_armed: bool = False,
         chip, inverted = "FAULT", True
     elif state.phase == "T":
         chip, inverted = "TRIG", True
+    elif state.fw_ok is False:
+        chip, inverted = "FW!", True      # MCU firmware != package: sudo laserhat-flash
     else:
         chip, inverted = "WAIT", False
     return tag, rows, chip, inverted
@@ -327,7 +331,7 @@ def main() -> int:
     def paint_key(st: State, sel: int):
         return (st.intensity, st.ramp_ticks, st.hold_ticks, st.phase, sel,
                 st.mode, st.estim_dur_ticks, st.estim_ipi_ticks,
-                st.laser_dac, st.estim_dac, st.module) + ui_flags()
+                st.laser_dac, st.estim_dac, st.module, st.fw_ok) + ui_flags()
 
     last_painted_key = paint_key(state, selected)
 

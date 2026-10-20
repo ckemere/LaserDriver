@@ -37,13 +37,13 @@ def build_brokerd() -> bool:
     return r.returncode == 0
 
 
-def python_broker(slave, sock):
+def python_broker(slave, sock, *extra):
     return [sys.executable, os.path.join(PI, "broker.py"),
-            "--device", slave, "--no-gpio", "--socket", sock]
+            "--device", slave, "--no-gpio", "--socket", sock, *extra]
 
 
-def c_broker(slave, sock):
-    return [BROKERD, "--device", slave, "--gpio", "sim", "--socket", sock]
+def c_broker(slave, sock, *extra):
+    return [BROKERD, "--device", slave, "--gpio", "sim", "--socket", sock, *extra]
 
 
 def _wait(predicate, timeout=5.0, interval=0.02):
@@ -55,16 +55,20 @@ def _wait(predicate, timeout=5.0, interval=0.02):
     return False
 
 
-def run(broker_cmd=python_broker) -> int:
+def run(broker_cmd=python_broker, fake_env=None, broker_extra=(),
+        expect_fw=("fake", True, None)) -> int:
+    """expect_fw = (fw_version, fw_ok, fw_expected) the broker must report
+    once the MCU is alive and the version probe has completed."""
     py = sys.executable
-    sock = f"/tmp/lh_test_{os.getpid()}.sock"
+    sock = f"/tmp/lh_test_{os.getpid()}_{time.monotonic_ns()}.sock"
 
+    env = dict(os.environ, **(fake_env or {}))
     fake = subprocess.Popen([py, os.path.join(PI, "fake_mcu.py")],
-                            stdout=subprocess.PIPE, text=True)
+                            stdout=subprocess.PIPE, text=True, env=env)
     slave = fake.stdout.readline().strip()
     assert slave, "fake_mcu did not report a device"
 
-    broker = subprocess.Popen(broker_cmd(slave, sock))
+    broker = subprocess.Popen(broker_cmd(slave, sock, *broker_extra))
 
     failures = []
     try:
@@ -80,6 +84,19 @@ def run(broker_cmd=python_broker) -> int:
         st = client.get_state()
         if st and st.intensity != 320:
             failures.append(f"unexpected default intensity {st.intensity}")
+
+        # Firmware identity: the broker probes CMD_GET_VERSION once alive
+        # (the probe times out when the fake plays old firmware, which is
+        # itself the answer: fw_ok False).
+        want_version, want_ok, want_expected = expect_fw
+        if not _wait(lambda: getattr(client.get_state(), "fw_ok", None) is not None):
+            failures.append("firmware version probe never completed (fw_ok stayed null)")
+        st = client.get_state()
+        if st and (st.fw_version, st.fw_ok, st.fw_expected) != expect_fw:
+            failures.append(f"firmware identity {(st.fw_version, st.fw_ok, st.fw_expected)}"
+                            f" != {expect_fw}")
+        if st and st.fw_version is not None and st.fw_proto is None:
+            failures.append("fw_proto missing although a version was reported")
 
         # set intensity -> ACK ok, and the cached state mirrors it.
         if not client.set_intensity(200):
@@ -127,15 +144,38 @@ def run(broker_cmd=python_broker) -> int:
     return 0
 
 
+def _fw_scenarios(broker_cmd):
+    """The three firmware-identity outcomes, for either broker."""
+    import tempfile
+    assert run(broker_cmd) == 0                     # matching (no VERSION file)
+    with tempfile.NamedTemporaryFile("w", suffix=".VERSION", delete=False) as f:
+        f.write("other\n")
+        path = f.name
+    try:                                            # package expects another build
+        assert run(broker_cmd, broker_extra=("--fw-version-file", path),
+                   expect_fw=("fake", False, "other")) == 0
+        assert run(broker_cmd, fake_env={"FAKE_MCU_VERSION": "other"},
+                   broker_extra=("--fw-version-file", path),
+                   expect_fw=("other", True, "other")) == 0
+    finally:
+        os.unlink(path)
+    # firmware older than protocol 2 ignores CMD_GET_VERSION -> no reply
+    assert run(broker_cmd, fake_env={"FAKE_MCU_NO_VERSION": "1"},
+               expect_fw=(None, False, None)) == 0
+    # wrong protocol number is refused even with a matching string
+    assert run(broker_cmd, fake_env={"FAKE_MCU_PROTO": "1"},
+               expect_fw=("fake", False, None)) == 0
+
+
 def test_integration():
-    assert run() == 0
+    _fw_scenarios(python_broker)
 
 
 def test_integration_brokerd():
     import pytest
     if not build_brokerd():
         pytest.skip("can't build laserhat-brokerd here")
-    assert run(c_broker) == 0
+    _fw_scenarios(c_broker)
 
 
 if __name__ == "__main__":

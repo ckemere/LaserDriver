@@ -26,7 +26,9 @@ IPC is newline-delimited JSON.  Client -> broker:
     sd (e-stim DAC code)
 Broker -> client:
     {"type": "state", "ok": true, "intensity": ..., "phase": "W", ...,
-     "laser_dac": .., "estim_dac": .., "module": <flags>, "adc_pd": .., "adc_comp": ..}
+     "laser_dac": .., "estim_dac": .., "module": <flags>, "adc_pd": .., "adc_comp": ..,
+     "fw_version": "0.2.0+rc6"|null, "fw_proto": 2|null,
+     "fw_expected": "<VERSION file>"|null, "fw_ok": true|false|null}
     {"type": "event", "event": "button", "mask": .., "edges": ..}
     {"type": "event", "event": "pulse_start"|"pulse_end", "tick": ..}
     {"type": "event", "event": "fault", "module": <flags>, "tick": ..}
@@ -54,6 +56,9 @@ except Exception:                       # gpiozero may be absent off-Pi
 
 
 DEFAULT_SOCKET = os.environ.get("LASERHAT_SOCK", "/run/laserhat/broker.sock")
+# The firmware version the installed package ships (written by build-deb.sh);
+# the MCU is asked for its own once it is alive and the two are compared.
+DEFAULT_FW_VERSION_FILE = "/usr/lib/laserhat/firmware/VERSION"
 POLL_INTERVAL = 0.25                    # s between liveness CMD_QUERY polls
 REPLY_TIMEOUT = 0.5                     # s to wait for a STATUS echo
 LIVENESS_TIMEOUT = 1.5                  # s without a status -> mcu_alive False
@@ -63,7 +68,8 @@ _KNOB_FIELD = {"i": "intensity", "r": "ramp_ticks", "h": "hold_ticks",
 
 
 class Broker:
-    def __init__(self, uart: LaserUART, gpio_trigger=None):
+    def __init__(self, uart: LaserUART, gpio_trigger=None,
+                 fw_expected: Optional[str] = None):
         self._uart = uart
         self._gpio = gpio_trigger
 
@@ -75,13 +81,18 @@ class Broker:
             "estim_dur_ticks": None, "estim_ipi_ticks": None,
             "laser_dac": None, "estim_dac": None, "module": 0,
             "adc_pd": 0, "adc_comp": 0,
+            "fw_version": None, "fw_proto": None,
+            "fw_expected": fw_expected, "fw_ok": None,
         }
         self._state_lock = threading.Lock()
         self._last_status_at = 0.0
+        self._fw_probed = False          # CMD_GET_VERSION sent since the MCU came alive
 
-        # One command in flight; its STATUS echo is routed here.
+        # One command in flight; its STATUS echo is routed here (a
+        # CMD_GET_VERSION's RSP_VERSION goes to _version_q instead).
         self._cmd_lock = threading.Lock()
         self._reply_q: "queue.Queue[dict]" = queue.Queue(maxsize=4)
+        self._version_q: "queue.Queue[tuple]" = queue.Queue(maxsize=4)
 
         self._subs: set[queue.Queue] = set()
         self._subs_lock = threading.Lock()
@@ -154,6 +165,11 @@ class Broker:
             self._broadcast({"type": "event", "event": "fault",
                              "module": flags, "tick": tick})
             self._broadcast_state()
+        elif mtype == proto.RSP_VERSION and len(payload) >= proto._VERSION.size:
+            try:
+                self._version_q.put_nowait(proto.unpack_version(payload))
+            except queue.Full:
+                pass
 
     def _pulse(self, phase: str, event: str, payload: bytes) -> None:
         tick = int.from_bytes(payload[:4], "little") if len(payload) >= 4 else 0
@@ -184,14 +200,58 @@ class Broker:
                     and time.monotonic() - self._last_status_at > LIVENESS_TIMEOUT):
                 self._state["mcu_alive"] = False
                 self._state["ok"] = False
+                # A reflash / power cycle gets a fresh probe when it returns.
+                self._fw_probed = False
+                self._state["fw_version"] = None
+                self._state["fw_proto"] = None
+                self._state["fw_ok"] = None
                 flip = True
         if flip:
             self._broadcast_state()
+
+    # ----- firmware identity -------------------------------------------
+    def _probe_version(self) -> None:
+        """Ask the MCU which firmware it runs (once per alive period) and
+        judge it against the package.  Firmware older than protocol 2
+        ignores the command, so a timeout is itself the answer."""
+        with self._cmd_lock:
+            try:
+                while True:
+                    self._version_q.get_nowait()
+            except queue.Empty:
+                pass
+            try:
+                self._uart.send(proto.CMD_GET_VERSION)
+            except Exception as exc:      # noqa: BLE001
+                print(f"broker: send failed: {exc}", file=sys.stderr)
+                return
+            try:
+                fw_proto, fw_version = self._version_q.get(timeout=REPLY_TIMEOUT)
+            except queue.Empty:
+                fw_proto, fw_version = None, None
+        with self._state_lock:
+            self._fw_probed = True
+            expected = self._state["fw_expected"]
+            ok = (fw_version is not None and fw_proto == proto.PROTO_VERSION
+                  and (expected is None or expected == fw_version))
+            self._state["fw_version"] = fw_version
+            self._state["fw_proto"] = fw_proto
+            self._state["fw_ok"] = ok
+        if not ok:
+            print(f"broker: MCU firmware {fw_version or 'unknown (no reply)'} "
+                  f"proto {fw_proto} does not match the package "
+                  f"({expected or 'any'}, proto {proto.PROTO_VERSION}): "
+                  "run sudo laserhat-flash", file=sys.stderr)
+        self._broadcast_state()
 
     # ----- poller -------------------------------------------------------
     def poller_loop(self) -> None:
         while not self._stop.is_set():
             self._command(proto.CMD_QUERY)        # refresh state / liveness
+            with self._state_lock:
+                probe = self._state["mcu_alive"] and not self._fw_probed
+            if probe:
+                self._probe_version()
             self._stop.wait(POLL_INTERVAL)
 
     # ----- command path (STATUS-correlated) -----------------------------
@@ -390,7 +450,17 @@ def main() -> int:
     p.add_argument("--socket", default=DEFAULT_SOCKET)
     p.add_argument("--no-gpio", action="store_true",
                    help="don't open the PiTrigger GPIO (off-hardware testing)")
+    p.add_argument("--fw-version-file", default=DEFAULT_FW_VERSION_FILE,
+                   help="file holding the firmware version the package ships "
+                        "(missing = accept any version with the right protocol)")
     args = p.parse_args()
+
+    fw_expected = None
+    try:
+        with open(args.fw_version_file, encoding="utf-8") as f:
+            fw_expected = f.read().strip() or None
+    except OSError:
+        pass
 
     print(f"broker: opening UART {args.device} @ {args.baud}", file=sys.stderr)
     uart = LaserUART(args.device, args.baud)
@@ -402,7 +472,7 @@ def main() -> int:
         except Exception as exc:          # noqa: BLE001
             print(f"broker: GPIO trigger unavailable: {exc}", file=sys.stderr)
 
-    broker = Broker(uart, gpio)
+    broker = Broker(uart, gpio, fw_expected)
     threading.Thread(target=broker.reader_loop, daemon=True).start()
     threading.Thread(target=broker.poller_loop, daemon=True).start()
 

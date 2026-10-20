@@ -13,8 +13,9 @@ boundary, reads TYPE, then the fixed number of payload bytes that TYPE
 implies.  There is no length field, no byte-stuffing, and no CRC:
 
   * Integrity is end-to-end — every command is answered with RSP_STATUS
-    (the "status-as-ack"), so the broker confirms the MCU actually holds
-    the values it sent; STATUS / event fields are range-checked on receipt.
+    (the "status-as-ack"; CMD_GET_VERSION -> RSP_VERSION is the one
+    exception), so the broker confirms the MCU actually holds the values
+    it sent; STATUS / event fields are range-checked on receipt.
   * The MCU's inbound payloads are bounded (CONFIG i/r/h, the DAC codes
     <= 0x0FFF, mode, e-stim ticks), and the broker guarantees a CONFIG
     payload never contains the SYNC bytes (see avoid_magic), so the MCU's
@@ -45,6 +46,7 @@ CMD_ESTIM_CONFIG  = 0x05    # pulse_dur_ticks u32, ipi_ticks u32
 CMD_LASER_CURRENT = 0x06    # dac u16: DAC0 code -> laser module IREF (0..LASER_DAC_MAX)
 CMD_ESTIM_CURRENT = 0x07    # dac u16: e-stim module DAC60501 code (0..ESTIM_DAC_MAX)
 CMD_CLEAR_FAULT   = 0x08    # — clear the latched module fault
+CMD_GET_VERSION   = 0x09    # — -> RSP_VERSION (firmware older than protocol 2 ignores it)
 
 # MCU -> Host (responses + events), high bit set.
 RSP_STATUS      = 0x81  # i u16, r u32, h u32, btn u8, phase u8, tick u32,
@@ -54,6 +56,13 @@ EVT_PULSE_START = 0x82  # tick u32
 EVT_PULSE_END   = 0x83  # tick u32
 EVT_BUTTON      = 0x84  # mask u8, edges u8 (bits: 0 BACK, 1 SELECT, 2/3 wheel, 4 FIRE, 5 BSL)
 EVT_FAULT       = 0x85  # module u8 (flags), tick u32 — a module fault latched
+RSP_VERSION     = 0x86  # proto u8, reserved u8, version char[30] (NUL-padded)
+
+# Wire-protocol version (mirror of PROTO_VERSION in protocol.h).  The
+# broker trusts a firmware only if it reports this number; 1 = the
+# firmware builds before CMD_GET_VERSION existed (v0.2.0-rc1..rc5).
+PROTO_VERSION = 2
+FW_VERSION_CHARS = 30
 
 # Phase byte values in RSP_STATUS (ASCII 'W' / 'T').
 PHASE_WAITING   = ord("W")
@@ -77,6 +86,7 @@ _STATUS       = struct.Struct("<HIIBBIBIIHHBHH")
 _ESTIM_CONFIG = struct.Struct("<II")        # pulse_dur_ticks, ipi_ticks
 _DAC          = struct.Struct("<H")         # dac code
 _FAULT        = struct.Struct("<BI")        # module flags, tick
+_VERSION      = struct.Struct("<BB30s")     # proto, reserved, version (NUL-padded)
 _U16 = struct.Struct("<H")
 _U32 = struct.Struct("<I")
 
@@ -84,9 +94,10 @@ _U32 = struct.Struct("<I")
 # set; an out-of-direction type is treated as unknown -> resync).
 CMD_LEN = {CMD_CONFIG: 10, CMD_TRIGGER: 0, CMD_QUERY: 0,
            CMD_SET_MODE: 1, CMD_ESTIM_CONFIG: 8,
-           CMD_LASER_CURRENT: 2, CMD_ESTIM_CURRENT: 2, CMD_CLEAR_FAULT: 0}
+           CMD_LASER_CURRENT: 2, CMD_ESTIM_CURRENT: 2, CMD_CLEAR_FAULT: 0,
+           CMD_GET_VERSION: 0}
 RSP_LEN = {RSP_STATUS: _STATUS.size, EVT_PULSE_START: 4, EVT_PULSE_END: 4,
-           EVT_BUTTON: 2, EVT_FAULT: _FAULT.size}
+           EVT_BUTTON: 2, EVT_FAULT: _FAULT.size, RSP_VERSION: _VERSION.size}
 
 # Field ranges, for validating a decoded STATUS (false-sync rejection).
 INTENSITY_MIN, INTENSITY_MAX = 1, 320
@@ -181,6 +192,23 @@ def pack_status(intensity: int, ramp: int, hold: int, button_mask: int,
         intensity, ramp, hold, button_mask, phase_byte, tick,
         mode, estim_dur_ticks, estim_ipi_ticks,
         laser_dac, estim_dac, module, adc_pd, adc_comp))
+
+
+def pack_version_payload(proto: int, version: str) -> bytes:
+    """RSP_VERSION payload: proto number + the build's version string
+    (ASCII, truncated to FW_VERSION_CHARS, NUL-padded like the firmware)."""
+    v = version.encode("ascii", "replace")[:FW_VERSION_CHARS]
+    return _VERSION.pack(proto, 0, v)
+
+
+def pack_version(proto: int, version: str) -> bytes:
+    return encode_frame(RSP_VERSION, pack_version_payload(proto, version))
+
+
+def unpack_version(payload: bytes) -> Tuple[int, str]:
+    """(proto, version string) of an RSP_VERSION."""
+    proto, _reserved, raw = _VERSION.unpack(payload)
+    return proto, raw.split(b"\0", 1)[0].decode("ascii", "replace")
 
 
 def unpack_config(payload: bytes) -> Tuple[int, int, int]:

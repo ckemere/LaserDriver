@@ -21,6 +21,7 @@
 
 #define DEFAULT_DEVICE "/dev/ttyS0"
 #define DEFAULT_SOCKET "/run/laserhat/broker.sock"
+#define DEFAULT_FW_VERSION_FILE "/usr/lib/laserhat/firmware/VERSION"
 
 /* ----- util ------------------------------------------------------------ */
 double now_mono(void)
@@ -91,7 +92,10 @@ static void usage(const char *argv0)
         "  --udp-allow IP       only accept triggers from this IPv4 source\n"
         "  --rt-prio N          SCHED_FIFO priority for the trigger thread (0 = off)\n"
         "  --cpu N              pin the trigger thread to CPU N\n"
-        "  --spin               busy-poll the UDP socket (use with an isolated CPU)\n",
+        "  --spin               busy-poll the UDP socket (use with an isolated CPU)\n"
+        "  --fw-version-file P  the package's firmware VERSION file (default\n"
+        "                       " DEFAULT_FW_VERSION_FILE "); the MCU's own version is\n"
+        "                       compared with it -> fw_expected / fw_ok in the state\n",
         argv0, LHT_DEFAULT_PORT);
 }
 
@@ -111,8 +115,9 @@ int main(int argc, char **argv)
     if (!device) device = DEFAULT_DEVICE;
     if (!sock_path) sock_path = DEFAULT_SOCKET;
 
+    const char *fw_version_file = DEFAULT_FW_VERSION_FILE;
     enum { O_DEVICE = 1, O_BAUD, O_SOCKET, O_CTCP, O_GPIO, O_NOGPIO, O_PIN,
-           O_PULSE, O_UDP, O_ALLOW, O_PRIO, O_CPU, O_SPIN, O_HELP };
+           O_PULSE, O_UDP, O_ALLOW, O_PRIO, O_CPU, O_SPIN, O_FWFILE, O_HELP };
     static const struct option opts[] = {
         { "device", 1, 0, O_DEVICE }, { "baud", 1, 0, O_BAUD },
         { "socket", 1, 0, O_SOCKET }, { "control-tcp", 1, 0, O_CTCP },
@@ -120,7 +125,8 @@ int main(int argc, char **argv)
         { "gpio-pin", 1, 0, O_PIN },  { "pulse-us", 1, 0, O_PULSE },
         { "udp", 1, 0, O_UDP },       { "udp-allow", 1, 0, O_ALLOW },
         { "rt-prio", 1, 0, O_PRIO },  { "cpu", 1, 0, O_CPU },
-        { "spin", 0, 0, O_SPIN },     { "help", 0, 0, O_HELP },
+        { "spin", 0, 0, O_SPIN },     { "fw-version-file", 1, 0, O_FWFILE },
+        { "help", 0, 0, O_HELP },
         { 0, 0, 0, 0 },
     };
     int o;
@@ -144,6 +150,7 @@ int main(int argc, char **argv)
             case O_PRIO:   tc.rt_prio = atoi(optarg); break;
             case O_CPU:    tc.cpu = atoi(optarg); break;
             case O_SPIN:   tc.spin = true; break;
+            case O_FWFILE: fw_version_file = optarg; break;
             default:       usage(argv[0]); return o == O_HELP ? 0 : 2;
         }
     }
@@ -194,6 +201,7 @@ int main(int argc, char **argv)
         return 1;
     }
 
+    mcu_set_expected_version_file(fw_version_file);
     mcu_start();
     ipc_serve(ufd);
     fprintf(stderr, "brokerd: serving on %s\n", sock_path);

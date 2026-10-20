@@ -51,6 +51,16 @@ def run(broker_cmd=python_broker) -> int:
         st = c.get("/api/state").get_json()
         if not st.get("ok"):
             failures.append(f"/api/state not ok: {st}")
+        # firmware identity reaches the page (probe completes shortly after alive)
+        if not _wait(lambda: c.get("/api/state").get_json().get("fw_ok") is not None):
+            failures.append("fw_ok never left null via /api/state")
+        st = c.get("/api/state").get_json()
+        for key in ("fw_version", "fw_proto", "fw_expected", "fw_ok", "fw_label"):
+            if key not in st:
+                failures.append(f"/api/state lacks {key}")
+        if st.get("fw_version") != "fake" or st.get("fw_ok") is not True:
+            failures.append(f"unexpected firmware identity in /api/state: "
+                            f"{st.get('fw_version')} ok={st.get('fw_ok')}")
 
         r = c.post("/api/set/i", json={"value": 150}).get_json()
         if not r.get("ok"):

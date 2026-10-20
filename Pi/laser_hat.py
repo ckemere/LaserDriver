@@ -40,6 +40,16 @@ class State:
     module: int = 0         # MODULE_* flag bits (see protocol.py)
     adc_pd: int = 0         # photodiode ADC code (laser mode)
     adc_comp: int = 0       # compliance-rail ADC code (laser mode)
+    # Firmware identity, probed once by the broker (CMD_GET_VERSION):
+    #   fw_version  the MCU's build string, None = not probed yet / no reply
+    #   fw_proto    its wire-protocol number (protocol.PROTO_VERSION expected)
+    #   fw_expected the package's firmware version (VERSION file), None = unknown
+    #   fw_ok       None until probed; False = no reply (firmware older than
+    #               protocol 2, or blank), wrong proto, or != fw_expected
+    fw_version: Optional[str] = None
+    fw_proto: Optional[int] = None
+    fw_expected: Optional[str] = None
+    fw_ok: Optional[bool] = None
 
     def button(self, n: int) -> bool:
         """True if button n (1..6) is pressed."""
@@ -72,6 +82,15 @@ class State:
     @classmethod
     def from_status_payload(cls, payload: bytes) -> "State":
         return cls(**proto.unpack_status(payload))
+
+    @property
+    def fw_label(self) -> str:
+        """Human-readable firmware identity for GUIs."""
+        if self.fw_version:
+            return self.fw_version
+        if self.fw_ok is False:
+            return "unknown (older than 0.2.0-rc6, or blank)"
+        return "probing"
 
 
 class LaserUART:
@@ -141,6 +160,7 @@ def _main() -> int:
     sp = sub.add_parser("estim-current", help="e-stim module amplitude (DAC code, ~0.12 µA each)")
     sp.add_argument("dac", type=int)
     sub.add_parser("clear-fault", help="clear a latched module fault")
+    sub.add_parser("version", help="firmware protocol number + build version")
 
     args = p.parse_args()
     uart = LaserUART(args.device, args.baud)
@@ -177,6 +197,19 @@ def _main() -> int:
     elif args.cmd == "clear-fault":
         uart.send(proto.CMD_CLEAR_FAULT)
         print(wait_status() or "no response")
+    elif args.cmd == "version":
+        uart.send(proto.CMD_GET_VERSION)
+        end = time.monotonic() + 1.0
+        reply = None
+        while reply is None and time.monotonic() < end:
+            for mtype, payload in uart.read_frames():
+                if mtype == proto.RSP_VERSION:
+                    reply = proto.unpack_version(payload)
+                    break
+        if reply is None:
+            print("no response (firmware older than protocol 2, or no firmware)")
+            return 1
+        print(f"proto {reply[0]} (host {proto.PROTO_VERSION}) version {reply[1]}")
     elif args.cmd == "watch":
         names = {v: k for k, v in vars(proto).items()
                  if k.isupper() and isinstance(v, int)}

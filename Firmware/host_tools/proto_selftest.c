@@ -104,6 +104,14 @@ int main(int argc, char **argv)
         print_hex((const uint8_t *)&f, sizeof f);
         return 0;
     }
+    if (argc == 4 && strcmp(argv[1], "version") == 0) {
+        VersionPayload v;
+        memset(&v, 0, sizeof v);
+        v.proto = (uint8_t)strtoul(argv[2], NULL, 10);
+        strncpy(v.version, argv[3], sizeof v.version);   /* NUL-padded, like the firmware */
+        print_hex((const uint8_t *)&v, sizeof v);
+        return 0;
+    }
     if (argc == 4 && strcmp(argv[1], "estim") == 0) {
         EstimConfigPayload e;
         e.pulse_dur_ticks = (uint32_t)strtoul(argv[2], NULL, 10);
@@ -111,6 +119,6 @@ int main(int argc, char **argv)
         print_hex((const uint8_t *)&e, sizeof e);
         return 0;
     }
-    fprintf(stderr, "usage: %s encode|decode|config|status|estim|dac|fault ...\n", argv[0]);
+    fprintf(stderr, "usage: %s encode|decode|config|status|estim|dac|fault|version ...\n", argv[0]);
     return 2;
 }

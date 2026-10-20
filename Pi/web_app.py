@@ -105,6 +105,11 @@ def _state_dict(state: Optional[State]) -> dict:
         "pd_volts":        round(proto.adc_to_volts(state.adc_pd), 3),
         "adc_comp":        state.adc_comp,
         "compliance_v":    round(proto.comp_to_volts(state.adc_comp), 2),
+        "fw_version":      state.fw_version,
+        "fw_proto":        state.fw_proto,
+        "fw_expected":     state.fw_expected,
+        "fw_ok":           state.fw_ok,
+        "fw_label":        state.fw_label,
     }
 
 

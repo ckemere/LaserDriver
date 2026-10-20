@@ -10,6 +10,7 @@
 #include "uart.h"
 #include "protocol.h"
 #include "framing.h"
+#include "version.h"
 #include <stdbool.h>
 #include <stdint.h>
 
@@ -677,6 +678,8 @@ static void poll_buttons(void)
  *   CMD_LASER_CURRENT   -> RSP_STATUS    (DAC0 code for the next pulse; mid-pulse: now)
  *   CMD_ESTIM_CURRENT   -> RSP_STATUS    (module DAC code, written between trains)
  *   CMD_CLEAR_FAULT     -> RSP_STATUS
+ *   CMD_GET_VERSION     -> RSP_VERSION   (protocol number + build version string;
+ *                                         the broker checks both against its package)
  *   (async)             -> EVT_BUTTON on any debounced button change,
  *                          EVT_FAULT when a module fault latches
  * ----------------------------------------------------------------------- */
@@ -719,6 +722,19 @@ static void emit_status(UartPort *port)
         .adc_comp         = g_adc_comp,
     };
     tx_frame(port, RSP_STATUS, (const uint8_t *)&s, sizeof s);
+}
+
+static void emit_version(UartPort *port)
+{
+    VersionPayload v = { .proto = (uint8_t)PROTO_VERSION, .reserved = 0u };
+    /* NUL-padded copy; a 30-character string fills the field exactly. */
+    for (size_t i = 0u; i < sizeof v.version; i++) {
+        v.version[i] = '\0';
+    }
+    for (size_t i = 0u; i < sizeof v.version && fw_version[i] != '\0'; i++) {
+        v.version[i] = fw_version[i];
+    }
+    tx_frame(port, RSP_VERSION, (const uint8_t *)&v, sizeof v);
 }
 
 static void apply_estim_config(const uint8_t *payload)
@@ -818,6 +834,10 @@ static void process_frame(UartPort *port, uint8_t type,
         case CMD_CLEAR_FAULT:
             g_fault_latched = false;
             emit_status(port);
+            break;
+
+        case CMD_GET_VERSION:
+            emit_version(port);
             break;
 
         default:

@@ -92,6 +92,7 @@
     .mode-btn.active-estim { background: #1a6b8a; color: white; border-color: #1a6b8a; }
     .mode-btn:hover:not(.active-laser):not(.active-estim) { background: var(--bg); }
     [data-panel].hidden { display: none; }
+    #fw-card.hidden { display: none; }
 
     footer { color: var(--muted); font-size: 12px; margin-top: 20px; text-align: center; }
     .err { color: var(--accent); }
@@ -196,6 +197,14 @@
     </div>
   </div>
 
+  <div class="card module-line hidden" id="fw-card">
+    <span>MCU firmware:</span>
+    <span class="flag bad" id="fw-running">—</span>
+    <span>package expects <span class="flag" id="fw-expected">—</span></span>
+    <span style="font-size:12px">The MCU is not running the firmware this package shipped (or none at all).
+      With no module in J8/J9, run <code>sudo laserhat-flash</code>, then wait for the ~2 s boot blink.</span>
+  </div>
+
   <div class="card module-line" id="fault-card">
     <span>module fault:</span>
     <span class="flag" id="flag-latched">none</span>
@@ -237,6 +246,7 @@
 
   <footer>
     state polls every 500 ms · <code>tick=<span id="tick">—</span></code>
+    · firmware <code id="fw-footer">—</code>
     <span id="err" class="err"></span>
   </footer>
 
@@ -324,6 +334,14 @@ async function refresh() {
     $("clear-fault").disabled = !s.fault_latched;
 
     $("tick").textContent = s.tick;
+
+    // Firmware identity (probed once per MCU boot by the broker).
+    $("fw-footer").textContent = s.fw_version
+      ? `${s.fw_version} (proto ${s.fw_proto})` : s.fw_label;
+    $("fw-card").classList.toggle("hidden", s.fw_ok !== false);
+    $("fw-running").textContent = s.fw_version
+      ? `${s.fw_version} proto ${s.fw_proto}` : s.fw_label;
+    $("fw-expected").textContent = s.fw_expected || "any (no VERSION file)";
 
     const phaseEl = $("phase");
     const ph = s.fault_latched ? "F" : s.phase;

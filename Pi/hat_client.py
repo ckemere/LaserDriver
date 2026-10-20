@@ -40,6 +40,10 @@ def _state_from_msg(msg: dict) -> Optional[State]:
         module=msg.get("module", 0),
         adc_pd=msg.get("adc_pd", 0),
         adc_comp=msg.get("adc_comp", 0),
+        fw_version=msg.get("fw_version"),
+        fw_proto=msg.get("fw_proto"),
+        fw_expected=msg.get("fw_expected"),
+        fw_ok=msg.get("fw_ok"),
     )
 
 

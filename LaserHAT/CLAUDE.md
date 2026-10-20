@@ -89,6 +89,9 @@ parts, footprint ids, values, DNP, pad nets, paths) → 0 differences.
   ≈100 mA; DAC0 is zero between pulses, per the Q1 cascode rule) + ADC1 readback of J9.4/J9.5; ESTIM mode = spec §7 sequencing on EN/CATH/RELEASE as GPIOs, DAC60501 over
   bit-banged I²C (`CMD_ESTIM_CURRENT`), FAULT_n GPIO-IRQ kill + latch (`EVT_FAULT`, `CMD_CLEAR_FAULT`).  Boot blink is
   ~2 s (was 4 s; it only mattered on Rev 1, where SWDIO became the trigger after it).  Rev 1 firmware = tag `firmware-rev1`.
+  **v0.2.0-rc6 adds `CMD_GET_VERSION` → `RSP_VERSION`** (`PROTO_VERSION` 2 + the build's `git describe` string, = the deb's
+  VERSION file): the broker probes it once per MCU boot and reports `fw_version`/`fw_ok`; web banner + OLED `FW!` chip +
+  `laserhat-flash` verification flag an un-reflashed board (the 2026-10-20 "no laser current" case: MCU still on rc1).
 - OLED bonnet (Adafruit 4567) runs only on 3.3 V and ties header pins 1/17 together itself.
 - J8/J9 pad positions and pinout are frozen (module contract, spec §7).
 

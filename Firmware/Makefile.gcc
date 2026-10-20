@@ -34,7 +34,18 @@ OBJS            := $(BUILD_DIR)/main.o \
                    $(BUILD_DIR)/module.o \
                    $(BUILD_DIR)/uart.o \
                    $(BUILD_DIR)/framing.o \
+                   $(BUILD_DIR)/version.o \
                    $(STARTUP_OBJ)
+
+# Version string reported over the wire (RSP_VERSION) — the same transform
+# of `git describe` that Pi/packaging/build-deb.sh uses for the Debian
+# package version, so the broker can compare them.  Override with
+# FW_VERSION=... (build-deb.sh passes the package version explicitly).
+FW_VERSION      ?= $(shell git describe --tags --always --dirty 2>/dev/null \
+                     | sed 's/^v//;s/-/+/g')
+ifeq ($(strip $(FW_VERSION)),)
+FW_VERSION      := unversioned
+endif
 
 # Compiler flags
 CPU_FLAGS       := -mcpu=cortex-m0plus -mthumb
@@ -104,6 +115,14 @@ $(TARGET_HEX): $(TARGET_ELF)
 
 $(BUILD_DIR)/%.o: $(PROJ_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# Always recompiled, so the string tracks the checkout (new commit, new tag,
+# dirty tree) without a `make clean`.
+$(BUILD_DIR)/version.o: $(PROJ_DIR)/version.c $(PROJ_DIR)/version.h FORCE | $(BUILD_DIR)
+	$(CC) $(CFLAGS) -DFW_VERSION='"$(FW_VERSION)"' -c $< -o $@
+
+FORCE:
+.PHONY: FORCE
 
 $(STARTUP_OBJ): $(STARTUP_SRC) | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@

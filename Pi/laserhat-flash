@@ -16,11 +16,14 @@
 #      (Rev 2's SWD pins are dedicated, so any moment works; the fresh
 #      reset just makes it predictable), erase + write, reset run
 #   4. restart the broker + GUIs (every one that is enabled or was running)
+#   5. verify: the broker asks the MCU for its version (CMD_GET_VERSION)
+#      and this script prints whether it matches the package's VERSION
+#      file (exit status 3 if it does not, 4 if the MCU never answered)
 #
 # Flash with no module in J8/J9.  A blank MCU is inert.
 #
 # Success looks like the ~2 s boot blink of the status LED D7 after the
-# write, then a short blip once a second.
+# write, then a short blip once a second, and "MCU firmware ... OK" here.
 
 set -eu
 
@@ -46,8 +49,10 @@ done
 command -v openocd >/dev/null || die "openocd not installed (sudo apt install openocd)"
 
 echo "Firmware: $ELF"
-[ -f "$FW_DIR/VERSION" ] && [ "$ELF" = "$FW_DIR/laserhat-mcu.elf" ] && \
-    echo "Version:  $(cat "$FW_DIR/VERSION")"
+EXPECTED=""
+[ -f "$FW_DIR/VERSION" ] && EXPECTED=$(tr -d '[:space:]' < "$FW_DIR/VERSION")
+[ -n "$EXPECTED" ] && [ "$ELF" = "$FW_DIR/laserhat-mcu.elf" ] && \
+    echo "Version:  $EXPECTED"
 if [ "$ASSUME_YES" -ne 1 ]; then
     printf 'Remove any module from J8/J9 before flashing.  Continue? [y/N] '
     read -r answer
@@ -66,7 +71,10 @@ for u in $UNITS; do
         RESTART="$RESTART $u"
     fi
 done
+RESTORED=0
 restore() {
+    [ "$RESTORED" -eq 1 ] && return
+    RESTORED=1
     if [ -n "$RESTART" ]; then
         echo "restarting:$RESTART"
         # shellcheck disable=SC2086
@@ -93,3 +101,57 @@ openocd -f "$FW_DIR/pi-swd.cfg" \
     -c "shutdown"
 
 echo "flashed; watch for the ~2 s boot blink on the status LED D7"
+
+# --- 4. bring the stack back, 5. verify through the broker -----------------
+restore
+case " $RESTART " in
+    *" laserhat-broker.service "*) ;;
+    *) echo "broker not enabled here; skipping the version check"; exit 0 ;;
+esac
+if [ "$ELF" != "$FW_DIR/laserhat-mcu.elf" ]; then
+    EXPECTED=""             # a developer image: report, don't judge
+fi
+# The broker probes the MCU once it is alive (boot blink ~2 s, then the
+# first STATUS); wait for the answer and compare with the package.
+python3 - "$EXPECTED" <<'PYEOF'
+import sys, time
+sys.path.insert(0, "/usr/lib/laserhat")
+import hat_client
+
+expected = sys.argv[1]
+client = None
+end = time.monotonic() + 12.0
+while time.monotonic() < end and client is None:
+    try:
+        client = hat_client.HatClient("/run/laserhat/broker.sock")
+    except OSError:
+        time.sleep(0.25)
+if client is None:
+    print("laserhat-flash: broker socket did not come up; check "
+          "`systemctl status laserhat-broker`")
+    sys.exit(4)
+st = None
+while time.monotonic() < end:
+    st = client.get_state()
+    if st is not None and st.fw_ok is not None:
+        break
+    time.sleep(0.25)
+client.close()
+if st is None:
+    print("laserhat-flash: MCU never came alive after the flash (no STATUS); "
+          "no boot blink = the write did not land")
+    sys.exit(4)
+if st.fw_version is None:
+    print("laserhat-flash: MCU alive but did not answer CMD_GET_VERSION: "
+          "it runs firmware older than 0.2.0-rc6 (the write did not land?)")
+    sys.exit(4)
+if expected and st.fw_version != expected:
+    print(f"laserhat-flash: MCU firmware {st.fw_version} != package {expected}")
+    sys.exit(3)
+if not st.fw_ok and expected:
+    print(f"laserhat-flash: MCU firmware {st.fw_version} proto {st.fw_proto} "
+          "not accepted by the broker (protocol mismatch?)")
+    sys.exit(3)
+print(f"MCU firmware {st.fw_version} (proto {st.fw_proto}"
+      + (f", package {expected}" if expected else "") + "): OK")
+PYEOF

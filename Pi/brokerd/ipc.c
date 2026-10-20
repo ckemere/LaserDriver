@@ -177,7 +177,7 @@ static void dispatch(const char *line, char *out, size_t cap)
 static void *client_loop(void *arg)
 {
     Client *c = arg;
-    char state[512];
+    char state[768];
 
     pthread_mutex_lock(&g_clients_mu);
     c->next = g_clients;

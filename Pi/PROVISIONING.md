@@ -154,5 +154,9 @@ D7, followed by a 1 Hz heartbeat blip, and the OLED/web then show the MCU as
 alive.  These are the Rev 2 HAT pins; a Rev 1 board (SWD and power/reset
 swapped) needs `make flash HAT_REV=1` from the source tree instead.
 `cat /usr/lib/laserhat/firmware/VERSION` shows which release the firmware
-came from. Re-run the command after installing a new package version to keep
-the firmware and broker matched.
+came from, and the command's last line (`MCU firmware <version> ... OK`)
+confirms the MCU now reports exactly that version.  Re-run the command after
+installing a new package version to keep the firmware and broker matched:
+until they match, the web page shows an "MCU firmware" banner and the OLED
+chip reads `FW!` (the broker probes `CMD_GET_VERSION` once per MCU boot;
+builds older than v0.2.0-rc6 do not answer and are flagged the same way).
