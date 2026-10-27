@@ -46,7 +46,9 @@ CLIP = "battpack:Clip_MY-18650-01"
 TOGGLE = "battpack:SW_MTS-203"
 HOLE = "MountingHole:MountingHole_3.2mm_M3"
 
-# LCSC codes (JLCPCB basic parts unless noted "ext"; checked 2026-10-26 with tools/jlc_search.py)
+# LCSC codes (JLCPCB basic parts unless noted "ext"; checked 2026-10-26 with tools/jlc_search.py).  Values of switches, LEDs,
+# connectors and other named parts are JLC's model strings (JLC's BOM matcher compares the Comment with them); functions are
+# in the net names and on the silk.
 L = dict(R100k="C25803", R68k="C23231", R33k="C4216", R30k="C22984", R15k="C22809", R13k="C22797", R12k="C22790",
          R10k="C25804", R6k8="C23212", R6k2="C4260", R2k="C22975", R1M="C22935", R120k="C25808", R120="C22787",
          R100="C22775", R100_1206="C17901", R0R1_1206="C25334",
@@ -94,9 +96,9 @@ PARTS = [
     clip("BC5", "C2"), clip("BC6", "C3"),
     clip("BC7", "C3"), clip("BC8", "+BAT"),
     # ---------------------------------------------------------------- switch, fuse, under-voltage cutoff
-    dict(ref="SW1", sym="SW_DPDT_CO", value="MTS-203 RUN/OFF/CHG", fp=TOGGLE, lcsc=L["TOGGLE"],
+    dict(ref="SW1", sym="SW_DPDT_CO", value="CAX-MTS203M-YB-10.6JL", fp=TOGGLE, lcsc=L["TOGGLE"],
          nets={"2": "+BAT", "1": "+RUN", "3": "+CHG", "5": "GND", "4": "OUT_GND", "6": "CGND"}),
-    dict(ref="F1", sym="Polyfuse", value="100mA PTC", fp=FUSE1812, lcsc=L["PTC"], nets={"1": "+RUN", "2": "+SW"}),   # Bourns MF-MSMF010-2
+    dict(ref="F1", sym="Polyfuse", value="MF-MSMF010-2", fp=FUSE1812, lcsc=L["PTC"], nets={"1": "+RUN", "2": "+SW"}),   # Bourns MF-MSMF010-2
     pmos("Q1", "Q1_G", "+SW", "+OUT"),
     R("R1", "100k", "+SW", "Q1_G", L["R100k"]),          # gate pull-up (off)
     R("R2", "100k", "Q1_G", "CUT_OC", L["R100k"]),       # with R1: Vgs = -Vsw/2 when U2B pulls low (AO3401A Vgs max 12 V)
@@ -133,16 +135,16 @@ PARTS = [
          nets={"3": "TH20", "2": "VS", "1": "LED20", "5": "THCUT", "6": "VS", "7": "CUT_OC", "8": "+G", "4": "GND"}),
     C("C1", "100n", "+G", "GND", L["C100n"]),
     C("C2", "100n", "+G", "GND", L["C100n"]),
-    led("D1", "red ON", L["LEDR"], "GND", "D1_A", fp=LED0603),          # KT-0603R
-    led("D2", "yellow >20%", L["LEDY"], "LED20", "D2_A"),              # KT-0805Y
-    led("D3", "green >50%", L["LEDG"], "LED50", "D3_A"),               # KT-0805G
-    led("D4", "green >80%", L["LEDG"], "LED80", "D4_A"),
+    led("D1", "KT-0603R", L["LEDR"], "GND", "D1_A", fp=LED0603),          # KT-0603R
+    led("D2", "KT-0805Y", L["LEDY"], "LED20", "D2_A"),              # KT-0805Y
+    led("D3", "KT-0805G", L["LEDG"], "LED50", "D3_A"),               # KT-0805G
+    led("D4", "KT-0805G", L["LEDG"], "LED80", "D4_A"),
     R("R12", "13k", "+OUT", "D1_A", L["R13k"]),          # ~1 mA at 15 V (red Vf 2 V)
     R("R13", "13k", "+G", "D2_A", L["R13k"]),
     R("R14", "12k", "+G", "D3_A", L["R12k"]),            # green Vf ~2.8 V
     R("R15", "12k", "+G", "D4_A", L["R12k"]),
     # ---------------------------------------------------------------- USB-C PD input and CN3704 charger (all on CGND)
-    dict(ref="J1", sym="USB_C_16P", value="USB-C PD 20V in", fp=USBC, lcsc=L["USBC"],
+    dict(ref="J1", sym="USB_C_16P", value="TYPE-C-31-M-12", fp=USBC, lcsc=L["USBC"],
          nets={"A4": "VBUS", "B4": "VBUS", "A9": "VBUS", "B9": "VBUS", "A5": "CC1", "B5": "CC2",
                "A6": "DP", "B6": "DP", "A7": "DM", "B7": "DM", "A8": None, "B8": None,
                "A1": "CGND", "B1": "CGND", "A12": "CGND", "B12": "CGND", "S1": "CGND"}),
@@ -160,25 +162,25 @@ PARTS = [
     pmos("Q6", "DRV", "VBUS", "SWA"),                    # buck switch
     schottky("D7", "SS34", L["SS34"], "SW", "SWA"),      # blocks battery -> input through Q6's body diode
     schottky("D8", "SS34", L["SS34"], "SW", "CGND"),     # freewheel
-    dict(ref="L1", sym="L", value="22uH 3A", fp=IND, lcsc=L["L22u"], nets={"1": "SW", "2": "CSP"}),   # Sunlord MWSA0603S-220MT
+    dict(ref="L1", sym="L", value="MWSA0603S-220MT", fp=IND, lcsc=L["L22u"], nets={"1": "SW", "2": "CSP"}),   # Sunlord MWSA0603S-220MT
     R("R25", "0.1R", "CSP", "RCS", L["R0R1_1206"], fp=R1206),      # 200 mV / 0.2 R = 1 A
     R("R26", "0.1R", "RCS", "+BAT", L["R0R1_1206"], fp=R1206),
     C("C7", "10u", "+BAT", "CGND", L["C10u25"], fp=C0805),
     C("C8", "10u", "+BAT", "CGND", L["C10u25"], fp=C0805),
-    dict(ref="RT1", sym="Thermistor", value="NTC 10k", fp=R0603, lcsc=L["NTC"], nets={"1": "TEMP", "2": "CGND"}),   # NCP18XH103F03RB
+    dict(ref="RT1", sym="Thermistor", value="NCP18XH103F03RB", fp=R0603, lcsc=L["NTC"], nets={"1": "TEMP", "2": "CGND"}),   # NCP18XH103F03RB
     C("C9", "470p", "COM1", "CGND", L["C470p"]),
     R("R27", "120", "COM2", "COM2C", L["R120"]),
     C("C10", "220n", "COM2C", "CGND", L["C220n"]),
     C("C11", "100n", "COM3", "CGND", L["C100n"]),
-    led("D9", "red CHRG", L["LEDR"], "CHRG", "D9_A", fp=LED0603),
-    led("D10", "green DONE", L["LEDG"], "DONE", "D10_A"),
+    led("D9", "KT-0603R", L["LEDR"], "CHRG", "D9_A", fp=LED0603),
+    led("D10", "KT-0805G", L["LEDG"], "DONE", "D10_A"),
     R("R28", "15k", "VBUS", "D9_A", L["R15k"]),
     R("R29", "15k", "VBUS", "D10_A", L["R15k"]),
     R("R30", "1M", "CGND", "GND", L["R1M"]),             # defines CGND while the toggle is not in CHARGE
     # ---------------------------------------------------------------- output and stacking
-    dict(ref="J3", sym="Conn_01x04", value="OUT +V/0V/-V + link", fp=PH4, lcsc=L["PH4"],
+    dict(ref="J3", sym="Conn_01x04", value="B4B-PH-K-S(LF)(SN)", fp=PH4, lcsc=L["PH4"],
          nets={"1": "+OUT", "2": "OUT_GND", "3": "LINK_N", "4": "STACK_IN"}),
-    dict(ref="J4", sym="Conn_01x04", value="LINK from lower pack", fp=PH4, lcsc=L["PH4"],
+    dict(ref="J4", sym="Conn_01x04", value="B4B-PH-K-S(LF)(SN)", fp=PH4, lcsc=L["PH4"],
          nets={"1": "GND", "2": "LINK_N", "3": None, "4": "+RUN"}),
     dict(ref="H1", sym="MountingHole", value="M3", fp=HOLE, lcsc="", nets={}),
     dict(ref="H2", sym="MountingHole", value="M3", fp=HOLE, lcsc="", nets={}),

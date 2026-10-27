@@ -88,8 +88,8 @@ class Sheet:
             f'(property "Datasheet" "" (at {F(x)} {F(y)} 0) (effects (font (size 1.27 1.27)) (hide yes)))',
         ]
         if p["lcsc"]:
-            props.append(f'(property "LCSC" "{p["lcsc"]}" (at {F(x)} {F(y)} 0) (effects (font (size 1.27 1.27)) (hide yes)))')
-        is_tp = p["sym"] == "TestPoint"
+            props.append(f'(property "LCSC Part #" "{p["lcsc"]}" (at {F(x)} {F(y)} 0) (effects (font (size 1.27 1.27)) (hide yes)))')
+        is_tp = p["sym"] in ("TestPoint", "MountingHole")      # not in the BOM
         self.items.append(
             f'(symbol (lib_id "{S.LIB}:{p["sym"]}") (at {F(x)} {F(y)} {rot}){" (mirror y)" if mirror else ""} (unit {unit}) '
             f'(exclude_from_sim no) (in_bom {"no" if is_tp else "yes"}) (on_board yes) (dnp {"yes" if p.get("dnp") else "no"})\n    (uuid "{symbol_uuid(ref, unit)}")\n    '

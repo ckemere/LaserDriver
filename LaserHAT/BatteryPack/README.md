@@ -18,7 +18,7 @@ board is edited in place, never rebuilt.  `tools/make_fab.py` writes `../fab/Bat
 |---|---|---|
 | Cells | BC1–BC8 MYOUNG MY-18650-01 clips (C2979183, extended) | four rows at 20 mm pitch, clips 48.0 mm apart (pin rows); **all four cells the same way round: − on the left, + (button) on the right** (4 mm silk "−" / "+" under each cell plus small marks beside the clips); the series links C1–C3 run diagonally under the cells from each row's right clip to the next row's left clip |
 | Balancers | U6–U9 HY2213-BB3A (C113632, ext), Q7–Q10 AO3400A, R35–R38 100 R 1206, R31–R34 100 R, C12–C15 100 n | one per cell in the band under the cells: 42 mA bleed above 4.200 V, release 4.19 V, 2.5 µA standing |
-| Toggle | SW1 MTS-203 DPDT centre-off (C55160018, ext), F1 100 mA PTC (C12430, ext) | **RUN / OFF / CHARGE**.  Pole 1 (+BAT): RUN → +RUN → F1 → +SW → Q1 → +OUT; CHARGE → +CHG.  Pole 2 (GND): RUN → J3.2 (output ground); CHARGE → CGND (USB-C ground + charger return).  OFF opens both |
+| Toggle | SW1 MTS-203 DPDT centre-off (C55160018, ext; **JLC stock 192 on 2026-10-27**), F1 100 mA PTC MF-MSMF010-2 (C12430, ext) | **RUN / OFF / CHARGE**.  Pole 1 (+BAT): RUN → +RUN → F1 → +SW → Q1 → +OUT; CHARGE → +CHG.  Pole 2 (GND): RUN → J3.2 (output ground); CHARGE → CGND (USB-C ground + charger return).  OFF opens both |
 | Cutoff | U2B (LM393), Q1 AO3401A, R1/R2 100k, R11 1M | +OUT off below 12.0 V (3.0 V/cell), back on above 12.8 V |
 | Gauge | U3 CJ431, R3–R11, U1/U2 LM393, D2–D4 + R13–R15 from the gauge rail +G (= +SW or +CHG via D5/D6 SS14) | D4 green ≥ 16.0 V, D3 green ≥ 15.2 V, D2 yellow ≥ 14.4 V, ~1 mA each; works in RUN and in CHARGE |
 | ON | D1 red + R12 from +OUT | lit whenever the output is live |
@@ -81,3 +81,11 @@ the electronics strip kept its routing.
 `python gen_schematic.py` → `python tools/netcheck.py` (CONNECTIVITY OK) → ERC (0) → `tools/pcb_sync.py` only if
 nets or footprints changed (`--keep-tracks`) → `../tools/path_check.py` / `sync_check.py` → `kicad-cli pcb drc` →
 `python tools/lcsc_check.py` → `python tools/make_fab.py`.
+
+**Part numbers on the board.**  `sch_parts.py` holds the LCSC codes; the generator writes them into every symbol as the
+`LCSC Part #` field and `tools/stamp_fields.py` writes the same field (hidden, F.Fab) into every footprint, syncs the
+Values and marks H1–H4 excluded from BOM and position files — so a BOM/CPL made straight from the PCB with the
+Fabrication Toolkit carries the codes too (added 2026-10-27 after a JLC upload without them failed to match C5, F1, J1,
+J3, J4 and SW1).  Re-run `stamp_fields.py` after changing a value or code in `sch_parts.py`.  Values of switches, LEDs,
+connectors, the inductor and the NTC are JLC's model strings (their matcher compares the BOM Comment with them); plain
+R/C values still draw JLC's harmless "comment differs" note, as on the HAT.

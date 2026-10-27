@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/claude-agent/Code/LaserDriver/LaserHAT/BatteryPack/BatteryPack.kicad_sch</source>
-    <date>2026-10-26T23:32:53-0500</date>
+    <date>2026-10-27T09:39:01-0500</date>
     <tool>Eeschema 9.0.8+dfsg-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -28,13 +28,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -44,13 +44,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -60,13 +60,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -76,13 +76,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -92,13 +92,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -108,13 +108,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -124,13 +124,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -140,13 +140,13 @@
       <value>MY-18650-01</value>
       <footprint>battpack:Clip_MY-18650-01</footprint>
       <fields>
-        <field name="LCSC">C2979183</field>
+        <field name="LCSC Part #">C2979183</field>
         <field name="Footprint">battpack:Clip_MY-18650-01</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Clip18650" description=""/>
-      <property name="LCSC" value="C2979183"/>
+      <property name="LCSC Part #" value="C2979183"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -156,13 +156,13 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -172,13 +172,13 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -188,13 +188,13 @@
       <value>1u</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C15849</field>
+        <field name="LCSC Part #">C15849</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C15849"/>
+      <property name="LCSC Part #" value="C15849"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -204,13 +204,13 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -220,13 +220,13 @@
       <value>22u 50V</value>
       <footprint>Capacitor_SMD:CP_Elec_6.3x5.4</footprint>
       <fields>
-        <field name="LCSC">C2836438</field>
+        <field name="LCSC Part #">C2836438</field>
         <field name="Footprint">Capacitor_SMD:CP_Elec_6.3x5.4</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="CP" description=""/>
-      <property name="LCSC" value="C2836438"/>
+      <property name="LCSC Part #" value="C2836438"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -236,13 +236,13 @@
       <value>1u</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C15849</field>
+        <field name="LCSC Part #">C15849</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C15849"/>
+      <property name="LCSC Part #" value="C15849"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -252,13 +252,13 @@
       <value>10u</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="LCSC">C15850</field>
+        <field name="LCSC Part #">C15850</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C15850"/>
+      <property name="LCSC Part #" value="C15850"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -268,13 +268,13 @@
       <value>10u</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
       <fields>
-        <field name="LCSC">C15850</field>
+        <field name="LCSC Part #">C15850</field>
         <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C15850"/>
+      <property name="LCSC Part #" value="C15850"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -284,13 +284,13 @@
       <value>470p</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C1620</field>
+        <field name="LCSC Part #">C1620</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C1620"/>
+      <property name="LCSC Part #" value="C1620"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -300,13 +300,13 @@
       <value>220n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C21120</field>
+        <field name="LCSC Part #">C21120</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C21120"/>
+      <property name="LCSC Part #" value="C21120"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -316,13 +316,13 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -332,13 +332,13 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -348,13 +348,13 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -364,13 +364,13 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -380,77 +380,77 @@
       <value>100n</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C14663</field>
+        <field name="LCSC Part #">C14663</field>
         <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="C" description=""/>
-      <property name="LCSC" value="C14663"/>
+      <property name="LCSC Part #" value="C14663"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>a6188c13-7b17-5869-a6fe-151e6735f6a7</tstamps>
     </comp>
     <comp ref="D1">
-      <value>red ON</value>
+      <value>KT-0603R</value>
       <footprint>LED_SMD:LED_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C2286</field>
+        <field name="LCSC Part #">C2286</field>
         <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LED" description=""/>
-      <property name="LCSC" value="C2286"/>
+      <property name="LCSC Part #" value="C2286"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>3b63655e-520d-54ec-a220-bc5f8fcd03a0</tstamps>
     </comp>
     <comp ref="D2">
-      <value>yellow &gt;20%</value>
+      <value>KT-0805Y</value>
       <footprint>LED_SMD:LED_0805_2012Metric</footprint>
       <fields>
-        <field name="LCSC">C2296</field>
+        <field name="LCSC Part #">C2296</field>
         <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LED" description=""/>
-      <property name="LCSC" value="C2296"/>
+      <property name="LCSC Part #" value="C2296"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>7b0d1639-4d3f-5b55-81a5-9373340d51da</tstamps>
     </comp>
     <comp ref="D3">
-      <value>green &gt;50%</value>
+      <value>KT-0805G</value>
       <footprint>LED_SMD:LED_0805_2012Metric</footprint>
       <fields>
-        <field name="LCSC">C2297</field>
+        <field name="LCSC Part #">C2297</field>
         <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LED" description=""/>
-      <property name="LCSC" value="C2297"/>
+      <property name="LCSC Part #" value="C2297"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>07dc64da-0c54-5f85-af92-e28caecf3902</tstamps>
     </comp>
     <comp ref="D4">
-      <value>green &gt;80%</value>
+      <value>KT-0805G</value>
       <footprint>LED_SMD:LED_0805_2012Metric</footprint>
       <fields>
-        <field name="LCSC">C2297</field>
+        <field name="LCSC Part #">C2297</field>
         <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LED" description=""/>
-      <property name="LCSC" value="C2297"/>
+      <property name="LCSC Part #" value="C2297"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -460,13 +460,13 @@
       <value>SS14</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
-        <field name="LCSC">C2480</field>
+        <field name="LCSC Part #">C2480</field>
         <field name="Footprint">Diode_SMD:D_SMA</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC" value="C2480"/>
+      <property name="LCSC Part #" value="C2480"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -476,13 +476,13 @@
       <value>SS14</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
-        <field name="LCSC">C2480</field>
+        <field name="LCSC Part #">C2480</field>
         <field name="Footprint">Diode_SMD:D_SMA</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC" value="C2480"/>
+      <property name="LCSC Part #" value="C2480"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -492,13 +492,13 @@
       <value>SS34</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
-        <field name="LCSC">C8678</field>
+        <field name="LCSC Part #">C8678</field>
         <field name="Footprint">Diode_SMD:D_SMA</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC" value="C8678"/>
+      <property name="LCSC Part #" value="C8678"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -508,61 +508,61 @@
       <value>SS34</value>
       <footprint>Diode_SMD:D_SMA</footprint>
       <fields>
-        <field name="LCSC">C8678</field>
+        <field name="LCSC Part #">C8678</field>
         <field name="Footprint">Diode_SMD:D_SMA</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC" value="C8678"/>
+      <property name="LCSC Part #" value="C8678"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>e401c5a9-2017-5830-a2e5-f71b974a1306</tstamps>
     </comp>
     <comp ref="D9">
-      <value>red CHRG</value>
+      <value>KT-0603R</value>
       <footprint>LED_SMD:LED_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C2286</field>
+        <field name="LCSC Part #">C2286</field>
         <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LED" description=""/>
-      <property name="LCSC" value="C2286"/>
+      <property name="LCSC Part #" value="C2286"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>3dccbaba-ce4d-57c0-a395-6fe9012f6407</tstamps>
     </comp>
     <comp ref="D10">
-      <value>green DONE</value>
+      <value>KT-0805G</value>
       <footprint>LED_SMD:LED_0805_2012Metric</footprint>
       <fields>
-        <field name="LCSC">C2297</field>
+        <field name="LCSC Part #">C2297</field>
         <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LED" description=""/>
-      <property name="LCSC" value="C2297"/>
+      <property name="LCSC Part #" value="C2297"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>4fee30d4-f15f-5d4a-b322-3ba9cfed334c</tstamps>
     </comp>
     <comp ref="F1">
-      <value>100mA PTC</value>
+      <value>MF-MSMF010-2</value>
       <footprint>Fuse:Fuse_1812_4532Metric</footprint>
       <fields>
-        <field name="LCSC">C12430</field>
+        <field name="LCSC Part #">C12430</field>
         <field name="Footprint">Fuse:Fuse_1812_4532Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Polyfuse" description=""/>
-      <property name="LCSC" value="C12430"/>
+      <property name="LCSC Part #" value="C12430"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -579,6 +579,7 @@
       <libsource lib="battpack" part="MountingHole" description=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>c9c68164-1388-5682-b5c5-fb867d258574</tstamps>
     </comp>
@@ -593,6 +594,7 @@
       <libsource lib="battpack" part="MountingHole" description=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>4c8413dd-0ea4-5290-b49c-141e55484185</tstamps>
     </comp>
@@ -607,6 +609,7 @@
       <libsource lib="battpack" part="MountingHole" description=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>fdabfd5e-da64-5e09-b206-846aa196d0f6</tstamps>
     </comp>
@@ -621,68 +624,69 @@
       <libsource lib="battpack" part="MountingHole" description=""/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>01bb1544-836b-59d9-9307-c488d435c9d9</tstamps>
     </comp>
     <comp ref="J1">
-      <value>USB-C PD 20V in</value>
+      <value>TYPE-C-31-M-12</value>
       <footprint>Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12</footprint>
       <fields>
-        <field name="LCSC">C165948</field>
+        <field name="LCSC Part #">C165948</field>
         <field name="Footprint">Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="USB_C_16P" description=""/>
-      <property name="LCSC" value="C165948"/>
+      <property name="LCSC Part #" value="C165948"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>98165b0d-5e52-52cc-980f-a4a1961b5c1c</tstamps>
     </comp>
     <comp ref="J3">
-      <value>OUT +V/0V/-V + link</value>
+      <value>B4B-PH-K-S(LF)(SN)</value>
       <footprint>Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</footprint>
       <fields>
-        <field name="LCSC">C131334</field>
+        <field name="LCSC Part #">C131334</field>
         <field name="Footprint">Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Conn_01x04" description=""/>
-      <property name="LCSC" value="C131334"/>
+      <property name="LCSC Part #" value="C131334"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>9d588e73-3515-59e3-bb15-1d1660509306</tstamps>
     </comp>
     <comp ref="J4">
-      <value>LINK from lower pack</value>
+      <value>B4B-PH-K-S(LF)(SN)</value>
       <footprint>Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</footprint>
       <fields>
-        <field name="LCSC">C131334</field>
+        <field name="LCSC Part #">C131334</field>
         <field name="Footprint">Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Conn_01x04" description=""/>
-      <property name="LCSC" value="C131334"/>
+      <property name="LCSC Part #" value="C131334"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>cc0af83e-bf99-5899-89f5-a1e513e0d498</tstamps>
     </comp>
     <comp ref="L1">
-      <value>22uH 3A</value>
+      <value>MWSA0603S-220MT</value>
       <footprint>Inductor_SMD:L_Sunlord_MWSA0603S</footprint>
       <fields>
-        <field name="LCSC">C408453</field>
+        <field name="LCSC Part #">C408453</field>
         <field name="Footprint">Inductor_SMD:L_Sunlord_MWSA0603S</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="L" description=""/>
-      <property name="LCSC" value="C408453"/>
+      <property name="LCSC Part #" value="C408453"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -692,13 +696,13 @@
       <value>AO3401A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C15127</field>
+        <field name="LCSC Part #">C15127</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
-      <property name="LCSC" value="C15127"/>
+      <property name="LCSC Part #" value="C15127"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -708,13 +712,13 @@
       <value>AO3401A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C15127</field>
+        <field name="LCSC Part #">C15127</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
-      <property name="LCSC" value="C15127"/>
+      <property name="LCSC Part #" value="C15127"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -724,13 +728,13 @@
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C20917</field>
+        <field name="LCSC Part #">C20917</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
-      <property name="LCSC" value="C20917"/>
+      <property name="LCSC Part #" value="C20917"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -740,13 +744,13 @@
       <value>AO3401A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C15127</field>
+        <field name="LCSC Part #">C15127</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
-      <property name="LCSC" value="C15127"/>
+      <property name="LCSC Part #" value="C15127"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -756,13 +760,13 @@
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C20917</field>
+        <field name="LCSC Part #">C20917</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
-      <property name="LCSC" value="C20917"/>
+      <property name="LCSC Part #" value="C20917"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -772,13 +776,13 @@
       <value>AO3401A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C15127</field>
+        <field name="LCSC Part #">C15127</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
-      <property name="LCSC" value="C15127"/>
+      <property name="LCSC Part #" value="C15127"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -788,13 +792,13 @@
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C20917</field>
+        <field name="LCSC Part #">C20917</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
-      <property name="LCSC" value="C20917"/>
+      <property name="LCSC Part #" value="C20917"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -804,13 +808,13 @@
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C20917</field>
+        <field name="LCSC Part #">C20917</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
-      <property name="LCSC" value="C20917"/>
+      <property name="LCSC Part #" value="C20917"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -820,13 +824,13 @@
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C20917</field>
+        <field name="LCSC Part #">C20917</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
-      <property name="LCSC" value="C20917"/>
+      <property name="LCSC Part #" value="C20917"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -836,13 +840,13 @@
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C20917</field>
+        <field name="LCSC Part #">C20917</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
-      <property name="LCSC" value="C20917"/>
+      <property name="LCSC Part #" value="C20917"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -852,13 +856,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -868,13 +872,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -884,13 +888,13 @@
       <value>6.8k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C23212</field>
+        <field name="LCSC Part #">C23212</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C23212"/>
+      <property name="LCSC Part #" value="C23212"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -900,13 +904,13 @@
       <value>6.8k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C23212</field>
+        <field name="LCSC Part #">C23212</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C23212"/>
+      <property name="LCSC Part #" value="C23212"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -916,13 +920,13 @@
       <value>2k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22975</field>
+        <field name="LCSC Part #">C22975</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22975"/>
+      <property name="LCSC Part #" value="C22975"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -932,13 +936,13 @@
       <value>2k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22975</field>
+        <field name="LCSC Part #">C22975</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22975"/>
+      <property name="LCSC Part #" value="C22975"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -948,13 +952,13 @@
       <value>6.2k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C4260</field>
+        <field name="LCSC Part #">C4260</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C4260"/>
+      <property name="LCSC Part #" value="C4260"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -964,13 +968,13 @@
       <value>30k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22984</field>
+        <field name="LCSC Part #">C22984</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22984"/>
+      <property name="LCSC Part #" value="C22984"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -980,13 +984,13 @@
       <value>68k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C23231</field>
+        <field name="LCSC Part #">C23231</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C23231"/>
+      <property name="LCSC Part #" value="C23231"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -996,13 +1000,13 @@
       <value>10k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25804</field>
+        <field name="LCSC Part #">C25804</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25804"/>
+      <property name="LCSC Part #" value="C25804"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1012,13 +1016,13 @@
       <value>1M</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22935</field>
+        <field name="LCSC Part #">C22935</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22935"/>
+      <property name="LCSC Part #" value="C22935"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1028,13 +1032,13 @@
       <value>13k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22797</field>
+        <field name="LCSC Part #">C22797</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22797"/>
+      <property name="LCSC Part #" value="C22797"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1044,13 +1048,13 @@
       <value>13k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22797</field>
+        <field name="LCSC Part #">C22797</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22797"/>
+      <property name="LCSC Part #" value="C22797"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1060,13 +1064,13 @@
       <value>12k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22790</field>
+        <field name="LCSC Part #">C22790</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22790"/>
+      <property name="LCSC Part #" value="C22790"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1076,13 +1080,13 @@
       <value>12k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22790</field>
+        <field name="LCSC Part #">C22790</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22790"/>
+      <property name="LCSC Part #" value="C22790"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1092,13 +1096,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1108,13 +1112,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1124,13 +1128,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1140,13 +1144,13 @@
       <value>33k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C4216</field>
+        <field name="LCSC Part #">C4216</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C4216"/>
+      <property name="LCSC Part #" value="C4216"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1156,13 +1160,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1172,13 +1176,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1188,13 +1192,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1204,13 +1208,13 @@
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25803</field>
+        <field name="LCSC Part #">C25803</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25803"/>
+      <property name="LCSC Part #" value="C25803"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1220,13 +1224,13 @@
       <value>120k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C25808</field>
+        <field name="LCSC Part #">C25808</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25808"/>
+      <property name="LCSC Part #" value="C25808"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1236,13 +1240,13 @@
       <value>0.1R</value>
       <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
       <fields>
-        <field name="LCSC">C25334</field>
+        <field name="LCSC Part #">C25334</field>
         <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25334"/>
+      <property name="LCSC Part #" value="C25334"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1252,13 +1256,13 @@
       <value>0.1R</value>
       <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
       <fields>
-        <field name="LCSC">C25334</field>
+        <field name="LCSC Part #">C25334</field>
         <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C25334"/>
+      <property name="LCSC Part #" value="C25334"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1268,13 +1272,13 @@
       <value>120</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22787</field>
+        <field name="LCSC Part #">C22787</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22787"/>
+      <property name="LCSC Part #" value="C22787"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1284,13 +1288,13 @@
       <value>15k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22809</field>
+        <field name="LCSC Part #">C22809</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22809"/>
+      <property name="LCSC Part #" value="C22809"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1300,13 +1304,13 @@
       <value>15k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22809</field>
+        <field name="LCSC Part #">C22809</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22809"/>
+      <property name="LCSC Part #" value="C22809"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1316,13 +1320,13 @@
       <value>1M</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22935</field>
+        <field name="LCSC Part #">C22935</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22935"/>
+      <property name="LCSC Part #" value="C22935"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1332,13 +1336,13 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22775</field>
+        <field name="LCSC Part #">C22775</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22775"/>
+      <property name="LCSC Part #" value="C22775"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1348,13 +1352,13 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22775</field>
+        <field name="LCSC Part #">C22775</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22775"/>
+      <property name="LCSC Part #" value="C22775"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1364,13 +1368,13 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22775</field>
+        <field name="LCSC Part #">C22775</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22775"/>
+      <property name="LCSC Part #" value="C22775"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1380,13 +1384,13 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C22775</field>
+        <field name="LCSC Part #">C22775</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C22775"/>
+      <property name="LCSC Part #" value="C22775"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1396,13 +1400,13 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
       <fields>
-        <field name="LCSC">C17901</field>
+        <field name="LCSC Part #">C17901</field>
         <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C17901"/>
+      <property name="LCSC Part #" value="C17901"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1412,13 +1416,13 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
       <fields>
-        <field name="LCSC">C17901</field>
+        <field name="LCSC Part #">C17901</field>
         <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C17901"/>
+      <property name="LCSC Part #" value="C17901"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1428,13 +1432,13 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
       <fields>
-        <field name="LCSC">C17901</field>
+        <field name="LCSC Part #">C17901</field>
         <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C17901"/>
+      <property name="LCSC Part #" value="C17901"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1444,45 +1448,45 @@
       <value>100</value>
       <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
       <fields>
-        <field name="LCSC">C17901</field>
+        <field name="LCSC Part #">C17901</field>
         <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC" value="C17901"/>
+      <property name="LCSC Part #" value="C17901"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>75832e79-4ba9-5e84-9504-6366b9016d6b</tstamps>
     </comp>
     <comp ref="RT1">
-      <value>NTC 10k</value>
+      <value>NCP18XH103F03RB</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC">C13564</field>
+        <field name="LCSC Part #">C13564</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Thermistor" description=""/>
-      <property name="LCSC" value="C13564"/>
+      <property name="LCSC Part #" value="C13564"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>b795291f-e918-5eca-ade7-1ead64dfc421</tstamps>
     </comp>
     <comp ref="SW1">
-      <value>MTS-203 RUN/OFF/CHG</value>
+      <value>CAX-MTS203M-YB-10.6JL</value>
       <footprint>battpack:SW_MTS-203</footprint>
       <fields>
-        <field name="LCSC">C55160018</field>
+        <field name="LCSC Part #">C55160018</field>
         <field name="Footprint">battpack:SW_MTS-203</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="SW_DPDT_CO" description=""/>
-      <property name="LCSC" value="C55160018"/>
+      <property name="LCSC Part #" value="C55160018"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1492,13 +1496,13 @@
       <value>LM393DR2G</value>
       <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
       <fields>
-        <field name="LCSC">C7955</field>
+        <field name="LCSC Part #">C7955</field>
         <field name="Footprint">Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LM393" description=""/>
-      <property name="LCSC" value="C7955"/>
+      <property name="LCSC Part #" value="C7955"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1508,13 +1512,13 @@
       <value>LM393DR2G</value>
       <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
       <fields>
-        <field name="LCSC">C7955</field>
+        <field name="LCSC Part #">C7955</field>
         <field name="Footprint">Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="LM393" description=""/>
-      <property name="LCSC" value="C7955"/>
+      <property name="LCSC Part #" value="C7955"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1524,13 +1528,13 @@
       <value>CJ431</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC">C3113</field>
+        <field name="LCSC Part #">C3113</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="TL431_SOT23" description=""/>
-      <property name="LCSC" value="C3113"/>
+      <property name="LCSC Part #" value="C3113"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1540,13 +1544,13 @@
       <value>CH224A</value>
       <footprint>Package_SO:SSOP-10-1EP_3.9x4.9mm_P1mm_EP2.1x3.3mm</footprint>
       <fields>
-        <field name="LCSC">C42459160</field>
+        <field name="LCSC Part #">C42459160</field>
         <field name="Footprint">Package_SO:SSOP-10-1EP_3.9x4.9mm_P1mm_EP2.1x3.3mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="CH224A" description=""/>
-      <property name="LCSC" value="C42459160"/>
+      <property name="LCSC Part #" value="C42459160"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1556,13 +1560,13 @@
       <value>CN3704</value>
       <footprint>Package_SO:TSSOP-16_4.4x5mm_P0.65mm</footprint>
       <fields>
-        <field name="LCSC">C51659</field>
+        <field name="LCSC Part #">C51659</field>
         <field name="Footprint">Package_SO:TSSOP-16_4.4x5mm_P0.65mm</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="CN3704" description=""/>
-      <property name="LCSC" value="C51659"/>
+      <property name="LCSC Part #" value="C51659"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1572,13 +1576,13 @@
       <value>HY2213-BB3A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <fields>
-        <field name="LCSC">C113632</field>
+        <field name="LCSC Part #">C113632</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="HY2213" description=""/>
-      <property name="LCSC" value="C113632"/>
+      <property name="LCSC Part #" value="C113632"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1588,13 +1592,13 @@
       <value>HY2213-BB3A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <fields>
-        <field name="LCSC">C113632</field>
+        <field name="LCSC Part #">C113632</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="HY2213" description=""/>
-      <property name="LCSC" value="C113632"/>
+      <property name="LCSC Part #" value="C113632"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1604,13 +1608,13 @@
       <value>HY2213-BB3A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <fields>
-        <field name="LCSC">C113632</field>
+        <field name="LCSC Part #">C113632</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="HY2213" description=""/>
-      <property name="LCSC" value="C113632"/>
+      <property name="LCSC Part #" value="C113632"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1620,13 +1624,13 @@
       <value>HY2213-BB3A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <fields>
-        <field name="LCSC">C113632</field>
+        <field name="LCSC Part #">C113632</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="HY2213" description=""/>
-      <property name="LCSC" value="C113632"/>
+      <property name="LCSC Part #" value="C113632"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1953,7 +1957,7 @@
     </library>
   </libraries>
   <nets>
-    <net code="1" name="+BAT" class="Default">
+    <net code="1" name="+BAT" class="Power">
       <node ref="BC8" pin="1" pintype="passive"/>
       <node ref="C7" pin="1" pintype="passive"/>
       <node ref="C8" pin="1" pintype="passive"/>
@@ -1965,7 +1969,7 @@
       <node ref="SW1" pin="2" pinfunction="C1" pintype="passive"/>
       <node ref="U5" pin="14" pinfunction="BAT" pintype="input"/>
     </net>
-    <net code="2" name="+CHG" class="Default">
+    <net code="2" name="+CHG" class="Power">
       <node ref="D6" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R22" pin="1" pintype="passive"/>
       <node ref="SW1" pin="3" pinfunction="B1" pintype="passive"/>
@@ -1983,26 +1987,26 @@
       <node ref="U1" pin="8" pinfunction="V+" pintype="power_in"/>
       <node ref="U2" pin="8" pinfunction="V+" pintype="power_in"/>
     </net>
-    <net code="4" name="+OUT" class="Default">
+    <net code="4" name="+OUT" class="Power">
       <node ref="J3" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="Q1" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R11" pin="1" pintype="passive"/>
       <node ref="R12" pin="1" pintype="passive"/>
       <node ref="R17" pin="2" pintype="passive"/>
     </net>
-    <net code="5" name="+RUN" class="Default">
+    <net code="5" name="+RUN" class="Power">
       <node ref="F1" pin="1" pintype="passive"/>
       <node ref="J4" pin="4" pinfunction="Pin_4" pintype="passive"/>
       <node ref="Q4" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="SW1" pin="1" pinfunction="A1" pintype="passive"/>
     </net>
-    <net code="6" name="+SW" class="Default">
+    <net code="6" name="+SW" class="Power">
       <node ref="D5" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="F1" pin="2" pintype="passive"/>
       <node ref="Q1" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R1" pin="1" pintype="passive"/>
     </net>
-    <net code="7" name="/C1" class="Default">
+    <net code="7" name="/C1" class="Power">
       <node ref="BC2" pin="1" pintype="passive"/>
       <node ref="BC3" pin="1" pintype="passive"/>
       <node ref="C13" pin="2" pintype="passive"/>
@@ -2011,7 +2015,7 @@
       <node ref="R35" pin="1" pintype="passive"/>
       <node ref="U7" pin="3" pinfunction="VSS" pintype="passive"/>
     </net>
-    <net code="8" name="/C2" class="Default">
+    <net code="8" name="/C2" class="Power">
       <node ref="BC4" pin="1" pintype="passive"/>
       <node ref="BC5" pin="1" pintype="passive"/>
       <node ref="C14" pin="2" pintype="passive"/>
@@ -2020,7 +2024,7 @@
       <node ref="R36" pin="1" pintype="passive"/>
       <node ref="U8" pin="3" pinfunction="VSS" pintype="passive"/>
     </net>
-    <net code="9" name="/C3" class="Default">
+    <net code="9" name="/C3" class="Power">
       <node ref="BC6" pin="1" pintype="passive"/>
       <node ref="BC7" pin="1" pintype="passive"/>
       <node ref="C15" pin="2" pintype="passive"/>
@@ -2033,7 +2037,7 @@
       <node ref="D9" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U5" pin="4" pinfunction="CHRG" pintype="open_collector"/>
     </net>
-    <net code="11" name="/CSP" class="Default">
+    <net code="11" name="/CSP" class="Charger">
       <node ref="L1" pin="2" pintype="passive"/>
       <node ref="R25" pin="1" pintype="passive"/>
       <node ref="U5" pin="13" pinfunction="CSP" pintype="input"/>
@@ -2052,11 +2056,11 @@
       <node ref="R18" pin="2" pintype="passive"/>
       <node ref="R19" pin="1" pintype="passive"/>
     </net>
-    <net code="15" name="/LINK_N" class="Default">
+    <net code="15" name="/LINK_N" class="Power">
       <node ref="J3" pin="3" pinfunction="Pin_3" pintype="passive"/>
       <node ref="J4" pin="2" pinfunction="Pin_2" pintype="passive"/>
     </net>
-    <net code="16" name="/OUT_GND" class="Default">
+    <net code="16" name="/OUT_GND" class="Power">
       <node ref="J3" pin="2" pinfunction="Pin_2" pintype="passive"/>
       <node ref="SW1" pin="4" pinfunction="A2" pintype="passive"/>
     </net>
@@ -2074,7 +2078,7 @@
       <node ref="Q2" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R16" pin="1" pintype="passive"/>
     </net>
-    <net code="20" name="/SW" class="Default">
+    <net code="20" name="/SW" class="Charger">
       <node ref="D7" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D8" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="L1" pin="1" pintype="passive"/>
@@ -2114,7 +2118,7 @@
       <node ref="U2" pin="2" pinfunction="-" pintype="input"/>
       <node ref="U2" pin="6" pinfunction="-" pintype="input"/>
     </net>
-    <net code="27" name="CGND" class="Default">
+    <net code="27" name="CGND" class="Charger">
       <node ref="C10" pin="2" pintype="passive"/>
       <node ref="C11" pin="2" pintype="passive"/>
       <node ref="C3" pin="2" pintype="passive"/>
@@ -2139,7 +2143,7 @@
       <node ref="U5" pin="3" pinfunction="GND" pintype="power_in"/>
       <node ref="U5" pin="7" pinfunction="EOC" pintype="input"/>
     </net>
-    <net code="28" name="GND" class="Default">
+    <net code="28" name="GND" class="Power">
       <node ref="BC1" pin="1" pintype="passive"/>
       <node ref="C1" pin="2" pintype="passive"/>
       <node ref="C12" pin="2" pintype="passive"/>
@@ -2192,7 +2196,7 @@
       <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U1" pin="1" pintype="open_collector"/>
     </net>
-    <net code="37" name="Net-(D7-A)" class="Default">
+    <net code="37" name="Net-(D7-A)" class="Charger">
       <node ref="D7" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="Q6" pin="3" pinfunction="D" pintype="passive"/>
     </net>
@@ -2204,11 +2208,11 @@
       <node ref="D10" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R29" pin="2" pintype="passive"/>
     </net>
-    <net code="40" name="Net-(J1-CC1)" class="Default">
+    <net code="40" name="Net-(J1-CC1)" class="Fine">
       <node ref="J1" pin="A5" pinfunction="CC1" pintype="passive"/>
       <node ref="U4" pin="7" pinfunction="CC1" pintype="bidirectional"/>
     </net>
-    <net code="41" name="Net-(J1-CC2)" class="Default">
+    <net code="41" name="Net-(J1-CC2)" class="Fine">
       <node ref="J1" pin="B5" pinfunction="CC2" pintype="passive"/>
       <node ref="U4" pin="6" pinfunction="CC2" pintype="bidirectional"/>
     </net>
@@ -2267,7 +2271,7 @@
       <node ref="Q10" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U9" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="55" name="Net-(R25-Pad2)" class="Default">
+    <net code="55" name="Net-(R25-Pad2)" class="Charger">
       <node ref="R25" pin="2" pintype="passive"/>
       <node ref="R26" pin="1" pintype="passive"/>
     </net>
@@ -2275,12 +2279,12 @@
       <node ref="R24" pin="1" pintype="passive"/>
       <node ref="U4" pin="9" pinfunction="CFG1" pintype="input"/>
     </net>
-    <net code="57" name="Net-(U4-DM)" class="Default">
+    <net code="57" name="Net-(U4-DM)" class="Fine">
       <node ref="J1" pin="A7" pinfunction="D-" pintype="passive"/>
       <node ref="J1" pin="B7" pinfunction="D-" pintype="passive"/>
       <node ref="U4" pin="5" pinfunction="DM" pintype="bidirectional"/>
     </net>
-    <net code="58" name="Net-(U4-DP)" class="Default">
+    <net code="58" name="Net-(U4-DP)" class="Fine">
       <node ref="J1" pin="A6" pinfunction="D+" pintype="passive"/>
       <node ref="J1" pin="B6" pinfunction="D+" pintype="passive"/>
       <node ref="U4" pin="4" pinfunction="DP" pintype="bidirectional"/>
@@ -2325,7 +2329,7 @@
       <node ref="R34" pin="2" pintype="passive"/>
       <node ref="U9" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="68" name="VBUS" class="Default">
+    <net code="68" name="VBUS" class="Charger">
       <node ref="C3" pin="1" pintype="passive"/>
       <node ref="C4" pin="2" pintype="passive"/>
       <node ref="C5" pin="1" pinfunction="+" pintype="passive"/>

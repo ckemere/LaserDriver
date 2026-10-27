@@ -192,9 +192,9 @@ text("charging; D1 (from +OUT) = output live.  Bar reads the open-circuit voltag
 
 # =========================================================================== 5. output, stack link, mounting
 box(82, 94, 136, 152, "5. OUTPUT, STACK LINK, MOUNTING HOLES")
-put("J3", 94, 102, mirror=True, val_at=(0, 10.16))
+put("J3", 94, 102, mirror=True, val_at=(0, 10.16)); text("OUT: +V / 0V / -V / STACK_IN  (to the module, or to the upper board's J4)", 84, 115)
 NET("J3.1"); NET("J3.2"); NET("J3.3"); NET("J3.4")
-put("J4", 118, 102, mirror=True, val_at=(0, 10.16))
+put("J4", 118, 102, mirror=True, val_at=(0, 10.16)); text("LINK IN from the lower board's J3 (lower +OUT -> GND here)", 110, 118)
 PWR("J4.1"); NET("J4.2"); PWR("J4.4")
 for i, h in enumerate(("H1", "H2", "H3", "H4")):
     put(h, 94 + 6 * i, 122, ref_at=(0, -3.81), val_at=(0, 3.81))
