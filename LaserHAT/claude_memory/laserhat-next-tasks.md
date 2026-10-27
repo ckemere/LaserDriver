@@ -5,6 +5,18 @@ metadata:
   type: project
 ---
 
+0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
+   (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB
+   that carries the cells, chargers and the stimulator circuit (DAC, Howland stage, switches, fault comparator) with
+   the isolators on it, and a standard cable (ribbon or shielded multi-way) carrying the HAT's module lines (EN, CATH,
+   RELEASE, FAULT_n, SDA, SCL, +5V, +3V3, GND = J8/J9) from the Pi/HAT.  The HAT stays as it is: the "module" in J8/J9
+   becomes a passive breakout to the cable.  The pluggable-module concept stays for the laser.
+   (b) **18350 cells instead of 18650** (35 mm long, same 18 mm diameter, ~1000 mAh): both 4S packs fit one 100 × 120
+   board (two cells end to end per row, the same MYOUNG clips 18 mm apart instead of 48), so one board gives ±V: one
+   USB-C + CH224A feeding two CN3704s on a common CGND (the series link is opened in CHARGE), one toggle, no stack cable
+   / J4 / slave enable, charge current halved (R25+R26 0.4 R).  Run time is not the issue (module ≈ 10 mA + gauge
+   5–8 mA → 60+ h on 18350); the trade is cell sourcing (vape/flashlight brands, few protected cells) vs size and weight.
+   (a) + (b) together = the whole stimulator on one board.
 0f. **2026-10-26: `BatteryPack/` rev B built end to end** (4S 18650 pack board, two stacked = ±V for the e-stim module): on-board USB-C PD charger (CH224A 20 V + CN3704 1 A / 16.8 V), HY2213 balancer per cell, MTS-203 RUN/OFF/CHARGE toggle (pole 2 switches the output ground in RUN and the USB-C ground in CHARGE, so charging boards can never loop through a shared-negative brick), LM393 cutoff + 3-LED gauge, 4-wire stack cable with a slave enable (upper toggle runs both boards). Schematic generated (ERC 0, netcheck OK); board placed by `tools/place.py` and routed with Freerouting headless (user is remote); DRC 0/0, path/sync checks 0, `lcsc_check` clean, `tools/make_fab.py` → `fab/BatteryPack/`.  Committed on branch `battery-pack` 2026-10-27; not ordered.  2026-10-27: at the user's request the board grew to 100 × 120 mm and was re-placed + rerouted by `tools/place.py` + new `tools/autoroute.py` (rip-up, pad stubs, Freerouting headless, stub clean-up): all cells + left / − right with 4 mm silk marks, balancers beside their clips, toggle between the headers and the charger, gauge LEDs by their comparators (DRC 0/0); JLC upload: the board footprints had no `LCSC Part #` field (the user's Fabrication Toolkit BOM came out without codes, six descriptive-value parts unmatched) → `tools/stamp_fields.py` stamps the field + values + hole exclusions onto the PCB, the generator writes `LCSC Part #` into the symbols, named parts' values = JLC model strings; the module end of the supply cable is PS1 pads 6/5/4 = +V/0V/−V on the e-stim board until its next rev gets the PH-4 socket.  User to check: toggle lever direction vs the RUN/CHG silk (meter), JLC DFM rotations, first-charge measurements (README).  E-stim next rev: PH-4 socket (+V / 0 V / −V / nc) beside PS1.
 0d. **2026-10-20:** no light pulses — the MCU was still on v0.2.0-rc1 (never reflashed; rc1 has no laser
    DAC set-point).  Added firmware version reporting + validation in `v0.2.0-rc7` (rc6 failed CI, superseded): `CMD_GET_VERSION` → `RSP_VERSION`
