@@ -1,85 +1,94 @@
-# BatteryPack — 4S 18650 pack board for the e-stim module (rev B)
+# BatteryPack — ±V battery board for the e-stim module (rev C: two hobby 4S packs)
 
-Rev B, 2026-10-26.  One board holds four 18650 cells in series (12.0–16.8 V) with an on-board USB-C PD charger and
-per-cell balancers; two identical boards stacked give the ±V supply the e-stim module wants (+V / 0 V / −V on a 4-pin
-JST-PH).  Replaces the hand-wired battery cases.  100 × 120 mm, 2-layer, JLC assembled (clips and toggle through-hole).
+Rev C, 2026-10-27.  One 100 × 100 mm board carries two off-the-shelf 4S hobby packs (any LiPo or Li-ion pack with the
+standard JST-XH 5-pin balance plug, 850–1550 mAh class, about 70–76 × 35 × 30–37 mm) strapped to its underside, and gives
+the e-stim module +V / 0 V / −V (12.0–16.8 V per rail) on a 4-pin JST-PH.  One USB-C PD charger charges both packs in
+parallel; one toggle does RUN / OFF / CHARGE.  2-layer, JLC assembled (toggle, XH sockets and PH header through-hole).
+
+Rev B (commit `6fa6e9d`) was a 4S 18650 board with clips, two of them stacked over a 4-wire cable; rev C replaces the
+clips with pack sockets and merges the two boards.  The output cable to the module is unchanged.
 
 Files: `gen_schematic.py` + `sch_parts.py` + `sch_symbols.py` (+ `sch_engine.py`) generate `BatteryPack.kicad_sch`
 (deterministic UUIDs, like the e-stim module); `tools/netcheck.py` proves the drawing matches `sch_parts.py`;
-`tools/make_bom.py` writes `bom_BatteryPack.csv`; `tools/make_footprints.py` writes `battpack.pretty/` (clip, toggle).
-Board: `tools/board_init.py` (once: rules, netclasses, footprints from the netlist via `tools/pcb_sync.py`),
-`tools/place.py` (outline, holes, placement, silk; idempotent) and `tools/autoroute.py` (rip-up, stubs out of pads
-narrower than their net class, Freerouting headless through DSN/SES, stub clean-up, DRC) built it — the user is remote,
-so the layout is scripted rather than hand-placed like the other boards.  Hand edits in pcbnew are fine afterwards;
-re-running `place.py` + `autoroute.py` discards them.  `tools/make_fab.py` writes `../fab/BatteryPack/` (gerbers, JLC BOM + CPL).
+`tools/make_bom.py` writes `bom_BatteryPack.csv`; `tools/make_footprints.py` writes `battpack.pretty/` (toggle; the clip
+footprint is kept for rev B).  Board: `tools/board_init.py` (once: rules, netclasses, footprints from the netlist via
+`tools/pcb_sync.py`), `tools/place.py` (outline, slots, holes, placement, silk; idempotent) and `tools/autoroute.py`
+(rip-up, stubs out of pads narrower than their net class, Freerouting headless through DSN/SES, stub clean-up, DRC)
+built it — the user is remote, so the layout is scripted rather than hand-placed like the other boards.  Hand edits in
+pcbnew are fine afterwards; re-running `place.py` + `autoroute.py` discards them.  `tools/stamp_fields.py` puts the LCSC
+codes on the footprints, `tools/make_fab.py` writes `../fab/BatteryPack/` (gerbers, JLC BOM + CPL).
 
 ## What is on it
 
 | Block | Parts | Notes |
 |---|---|---|
-| Cells | BC1–BC8 MYOUNG MY-18650-01 clips (C2979183, extended) | four rows at 20 mm pitch, clips 48.0 mm apart (pin rows); **all four cells the same way round: + (button) on the left, − on the right** (4 mm silk "+" / "−" under each cell plus small marks beside the clips); the right clips carry GND, C1, C2, C3 (rows 1–4) so each balancer sits beside the two clips it taps, +BAT is the bottom-left clip next to the switch |
-| Balancers | U6–U9 HY2213-BB3A (C113632, ext), Q7–Q10 AO3400A, R35–R38 100 R 1206, R31–R34 100 R, C12–C15 100 n | balancers 1–3 in the right column between the rows they tap, balancer 4 bottom left by the +BAT clip: 42 mA bleed above 4.200 V, release 4.19 V, 2.5 µA standing |
-| Toggle | SW1 MTS-203 DPDT centre-off (C55160018, ext; **JLC stock 192 on 2026-10-27**), F1 100 mA PTC MF-MSMF010-2 (C12430, ext) | **RUN / OFF / CHARGE**.  Pole 1 (+BAT): RUN → +RUN → F1 → +SW → Q1 → +OUT; CHARGE → +CHG.  Pole 2 (GND): RUN → J3.2 (output ground); CHARGE → CGND (USB-C ground + charger return).  OFF opens both |
-| Cutoff | U2B (LM393), Q1 AO3401A, R1/R2 100k, R11 1M | +OUT off below 12.0 V (3.0 V/cell), back on above 12.8 V |
-| Gauge | U3 CJ431, R3–R11, U1/U2 LM393, D2–D4 + R13–R15 from the gauge rail +G (= +SW or +CHG via D5/D6 SS14) | D4 green ≥ 16.0 V, D3 green ≥ 15.2 V, D2 yellow ≥ 14.4 V, ~1 mA each; works in RUN and in CHARGE |
-| ON | D1 red + R12 from +OUT | lit whenever the output is live |
-| Charger | J1 USB-C (C165948, ext), U4 CH224A (C42459160, ext) + C3 + R24 120k, U5 CN3704 (C51659, ext), Q6 AO3401A, D7/D8 SS34, L1 22 µH (C408453, ext), R25+R26 0.2 R, C4–C11, R27, RT1 NTC (C13564, ext), D9 CHRG red, D10 DONE green | PD brick negotiated to 20 V; 1 A CC, 16.8 V ±1 % CV, termination 92 mA, trickle 150 mA below 11.2 V, re-charge below 16.0 V, 18.1 V over-voltage cut, NTC stops it hot / cold.  Everything referenced to CGND, which meets GND only in CHARGE (R30 1M otherwise) |
-| Slave enable | Q2 AO3401A, Q3/Q5 AO3400A, Q4 AO3401A, R16–R23 | the upper board's +RUN arrives on J3.4 and switches this board's +RUN on through Q4 (0.3 mA), blocked in CHARGE by Q5 |
-| Output | J3 B4B-PH-K-S (+OUT, OUT_GND, LINK_N, STACK_IN), J4 same (GND, LINK_N, NC, +RUN) | 4-wire straight cable J3 → J4 between boards; upper J3 to the module |
-| Mounting | H1–H4 M3 at (8, 4), (96, 4), (8, 116), (96, 116) | 25 mm standoffs clear the clips + cells and the toggle lever (≈19 mm) |
+| Pack sockets | J5 (pack A, −V side), J6 (pack B, +V side): JST S5B-XH-A-1 right-angle (C163038, ext) | pin 1 = black = pack negative, 2–4 = cell taps, 5 = pack positive; the XT60 power lead stays unused (the XH pins are rated 3 A, the board draws 15 mA and charges at 0.5 A per pack).  J5 = GND, C1, C2, C3, +BAT; J6 = 0V, B1, B2, B3, +BATB |
+| Balancers | pack A: U6–U9 HY2213-BB3A (C113632, ext), Q7–Q10 AO3400A, R35–R38 100 R 1206, R31–R34, C12–C15; pack B: U10–U13, Q15–Q18, R62–R65, R58–R61, C16–C19 | 42 mA bleed above 4.200 V, release 4.19 V, 2.5 µA standing, per cell of both packs |
+| Toggle | SW1 MTS-203 DPDT centre-off (C55160018, ext; **JLC stock 192 on 2026-10-27**) | **RUN / OFF / CHARGE**.  Pole 1 (common 0V = pack B's negative): RUN → +BAT (packs in series, 0V = output 0 V); CHARGE → GND (negatives joined).  Pole 2 (common +BATB): RUN → +RUN (pack B's output chain); CHARGE → +CHGB → F3 → +BAT (positives joined).  OFF opens both; R30 1M holds 0V at GND |
+| Link fuse | F3 MF-MSMF110/24X-2 1.1 A PTC (C210835, ext) | in the CHARGE link between the two packs' positives: limits the equalising current if the packs are at different voltages when switched to CHARGE |
+| +V chain (pack B) | F1 100 mA PTC MF-MSMF010-2 (C12430, ext), Q1 AO3401A, R1/R2 100k, U15B (LM393), R53 1M | +RUN → F1 → +SW → Q1 → +OUT (J3.1).  Off below 12.0 V, back on above 12.8 V |
+| −V chain (pack A) | F2 100 mA PTC, Q11 AO3400A (N, in pack A's negative), R39/R40 100k, U2B (LM393), R11 470k, Q14 + D1 (ON) | GND → F2 → Q11 → −V (J3.3).  Q11's gate is +BAT/2 only in RUN (R39 from 0V); U2B pulls it low below 12.0 V, back on above 12.9 V.  Q14 lights D1 while Q11 conducts without loading −V |
+| Gauges | pack A: U3 CJ431, R3–R10, U1/U2 LM393, D2–D4 + R13–R15 on rail +G (= 0V or +CHGB via D15/D16); pack B: U16, R45–R52, U14/U15, D12–D14 + R55–R57 on +GB (= +SW or +CHGB via D5/D6), D11 + R54 ON from +OUT | per pack: green ≥ 16.0 V, green ≥ 15.2 V, yellow ≥ 14.4 V, ~1 mA each; both gauges show in RUN and CHARGE, dark in OFF |
+| Charger | J1 USB-C (C165948, ext), U4 CH224A (C42459160, ext) + C3 + R24 120k, **Q13 AO3401A VBUS switch** + R43/R44 + Q12 AO3400A + R41/R42, U5 CN3704 (C51659, ext), Q6 AO3401A, D7/D8 SS34, L1 22 µH (C408453, ext), R25+R26 0.2 R, C4–C11, R27, RT1 NTC (C13564, ext), D9 CHRG red, D10 DONE green | PD brick negotiated to 20 V; Q13 passes VBUS to the charger only in CHARGE (Q12's gate sees +CHGB), so a brick plugged in while RUN or OFF does nothing.  1 A CC shared by the two packs in parallel, 16.8 V ±1 % CV, termination 92 mA, trickle 150 mA below 11.2 V, re-charge below 16.0 V, 18.1 V over-voltage cut, NTC stops it hot / cold.  Everything on GND (= pack A's negative = the USB-C shell) |
+| Output | J3 B4B-PH-K-S (+OUT, 0V, −V, nc) | same 4-wire cable to the module as rev B (pin 4 unused) |
+| Mounting | H1–H4 M3 at (4, 4), (96, 4), (4, 96), (96, 96); three 3.5 × 22 mm strap slots at x 3–6.5, 45.75–50.25, 90.5–94, y 39–61 | packs under the board on 40 mm standoffs (packs are up to 37 mm thick); two 20 mm hobby battery straps, each through the outer slot and the shared middle slot |
 
-Standing draw in RUN: 5–8 mA (reference, comparators, LEDs); in CHARGE with no brick: the same from the pack (the
-gauge stays on); in OFF: about 40 µA (charger and balancers).  A lower board left in OFF draws only that until the
-upper toggle enables it.
+Standing draw in RUN: 10–16 mA (two gauges, ON LEDs); in CHARGE with no brick: the same from the packs; in OFF about
+40 µA (balancers, charger output stage).  The e-stim module itself draws about 10 mA.
 
-## Stacking and switching (two boards = ±V)
+## Operation
 
-- Lower J3 → upper J4 (4-wire JST-PH cable): lower +OUT → upper GND (= 0 V); lower OUT_GND → LINK_N → upper J3.3
-  (= −V); upper +RUN → lower STACK_IN.  Upper J3 = +V / 0 V / −V / +RUN to the e-stim module (pin 4 unused there).
-- **Upper toggle = the stack switch.**  Lower toggle stays in OFF (its output follows the upper one) and goes to
-  CHARGE only to charge.  RUN on the lower board is for a board used on its own.
-- Charging: put the board(s) to charge in CHARGE, plug a PD brick (20 V, ≥ 30 W) into each.  A board in CHARGE has
-  both output lines open, so no combination of bricks (shared negatives included) can loop a pack; the stack cable can
-  stay in.  Plugging a brick into a board in RUN does nothing (its USB ground floats; DONE may light).
-- Fully charged packs give ±16.8 V: within the ADG1436's 35 V rail-to-rail maximum (33.6 V).
+- **RUN:** packs in series, both output chains enabled; +V = pack B, −V = pack A, 0 V = their junction.  A pack below
+  12.0 V drops its rail (the module's fault comparator reports a missing rail); it comes back above 12.8 / 12.9 V.
+- **OFF:** both toggle poles open, 0V tied to GND through 1M, both rails float, gauges dark.
+- **CHARGE:** the packs are joined in parallel (negatives by the toggle, positives through F3) across the one charger;
+  both outputs are open (Q1 unpowered, Q11's gate at 0 V).  Plug a 20 V PD brick (≥ 30 W) into J1: CHRG lights, both
+  gauges show their pack, DONE lights at 92 mA total.  The module can stay connected: it sees 0 V across its rails.
+- Switching to CHARGE with the packs at different voltages: the fuller pack feeds the emptier one through F3 (1.1 A
+  hold, 2.2 A trip); a large mismatch trips F3, which then limits the equalisation to a trickle until the charger has
+  brought the lower pack up.  Charge the packs separately on a hobby charger if they differ by more than a volt.
+- A brick plugged in while RUN or OFF does nothing (Q13 open): charge only in CHARGE.
 
 ## Thresholds and values
 
-Gauge rail +G = +BAT − 0.25 V (SS14 at ~5 mA).  VS = +G × 0.1357 with +OUT live (R9 68k ∥ R11 1M against R10 10k),
-× 0.1271 cut off.  Ladder from 2.495 V: R4 6.8k, R5 2k, R6 2k, R7 6.2k, R8 30k → TH80 2.137 V, TH50 2.029 V,
-TH20 1.920 V, THCUT 1.595 V → 16.0 / 15.2 / 14.4 V (pack) and 12.0 V (cutoff) / 12.8 V (re-enable); worst error 29 mV.
-Charger: Ich = 200 mV / 0.2 R = 1 A; Ieoc = 9.17 % (EOC grounded); CH224A CFG1 120k = 20 V request.
+Gauge rails: +GB = pack B − 0.25 V, +G = pack A − 0.25 V in RUN (SS14 at ~5 mA); in CHARGE both come from +CHGB (pack B's
+terminal: pack A's gauge then reads pack B through F3 — a few tens of mV low while charging).  VS = rail × 0.1357 with
+the output live (R9 68k ∥ R11 against R10 10k), × 0.1271 cut off.  Ladder from 2.495 V: 6.8k, 2k, 2k, 6.2k, 30k →
+TH80 2.137 V, TH50 2.029 V, TH20 1.920 V, THCUT 1.595 V → 16.0 / 15.2 / 14.4 V (pack) and 12.0 V (cutoff) / 12.8 V
+(re-enable, pack B via R53 1M from +OUT) / 12.9 V (pack A via R11 470k from Q11's gate, which sits at +BAT/2).
+Charger: Ich = 200 mV / 0.2 R = 1 A total (0.5 A per pack when balanced; 0.4 C for a 1300 mAh pack); Ieoc = 9.17 %
+(EOC grounded); CH224A CFG1 120k = 20 V request.  Q13: Vgs = −VBUS/2 = −10 V (R43/R44), Rds ~50 mΩ at 1 A.
 
 ## Board
 
-100 × 120 mm (2026-10-27; the first routing was 100 × 96 with the switch at the top right, alternating cells and the
-balancers in a band under them — the user asked for one cell orientation, the switch next to the headers and shorter
-power runs).  Layout: cells x 2–68, rows y 17/37/57/77; balancers 1–3 at x 70–84 between the right clips; reference,
-ladder, comparators and the gauge LEDs x 81–100, y 20–60; USB-C on the right edge at y 86 with the CH224A beside it;
-charger (CN3704, inductor, diodes, sense resistors) bottom right; toggle at (48, 97) between the headers (J4 LINK IN at
-x 22, J3 OUT at x 36, bottom edge) and the fuse / cutoff / gauge-rail diodes; slave enable above the headers; balancer 4
-bottom left.  Netclasses: Power 0.8 mm (+BAT, GND, C1–C3, +RUN, +SW, +OUT, OUT_GND, LINK_N, +CHG), Charger 0.4 mm
-(SW, SWA, CSP, RCS, VBUS, CGND), Fine 0.25 / 0.15 mm (USB-C CC1/CC2/D+/D−), Default 0.3 / 0.2 mm.  Board minimums
-0.15 / 0.15 (JLC: 0.127).  No copper pours.  DRC 0 violations, 0 unconnected; `path_check` / `sync_check` 0.
-Reference designators are hidden on the silk; the silk carries the cell polarity (4 mm marks under every cell), RUN/CHG,
-LED functions, OUT / LINK IN and the USB-C label.
+100 × 100 mm (JLC's cheapest size tier).  Packs underneath, long axis along y, envelopes x 7–45 and 51–89, y 10–86
+(silk outlines on the back), leads round the front edge (y = 100) to the right-angle XH sockets J5 (x 11–21) and J6
+(x 76–86).  Top side: pack A's gauge top left (LEDs on the left edge at y 10–22), its balancers mid left (x 8–38,
+y 39–61), its −V chain bottom left; the charger top right with the USB-C on the right edge at y 14, CHRG / DONE LEDs
+below it; pack B's balancers mid right (x 52–82), its gauge lower right (LEDs on the right edge at y 66–78), its +V
+chain between the toggle and J6; toggle at (52, 84), J3 at (33–39, 94), F3 / R30 at x 40.  Netclasses: Power 0.8 mm
+(+BAT, GND, 0V, +BATB, C1–C3, B1–B3, +RUN, +SW, +OUT, +CHGB, −V, GNDF), Charger 0.4 mm (SW, SWA, CSP, RCS, VBUS, VCHG),
+Fine 0.25 / 0.15 mm (USB-C CC1/CC2/D+/D−), Default 0.3 / 0.2 mm.  Board minimums 0.15 / 0.15 (JLC: 0.127).  No copper
+pours.  Reference designators are hidden on the silk; the silk carries PACK A / PACK B at the sockets, OUT, RUN/CHG,
+LED functions, CHRG / DONE and the USB-C label.
 
 ## Assembly notes and first-article checks
 
 - **Toggle lever direction:** the silk assumes the usual toggle convention (lever away from the closed contacts):
   lever toward "RUN" closes pins 1/4 (RUN), toward "CHG" closes 3/6.  Verify with a meter on the first board; if the
   switch is the other way round, swap the two silk words in `tools/make_footprints.py` and on the board.
-- **JLC rotation:** JLC's CPL rotation convention differs from KiCad's for some packages; check SOT-23, SOIC, TSSOP,
-  the LEDs (cathode = pad 1, KENTO parts as on the HAT) and the electrolytic in JLC's DFM preview before ordering.
+- **Pack plug polarity:** JST-XH pin 1 (the socket's marked end, x 11 on J5 and x 76 on J6) must take the pack's black
+  wire.  Every 4S hobby pack wires the balance plug this way; check the first pack with a meter against the silk.
+- **JLC rotation:** check SOT-23, SOIC, TSSOP, the LEDs (cathode = pad 1, KENTO parts as on the HAT) and the
+  electrolytic in JLC's DFM preview before ordering.
 - **USB-C:** front flush with the board edge (footprint origin 4.2 mm inside).  CH224A requests 20 V; a 5 V-only
   source leaves the CN3704 below its lock-out, nothing charges.
-- **First charge:** meter on every clip (cell voltages) and on CSP−BAT (200 mV = 1 A) during the first charge; confirm
-  DONE at ~90 mA and the balancer resistors warming on the fullest cell.  The NTC RT1 sits beside cell 4's right clip; a 10k
-  fixed resistor in its place disables temperature control.
-- **Clips:** arms grip the cell body (16 ± 1 mm sprung opening for an 18.3–18.6 mm cell); fallback MYOUNG
-  MY-18650-04-J / -05-J SMT end contacts if a batch is too tight.
-- Extended parts (feeder fee each): clips, toggle, PTC, USB-C, CH224A, CN3704, inductor, electrolytic, HY2213, NTC,
-  PH-4 header.  Everything else is basic.
+- **First charge:** both packs at about the same voltage, toggle to CHARGE, meter on CSP−BAT (200 mV = 1 A) and on each
+  pack's XH pins; confirm DONE at ~90 mA and the balancer resistors warming on the fullest cells.  RT1 reads the board
+  temperature next to the charger; a 10k fixed resistor in its place disables temperature control.
+- **Straps:** 20 mm hobby battery straps (the usual 5-inch-quad ones, 200–250 mm long); the middle slot takes both.
+- Extended parts (feeder fee each): toggle, XH sockets, PTCs, USB-C, CH224A, CN3704, inductor, electrolytic, HY2213,
+  NTC, PH-4 header.  Everything else is basic.
 
 ## Checks before fab
 
@@ -90,7 +99,6 @@ nets or footprints changed (`--keep-tracks`) → `../tools/path_check.py` / `syn
 **Part numbers on the board.**  `sch_parts.py` holds the LCSC codes; the generator writes them into every symbol as the
 `LCSC Part #` field and `tools/stamp_fields.py` writes the same field (hidden, F.Fab) into every footprint, syncs the
 Values and marks H1–H4 excluded from BOM and position files — so a BOM/CPL made straight from the PCB with the
-Fabrication Toolkit carries the codes too (added 2026-10-27 after a JLC upload without them failed to match C5, F1, J1,
-J3, J4 and SW1).  Re-run `stamp_fields.py` after changing a value or code in `sch_parts.py`.  Values of switches, LEDs,
-connectors, the inductor and the NTC are JLC's model strings (their matcher compares the BOM Comment with them); plain
-R/C values still draw JLC's harmless "comment differs" note, as on the HAT.
+Fabrication Toolkit carries the codes too.  Re-run `stamp_fields.py` after changing a value or code in `sch_parts.py`.
+Values of switches, LEDs, connectors, the inductor and the NTC are JLC's model strings (their matcher compares the BOM
+Comment with them); plain R/C values still draw JLC's harmless "comment differs" note, as on the HAT.

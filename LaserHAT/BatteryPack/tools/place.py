@@ -1,18 +1,20 @@
 #!/usr/bin/env python3
-"""Placement of BatteryPack.kicad_pcb (rev B, 100 x 120 mm since 2026-10-27): board outline, mounting holes, cells in four
-rows (all the same way round), each balancer beside its cell's clips, switch / fuse / cutoff next to the output headers
-at the bottom, charger in the lower right with the USB-C on the right edge, gauge and LEDs above it.
-Idempotent: re-running moves every footprint back to the table and redraws the outline and board-level silk; copper is
-left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
+"""Placement of BatteryPack.kicad_pcb (rev C, 100 x 100 mm, 2026-10-27): the two hobby 4S packs sit under the board (long
+axis along y, 42 mm pitch, two 20 mm straps through the slots), their balance leads come round the front edge (y = 100) to
+the right-angle XH sockets J5 (pack A, left) and J6 (pack B, right).  Top side: pack A's gauge top left, its balancers
+mid left, its -V chain bottom left; the charger top right with the USB-C on the right edge; pack B's balancers mid right,
+its gauge and +V chain bottom right; the toggle bottom centre with the output header J3 beside it.
+Idempotent: re-running moves every footprint back to the table and redraws the outline, slots and board-level silk;
+copper is left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
 import os
 
 import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BOARD = os.path.join(ROOT, "BatteryPack.kicad_pcb")
-W, H = 100.0, 120.0
-ROWS = (17.0, 37.0, 57.0, 77.0)            # cell axes (y), 20 mm pitch
-XL, XR = 11.0, 59.0                        # clip origins (pin-pair centres), 48.0 mm apart
+W, H = 100.0, 100.0
+PACKS = ((7.0, 45.0), (51.0, 89.0))                       # x extents of the two pack envelopes (y 10..90), bottom side
+SLOTS = ((3.0, 6.5), (45.75, 50.25), (90.5, 94.0))        # strap slots, x extents; y 39..61
 
 mm = pcbnew.FromMM
 P = {}                                     # ref -> (x, y, rot)
@@ -22,67 +24,70 @@ def at(ref, x, y, rot=0):
     P[ref] = (x, y, rot)
 
 
-# ---- cells: all four the same way round, + (even clip, cell n's positive end) on the LEFT at x=11, - (odd clip) on the
-#      right at x=59.  Right clips then carry GND, C1, C2, C3 (rows 1-4) and left clips C1, C2, C3, +BAT, so the series
-#      links run diagonally (row n left -> row n+1 right), GND meets the electronics column at row 1 and +BAT at the
-#      bottom left, next to the switch.
-for row in range(4):
-    at(f"BC{2 * row + 2}", XL, ROWS[row], 0)
-    at(f"BC{2 * row + 1}", XR, ROWS[row], 180)
-
-
-def balancer(n, x0, y0):
-    """HY2213 block for cell n (U5+n, Q6+n, R34+n bleed, R30+n, C11+n): 14 x 8 mm, parts at y0 and y0+4"""
-    at(f"U{5 + n}", x0 + 2, y0); at(f"Q{6 + n}", x0 + 7, y0); at(f"R{34 + n}", x0 + 11, y0, 90)
-    at(f"R{30 + n}", x0 + 2, y0 + 4); at(f"C{11 + n}", x0 + 7, y0 + 4)
-
-
-# ---- balancers 1-3 in the right column between the rows they tap (cell n's ends are the right clips of rows n and n+1);
-#      balancer 4 (C3 / +BAT) bottom left beside the +BAT clip
-for n in (1, 2, 3):
-    balancer(n, 70.0, 25.0 + 20.0 * (n - 1))
-balancer(4, 4.0, 90.0)
 # ---- mounting holes
-at("H1", 8, 4); at("H2", 96, 4); at("H3", 8, 116); at("H4", 96, 116)
-# ---- switch, fuse, cutoff, gauge rail diodes: bottom centre, beside the headers
-at("SW1", 48, 97)
-at("F1", 60, 93, 90); at("Q1", 60, 99); at("R1", 60, 102.5); at("R2", 60, 104.5)
-at("D5", 65, 96, 90); at("D6", 65, 104, 90)
-# ---- output / link headers and the stack slave enable, bottom left of centre
-at("J4", 22, 112); at("J3", 36, 112)
-for i, ref in enumerate(("Q2", "Q3", "Q4", "Q5")):
-    at(ref, 21 + 5.0 * i, 100)
-for i, ref in enumerate(("R16", "R17", "R18", "R19", "R20", "R21", "R22", "R23")):
-    at(ref, 20 + 1.8 * i, 95.5, 90)
-# ---- reference, ladder, comparators and LEDs: right column above the charger
-at("U3", 86, 22); at("R3", 86, 25)
+at("H1", 4, 4); at("H2", 96, 4); at("H3", 4, 96); at("H4", 96, 96)
+# ---- pack sockets (right-angle XH, opening toward the front edge), output header, toggle, link, pull-down
+at("J5", 11, 91.5); at("J6", 76, 91.5)
+at("J3", 33, 94)
+at("SW1", 52, 84)
+at("F3", 40, 80, 90); at("R30", 40, 86)
+
+
+def balancer(u, q, rv, c, rb, x0, y0):
+    """HY2213 block (U, Q, bleed R 1206, VDD R, C): 14 x 8 mm, parts at y0 and y0 + 4"""
+    at(u, x0 + 2, y0); at(q, x0 + 7, y0); at(rb, x0 + 11, y0, 90)
+    at(rv, x0 + 2, y0 + 4); at(c, x0 + 7, y0 + 4)
+
+
+# ---- balancers: pack A (U6..U9, Q7..Q10, R35..R38 bleed, R31..R34, C12..C15) mid left, pack B mid right, 2 x 2 each
+for n in range(4):
+    x0, y0 = 9 + 16 * (n % 2), 41 + 10 * (n // 2)
+    balancer(f"U{6 + n}", f"Q{7 + n}", f"R{31 + n}", f"C{12 + n}", f"R{35 + n}", x0, y0)
+    balancer(f"U{10 + n}", f"Q{15 + n}", f"R{58 + n}", f"C{16 + n}", f"R{62 + n}", x0 + 45, y0)
+# ---- pack A gauge, top left: LEDs on the left edge, comparators, reference and ladder
+for ref, y in (("D4", 10), ("D3", 14), ("D2", 18), ("D1", 22)):
+    at(ref, 3.5, y, 90)
+for ref, y in (("R15", 10), ("R14", 14), ("R13", 18), ("R12", 22)):
+    at(ref, 9.5, y)
+at("C1", 16, 7.5); at("U1", 16, 12); at("U2", 16, 20); at("C2", 16, 25); at("Q14", 21, 28)
+at("U3", 24, 8); at("R3", 24, 11)
 for i, ref in enumerate(("R4", "R5", "R6", "R7", "R8")):
-    at(ref, 86, 28 + 2.5 * i)
-at("R9", 86, 42); at("R10", 86, 44.5); at("R11", 90, 44.5)
-at("C1", 81.5, 50, 90); at("U1", 86.5, 50)
-at("C2", 81.5, 58, 90); at("U2", 86.5, 58)
-for ref, y in (("R15", 48), ("R14", 51.5), ("R13", 55), ("R12", 58.5)):
-    at(ref, 92.5, y)
-for ref, y in (("D4", 48), ("D3", 51.5), ("D2", 55), ("D1", 58.5)):
+    at(ref, 24, 14 + 2.5 * i)
+at("R9", 30, 10); at("R10", 30, 12.5); at("R11", 30, 15)
+# ---- pack A -V chain, bottom left (above J5)
+at("F2", 10, 70, 90); at("Q11", 16, 70); at("R39", 16, 73.5); at("R40", 16, 75.5)
+at("D15", 28, 68, 90); at("D16", 28, 76, 90)
+# ---- charger, top right: USB-C on the right edge, CH224A, VBUS switch, CN3704 and its passives, CHRG / DONE LEDs
+at("J1", 95.8, 14, 90)                     # front flush with the right edge (courtyard +y end = 4.2 mm from origin)
+at("U4", 84, 14); at("C3", 84, 9.5); at("R24", 84, 18.5)
+at("Q13", 76, 9); at("R43", 71.5, 7.5); at("R44", 71.5, 10)
+at("Q12", 76, 14); at("R41", 71.5, 13.5); at("R42", 71.5, 16)
+at("C5", 64, 10); at("C6", 64, 16)
+at("U5", 82, 27); at("C4", 82, 22.5); at("Q6", 91.5, 23); at("D7", 92, 29, 90); at("L1", 86, 35)
+at("D8", 74, 31); at("R25", 70, 22); at("R26", 70, 25); at("C7", 64, 23); at("C8", 64, 26.5)
+at("C9", 76, 20); at("C10", 79.5, 20); at("C11", 73, 20); at("R27", 76, 17.5)
+at("RT1", 58, 30)
+at("R28", 97.5, 22, 90); at("D9", 97.5, 25.5, 90); at("R29", 97.5, 30, 90); at("D10", 97.5, 34, 90)
+# ---- pack B gauge, lower right: LEDs on the right edge
+for ref, y in (("D14", 66), ("D13", 70), ("D12", 74)):
     at(ref, 97.5, y, 90)
-# ---- USB-C PD input, lower right edge
-at("J1", 95.8, 86, 90)                     # front flush with the right edge (courtyard +y end = 4.2 mm from origin)
-at("U4", 85, 86); at("C3", 85, 81.5); at("R24", 85, 90.5)
-at("C5", 76, 84); at("C6", 76, 89.5); at("R30", 76, 93)
-at("D9", 97.5, 76, 90); at("R28", 97.5, 72.5, 90)
-at("D10", 97.5, 95, 90); at("R29", 97.5, 98.5, 90)
-# ---- charger, bottom right (clear of the hole at (96, 116))
-at("U5", 82, 99); at("C4", 82, 94.5); at("Q6", 91.5, 93.5)
-at("D7", 92, 100, 90); at("L1", 86, 110); at("D8", 76, 108)
-at("R25", 78, 116); at("R26", 84, 116)
-at("C7", 89, 116); at("C8", 73, 116)
-at("C9", 79, 103.5); at("C10", 82, 103.5); at("C11", 85, 103.5); at("R27", 80, 105.5)
-at("RT1", 70.5, 80, 90)
+for ref, y in (("R57", 66), ("R56", 70), ("R55", 74)):
+    at(ref, 92.5, y)
+at("R54", 43, 90); at("D11", 43, 92.5)                   # +V ON LED beside the output header, on the +OUT run to J3
+at("U16", 63, 64); at("R45", 63, 67)
+for i, ref in enumerate(("R46", "R47", "R48", "R49", "R50")):
+    at(ref, 63, 70 + 2.5 * i)
+at("R51", 68, 64); at("R52", 68, 66.5); at("R53", 68, 69)
+at("C20", 70.5, 66, 90); at("U14", 76, 66); at("C21", 70.5, 74, 90); at("U15", 76, 74)
+# ---- pack B +V chain, between the toggle and J6
+at("F1", 63.5, 86, 90); at("Q1", 68, 84); at("R1", 68, 87.5); at("R2", 68, 89.5)
+at("D5", 72, 82, 90); at("D6", 84, 80, 90)
 
 board = pcbnew.LoadBoard(BOARD)
-# idempotent: a previous run's outline and board-level silk are collected now and removed at the very end
+# idempotent: a previous run's outline, slots and board-level silk are collected now and removed at the very end
 stale = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts
-         or (d.GetLayer() == pcbnew.F_SilkS and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
+         or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
+stale += [z for z in board.Zones() if z.GetIsRuleArea()]
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 missing = [r for r in fps if r not in P]
 assert not missing, f"unplaced: {missing}"
@@ -90,39 +95,59 @@ for ref, (x, y, rot) in P.items():
     f = fps[ref]
     f.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
     f.SetOrientationDegrees(rot)
-# outline
-for (x1, y1), (x2, y2) in (((0, 0), (W, 0)), ((W, 0), (W, H)), ((W, H), (0, H)), ((0, H), (0, 0))):
-    s = pcbnew.PCB_SHAPE(board)
-    s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetLayer(pcbnew.Edge_Cuts); s.SetWidth(mm(0.1))
-    s.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); s.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2)))
-    board.Add(s)
+    f.Reference().SetVisible(False)             # no designators on the silk
 
 
-def silk(txt, x, y, size=1.2, rot=0):
-    t = pcbnew.PCB_TEXT(board)
-    t.SetText(txt); t.SetLayer(pcbnew.F_SilkS)
-    t.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
-    t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size))); t.SetTextThickness(mm(0.15 * size))
-    t.SetTextAngleDegrees(rot)
-    board.Add(t)
-
-
-def seg(x1, y1, x2, y2, w=0.6):
+def seg(x1, y1, x2, y2, layer=pcbnew.F_SilkS, w=0.15):
     d = pcbnew.PCB_SHAPE(board)
-    d.SetShape(pcbnew.SHAPE_T_SEGMENT); d.SetLayer(pcbnew.F_SilkS); d.SetWidth(mm(w))
+    d.SetShape(pcbnew.SHAPE_T_SEGMENT); d.SetLayer(layer); d.SetWidth(mm(w))
     d.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); d.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2)))
     board.Add(d)
 
 
-for y in ROWS:
-    silk("+", 7, y - 9.9, 1.5); silk("-", 63, y - 9.9, 1.5)        # small marks outside each clip
-    seg(14, y, 18, y); seg(16, y - 2, 16, y + 2)                    # 4 mm "+" under the cell's positive (button) end
-    seg(52, y, 56, y)                                               # 4 mm "-" under the negative end
-silk("LaserHAT BatteryPack rev B  4S 18650", 36, 3.2, 1.2)
-silk("USB-C PD 20V", 86, 78.5, 1.0)
-silk("OUT", 36, 107.3, 1.0); silk("LINK IN", 22, 107.3, 1.0)
-silk("CHRG", 93.5, 76, 0.9); silk("DONE", 97.5, 101.5, 0.8)
-silk("80%", 95.1, 48, 0.8); silk("50%", 95.1, 51.5, 0.8); silk("20%", 95.1, 55, 0.8); silk("ON", 95.1, 58.5, 0.8)
+def rect(x1, y1, x2, y2, layer, w):
+    for (a, b), (c, d) in (((x1, y1), (x2, y1)), ((x2, y1), (x2, y2)), ((x2, y2), (x1, y2)), ((x1, y2), (x1, y1))):
+        seg(a, b, c, d, layer, w)
+
+
+rect(0, 0, W, H, pcbnew.Edge_Cuts, 0.1)                   # outline
+for x1, x2 in SLOTS:                                      # strap slots, each with a copper keep-out 0.5 mm around it
+    rect(x1, 39, x2, 61, pcbnew.Edge_Cuts, 0.1)
+    z = pcbnew.ZONE(board)
+    z.SetIsRuleArea(True); z.SetDoNotAllowTracks(True); z.SetDoNotAllowVias(True); z.SetDoNotAllowCopperPour(True)
+    z.SetDoNotAllowPads(False); z.SetDoNotAllowFootprints(False)
+    z.SetLayerSet(pcbnew.LSET.AllCuMask(2))
+    o = z.Outline(); o.NewOutline()
+    for px, py in ((x1 - 0.5, 38.5), (x2 + 0.5, 38.5), (x2 + 0.5, 61.5), (x1 - 0.5, 61.5)):
+        o.Append(mm(px), mm(py))
+    board.Add(z)
+
+
+def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
+    t = pcbnew.PCB_TEXT(board)
+    t.SetText(txt); t.SetLayer(layer)
+    t.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
+    t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size))); t.SetTextThickness(mm(0.15 * size))
+    t.SetTextAngleDegrees(rot)
+    if layer == pcbnew.B_SilkS:
+        t.SetMirrored(True)
+    board.Add(t)
+
+
+silk("LaserHAT BatteryPack rev C   2 x 4S hobby packs", 50, 2.5, 1.2)
+silk("PACK A  -V", 16, 84.5, 1.0); silk("PACK B  +V", 81, 85, 1.0)
+silk("OUT +V 0V -V", 36, 90.5, 0.9)
+silk("USB-C PD 20V", 86, 6, 1.0)
+silk("CHRG", 94.8, 25.5, 0.8); silk("DONE", 94.8, 34, 0.8)
+for txt, y in (("80%", 10), ("50%", 14), ("20%", 18)):
+    silk(txt, 6.3, y, 0.8); silk(txt, 95.1, y + 56, 0.8)
+silk("ON", 6.3, 22, 0.8); silk("ON", 46.5, 93, 0.8)
+silk("A", 6.3, 25.5, 0.8); silk("B", 95.1, 77.5, 0.8)
+# bottom: the pack envelopes and names (read from below)
+for (x1, x2), name in zip(PACKS, ("PACK A  (-V side, leads to J5)", "PACK B  (+V side, leads to J6)")):
+    for (a, b), (c, d) in (((x1, 80), (x1, 10)), ((x1, 10), (x2, 10)), ((x2, 10), (x2, 80))):   # open toward the leads
+        seg(a, b, c, d, pcbnew.B_SilkS, 0.15)
+    silk(name, (x1 + x2) / 2, 48, 1.2, 90, pcbnew.B_SilkS)
 for d in stale:
     board.Remove(d)
 pcbnew.SaveBoard(BOARD, board)

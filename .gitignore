@@ -29,3 +29,4 @@ LaserHAT/EStimDaughter/route/
 
 # battery pack autorouter intermediates (dsn/ses, logs, DRC json)
 LaserHAT/BatteryPack/route/
+LaserHAT/BatteryPack/parts/ds/

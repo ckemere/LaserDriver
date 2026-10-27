@@ -6,6 +6,7 @@
   3. export DSN, run Freerouting, import SES
   4. delete stubs that stayed dangling (KiCad's track_dangling check, repeated), keeping copper that is in use
   5. DRC summary
+Every board edit (rip, stubs, DSN export, SES import) runs in its own process: pcbnew segfaults when they share one.
 Env: FREEROUTING_JAVA (default ~/Tools/jdk-25.0.4.1+1-jre/bin/java), FREEROUTING_JAR (~/Tools/freerouting-2.4.1.jar).
 Run with KiCad's Python (-u: pcbnew may crash on exit and lose buffered output):
   $KICAD_PY -u tools/autoroute.py [--passes 60] [--keep-stubs]      full pipeline
@@ -81,8 +82,8 @@ def add_stubs(board):
         if dx * ax + dy * ay < 0:
             ax, ay = -ax, -ay
         sw = min(sx, sy)
-        # shorten the stub until its end keeps CLR from every other pad (bounding boxes, other nets only)
-        L = half + STUB_BEYOND
+        # fine-pitch pads (TSSOP) on wide nets get a long stub, so the wide track attaches clear of the neighbours' tracks
+        L = half + STUB_BEYOND + (1.2 if (w >= 0.6 and sw < 0.5) else 0.0)
         px, py = pc.x / 1e6, pc.y / 1e6
         while L >= half + STUB_MIN:
             ex, ey = px + ax * L, py + ay * L
@@ -177,12 +178,14 @@ def trim_stubs(path):
         return abs(p.x - q.x) < 10000 and abs(p.y - q.y) < 10000          # 0.01 mm
 
     def free(t, q):
-        net = t.GetNetCode()
-        if any(p.GetNetCode() == net and p.GetBoundingBox().Contains(q) for p in pads):
+        """nothing of t's net touches point q on t's layer (same-layer tracks, vias, pads on that layer)"""
+        net, layer = t.GetNetCode(), t.GetLayer()
+        if any(p.GetNetCode() == net and p.IsOnLayer(layer) and p.GetBoundingBox().Contains(q) for p in pads):
             return False
         if any(v.GetNetCode() == net and near(v.GetPosition(), q) for v in vias):
             return False
-        return not any(u is not t and u.GetNetCode() == net and (near(u.GetStart(), q) or near(u.GetEnd(), q))
+        return not any(u is not t and u.GetNetCode() == net and u.GetLayer() == layer
+                       and (near(u.GetStart(), q) or near(u.GetEnd(), q) or u.HitTest(q, 0))      # ends or a T-junction
                        for u in tracks)
     kill = []
     for x, y in pos:
@@ -227,24 +230,47 @@ if __name__ == "__main__" and CLEANUP_ONLY:
     report()
     sys.exit(0)
 
-if __name__ == "__main__":                              # the full pipeline
+def stage(name):
+    """one board edit per process: pcbnew does not survive rip + stub + export in a single interpreter"""
     board = pcbnew.LoadBoard(BOARD)
-    print("ripped", rip(board), "tracks/vias; stubs:", add_stubs(board))
+    if name == "rip":
+        print("ripped", rip(board), "tracks/vias")
+    elif name == "stubs":
+        print("stubs:", add_stubs(board))
+    elif name == "dsn":
+        assert pcbnew.ExportSpecctraDSN(board, os.path.join(WORK, "BatteryPack.dsn")), "DSN export failed"
+        return
+    elif name == "ses":
+        assert pcbnew.ImportSpecctraSES(board, os.path.join(WORK, "BatteryPack.ses")), "SES import failed"
     pcbnew.SaveBoard(BOARD, board)
+
+
+if __name__ == "__main__" and "--stage" in sys.argv:
+    stage(sys.argv[sys.argv.index("--stage") + 1])
+    sys.exit(0)
+
+
+def run_stage(name):
+    r = subprocess.run([sys.executable, "-u", os.path.abspath(__file__), "--stage", name], capture_output=True, text=True)
+    out = [l for l in (r.stdout + r.stderr).splitlines() if "Debug:" not in l and "memory leak" not in l]
+    print("\n".join(out[-3:]))
+    if r.returncode != 0:
+        sys.exit(f"stage {name} failed (exit {r.returncode})")
+
+
+if __name__ == "__main__":                              # the full pipeline
+    run_stage("rip")
+    run_stage("stubs")
+    run_stage("dsn")
     dsn, ses = os.path.join(WORK, "BatteryPack.dsn"), os.path.join(WORK, "BatteryPack.ses")
-    board = pcbnew.LoadBoard(BOARD)
-    assert pcbnew.ExportSpecctraDSN(board, dsn), "DSN export failed"
     if os.path.exists(ses):
         os.remove(ses)
     log = open(os.path.join(WORK, "freerouting.log"), "w")
     subprocess.run([JAVA, "-jar", JAR, "-de", dsn, "-do", ses, "-mp", str(PASSES), "--gui.enabled=false"],
                    stdout=log, stderr=subprocess.STDOUT, timeout=3600)
     assert os.path.exists(ses), "Freerouting produced no SES (see route/freerouting.log)"
-    board = pcbnew.LoadBoard(BOARD)
-    assert pcbnew.ImportSpecctraSES(board, ses), "SES import failed"
-    pcbnew.SaveBoard(BOARD, board)
+    run_stage("ses")
     shutil.copy(BOARD, os.path.join(WORK, "before_cleanup.kicad_pcb"))
     if not KEEP_STUBS:
         print("removed", remove_dangling(BOARD), "dangling stubs")
     report()
-

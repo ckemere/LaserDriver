@@ -1,10 +1,26 @@
 ---
 name: laserhat-next-tasks
-description: "Status 2026-10-27: BatteryPack rev B (4S pack + USB-C charger board) built and committed on branch battery-pack, awaiting the user's review; firmware version check in v0.2.0-rc7; module firmware untested on modules; next = user tests TESTING.md 10-11, then merge pcb-rev2 into main"
+description: "Status 2026-10-27: BatteryPack rev C (two hobby 4S packs on one 100 x 100 board, one charger) built and committed on branch battery-pack, awaiting the user's review; firmware version check in v0.2.0-rc7; module firmware untested on modules; next = user tests TESTING.md 10-11, then merge pcb-rev2 into main"
 metadata:
   type: project
 ---
 
+0h. **2026-10-27 (later): BatteryPack rev C = two hobby 4S packs on one 100 × 100 board** (user chose the hobby-pack idea
+   from 0g and kept the charger).  J5/J6 JST-XH right-angle sockets take any 4S pack's balance plug (pin 1 black = pack
+   negative); packs strap under the board (slots at x 3–6.5 / 45.75–50.25 / 90.5–94, y 39–61; 40 mm standoffs).  Circuit:
+   pack A = −V side (GND..+BAT), pack B = +V side (0V..+BATB); MTS-203 pole 1 (common 0V): RUN → +BAT (series), CHARGE →
+   GND (negatives joined); pole 2 (common +BATB): RUN → +RUN → F1 → Q1 (P) → +OUT, CHARGE → +CHGB → F3 (1.1 A PTC) → +BAT
+   (positives joined: both packs in parallel on the one CN3704, 0.5 A each).  −V chain: GND → F2 → Q11 (N-FET in pack A's
+   negative, gate = +BAT/2 only in RUN via R39 from 0V, U2B cutoff with swapped inputs, R11 470k hysteresis, Q14 lights
+   D1).  Second gauge (U14–U16, R45–R57, D11–D14) on +GB/0V; +G = 0V or +CHGB via D15/D16.  VBUS switch Q13 (P) + Q12
+   (gate on +CHGB): the charger sees VBUS only in CHARGE, so a brick in RUN/OFF does nothing (CH224A CFG1-floating
+   behaviour is undefined, so the inhibit is on VBUS, not CFG1).  No stack cable / J4 / slave enable; CGND merged into
+   GND.  Checks: netcheck OK, ERC 0, DRC 0/0/0, path/sync 0, lcsc_check all codes (toggle stock 192), fab 134 placements /
+   43 BOM lines.  `tools/autoroute.py` now runs rip / stubs / DSN / SES each in its own process (pcbnew segfaulted
+   otherwise), gives fine-pitch pads on 0.8 mm nets a 2 mm stub, and prunes stubs per layer; `place.py` adds copper
+   keep-outs round the slots (Freerouting ignored the edge clearance there).  Not ordered.  User checks: toggle lever
+   direction, pack plug polarity vs silk, JLC rotations, first charge (README).  Datasheets in `BatteryPack/parts/ds/`
+   (git-ignored).  Rev B (18650 clips, stacked boards) = commit 6fa6e9d.
 0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
    (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB
    that carries the cells, chargers and the stimulator circuit (DAC, Howland stage, switches, fault comparator) with

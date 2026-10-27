@@ -10,8 +10,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, ".."))
 BOARD = os.path.join(ROOT, "BatteryPack.kicad_pcb")
 NET = os.path.join(ROOT, "tools", "ref", "BatteryPack.net")
-POWER = ["+BAT", "GND", "/C1", "/C2", "/C3", "CGND", "VBUS", "/SW", "Net-(D7-A)", "/CSP", "Net-(R25-Pad2)", "+RUN", "+SW", "+OUT",
-         "/OUT_GND", "/LINK_N", "+CHG"]     # board net names: local labels carry a "/" prefix
+POWER = ["+BAT", "GND", "0V", "+BATB", "/C1", "/C2", "/C3", "/B1", "/B2", "/B3", "+RUN", "+SW", "+OUT", "+CHGB", "/-V",
+         "/GNDF"]     # board net names: local labels carry a "/" prefix     # board net names: local labels carry a "/" prefix
 
 if os.path.exists(BOARD):
     sys.exit("board exists; delete it first if you really want to start over")

@@ -111,8 +111,8 @@ def power_symbol(name, gnd=False):
         gfx = poly([(0, 0), (0, 1.27)]) + "\n    " + poly([(-1.27, 1.27), (1.27, 1.27)], w=0.508)
         add_symbol(name, "#PWR", gfx, [("1", name, 0, 0, 270, "power_in")], power=True, ref_pos=(0, -3.81), val_pos=(0, 3.175),
                    hide_pin_numbers=True, hide_pin_names=True)
-POWER_NETS = {"+BAT": False, "+SW": False, "+OUT": False, "+RUN": False, "+CHG": False, "+G": False,
-              "VBUS": False, "GND": True, "CGND": True}
+POWER_NETS = {"+BAT": False, "+SW": False, "+OUT": False, "+RUN": False, "+CHGB": False, "+G": False, "+GB": False,
+              "+BATB": False, "VBUS": False, "VCHG": False, "GND": True, "0V": True}      # rev C: 0V = pack B's negative
 for n, g in POWER_NETS.items():
     power_symbol(n, g)
 
