@@ -16,7 +16,7 @@ board is edited in place, never rebuilt.  `tools/make_fab.py` writes `../fab/Bat
 
 | Block | Parts | Notes |
 |---|---|---|
-| Cells | BC1–BC8 MYOUNG MY-18650-01 clips (C2979183, extended) | four rows at 20 mm pitch, clips 48.0 mm apart (pin rows); cells alternate direction so the series links are short: row 1 + left, row 2 + right, row 3 + left, row 4 + right (silk "+"/"−" at each clip) |
+| Cells | BC1–BC8 MYOUNG MY-18650-01 clips (C2979183, extended) | four rows at 20 mm pitch, clips 48.0 mm apart (pin rows); **all four cells the same way round: − on the left, + (button) on the right** (4 mm silk "−" / "+" under each cell plus small marks beside the clips); the series links C1–C3 run diagonally under the cells from each row's right clip to the next row's left clip |
 | Balancers | U6–U9 HY2213-BB3A (C113632, ext), Q7–Q10 AO3400A, R35–R38 100 R 1206, R31–R34 100 R, C12–C15 100 n | one per cell in the band under the cells: 42 mA bleed above 4.200 V, release 4.19 V, 2.5 µA standing |
 | Toggle | SW1 MTS-203 DPDT centre-off (C55160018, ext), F1 100 mA PTC (C12430, ext) | **RUN / OFF / CHARGE**.  Pole 1 (+BAT): RUN → +RUN → F1 → +SW → Q1 → +OUT; CHARGE → +CHG.  Pole 2 (GND): RUN → J3.2 (output ground); CHARGE → CGND (USB-C ground + charger return).  OFF opens both |
 | Cutoff | U2B (LM393), Q1 AO3401A, R1/R2 100k, R11 1M | +OUT off below 12.0 V (3.0 V/cell), back on above 12.8 V |
@@ -54,8 +54,10 @@ Charger: Ich = 200 mV / 0.2 R = 1 A; Ieoc = 9.17 % (EOC grounded); CH224A CFG1 1
 100 × 96 mm.  Netclasses: Power 0.8 mm (+BAT, GND, C1–C3, +RUN, +SW, +OUT, OUT_GND, LINK_N, +CHG), Charger 0.4 mm
 (SW, SWA, CSP, RCS, VBUS, CGND), Fine 0.25 / 0.15 mm (USB-C CC1/CC2/D+/D−), Default 0.3 / 0.2 mm.  Board minimums
 0.15 / 0.15 (JLC: 0.127).  No copper pours.  DRC 0 violations, 0 unconnected; `path_check` / `sync_check` 0.
-Reference designators are hidden on the silk; the silk carries the cell polarity, RUN/CHG, LED functions, OUT / LINK IN
-and the USB-C label.
+Reference designators are hidden on the silk; the silk carries the cell polarity (4 mm marks under every cell, same
+way round in all four rows), RUN/CHG, LED functions, OUT / LINK IN and the USB-C label.  2026-10-27: the cells were
+re-placed in one orientation (they alternated in the first routing) and the cell-area copper rerouted with Freerouting;
+the electronics strip kept its routing.
 
 ## Assembly notes and first-article checks
 

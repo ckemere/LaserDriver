@@ -20,12 +20,12 @@ def at(ref, x, y, rot=0):
     P[ref] = (x, y, rot)
 
 
-# ---- cells: row 1 left = BC2 (+), right = BC1 (-); row 2 left = BC3 (-), right = BC4 (+); row 3 left = BC6 (+),
-#      right = BC5 (-); row 4 left = BC7 (-), right = BC8 (+).  Series links: C1 at x=11 (rows 1-2), C2 at x=59
-#      (rows 2-3), C3 at x=11 (rows 3-4); GND row 1 right, +BAT row 4 right.
-for row, (l, r) in enumerate((("BC2", "BC1"), ("BC3", "BC4"), ("BC6", "BC5"), ("BC7", "BC8"))):
-    at(l, XL, ROWS[row], 0)
-    at(r, XR, ROWS[row], 180)
+# ---- cells: all four the same way round, - (odd clip) on the left at x=11, + (even clip) on the right at x=59,
+#      so every cell goes in with its button end to the right.  Series links C1..C3 run diagonally under the cells
+#      (row n right clip -> row n+1 left clip); GND = BC1 row 1 left, +BAT = BC8 row 4 right.
+for row in range(4):
+    at(f"BC{2 * row + 1}", XL, ROWS[row], 0)
+    at(f"BC{2 * row + 2}", XR, ROWS[row], 180)
 # ---- balancers in the band under the cells
 for n in range(1, 5):
     x0 = 14.0 + 12.5 * (n - 1)
@@ -68,7 +68,7 @@ for i, ref in enumerate(("R16", "R17", "R18", "R19", "R20", "R21", "R22", "R23")
 
 board = pcbnew.LoadBoard(BOARD)
 # idempotent: a previous run's outline and board-level silk texts are collected now and removed at the very end
-stale = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts or (d.GetLayer() == pcbnew.F_SilkS and d.GetClass() == "PCB_TEXT")]
+stale = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts or (d.GetLayer() == pcbnew.F_SilkS and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 missing = [r for r in fps if r not in P]
 assert not missing, f"unplaced: {missing}"
@@ -93,8 +93,17 @@ def silk(txt, x, y, size=1.2, rot=0):
     board.Add(t)
 
 
-for row, (lp, rp) in enumerate((("+", "-"), ("-", "+"), ("+", "-"), ("-", "+"))):
-    silk(lp, 7, ROWS[row] - 9.9, 1.5); silk(rp, 63, ROWS[row] - 9.9, 1.5)
+def seg(x1, y1, x2, y2, w=0.6):
+    d = pcbnew.PCB_SHAPE(board)
+    d.SetShape(pcbnew.SHAPE_T_SEGMENT); d.SetLayer(pcbnew.F_SilkS); d.SetWidth(mm(w))
+    d.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); d.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2)))
+    board.Add(d)
+
+
+for y in ROWS:
+    silk("-", 7, y - 9.9, 1.5); silk("+", 63, y - 9.9, 1.5)        # small marks outside each clip
+    seg(14, y, 18, y)                                               # 4 mm "-" under the cell's negative end
+    seg(52, y, 56, y); seg(54, y - 2, 54, y + 2)                    # 4 mm "+" under the positive (button) end
 silk("LaserHAT BatteryPack rev B  4S 18650", 36, 3.2, 1.2)
 silk("USB-C PD 20V", 84, 59, 1.0)
 silk("OUT", 82, 87.4, 1.0); silk("LINK IN", 70, 87.4, 1.0)
