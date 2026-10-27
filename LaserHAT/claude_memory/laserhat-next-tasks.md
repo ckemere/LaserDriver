@@ -27,7 +27,11 @@ metadata:
    (45.5, 94.5) between the XT60s.  `tools/autoroute.py`'s pipeline still ends with remove_dangling; `trim_stubs` is run
    after it by hand (import autoroute; trim_stubs(BOARD)) and is what clears the last track_dangling warnings.  XT60PW-M footprint copied into battpack.pretty so its 3D model
    (`battpack.3dshapes/XT60PW-M.step`, built by `tools/make_xt60_model.py` with CadQuery from KiCad's vertical XT60-M
-   housing + Amass drawing XT60PW-M30) renders; KiCad 9 ships no model for the horizontal part.  Datasheets in `BatteryPack/parts/ds/`
+   housing + Amass drawing XT60PW-M30) renders; KiCad 9 ships no model for the horizontal part.  Then H5–H8 M2.5 (29.5/87.5, 7.5/56.5) = Raspberry Pi 58 × 49 pattern so the Pi + HAT
+   sit above the board (y 4–60, ports end 11 mm past the right edge, ≥ 11 mm standoffs); balancer rows moved up 3 mm (pack B 1 mm left),
+   CHRG / DONE moved to the top edge (y 2.5, x 66–84, outside the Pi; the right-edge route past the standoff
+   and slot keep-outs was unroutable), R9–R11 and C3 nudged; rule
+   areas (no vias, r 3.0) under the Pi standoffs — a no-tracks version made the left pack's C1 run unroutable.  Datasheets in `BatteryPack/parts/ds/`
    (git-ignored).  Rev B (18650 clips, stacked boards) = commit 6fa6e9d.
 0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
    (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB

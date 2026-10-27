@@ -3,9 +3,11 @@
 axis along y, 42 mm pitch, two 20 mm straps through the slots), their XT60 discharge plugs and balance leads come round the front edge
 (y = 100) to the XT60 sockets J7 / J8 and the right-angle XH sockets J5 / J6 (pack A left, pack B right).  Top side: pack A's gauge top left, its balancers
 mid left, its -V chain bottom left; the charger top right with the USB-C on the right edge; pack B's balancers mid right,
-its gauge and +V chain bottom right; the toggle bottom centre with the output header J3 beside it.
+its gauge and +V chain bottom right; the toggle bottom centre with the output header J3 beside it.  H5-H8 are a
+Raspberry Pi's holes (58 x 49): the Pi sits over y 4-60 on standoffs, ports end over the right edge.
 Idempotent: re-running moves every footprint back to the table and redraws the outline, slots and board-level silk;
 copper is left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
+import math
 import os
 
 import pcbnew
@@ -26,6 +28,11 @@ def at(ref, x, y, rot=0):
 
 # ---- mounting holes
 at("H1", 4, 4); at("H2", 96, 4); at("H3", 4, 96); at("H4", 96, 96)
+# ---- Raspberry Pi holes (58 x 49, M2.5): the Pi sits over the quiet half of the board (y 4-60) on standoffs, its ports
+# end 10.5 mm past the right edge; the toggle, the pack sockets and every LED stay uncovered
+PI = ((29.5, 7.5), (87.5, 7.5), (29.5, 56.5), (87.5, 56.5))
+for ref, (x, y) in zip(("H5", "H6", "H7", "H8"), PI):
+    at(ref, x, y)
 # ---- pack sockets along the front edge: XH balance (J5 / J6, opening toward the edge) outboard, XT60 (J7 / J8, face flush
 # with the edge, "-" pin outboard) inboard; toggle and output header between the XT60s; link fuse and pull-down above
 at("J5", 10.5, 91.5); at("J6", 79.5, 91.5)
@@ -43,9 +50,9 @@ def balancer(u, q, rv, c, rb, x0, y0):
 
 # ---- balancers: pack A (U6..U9, Q7..Q10, R35..R38 bleed, R31..R34, C12..C15) mid left, pack B mid right, 2 x 2 each
 for n in range(4):
-    x0, y0 = 9 + 16 * (n % 2), 41 + 10 * (n // 2)
+    x0, y0 = 9 + 16 * (n % 2), 38 + 10 * (n // 2)
     balancer(f"U{6 + n}", f"Q{7 + n}", f"R{31 + n}", f"C{12 + n}", f"R{35 + n}", x0, y0)
-    balancer(f"U{10 + n}", f"Q{15 + n}", f"R{58 + n}", f"C{16 + n}", f"R{62 + n}", x0 + 45, y0)
+    balancer(f"U{10 + n}", f"Q{15 + n}", f"R{58 + n}", f"C{16 + n}", f"R{62 + n}", x0 + 44, y0)
 # ---- pack A gauge, top left: LEDs on the left edge, comparators, reference and ladder
 for ref, y in (("D4", 10), ("D3", 14), ("D2", 18), ("D1", 22)):
     at(ref, 3.5, y, 90)
@@ -55,13 +62,13 @@ at("C1", 16, 7.5); at("U1", 16, 12); at("U2", 16, 20); at("C2", 16, 25); at("Q14
 at("U3", 24, 8); at("R3", 24, 11)
 for i, ref in enumerate(("R4", "R5", "R6", "R7", "R8")):
     at(ref, 24, 14 + 2.5 * i)
-at("R9", 30, 10); at("R10", 30, 12.5); at("R11", 30, 15)
+at("R9", 30, 12.5); at("R10", 30, 15); at("R11", 30, 17.5)
 # ---- pack A -V chain, bottom left (above J5)
 at("F2", 10, 70, 90); at("Q11", 16, 70); at("R39", 16, 73.5); at("R40", 16, 75.5)
 at("D15", 28, 68, 90); at("D16", 28, 76, 90)
 # ---- charger, top right: USB-C on the right edge, CH224A, VBUS switch, CN3704 and its passives, CHRG / DONE LEDs
 at("J1", 95.8, 14, 90)                     # front flush with the right edge (courtyard +y end = 4.2 mm from origin)
-at("U4", 84, 14); at("C3", 84, 9.5); at("R24", 84, 18.5)
+at("U4", 84, 14); at("C3", 81.5, 9.5); at("R24", 84, 18.5)
 at("Q13", 76, 9); at("R43", 71.5, 7.5); at("R44", 71.5, 10)
 at("Q12", 76, 14); at("R41", 71.5, 13.5); at("R42", 71.5, 16)
 at("C5", 64, 10); at("C6", 64, 16)
@@ -69,7 +76,8 @@ at("U5", 82, 27); at("C4", 82, 22.5); at("Q6", 91.5, 23); at("D7", 92, 29, 90); 
 at("D8", 74, 31); at("R25", 70, 22); at("R26", 70, 25); at("C7", 64, 23); at("C8", 64, 26.5)
 at("C9", 76, 20); at("C10", 79.5, 20); at("C11", 73, 20); at("R27", 76, 17.5)
 at("RT1", 58, 30)
-at("R28", 97.5, 22, 90); at("D9", 97.5, 25.5, 90); at("R29", 97.5, 30, 90); at("D10", 97.5, 34, 90)
+# CHRG / DONE LEDs on the top edge (y 2.5), outside the Pi's edge (y 4), above the charger
+at("R28", 66.5, 2.5); at("D9", 70, 2.5); at("R29", 79, 2.5); at("D10", 82.5, 2.5)
 # ---- pack B gauge, lower right: LEDs on the right edge
 for ref, y in (("D14", 66), ("D13", 70), ("D12", 74), ("D11", 78)):
     at(ref, 97.5, y, 90)
@@ -123,6 +131,16 @@ for x1, x2 in SLOTS:                                      # strap slots, each wi
     for px, py in ((x1 - 0.5, 38.5), (x2 + 0.5, 38.5), (x2 + 0.5, 61.5), (x1 - 0.5, 61.5)):
         o.Append(mm(px), mm(py))
     board.Add(z)
+for cx, cy in PI:                                         # no vias under the Pi standoffs (r 3.0; mask-covered tracks are fine)
+    z = pcbnew.ZONE(board)
+    z.SetIsRuleArea(True); z.SetDoNotAllowTracks(False); z.SetDoNotAllowVias(True); z.SetDoNotAllowCopperPour(True)
+    z.SetDoNotAllowPads(False); z.SetDoNotAllowFootprints(False)
+    z.SetLayerSet(pcbnew.LSET.AllCuMask(2))
+    o = z.Outline(); o.NewOutline()
+    for k in range(24):
+        a = 2 * math.pi * k / 24
+        o.Append(mm(cx + 3.0 * math.cos(a)), mm(cy + 3.0 * math.sin(a)))
+    board.Add(z)
 
 
 def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
@@ -136,15 +154,16 @@ def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
     board.Add(t)
 
 
-silk("LaserHAT BatteryPack rev C   2 x 4S hobby packs", 50, 2.5, 1.2)
+silk("LaserHAT BatteryPack rev C", 21, 2.5, 1.0)
 silk("PACK A  -V", 15.5, 85.8, 1.0); silk("PACK B  +V", 84.5, 85.8, 1.0)
 silk("OUT +V 0V -V", 48.5, 98.9, 0.8)
-silk("USB-C PD 20V", 86, 6, 1.0)
-silk("CHRG", 94.8, 25.5, 0.8); silk("DONE", 94.8, 34, 0.8)
+silk("USB-C 20V", 89.5, 2.5, 0.8)
+silk("CHRG", 62, 2.5, 0.8); silk("DONE", 74.5, 2.5, 0.8)
 for txt, y in (("80%", 10), ("50%", 14), ("20%", 18)):
     silk(txt, 6.3, y, 0.8); silk(txt, 95.1, y + 56, 0.8)
 silk("ON", 6.3, 22, 0.8); silk("ON", 95.1, 78, 0.8)
 silk("A", 6.3, 25.5, 0.8); silk("B", 95.1, 81.5, 0.8)
+silk("RPi  58 x 49  M2.5", 40, 7.5, 0.8)
 # bottom: the pack envelopes and names (read from below)
 for (x1, x2), name in zip(PACKS, ("PACK A  (-V side, plugs to J7 / J5)", "PACK B  (+V side, plugs to J8 / J6)")):
     for (a, b), (c, d) in (((x1, 80), (x1, 10)), ((x1, 10), (x2, 10)), ((x2, 10), (x2, 80))):   # open toward the leads

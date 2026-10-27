@@ -49,6 +49,7 @@ XT60 = "battpack:XT60PW-M"                              # KiCad's AMASS_XT60PW-M
 USBC = "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12"
 TOGGLE = "battpack:SW_MTS-203"
 HOLE = "MountingHole:MountingHole_3.2mm_M3"
+HOLE25 = "MountingHole:MountingHole_2.7mm_M2.5"
 
 # LCSC codes (JLCPCB basic parts unless noted "ext"; checked 2026-10-26/27 with tools/jlc_search.py).  Values of switches,
 # LEDs, connectors and other named parts are JLC's model strings (JLC's BOM matcher compares the Comment with them);
@@ -228,6 +229,10 @@ PARTS = [
     dict(ref="H2", sym="MountingHole", value="M3", fp=HOLE, lcsc="", nets={}),
     dict(ref="H3", sym="MountingHole", value="M3", fp=HOLE, lcsc="", nets={}),
     dict(ref="H4", sym="MountingHole", value="M3", fp=HOLE, lcsc="", nets={}),
+    dict(ref="H5", sym="MountingHole", value="M2.5", fp=HOLE25, lcsc="", nets={}),       # Raspberry Pi (58 x 49)
+    dict(ref="H6", sym="MountingHole", value="M2.5", fp=HOLE25, lcsc="", nets={}),       # Raspberry Pi (58 x 49)
+    dict(ref="H7", sym="MountingHole", value="M2.5", fp=HOLE25, lcsc="", nets={}),       # Raspberry Pi (58 x 49)
+    dict(ref="H8", sym="MountingHole", value="M2.5", fp=HOLE25, lcsc="", nets={}),       # Raspberry Pi (58 x 49)
 ] + GAUGE_A + GAUGE_B
 
 

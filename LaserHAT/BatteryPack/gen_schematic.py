@@ -221,6 +221,9 @@ put("J3", 170, 104, mirror=True, val_at=(0, 10.16)); text("OUT: +V / 0V / -V / n
 PWR("J3.1"); PWR("J3.2"); NET("J3.3")
 for i, h in enumerate(("H1", "H2", "H3", "H4")):
     put(h, 170 + 6 * i, 126, ref_at=(0, -3.81), val_at=(0, 3.81))
+for i, h in enumerate(("H5", "H6", "H7", "H8")):
+    put(h, 170 + 6 * i, 133, ref_at=(0, -3.81), val_at=(0, 3.81))
+text("H1-H4 M3: pack standoffs below.  H5-H8 M2.5, 58 x 49 mm: a Raspberry Pi (3B+/4/5) on standoffs above the board.", 159, 137)
 text("Packs strapped under the board (two 20 mm straps through the slots), XT60 plugs to J7 / J8 and balance leads to J5 / J6 at the front edge.", 159, 139)
 text("Toggle RUN powers the module; OFF; CHARGE joins the packs in parallel on the charger and opens", 159, 141)
 text("both outputs.  -V floats whenever pack A is off (OFF, CHARGE, under-voltage), +V whenever pack B", 159, 143)
