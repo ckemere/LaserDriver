@@ -6,6 +6,9 @@ Writes the project footprints in battpack.pretty from the manufacturers' drawing
                      (drawing WD-CP-0056: "L" = 48.00 mm, contact plate ~8.5 mm outboard of the pair row -> 65 mm cell length).
   SW_MTS-203         MTS-203 DPDT centre-off toggle (LCSC C55160018): 2 x 3 flat lugs, 4.7 mm pitch, rows 4.8 mm apart,
                      body 12.8 x 11.5 mm, M6 bushing (drawing CAX-MTS203M-YB-10.6JL, 2024-11-14).
+  XT60PW-M           not written here: a copy of KiCad's Connector_AMASS AMASS_XT60PW-M_1x02_P7.20mm_Horizontal with its 3D model
+                     pointed at ${KIPRJMOD}/battpack.3dshapes/XT60PW-M.step (tools/make_xt60_model.py; KiCad 9 ships no model
+                     for the horizontal part).
 Run: python tools/make_footprints.py
 """
 import os

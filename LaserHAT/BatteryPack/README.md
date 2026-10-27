@@ -100,6 +100,10 @@ LED functions, CHRG / DONE and the USB-C label.
 nets or footprints changed (`--keep-tracks`) → `../tools/path_check.py` / `sync_check.py` → `kicad-cli pcb drc` →
 `python tools/lcsc_check.py` → `python tools/make_fab.py`.
 
+**XT60 footprint and 3D model.**  `battpack.pretty/XT60PW-M.kicad_mod` is KiCad's AMASS_XT60PW-M footprint with its
+model pointed at `battpack.3dshapes/XT60PW-M.step`, which `tools/make_xt60_model.py` builds with CadQuery (KiCad 9 ships
+no model for the horizontal part; the model reuses the vertical XT60-M nose and adds the PW's body, bent pins and legs).
+
 **Part numbers on the board.**  `sch_parts.py` holds the LCSC codes; the generator writes them into every symbol as the
 `LCSC Part #` field and `tools/stamp_fields.py` writes the same field (hidden, F.Fab) into every footprint, syncs the
 Values and marks H1–H4 excluded from BOM and position files — so a BOM/CPL made straight from the PCB with the

@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/claude-agent/Code/LaserDriver/LaserHAT/BatteryPack/BatteryPack.kicad_sch</source>
-    <date>2026-10-27T16:09:22-0500</date>
+    <date>2026-10-27T16:23:46-0500</date>
     <tool>Eeschema 9.0.8+dfsg-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -790,10 +790,10 @@
     </comp>
     <comp ref="J7">
       <value>XT60PW-M</value>
-      <footprint>Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</footprint>
+      <footprint>battpack:XT60PW-M</footprint>
       <fields>
         <field name="LCSC Part #">C98732</field>
-        <field name="Footprint">Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</field>
+        <field name="Footprint">battpack:XT60PW-M</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
@@ -806,10 +806,10 @@
     </comp>
     <comp ref="J8">
       <value>XT60PW-M</value>
-      <footprint>Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</footprint>
+      <footprint>battpack:XT60PW-M</footprint>
       <fields>
         <field name="LCSC Part #">C98732</field>
-        <field name="Footprint">Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</field>
+        <field name="Footprint">battpack:XT60PW-M</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>

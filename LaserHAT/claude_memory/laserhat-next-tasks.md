@@ -25,7 +25,9 @@ metadata:
    XT60; XT30 packs need an adapter — the user chose XT60).  Pack B's ON LED moved into its LED column (R54 on +OUT
    beside Q1, thin net to D11 at (97.5, 78)); chain B now right of gauge B (x 81–90, y 62–80), toggle (49, 84) and J3
    (45.5, 94.5) between the XT60s.  `tools/autoroute.py`'s pipeline still ends with remove_dangling; `trim_stubs` is run
-   after it by hand (import autoroute; trim_stubs(BOARD)) and is what clears the last track_dangling warnings.  Datasheets in `BatteryPack/parts/ds/`
+   after it by hand (import autoroute; trim_stubs(BOARD)) and is what clears the last track_dangling warnings.  XT60PW-M footprint copied into battpack.pretty so its 3D model
+   (`battpack.3dshapes/XT60PW-M.step`, built by `tools/make_xt60_model.py` with CadQuery from KiCad's vertical XT60-M
+   housing + Amass drawing XT60PW-M30) renders; KiCad 9 ships no model for the horizontal part.  Datasheets in `BatteryPack/parts/ds/`
    (git-ignored).  Rev B (18650 clips, stacked boards) = commit 6fa6e9d.
 0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
    (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB

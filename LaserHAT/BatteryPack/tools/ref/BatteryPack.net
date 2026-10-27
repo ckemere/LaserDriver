@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/claude-agent/Code/LaserDriver/LaserHAT/BatteryPack/BatteryPack.kicad_sch")
-    (date "2026-10-27T16:04:33-0500")
+    (date "2026-10-27T16:23:47-0500")
     (tool "Eeschema 9.0.8+dfsg-1")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
@@ -690,10 +690,10 @@
       (tstamps "9933c8d2-7d34-5da5-ada2-06576e50cfa7"))
     (comp (ref "J7")
       (value "XT60PW-M")
-      (footprint "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal")
+      (footprint "battpack:XT60PW-M")
       (fields
         (field (name "LCSC Part #") "C98732")
-        (field (name "Footprint") "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal")
+        (field (name "Footprint") "battpack:XT60PW-M")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "battpack") (part "Conn_01x02") (description ""))
@@ -704,10 +704,10 @@
       (tstamps "79c4d033-5fdc-5e4f-b419-9071a07b1be0"))
     (comp (ref "J8")
       (value "XT60PW-M")
-      (footprint "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal")
+      (footprint "battpack:XT60PW-M")
       (fields
         (field (name "LCSC Part #") "C98732")
-        (field (name "Footprint") "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal")
+        (field (name "Footprint") "battpack:XT60PW-M")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "battpack") (part "Conn_01x02") (description ""))
