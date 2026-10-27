@@ -4,7 +4,8 @@ axis along y, 42 mm pitch, two 20 mm straps through the slots), their XT60 disch
 (y = 100) to the XT60 sockets J7 / J8 and the right-angle XH sockets J5 / J6 (pack A left, pack B right).  Top side: pack A's gauge top left, its balancers
 mid left, its -V chain bottom left; the charger top right with the USB-C on the right edge; pack B's balancers mid right,
 its gauge and +V chain bottom right; the toggle bottom centre with the output header J3 beside it.  H5-H8 are a
-Raspberry Pi's holes (58 x 49): the Pi sits over y 4-60 on standoffs, ports end over the right edge.
+Raspberry Pi's holes (58 x 49): the Pi sits over y 4-60 on standoffs, ports end over the right edge; the HAT's
+outline is drawn on User.Comments and the Pi's on User.Drawings.
 Idempotent: re-running moves every footprint back to the table and redraws the outline, slots and board-level silk;
 copper is left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
 import math
@@ -95,7 +96,7 @@ at("D5", 83, 77, 90); at("D6", 88, 76, 90)
 
 board = pcbnew.LoadBoard(BOARD)
 # idempotent: a previous run's outline, slots and board-level silk are collected now and removed at the very end
-stale = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts
+stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
          or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
 stale += [z for z in board.Zones() if z.GetIsRuleArea()]
 fps = {f.GetReference(): f for f in board.GetFootprints()}
@@ -143,6 +144,13 @@ for cx, cy in PI:                                         # no vias under the Pi
     board.Add(z)
 
 
+def arc(start, mid, end, layer, w, dx=0.0, dy=0.0):
+    d = pcbnew.PCB_SHAPE(board)
+    d.SetShape(pcbnew.SHAPE_T_ARC); d.SetLayer(layer); d.SetWidth(mm(w))
+    d.SetArcGeometry(*(pcbnew.VECTOR2I(v.x + mm(dx), v.y + mm(dy)) for v in (start, mid, end)))
+    board.Add(d)
+
+
 def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
     t = pcbnew.PCB_TEXT(board)
     t.SetText(txt); t.SetLayer(layer)
@@ -154,7 +162,7 @@ def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
     board.Add(t)
 
 
-silk("LaserHAT BatteryPack rev C", 21, 2.5, 1.0)
+silk("LaserHAT BatteryPack rev C", 14, 30, 1.0)                 # clear of the HAT (x >= 26)
 silk("PACK A  -V", 15.5, 85.8, 1.0); silk("PACK B  +V", 84.5, 85.8, 1.0)
 silk("OUT +V 0V -V", 48.5, 98.9, 0.8)
 silk("USB-C 20V", 89.5, 2.5, 0.8)
@@ -164,6 +172,36 @@ for txt, y in (("80%", 10), ("50%", 14), ("20%", 18)):
 silk("ON", 6.3, 22, 0.8); silk("ON", 95.1, 78, 0.8)
 silk("A", 6.3, 25.5, 0.8); silk("B", 95.1, 81.5, 0.8)
 silk("RPi  58 x 49  M2.5", 40, 7.5, 0.8)
+# User.Comments: the LaserHAT's outline (its Edge.Cuts, read live from ../LaserDriver.kicad_pcb) with its hole MH1 on H5, i.e.
+# where the HAT sits when the Pi is on H5-H8; User.Drawings: the Raspberry Pi itself (85 x 56, r 3, holes 3.5 in from the
+# left/top/bottom edges, ports end 23.5 beyond the right holes).  Both are drawings only (not in the gerbers).
+HAT = os.path.join(ROOT, "..", "LaserDriver.kicad_pcb")
+hat = pcbnew.LoadBoard(HAT)
+mh1 = hat.FindFootprintByReference("MH1").GetPosition()
+dx, dy = PI[0][0] - mh1.x / 1e6, PI[0][1] - mh1.y / 1e6
+n_hat = 0
+for d in hat.GetDrawings():
+    if d.GetLayer() != pcbnew.Edge_Cuts or d.GetClass() != "PCB_SHAPE":
+        continue
+    if d.GetShape() == pcbnew.SHAPE_T_SEGMENT:
+        seg(d.GetStart().x / 1e6 + dx, d.GetStart().y / 1e6 + dy, d.GetEnd().x / 1e6 + dx, d.GetEnd().y / 1e6 + dy, pcbnew.Cmts_User, 0.15)
+    elif d.GetShape() == pcbnew.SHAPE_T_ARC:
+        arc(d.GetStart(), d.GetArcMid(), d.GetEnd(), pcbnew.Cmts_User, 0.15, dx, dy)
+    else:
+        raise SystemExit(f"HAT outline: unhandled shape {d.GetShape()}")
+    n_hat += 1
+hat_bb = hat.GetBoardEdgesBoundingBox()
+silk("LaserHAT outline (MH1-MH4 on H5-H8)", (hat_bb.GetLeft() + hat_bb.GetRight()) / 2e6 + dx, hat_bb.GetBottom() / 1e6 + dy - 2, 1.0,
+     layer=pcbnew.Cmts_User)
+print("HAT outline:", n_hat, "edges, shifted by", round(dx, 3), round(dy, 3))
+px, py, r = PI[0][0] - 3.5, PI[0][1] - 3.5, 3.0                                    # Pi top-left corner
+for (x1, y1, x2, y2) in ((px + r, py, px + 85 - r, py), (px + 85, py + r, px + 85, py + 56 - r),
+                         (px + 85 - r, py + 56, px + r, py + 56), (px, py + 56 - r, px, py + r)):
+    seg(x1, y1, x2, y2, pcbnew.Dwgs_User, 0.15)
+for cx, cy, a0 in ((px + r, py + r, 180), (px + 85 - r, py + r, 270), (px + 85 - r, py + 56 - r, 0), (px + r, py + 56 - r, 90)):
+    pts = [pcbnew.VECTOR2I(mm(cx + r * math.cos(math.radians(a))), mm(cy + r * math.sin(math.radians(a)))) for a in (a0, a0 + 45, a0 + 90)]
+    arc(pts[0], pts[1], pts[2], pcbnew.Dwgs_User, 0.15)
+silk("Raspberry Pi outline (85 x 56)", px + 42.5, py + 56 + 2, 1.0, layer=pcbnew.Dwgs_User)
 # bottom: the pack envelopes and names (read from below)
 for (x1, x2), name in zip(PACKS, ("PACK A  (-V side, plugs to J7 / J5)", "PACK B  (+V side, plugs to J8 / J6)")):
     for (a, b), (c, d) in (((x1, 80), (x1, 10)), ((x1, 10), (x2, 10)), ((x2, 10), (x2, 80))):   # open toward the leads

@@ -31,7 +31,7 @@ metadata:
    sit above the board (y 4–60, ports end 11 mm past the right edge, ≥ 11 mm standoffs); balancer rows moved up 3 mm (pack B 1 mm left),
    CHRG / DONE moved to the top edge (y 2.5, x 66–84, outside the Pi; the right-edge route past the standoff
    and slot keep-outs was unroutable), R9–R11 and C3 nudged; rule
-   areas (no vias, r 3.0) under the Pi standoffs — a no-tracks version made the left pack's C1 run unroutable.  Datasheets in `BatteryPack/parts/ds/`
+   areas (no vias, r 3.0) under the Pi standoffs — a no-tracks version made the left pack's C1 run unroutable.  The HAT's Edge.Cuts (read live from LaserDriver.kicad_pcb, MH1 → H5) is drawn on User.Comments and the Pi's 85 × 56 outline on User.Drawings by place.py; title silk moved to (14, 30) to stay clear of the HAT.  Datasheets in `BatteryPack/parts/ds/`
    (git-ignored).  Rev B (18650 clips, stacked boards) = commit 6fa6e9d.
 0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
    (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB
