@@ -26,3 +26,6 @@ LaserHAT/fab/*/gerbers/
 
 # e-stim autorouter intermediates (placed boards, .dsn/.ses, DRC reports)
 LaserHAT/EStimDaughter/route/
+
+# battery pack autorouter intermediates (dsn/ses, logs, DRC json)
+LaserHAT/BatteryPack/route/

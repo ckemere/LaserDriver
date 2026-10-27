@@ -2,22 +2,23 @@
 
 Rev B, 2026-10-26.  One board holds four 18650 cells in series (12.0–16.8 V) with an on-board USB-C PD charger and
 per-cell balancers; two identical boards stacked give the ±V supply the e-stim module wants (+V / 0 V / −V on a 4-pin
-JST-PH).  Replaces the hand-wired battery cases.  100 × 96 mm, 2-layer, JLC assembled (clips and toggle through-hole).
+JST-PH).  Replaces the hand-wired battery cases.  100 × 120 mm, 2-layer, JLC assembled (clips and toggle through-hole).
 
 Files: `gen_schematic.py` + `sch_parts.py` + `sch_symbols.py` (+ `sch_engine.py`) generate `BatteryPack.kicad_sch`
 (deterministic UUIDs, like the e-stim module); `tools/netcheck.py` proves the drawing matches `sch_parts.py`;
 `tools/make_bom.py` writes `bom_BatteryPack.csv`; `tools/make_footprints.py` writes `battpack.pretty/` (clip, toggle).
-Board: `tools/board_init.py` (once: rules, netclasses, footprints from the netlist via `tools/pcb_sync.py`) and
-`tools/place.py` (outline, holes, placement, silk) built it; Freerouting (`~/Tools/freerouting-2.4.1.jar`, headless with
-`--gui.enabled=false`, DSN/SES through `pcbnew.ExportSpecctraDSN` / `ImportSpecctraSES`) routed it; from here on the
-board is edited in place, never rebuilt.  `tools/make_fab.py` writes `../fab/BatteryPack/` (gerbers, JLC BOM + CPL).
+Board: `tools/board_init.py` (once: rules, netclasses, footprints from the netlist via `tools/pcb_sync.py`),
+`tools/place.py` (outline, holes, placement, silk; idempotent) and `tools/autoroute.py` (rip-up, stubs out of pads
+narrower than their net class, Freerouting headless through DSN/SES, stub clean-up, DRC) built it — the user is remote,
+so the layout is scripted rather than hand-placed like the other boards.  Hand edits in pcbnew are fine afterwards;
+re-running `place.py` + `autoroute.py` discards them.  `tools/make_fab.py` writes `../fab/BatteryPack/` (gerbers, JLC BOM + CPL).
 
 ## What is on it
 
 | Block | Parts | Notes |
 |---|---|---|
-| Cells | BC1–BC8 MYOUNG MY-18650-01 clips (C2979183, extended) | four rows at 20 mm pitch, clips 48.0 mm apart (pin rows); **all four cells the same way round: − on the left, + (button) on the right** (4 mm silk "−" / "+" under each cell plus small marks beside the clips); the series links C1–C3 run diagonally under the cells from each row's right clip to the next row's left clip |
-| Balancers | U6–U9 HY2213-BB3A (C113632, ext), Q7–Q10 AO3400A, R35–R38 100 R 1206, R31–R34 100 R, C12–C15 100 n | one per cell in the band under the cells: 42 mA bleed above 4.200 V, release 4.19 V, 2.5 µA standing |
+| Cells | BC1–BC8 MYOUNG MY-18650-01 clips (C2979183, extended) | four rows at 20 mm pitch, clips 48.0 mm apart (pin rows); **all four cells the same way round: + (button) on the left, − on the right** (4 mm silk "+" / "−" under each cell plus small marks beside the clips); the right clips carry GND, C1, C2, C3 (rows 1–4) so each balancer sits beside the two clips it taps, +BAT is the bottom-left clip next to the switch |
+| Balancers | U6–U9 HY2213-BB3A (C113632, ext), Q7–Q10 AO3400A, R35–R38 100 R 1206, R31–R34 100 R, C12–C15 100 n | balancers 1–3 in the right column between the rows they tap, balancer 4 bottom left by the +BAT clip: 42 mA bleed above 4.200 V, release 4.19 V, 2.5 µA standing |
 | Toggle | SW1 MTS-203 DPDT centre-off (C55160018, ext; **JLC stock 192 on 2026-10-27**), F1 100 mA PTC MF-MSMF010-2 (C12430, ext) | **RUN / OFF / CHARGE**.  Pole 1 (+BAT): RUN → +RUN → F1 → +SW → Q1 → +OUT; CHARGE → +CHG.  Pole 2 (GND): RUN → J3.2 (output ground); CHARGE → CGND (USB-C ground + charger return).  OFF opens both |
 | Cutoff | U2B (LM393), Q1 AO3401A, R1/R2 100k, R11 1M | +OUT off below 12.0 V (3.0 V/cell), back on above 12.8 V |
 | Gauge | U3 CJ431, R3–R11, U1/U2 LM393, D2–D4 + R13–R15 from the gauge rail +G (= +SW or +CHG via D5/D6 SS14) | D4 green ≥ 16.0 V, D3 green ≥ 15.2 V, D2 yellow ≥ 14.4 V, ~1 mA each; works in RUN and in CHARGE |
@@ -25,7 +26,7 @@ board is edited in place, never rebuilt.  `tools/make_fab.py` writes `../fab/Bat
 | Charger | J1 USB-C (C165948, ext), U4 CH224A (C42459160, ext) + C3 + R24 120k, U5 CN3704 (C51659, ext), Q6 AO3401A, D7/D8 SS34, L1 22 µH (C408453, ext), R25+R26 0.2 R, C4–C11, R27, RT1 NTC (C13564, ext), D9 CHRG red, D10 DONE green | PD brick negotiated to 20 V; 1 A CC, 16.8 V ±1 % CV, termination 92 mA, trickle 150 mA below 11.2 V, re-charge below 16.0 V, 18.1 V over-voltage cut, NTC stops it hot / cold.  Everything referenced to CGND, which meets GND only in CHARGE (R30 1M otherwise) |
 | Slave enable | Q2 AO3401A, Q3/Q5 AO3400A, Q4 AO3401A, R16–R23 | the upper board's +RUN arrives on J3.4 and switches this board's +RUN on through Q4 (0.3 mA), blocked in CHARGE by Q5 |
 | Output | J3 B4B-PH-K-S (+OUT, OUT_GND, LINK_N, STACK_IN), J4 same (GND, LINK_N, NC, +RUN) | 4-wire straight cable J3 → J4 between boards; upper J3 to the module |
-| Mounting | H1–H4 M3 at (8, 4), (96, 4), (8, 92), (96, 92) | 25 mm standoffs clear the clips + cells and the toggle lever (≈19 mm) |
+| Mounting | H1–H4 M3 at (8, 4), (96, 4), (8, 116), (96, 116) | 25 mm standoffs clear the clips + cells and the toggle lever (≈19 mm) |
 
 Standing draw in RUN: 5–8 mA (reference, comparators, LEDs); in CHARGE with no brick: the same from the pack (the
 gauge stays on); in OFF: about 40 µA (charger and balancers).  A lower board left in OFF draws only that until the
@@ -51,13 +52,17 @@ Charger: Ich = 200 mV / 0.2 R = 1 A; Ieoc = 9.17 % (EOC grounded); CH224A CFG1 1
 
 ## Board
 
-100 × 96 mm.  Netclasses: Power 0.8 mm (+BAT, GND, C1–C3, +RUN, +SW, +OUT, OUT_GND, LINK_N, +CHG), Charger 0.4 mm
+100 × 120 mm (2026-10-27; the first routing was 100 × 96 with the switch at the top right, alternating cells and the
+balancers in a band under them — the user asked for one cell orientation, the switch next to the headers and shorter
+power runs).  Layout: cells x 2–68, rows y 17/37/57/77; balancers 1–3 at x 70–84 between the right clips; reference,
+ladder, comparators and the gauge LEDs x 81–100, y 20–60; USB-C on the right edge at y 86 with the CH224A beside it;
+charger (CN3704, inductor, diodes, sense resistors) bottom right; toggle at (48, 97) between the headers (J4 LINK IN at
+x 22, J3 OUT at x 36, bottom edge) and the fuse / cutoff / gauge-rail diodes; slave enable above the headers; balancer 4
+bottom left.  Netclasses: Power 0.8 mm (+BAT, GND, C1–C3, +RUN, +SW, +OUT, OUT_GND, LINK_N, +CHG), Charger 0.4 mm
 (SW, SWA, CSP, RCS, VBUS, CGND), Fine 0.25 / 0.15 mm (USB-C CC1/CC2/D+/D−), Default 0.3 / 0.2 mm.  Board minimums
 0.15 / 0.15 (JLC: 0.127).  No copper pours.  DRC 0 violations, 0 unconnected; `path_check` / `sync_check` 0.
-Reference designators are hidden on the silk; the silk carries the cell polarity (4 mm marks under every cell, same
-way round in all four rows), RUN/CHG, LED functions, OUT / LINK IN and the USB-C label.  2026-10-27: the cells were
-re-placed in one orientation (they alternated in the first routing) and the cell-area copper rerouted with Freerouting;
-the electronics strip kept its routing.
+Reference designators are hidden on the silk; the silk carries the cell polarity (4 mm marks under every cell), RUN/CHG,
+LED functions, OUT / LINK IN and the USB-C label.
 
 ## Assembly notes and first-article checks
 
@@ -69,7 +74,7 @@ the electronics strip kept its routing.
 - **USB-C:** front flush with the board edge (footprint origin 4.2 mm inside).  CH224A requests 20 V; a 5 V-only
   source leaves the CN3704 below its lock-out, nothing charges.
 - **First charge:** meter on every clip (cell voltages) and on CSP−BAT (200 mV = 1 A) during the first charge; confirm
-  DONE at ~90 mA and the balancer resistors warming on the fullest cell.  The NTC RT1 sits beside cell 3; a 10k
+  DONE at ~90 mA and the balancer resistors warming on the fullest cell.  The NTC RT1 sits beside cell 4's right clip; a 10k
   fixed resistor in its place disables temperature control.
 - **Clips:** arms grip the cell body (16 ± 1 mm sprung opening for an 18.3–18.6 mm cell); fallback MYOUNG
   MY-18650-04-J / -05-J SMT end contacts if a batch is too tight.

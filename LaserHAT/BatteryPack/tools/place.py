@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
-"""Initial placement of BatteryPack.kicad_pcb (rev B, 100 x 96 mm): board outline, mounting holes, cells in four rows,
-balancers in a band under the cells, electronics strip on the right.  Run once after board_init.py; afterwards the board
-is edited in place (never rebuilt).      $KICAD_PY tools/place.py"""
+"""Placement of BatteryPack.kicad_pcb (rev B, 100 x 120 mm since 2026-10-27): board outline, mounting holes, cells in four
+rows (all the same way round), each balancer beside its cell's clips, switch / fuse / cutoff next to the output headers
+at the bottom, charger in the lower right with the USB-C on the right edge, gauge and LEDs above it.
+Idempotent: re-running moves every footprint back to the table and redraws the outline and board-level silk; copper is
+left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
 import os
 
 import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BOARD = os.path.join(ROOT, "BatteryPack.kicad_pcb")
-W, H = 100.0, 96.0
+W, H = 100.0, 120.0
 ROWS = (17.0, 37.0, 57.0, 77.0)            # cell axes (y), 20 mm pitch
 XL, XR = 11.0, 59.0                        # clip origins (pin-pair centres), 48.0 mm apart
 
@@ -20,55 +22,67 @@ def at(ref, x, y, rot=0):
     P[ref] = (x, y, rot)
 
 
-# ---- cells: all four the same way round, - (odd clip) on the left at x=11, + (even clip) on the right at x=59,
-#      so every cell goes in with its button end to the right.  Series links C1..C3 run diagonally under the cells
-#      (row n right clip -> row n+1 left clip); GND = BC1 row 1 left, +BAT = BC8 row 4 right.
+# ---- cells: all four the same way round, + (even clip, cell n's positive end) on the LEFT at x=11, - (odd clip) on the
+#      right at x=59.  Right clips then carry GND, C1, C2, C3 (rows 1-4) and left clips C1, C2, C3, +BAT, so the series
+#      links run diagonally (row n left -> row n+1 right), GND meets the electronics column at row 1 and +BAT at the
+#      bottom left, next to the switch.
 for row in range(4):
-    at(f"BC{2 * row + 1}", XL, ROWS[row], 0)
-    at(f"BC{2 * row + 2}", XR, ROWS[row], 180)
-# ---- balancers in the band under the cells
-for n in range(1, 5):
-    x0 = 14.0 + 12.5 * (n - 1)
-    at(f"U{5 + n}", x0 + 2, 89.5); at(f"Q{6 + n}", x0 + 6, 89.5); at(f"R{34 + n}", x0 + 9.5, 89.5, 90)
-    at(f"R{30 + n}", x0 + 2, 93.5); at(f"C{11 + n}", x0 + 6, 93.5)
-at("J4", 67, 91.5); at("J3", 79, 91.5)
-at("H1", 8, 4); at("H2", 96, 4); at("H3", 8, 92); at("H4", 96, 92)
-# ---- switch, fuse, cutoff
-at("SW1", 84, 12)
-at("F1", 72.5, 7, 90); at("Q1", 72.5, 12); at("R1", 72.5, 15.5); at("R2", 72.5, 17.5)
-at("D5", 75, 20.5); at("D6", 82, 20.5)
-# ---- gauge
-for ref, y in (("D4", 24.5), ("D3", 28), ("D2", 31.5), ("D1", 35)):
-    at(ref, 97.5, y, 90)
-for ref, y in (("R15", 24.5), ("R14", 28), ("R13", 31.5), ("R12", 35)):
-    at(ref, 93.5, y)
-at("U1", 85, 27); at("U2", 85, 35); at("C1", 80.5, 27, 90); at("C2", 80.5, 35, 90)
-at("U3", 74, 24.5); at("R3", 74, 27.5)
-for i, ref in enumerate(("R4", "R5", "R6", "R7", "R8")):
-    at(ref, 74, 30 + 2.5 * i)
-at("R9", 78, 40); at("R10", 78, 42.5); at("R11", 82, 42.5)
-# ---- USB-C PD input
-at("J1", 95.8, 52, 90)                     # front flush with the right edge (courtyard +y end = 4.2 mm from origin)
-at("U4", 85, 52); at("C3", 85, 47.5); at("R24", 85, 56.5)
-at("C5", 76, 50); at("C6", 76, 55.5); at("R30", 76, 59)
-at("D9", 97.5, 42, 90); at("R28", 97.5, 38.5, 90)
-at("D10", 97.5, 61, 90); at("R29", 97.5, 64.5, 90)
-# ---- charger
-at("U5", 84, 66); at("C4", 84, 61.5); at("Q6", 91.5, 62)
-at("D7", 92, 68, 90); at("L1", 92, 76); at("D8", 84, 75)
-at("R25", 90, 82); at("R26", 95, 82)
-at("C7", 78, 74); at("C8", 78, 77)
-at("C9", 81, 70.5); at("C10", 84, 70.5); at("C11", 87, 70.5); at("R27", 82, 72.5)
-at("RT1", 70.5, 46, 90)
-# ---- stack slave enable
+    at(f"BC{2 * row + 2}", XL, ROWS[row], 0)
+    at(f"BC{2 * row + 1}", XR, ROWS[row], 180)
+
+
+def balancer(n, x0, y0):
+    """HY2213 block for cell n (U5+n, Q6+n, R34+n bleed, R30+n, C11+n): 14 x 8 mm, parts at y0 and y0+4"""
+    at(f"U{5 + n}", x0 + 2, y0); at(f"Q{6 + n}", x0 + 7, y0); at(f"R{34 + n}", x0 + 11, y0, 90)
+    at(f"R{30 + n}", x0 + 2, y0 + 4); at(f"C{11 + n}", x0 + 7, y0 + 4)
+
+
+# ---- balancers 1-3 in the right column between the rows they tap (cell n's ends are the right clips of rows n and n+1);
+#      balancer 4 (C3 / +BAT) bottom left beside the +BAT clip
+for n in (1, 2, 3):
+    balancer(n, 70.0, 25.0 + 20.0 * (n - 1))
+balancer(4, 4.0, 90.0)
+# ---- mounting holes
+at("H1", 8, 4); at("H2", 96, 4); at("H3", 8, 116); at("H4", 96, 116)
+# ---- switch, fuse, cutoff, gauge rail diodes: bottom centre, beside the headers
+at("SW1", 48, 97)
+at("F1", 60, 93, 90); at("Q1", 60, 99); at("R1", 60, 102.5); at("R2", 60, 104.5)
+at("D5", 65, 96, 90); at("D6", 65, 104, 90)
+# ---- output / link headers and the stack slave enable, bottom left of centre
+at("J4", 22, 112); at("J3", 36, 112)
 for i, ref in enumerate(("Q2", "Q3", "Q4", "Q5")):
-    at(ref, 71.5 + 4.0 * i, 85)
+    at(ref, 21 + 5.0 * i, 100)
 for i, ref in enumerate(("R16", "R17", "R18", "R19", "R20", "R21", "R22", "R23")):
-    at(ref, 71 + 1.8 * i, 81.5, 90)
+    at(ref, 20 + 1.8 * i, 95.5, 90)
+# ---- reference, ladder, comparators and LEDs: right column above the charger
+at("U3", 86, 22); at("R3", 86, 25)
+for i, ref in enumerate(("R4", "R5", "R6", "R7", "R8")):
+    at(ref, 86, 28 + 2.5 * i)
+at("R9", 86, 42); at("R10", 86, 44.5); at("R11", 90, 44.5)
+at("C1", 81.5, 50, 90); at("U1", 86.5, 50)
+at("C2", 81.5, 58, 90); at("U2", 86.5, 58)
+for ref, y in (("R15", 48), ("R14", 51.5), ("R13", 55), ("R12", 58.5)):
+    at(ref, 92.5, y)
+for ref, y in (("D4", 48), ("D3", 51.5), ("D2", 55), ("D1", 58.5)):
+    at(ref, 97.5, y, 90)
+# ---- USB-C PD input, lower right edge
+at("J1", 95.8, 86, 90)                     # front flush with the right edge (courtyard +y end = 4.2 mm from origin)
+at("U4", 85, 86); at("C3", 85, 81.5); at("R24", 85, 90.5)
+at("C5", 76, 84); at("C6", 76, 89.5); at("R30", 76, 93)
+at("D9", 97.5, 76, 90); at("R28", 97.5, 72.5, 90)
+at("D10", 97.5, 95, 90); at("R29", 97.5, 98.5, 90)
+# ---- charger, bottom right (clear of the hole at (96, 116))
+at("U5", 82, 99); at("C4", 82, 94.5); at("Q6", 91.5, 93.5)
+at("D7", 92, 100, 90); at("L1", 86, 110); at("D8", 76, 108)
+at("R25", 78, 116); at("R26", 84, 116)
+at("C7", 89, 116); at("C8", 73, 116)
+at("C9", 79, 103.5); at("C10", 82, 103.5); at("C11", 85, 103.5); at("R27", 80, 105.5)
+at("RT1", 70.5, 80, 90)
 
 board = pcbnew.LoadBoard(BOARD)
-# idempotent: a previous run's outline and board-level silk texts are collected now and removed at the very end
-stale = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts or (d.GetLayer() == pcbnew.F_SilkS and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
+# idempotent: a previous run's outline and board-level silk are collected now and removed at the very end
+stale = [d for d in board.GetDrawings() if d.GetLayer() == pcbnew.Edge_Cuts
+         or (d.GetLayer() == pcbnew.F_SilkS and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 missing = [r for r in fps if r not in P]
 assert not missing, f"unplaced: {missing}"
@@ -101,14 +115,14 @@ def seg(x1, y1, x2, y2, w=0.6):
 
 
 for y in ROWS:
-    silk("-", 7, y - 9.9, 1.5); silk("+", 63, y - 9.9, 1.5)        # small marks outside each clip
-    seg(14, y, 18, y)                                               # 4 mm "-" under the cell's negative end
-    seg(52, y, 56, y); seg(54, y - 2, 54, y + 2)                    # 4 mm "+" under the positive (button) end
+    silk("+", 7, y - 9.9, 1.5); silk("-", 63, y - 9.9, 1.5)        # small marks outside each clip
+    seg(14, y, 18, y); seg(16, y - 2, 16, y + 2)                    # 4 mm "+" under the cell's positive (button) end
+    seg(52, y, 56, y)                                               # 4 mm "-" under the negative end
 silk("LaserHAT BatteryPack rev B  4S 18650", 36, 3.2, 1.2)
-silk("USB-C PD 20V", 84, 59, 1.0)
-silk("OUT", 82, 87.4, 1.0); silk("LINK IN", 70, 87.4, 1.0)
-silk("CHRG", 93.5, 42, 0.9); silk("DONE", 94.6, 64.5, 0.9)
-silk("80%", 90.5, 24.5, 0.9); silk("50%", 90.5, 28, 0.9); silk("20%", 90.5, 31.5, 0.9); silk("ON", 90.5, 35, 0.9)
+silk("USB-C PD 20V", 86, 78.5, 1.0)
+silk("OUT", 36, 107.3, 1.0); silk("LINK IN", 22, 107.3, 1.0)
+silk("CHRG", 93.5, 76, 0.9); silk("DONE", 97.5, 101.5, 0.8)
+silk("80%", 95.1, 48, 0.8); silk("50%", 95.1, 51.5, 0.8); silk("20%", 95.1, 55, 0.8); silk("ON", 95.1, 58.5, 0.8)
 for d in stale:
     board.Remove(d)
 pcbnew.SaveBoard(BOARD, board)
