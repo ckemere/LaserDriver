@@ -1,10 +1,11 @@
 ---
 name: laserhat-next-tasks
-description: "Status 2026-10-20: firmware version check in v0.2.0-rc7 (MCU had never been reflashed past rc1 -> no laser current); HAT firmware works on hardware; module firmware in v0.2.0-rc3 (laser DAC zero between pulses, e-stim spec §7, fault latch), untested on modules; next = user tests TESTING.md steps 10-11 (multimeter checks added), then merge pcb-rev2 into main"
+description: "Status 2026-10-27: BatteryPack rev B (4S pack + USB-C charger board) built and committed on branch battery-pack, awaiting the user's review; firmware version check in v0.2.0-rc7; module firmware untested on modules; next = user tests TESTING.md 10-11, then merge pcb-rev2 into main"
 metadata:
   type: project
 ---
 
+0f. **2026-10-26: `BatteryPack/` rev B built end to end** (4S 18650 pack board, two stacked = ±V for the e-stim module): on-board USB-C PD charger (CH224A 20 V + CN3704 1 A / 16.8 V), HY2213 balancer per cell, MTS-203 RUN/OFF/CHARGE toggle (pole 2 switches the output ground in RUN and the USB-C ground in CHARGE, so charging boards can never loop through a shared-negative brick), LM393 cutoff + 3-LED gauge, 4-wire stack cable with a slave enable (upper toggle runs both boards). Schematic generated (ERC 0, netcheck OK); board placed by `tools/place.py` and routed with Freerouting headless (user is remote); DRC 0/0, path/sync checks 0, `lcsc_check` clean, `tools/make_fab.py` → `fab/BatteryPack/`.  Committed on branch `battery-pack` 2026-10-27; not ordered.  User to check: toggle lever direction vs the RUN/CHG silk (meter), JLC DFM rotations, first-charge measurements (README).  E-stim next rev: PH-4 socket (+V / 0 V / −V / nc) beside PS1.
 0d. **2026-10-20:** no light pulses — the MCU was still on v0.2.0-rc1 (never reflashed; rc1 has no laser
    DAC set-point).  Added firmware version reporting + validation in `v0.2.0-rc7` (rc6 failed CI, superseded): `CMD_GET_VERSION` → `RSP_VERSION`
    (`PROTO_VERSION` 2, `version.c` string = deb VERSION), broker probe once per MCU boot (`fw_version`/`fw_proto`/

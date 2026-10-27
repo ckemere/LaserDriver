@@ -1,0 +1,2402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<export version="E">
+  <design>
+    <source>/home/claude-agent/Code/LaserDriver/LaserHAT/BatteryPack/BatteryPack.kicad_sch</source>
+    <date>2026-10-26T23:32:53-0500</date>
+    <tool>Eeschema 9.0.8+dfsg-1</tool>
+    <sheet number="1" name="/" tstamps="/">
+      <title_block>
+        <title>4S 18650 battery pack for the LaserHAT e-stim module</title>
+        <company>Kemere lab</company>
+        <rev>B</rev>
+        <date>2026-10-26</date>
+        <source>BatteryPack.kicad_sch</source>
+        <comment number="1" value=""/>
+        <comment number="2" value=""/>
+        <comment number="3" value=""/>
+        <comment number="4" value=""/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+  </design>
+  <components>
+    <comp ref="BC1">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ce4042b2-6727-5f2e-a7a6-747466adfdea</tstamps>
+    </comp>
+    <comp ref="BC2">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3d17ec3f-f6f0-5c76-a8ab-db6507a3c558</tstamps>
+    </comp>
+    <comp ref="BC3">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>44957e1a-c948-5559-a703-f324dc5e235d</tstamps>
+    </comp>
+    <comp ref="BC4">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>002b6a1d-239e-5af4-b7b1-07db26b735c6</tstamps>
+    </comp>
+    <comp ref="BC5">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4d5a3fb0-b0b3-536f-8d9e-2458c36429aa</tstamps>
+    </comp>
+    <comp ref="BC6">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9a83c4c5-bc98-5120-9470-ebc5363c4afd</tstamps>
+    </comp>
+    <comp ref="BC7">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c372e5ef-8f7d-5274-a68e-1efd49d8ef7c</tstamps>
+    </comp>
+    <comp ref="BC8">
+      <value>MY-18650-01</value>
+      <footprint>battpack:Clip_MY-18650-01</footprint>
+      <fields>
+        <field name="LCSC">C2979183</field>
+        <field name="Footprint">battpack:Clip_MY-18650-01</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Clip18650" description=""/>
+      <property name="LCSC" value="C2979183"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3e032188-2618-5aaf-9bd2-4eaedc428532</tstamps>
+    </comp>
+    <comp ref="C1">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1270043b-1e32-5873-8f4e-50cc5b2873f4</tstamps>
+    </comp>
+    <comp ref="C2">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>846c10fe-fdf7-50eb-a0dd-5f62bf72fb7e</tstamps>
+    </comp>
+    <comp ref="C3">
+      <value>1u</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C15849</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C15849"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>54fbeca0-464f-5857-8dee-6eedea530579</tstamps>
+    </comp>
+    <comp ref="C4">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>72b930e8-b53f-54b9-b622-c4311afb2d59</tstamps>
+    </comp>
+    <comp ref="C5">
+      <value>22u 50V</value>
+      <footprint>Capacitor_SMD:CP_Elec_6.3x5.4</footprint>
+      <fields>
+        <field name="LCSC">C2836438</field>
+        <field name="Footprint">Capacitor_SMD:CP_Elec_6.3x5.4</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="CP" description=""/>
+      <property name="LCSC" value="C2836438"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9f6c1161-6fc6-5440-88fc-aa3e514c2ba7</tstamps>
+    </comp>
+    <comp ref="C6">
+      <value>1u</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C15849</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C15849"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>29f46b94-2e28-5604-bbfa-847d986d13d6</tstamps>
+    </comp>
+    <comp ref="C7">
+      <value>10u</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C15850</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C15850"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>85590396-c3c3-5196-b6d4-b21d09132f77</tstamps>
+    </comp>
+    <comp ref="C8">
+      <value>10u</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C15850</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C15850"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4f2fbdee-da7a-5c2d-87f8-d8fe31b938d4</tstamps>
+    </comp>
+    <comp ref="C9">
+      <value>470p</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C1620</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C1620"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0aa24f4e-2b1e-5681-8644-8cfb56889bc5</tstamps>
+    </comp>
+    <comp ref="C10">
+      <value>220n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C21120</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C21120"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e9e6500b-e4c4-5b21-8553-674aa5e68719</tstamps>
+    </comp>
+    <comp ref="C11">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d2750158-aa0e-5c51-a97c-3ecce093c4e8</tstamps>
+    </comp>
+    <comp ref="C12">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>877294b0-72a3-5ee5-8133-4801658710d2</tstamps>
+    </comp>
+    <comp ref="C13">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0f24ed7b-f1f6-576e-9784-f1d221c1df8e</tstamps>
+    </comp>
+    <comp ref="C14">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8f462027-4a53-5572-864d-69e02b3b8128</tstamps>
+    </comp>
+    <comp ref="C15">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a6188c13-7b17-5869-a6fe-151e6735f6a7</tstamps>
+    </comp>
+    <comp ref="D1">
+      <value>red ON</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C2286</field>
+        <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC" value="C2286"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3b63655e-520d-54ec-a220-bc5f8fcd03a0</tstamps>
+    </comp>
+    <comp ref="D2">
+      <value>yellow &gt;20%</value>
+      <footprint>LED_SMD:LED_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C2296</field>
+        <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC" value="C2296"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7b0d1639-4d3f-5b55-81a5-9373340d51da</tstamps>
+    </comp>
+    <comp ref="D3">
+      <value>green &gt;50%</value>
+      <footprint>LED_SMD:LED_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C2297</field>
+        <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC" value="C2297"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>07dc64da-0c54-5f85-af92-e28caecf3902</tstamps>
+    </comp>
+    <comp ref="D4">
+      <value>green &gt;80%</value>
+      <footprint>LED_SMD:LED_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C2297</field>
+        <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC" value="C2297"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3b459ad9-44b2-5020-b793-ff55321a01e8</tstamps>
+    </comp>
+    <comp ref="D5">
+      <value>SS14</value>
+      <footprint>Diode_SMD:D_SMA</footprint>
+      <fields>
+        <field name="LCSC">C2480</field>
+        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="D_Schottky" description=""/>
+      <property name="LCSC" value="C2480"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>bc02c695-ea99-51bc-9827-63644836449c</tstamps>
+    </comp>
+    <comp ref="D6">
+      <value>SS14</value>
+      <footprint>Diode_SMD:D_SMA</footprint>
+      <fields>
+        <field name="LCSC">C2480</field>
+        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="D_Schottky" description=""/>
+      <property name="LCSC" value="C2480"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4b05986b-4c9e-5538-ac01-b077e8cf0f22</tstamps>
+    </comp>
+    <comp ref="D7">
+      <value>SS34</value>
+      <footprint>Diode_SMD:D_SMA</footprint>
+      <fields>
+        <field name="LCSC">C8678</field>
+        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="D_Schottky" description=""/>
+      <property name="LCSC" value="C8678"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5777eabf-c1ed-5f0b-8101-bb73e8cb86a9</tstamps>
+    </comp>
+    <comp ref="D8">
+      <value>SS34</value>
+      <footprint>Diode_SMD:D_SMA</footprint>
+      <fields>
+        <field name="LCSC">C8678</field>
+        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="D_Schottky" description=""/>
+      <property name="LCSC" value="C8678"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e401c5a9-2017-5830-a2e5-f71b974a1306</tstamps>
+    </comp>
+    <comp ref="D9">
+      <value>red CHRG</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C2286</field>
+        <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC" value="C2286"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3dccbaba-ce4d-57c0-a395-6fe9012f6407</tstamps>
+    </comp>
+    <comp ref="D10">
+      <value>green DONE</value>
+      <footprint>LED_SMD:LED_0805_2012Metric</footprint>
+      <fields>
+        <field name="LCSC">C2297</field>
+        <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC" value="C2297"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4fee30d4-f15f-5d4a-b322-3ba9cfed334c</tstamps>
+    </comp>
+    <comp ref="F1">
+      <value>100mA PTC</value>
+      <footprint>Fuse:Fuse_1812_4532Metric</footprint>
+      <fields>
+        <field name="LCSC">C12430</field>
+        <field name="Footprint">Fuse:Fuse_1812_4532Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Polyfuse" description=""/>
+      <property name="LCSC" value="C12430"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f6a62acf-af21-5abe-bfe1-70df5470caeb</tstamps>
+    </comp>
+    <comp ref="H1">
+      <value>M3</value>
+      <footprint>MountingHole:MountingHole_3.2mm_M3</footprint>
+      <fields>
+        <field name="Footprint">MountingHole:MountingHole_3.2mm_M3</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="MountingHole" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c9c68164-1388-5682-b5c5-fb867d258574</tstamps>
+    </comp>
+    <comp ref="H2">
+      <value>M3</value>
+      <footprint>MountingHole:MountingHole_3.2mm_M3</footprint>
+      <fields>
+        <field name="Footprint">MountingHole:MountingHole_3.2mm_M3</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="MountingHole" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4c8413dd-0ea4-5290-b49c-141e55484185</tstamps>
+    </comp>
+    <comp ref="H3">
+      <value>M3</value>
+      <footprint>MountingHole:MountingHole_3.2mm_M3</footprint>
+      <fields>
+        <field name="Footprint">MountingHole:MountingHole_3.2mm_M3</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="MountingHole" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fdabfd5e-da64-5e09-b206-846aa196d0f6</tstamps>
+    </comp>
+    <comp ref="H4">
+      <value>M3</value>
+      <footprint>MountingHole:MountingHole_3.2mm_M3</footprint>
+      <fields>
+        <field name="Footprint">MountingHole:MountingHole_3.2mm_M3</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="MountingHole" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>01bb1544-836b-59d9-9307-c488d435c9d9</tstamps>
+    </comp>
+    <comp ref="J1">
+      <value>USB-C PD 20V in</value>
+      <footprint>Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12</footprint>
+      <fields>
+        <field name="LCSC">C165948</field>
+        <field name="Footprint">Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="USB_C_16P" description=""/>
+      <property name="LCSC" value="C165948"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>98165b0d-5e52-52cc-980f-a4a1961b5c1c</tstamps>
+    </comp>
+    <comp ref="J3">
+      <value>OUT +V/0V/-V + link</value>
+      <footprint>Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</footprint>
+      <fields>
+        <field name="LCSC">C131334</field>
+        <field name="Footprint">Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Conn_01x04" description=""/>
+      <property name="LCSC" value="C131334"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9d588e73-3515-59e3-bb15-1d1660509306</tstamps>
+    </comp>
+    <comp ref="J4">
+      <value>LINK from lower pack</value>
+      <footprint>Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</footprint>
+      <fields>
+        <field name="LCSC">C131334</field>
+        <field name="Footprint">Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Conn_01x04" description=""/>
+      <property name="LCSC" value="C131334"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>cc0af83e-bf99-5899-89f5-a1e513e0d498</tstamps>
+    </comp>
+    <comp ref="L1">
+      <value>22uH 3A</value>
+      <footprint>Inductor_SMD:L_Sunlord_MWSA0603S</footprint>
+      <fields>
+        <field name="LCSC">C408453</field>
+        <field name="Footprint">Inductor_SMD:L_Sunlord_MWSA0603S</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="L" description=""/>
+      <property name="LCSC" value="C408453"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>edf659d3-0d4d-5f3b-9b5c-2dc0b30181f0</tstamps>
+    </comp>
+    <comp ref="Q1">
+      <value>AO3401A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C15127</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
+      <property name="LCSC" value="C15127"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f7aad3c4-ca55-50d0-947b-d2eafe512a29</tstamps>
+    </comp>
+    <comp ref="Q2">
+      <value>AO3401A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C15127</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
+      <property name="LCSC" value="C15127"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a2867447-cf94-5a78-b454-ad5361855d66</tstamps>
+    </comp>
+    <comp ref="Q3">
+      <value>AO3400A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C20917</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC" value="C20917"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7fa1323e-b861-5377-ba58-ea29ec9af485</tstamps>
+    </comp>
+    <comp ref="Q4">
+      <value>AO3401A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C15127</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
+      <property name="LCSC" value="C15127"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6fdde2cd-7f0f-5a5f-8425-856a39352682</tstamps>
+    </comp>
+    <comp ref="Q5">
+      <value>AO3400A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C20917</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC" value="C20917"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>384256d2-5465-5558-bb1e-ee8adf448702</tstamps>
+    </comp>
+    <comp ref="Q6">
+      <value>AO3401A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C15127</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
+      <property name="LCSC" value="C15127"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0981cd0d-6d71-54e5-bbe0-1310795e7cb0</tstamps>
+    </comp>
+    <comp ref="Q7">
+      <value>AO3400A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C20917</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC" value="C20917"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b6f0d57e-ee82-5f23-b74c-9bd3c0d52a43</tstamps>
+    </comp>
+    <comp ref="Q8">
+      <value>AO3400A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C20917</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC" value="C20917"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>ce157d81-8100-5cd9-a565-3134af6a6b00</tstamps>
+    </comp>
+    <comp ref="Q9">
+      <value>AO3400A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C20917</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC" value="C20917"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>17e5b562-91a8-581a-b280-cc12f9d925a3</tstamps>
+    </comp>
+    <comp ref="Q10">
+      <value>AO3400A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C20917</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC" value="C20917"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9f6f2f90-f956-5f01-9750-d64ee15bfaf6</tstamps>
+    </comp>
+    <comp ref="R1">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4a374bd9-2db6-530c-8e42-2ad832b02166</tstamps>
+    </comp>
+    <comp ref="R2">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e6110f0b-6267-55dc-80a2-5071061a7c0d</tstamps>
+    </comp>
+    <comp ref="R3">
+      <value>6.8k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C23212</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C23212"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f9cb4b70-3b2d-5846-adff-30feefbb402b</tstamps>
+    </comp>
+    <comp ref="R4">
+      <value>6.8k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C23212</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C23212"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4e6ccc92-caf5-5ff5-83f2-21b08ed3778e</tstamps>
+    </comp>
+    <comp ref="R5">
+      <value>2k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22975</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22975"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>525768d6-c3c1-575f-b6c3-a8ced5620746</tstamps>
+    </comp>
+    <comp ref="R6">
+      <value>2k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22975</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22975"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0eeecb67-5a26-5247-b7bf-7c7f811bb477</tstamps>
+    </comp>
+    <comp ref="R7">
+      <value>6.2k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C4260</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C4260"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c06e70ba-8f3a-5089-9f1c-439caa86ff8d</tstamps>
+    </comp>
+    <comp ref="R8">
+      <value>30k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22984</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22984"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5968246d-ece9-5e23-8b93-da7456f68900</tstamps>
+    </comp>
+    <comp ref="R9">
+      <value>68k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C23231</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C23231"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>1ca28ac2-121d-5166-b224-c62f2aa60db3</tstamps>
+    </comp>
+    <comp ref="R10">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25804</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25804"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2f1d5928-3029-51bb-bfdb-8e3d855ca5e8</tstamps>
+    </comp>
+    <comp ref="R11">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22935</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22935"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5a44ae56-4eb8-5be0-afb9-9f98c2dd02bf</tstamps>
+    </comp>
+    <comp ref="R12">
+      <value>13k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22797</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22797"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>de3d3387-4df7-53c9-bc90-8bfa17bd0fd3</tstamps>
+    </comp>
+    <comp ref="R13">
+      <value>13k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22797</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22797"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4a7097b6-4870-5a35-b7e7-e845ed1d56cd</tstamps>
+    </comp>
+    <comp ref="R14">
+      <value>12k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22790</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22790"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>85b91904-7ca1-55e2-b238-8d606aed17d0</tstamps>
+    </comp>
+    <comp ref="R15">
+      <value>12k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22790</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22790"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>f4cf4662-626c-55bd-8216-1ec950d83e90</tstamps>
+    </comp>
+    <comp ref="R16">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>92fb4780-df2c-5788-a4cc-b191bbe7ee77</tstamps>
+    </comp>
+    <comp ref="R17">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>916105cf-0507-5608-9d4f-a0998fc1ba37</tstamps>
+    </comp>
+    <comp ref="R18">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>06359fcc-4098-5439-ac0e-b1e55ab4c34b</tstamps>
+    </comp>
+    <comp ref="R19">
+      <value>33k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C4216</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C4216"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>33916500-afc5-5e7a-b1af-97bfc4fda859</tstamps>
+    </comp>
+    <comp ref="R20">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2ea9c923-947d-5451-82c6-e1c8998ae798</tstamps>
+    </comp>
+    <comp ref="R21">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>13b2cceb-9dde-5de8-a998-ca0483f81280</tstamps>
+    </comp>
+    <comp ref="R22">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>fa0cee31-73e6-5f01-9815-88f0214c30bc</tstamps>
+    </comp>
+    <comp ref="R23">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e0d6b8c9-0ff9-530d-8338-70ab1fc708b6</tstamps>
+    </comp>
+    <comp ref="R24">
+      <value>120k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C25808</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25808"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>96f43408-ba0e-51f3-a18a-e0f599ccec97</tstamps>
+    </comp>
+    <comp ref="R25">
+      <value>0.1R</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="LCSC">C25334</field>
+        <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25334"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5b6d2b4f-cdc7-5822-bcd0-5fcd25440338</tstamps>
+    </comp>
+    <comp ref="R26">
+      <value>0.1R</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="LCSC">C25334</field>
+        <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C25334"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>feb2b931-576e-578d-82fa-92b43f91b0ba</tstamps>
+    </comp>
+    <comp ref="R27">
+      <value>120</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22787</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22787"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8ca45f59-d9ea-5301-8be6-5247d29a8f42</tstamps>
+    </comp>
+    <comp ref="R28">
+      <value>15k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22809</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22809"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3d89d737-0bea-5af9-8bf4-2f2996daa930</tstamps>
+    </comp>
+    <comp ref="R29">
+      <value>15k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22809</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22809"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9aa45596-26df-5292-9bed-9fa5f4e29850</tstamps>
+    </comp>
+    <comp ref="R30">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22935</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22935"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6fcd1237-bfb0-54cf-b591-b011cfbd3747</tstamps>
+    </comp>
+    <comp ref="R31">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22775</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22775"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>41fc3d8d-9480-5d86-8ee1-9baa861c3100</tstamps>
+    </comp>
+    <comp ref="R32">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22775</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22775"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>6e08639a-bd76-5f7d-a7fa-67ee5bbafb38</tstamps>
+    </comp>
+    <comp ref="R33">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22775</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22775"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>696b5dec-2569-56c9-be59-4ee2262387bb</tstamps>
+    </comp>
+    <comp ref="R34">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C22775</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C22775"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8b3ab851-084e-5d9d-946b-5e094858c087</tstamps>
+    </comp>
+    <comp ref="R35">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="LCSC">C17901</field>
+        <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C17901"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a2b312f3-cf0d-5649-96dc-6f70a46cb0b3</tstamps>
+    </comp>
+    <comp ref="R36">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="LCSC">C17901</field>
+        <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C17901"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>13a44186-4793-5a2e-a962-2dddd51d4ec0</tstamps>
+    </comp>
+    <comp ref="R37">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="LCSC">C17901</field>
+        <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C17901"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>88e6e95b-5f4b-54d6-86cb-f828303210da</tstamps>
+    </comp>
+    <comp ref="R38">
+      <value>100</value>
+      <footprint>Resistor_SMD:R_1206_3216Metric</footprint>
+      <fields>
+        <field name="LCSC">C17901</field>
+        <field name="Footprint">Resistor_SMD:R_1206_3216Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC" value="C17901"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>75832e79-4ba9-5e84-9504-6366b9016d6b</tstamps>
+    </comp>
+    <comp ref="RT1">
+      <value>NTC 10k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC">C13564</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Thermistor" description=""/>
+      <property name="LCSC" value="C13564"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b795291f-e918-5eca-ade7-1ead64dfc421</tstamps>
+    </comp>
+    <comp ref="SW1">
+      <value>MTS-203 RUN/OFF/CHG</value>
+      <footprint>battpack:SW_MTS-203</footprint>
+      <fields>
+        <field name="LCSC">C55160018</field>
+        <field name="Footprint">battpack:SW_MTS-203</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="SW_DPDT_CO" description=""/>
+      <property name="LCSC" value="C55160018"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9f04e3d6-2981-5340-a1c4-5f23cad05c80</tstamps>
+    </comp>
+    <comp ref="U1">
+      <value>LM393DR2G</value>
+      <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
+      <fields>
+        <field name="LCSC">C7955</field>
+        <field name="Footprint">Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LM393" description=""/>
+      <property name="LCSC" value="C7955"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a176d352-28e3-5349-9df8-8d151203b0dd 8f520d21-417b-5184-ba9c-a87b0cba8949 1e47b48a-3205-5883-89ba-4b53cc612ecc</tstamps>
+    </comp>
+    <comp ref="U2">
+      <value>LM393DR2G</value>
+      <footprint>Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</footprint>
+      <fields>
+        <field name="LCSC">C7955</field>
+        <field name="Footprint">Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="LM393" description=""/>
+      <property name="LCSC" value="C7955"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e01832b5-5ad1-5457-bf2e-8a4d3a5d9478 a4f44654-f85e-552b-a688-e0f59551e95b 5f32e821-6866-5119-affb-307529133d15</tstamps>
+    </comp>
+    <comp ref="U3">
+      <value>CJ431</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC">C3113</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="TL431_SOT23" description=""/>
+      <property name="LCSC" value="C3113"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e587e069-1b6e-5a57-b324-7aba343144fd</tstamps>
+    </comp>
+    <comp ref="U4">
+      <value>CH224A</value>
+      <footprint>Package_SO:SSOP-10-1EP_3.9x4.9mm_P1mm_EP2.1x3.3mm</footprint>
+      <fields>
+        <field name="LCSC">C42459160</field>
+        <field name="Footprint">Package_SO:SSOP-10-1EP_3.9x4.9mm_P1mm_EP2.1x3.3mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="CH224A" description=""/>
+      <property name="LCSC" value="C42459160"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a5cb4ed3-fd30-5480-ac55-19defaaadbf2</tstamps>
+    </comp>
+    <comp ref="U5">
+      <value>CN3704</value>
+      <footprint>Package_SO:TSSOP-16_4.4x5mm_P0.65mm</footprint>
+      <fields>
+        <field name="LCSC">C51659</field>
+        <field name="Footprint">Package_SO:TSSOP-16_4.4x5mm_P0.65mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="CN3704" description=""/>
+      <property name="LCSC" value="C51659"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>26144092-801c-5253-93c6-a0cf7218c547</tstamps>
+    </comp>
+    <comp ref="U6">
+      <value>HY2213-BB3A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <fields>
+        <field name="LCSC">C113632</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="HY2213" description=""/>
+      <property name="LCSC" value="C113632"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a02a1ebc-8fb4-57e9-84ab-38c48d70668f</tstamps>
+    </comp>
+    <comp ref="U7">
+      <value>HY2213-BB3A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <fields>
+        <field name="LCSC">C113632</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="HY2213" description=""/>
+      <property name="LCSC" value="C113632"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>765da312-ef9e-5452-b76a-3d9e82740112</tstamps>
+    </comp>
+    <comp ref="U8">
+      <value>HY2213-BB3A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <fields>
+        <field name="LCSC">C113632</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="HY2213" description=""/>
+      <property name="LCSC" value="C113632"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>91951e6f-d040-5b47-ac99-9e15a02d9fe6</tstamps>
+    </comp>
+    <comp ref="U9">
+      <value>HY2213-BB3A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <fields>
+        <field name="LCSC">C113632</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="HY2213" description=""/>
+      <property name="LCSC" value="C113632"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c7aa1770-f230-523e-b46d-8763a63ce742</tstamps>
+    </comp>
+  </components>
+  <libparts>
+    <libpart lib="battpack" part="C">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">C</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="CH224A">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">CH224A</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="VHV" type="power_in"/>
+        <pin num="2" name="CFG2" type="input"/>
+        <pin num="3" name="CFG3" type="bidirectional"/>
+        <pin num="4" name="DP" type="bidirectional"/>
+        <pin num="5" name="DM" type="bidirectional"/>
+        <pin num="6" name="CC2" type="bidirectional"/>
+        <pin num="7" name="CC1" type="bidirectional"/>
+        <pin num="8" name="VBUS" type="input"/>
+        <pin num="9" name="CFG1" type="input"/>
+        <pin num="10" name="PG" type="open_collector"/>
+        <pin num="11" name="GND" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="CN3704">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">CN3704</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="VG" type="passive"/>
+        <pin num="2" name="PGND" type="power_in"/>
+        <pin num="3" name="GND" type="power_in"/>
+        <pin num="4" name="CHRG" type="open_collector"/>
+        <pin num="5" name="DONE" type="open_collector"/>
+        <pin num="6" name="TEMP" type="input"/>
+        <pin num="7" name="EOC" type="input"/>
+        <pin num="8" name="COM1" type="passive"/>
+        <pin num="9" name="COM2" type="passive"/>
+        <pin num="10" name="test" type="input"/>
+        <pin num="11" name="COM3" type="passive"/>
+        <pin num="12" name="NC" type="no_connect"/>
+        <pin num="13" name="CSP" type="input"/>
+        <pin num="14" name="BAT" type="input"/>
+        <pin num="15" name="VCC" type="power_in"/>
+        <pin num="16" name="DRV" type="output"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="CP">
+      <fields>
+        <field name="Reference">C</field>
+        <field name="Value">CP</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="+" type="passive"/>
+        <pin num="2" name="-" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="Clip18650">
+      <fields>
+        <field name="Reference">BC</field>
+        <field name="Value">Clip18650</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="Conn_01x04">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x04</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
+        <pin num="3" name="Pin_3" type="passive"/>
+        <pin num="4" name="Pin_4" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="D_Schottky">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D_Schottky</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="HY2213">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">HY2213</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="NC" type="no_connect"/>
+        <pin num="2" name="VDD" type="passive"/>
+        <pin num="3" name="VSS" type="passive"/>
+        <pin num="4" name="NC" type="no_connect"/>
+        <pin num="5" name="NC" type="no_connect"/>
+        <pin num="6" name="OUT" type="output"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="L">
+      <fields>
+        <field name="Reference">L</field>
+        <field name="Value">L</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="LED">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">LED</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="LM393">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">LM393</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="open_collector"/>
+        <pin num="2" name="-" type="input"/>
+        <pin num="3" name="+" type="input"/>
+        <pin num="4" name="V-" type="power_in"/>
+        <pin num="5" name="+" type="input"/>
+        <pin num="6" name="-" type="input"/>
+        <pin num="7" name="" type="open_collector"/>
+        <pin num="8" name="V+" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="MountingHole">
+      <fields>
+        <field name="Reference">H</field>
+        <field name="Value">MountingHole</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+    </libpart>
+    <libpart lib="battpack" part="Polyfuse">
+      <fields>
+        <field name="Reference">F</field>
+        <field name="Value">Polyfuse</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="Q_NMOS_GSD">
+      <fields>
+        <field name="Reference">Q</field>
+        <field name="Value">Q_NMOS_GSD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="G" type="input"/>
+        <pin num="2" name="S" type="passive"/>
+        <pin num="3" name="D" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="Q_PMOS_GSD">
+      <fields>
+        <field name="Reference">Q</field>
+        <field name="Value">Q_PMOS_GSD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="G" type="input"/>
+        <pin num="2" name="S" type="passive"/>
+        <pin num="3" name="D" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="R">
+      <fields>
+        <field name="Reference">R</field>
+        <field name="Value">R</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="SW_DPDT_CO">
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_DPDT_CO</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="A1" type="passive"/>
+        <pin num="2" name="C1" type="passive"/>
+        <pin num="3" name="B1" type="passive"/>
+        <pin num="4" name="A2" type="passive"/>
+        <pin num="5" name="C2" type="passive"/>
+        <pin num="6" name="B2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="TL431_SOT23">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">TL431_SOT23</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="REF" type="input"/>
+        <pin num="2" name="K" type="passive"/>
+        <pin num="3" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="Thermistor">
+      <fields>
+        <field name="Reference">RT</field>
+        <field name="Value">Thermistor</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
+        <pin num="2" name="" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="USB_C_16P">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">USB_C_16P</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="A1" name="GND" type="passive"/>
+        <pin num="A4" name="VBUS" type="passive"/>
+        <pin num="A5" name="CC1" type="passive"/>
+        <pin num="A6" name="D+" type="passive"/>
+        <pin num="A7" name="D-" type="passive"/>
+        <pin num="A8" name="SBU1" type="passive"/>
+        <pin num="A9" name="VBUS" type="passive"/>
+        <pin num="A12" name="GND" type="passive"/>
+        <pin num="B1" name="GND" type="passive"/>
+        <pin num="B4" name="VBUS" type="passive"/>
+        <pin num="B5" name="CC2" type="passive"/>
+        <pin num="B6" name="D+" type="passive"/>
+        <pin num="B7" name="D-" type="passive"/>
+        <pin num="B8" name="SBU2" type="passive"/>
+        <pin num="B9" name="VBUS" type="passive"/>
+        <pin num="B12" name="GND" type="passive"/>
+        <pin num="S1" name="SH" type="passive"/>
+      </pins>
+    </libpart>
+  </libparts>
+  <libraries>
+    <library logical="battpack">
+      <uri>/home/claude-agent/Code/LaserDriver/LaserHAT/BatteryPack/battpack.kicad_sym</uri>
+    </library>
+  </libraries>
+  <nets>
+    <net code="1" name="+BAT" class="Default">
+      <node ref="BC8" pin="1" pintype="passive"/>
+      <node ref="C7" pin="1" pintype="passive"/>
+      <node ref="C8" pin="1" pintype="passive"/>
+      <node ref="Q4" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R20" pin="1" pintype="passive"/>
+      <node ref="R26" pin="2" pintype="passive"/>
+      <node ref="R34" pin="1" pintype="passive"/>
+      <node ref="R38" pin="1" pintype="passive"/>
+      <node ref="SW1" pin="2" pinfunction="C1" pintype="passive"/>
+      <node ref="U5" pin="14" pinfunction="BAT" pintype="input"/>
+    </net>
+    <net code="2" name="+CHG" class="Default">
+      <node ref="D6" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R22" pin="1" pintype="passive"/>
+      <node ref="SW1" pin="3" pinfunction="B1" pintype="passive"/>
+    </net>
+    <net code="3" name="+G" class="Default">
+      <node ref="C1" pin="1" pintype="passive"/>
+      <node ref="C2" pin="1" pintype="passive"/>
+      <node ref="D5" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="D6" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="R13" pin="1" pintype="passive"/>
+      <node ref="R14" pin="1" pintype="passive"/>
+      <node ref="R15" pin="1" pintype="passive"/>
+      <node ref="R3" pin="1" pintype="passive"/>
+      <node ref="R9" pin="1" pintype="passive"/>
+      <node ref="U1" pin="8" pinfunction="V+" pintype="power_in"/>
+      <node ref="U2" pin="8" pinfunction="V+" pintype="power_in"/>
+    </net>
+    <net code="4" name="+OUT" class="Default">
+      <node ref="J3" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Q1" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R11" pin="1" pintype="passive"/>
+      <node ref="R12" pin="1" pintype="passive"/>
+      <node ref="R17" pin="2" pintype="passive"/>
+    </net>
+    <net code="5" name="+RUN" class="Default">
+      <node ref="F1" pin="1" pintype="passive"/>
+      <node ref="J4" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="Q4" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="SW1" pin="1" pinfunction="A1" pintype="passive"/>
+    </net>
+    <net code="6" name="+SW" class="Default">
+      <node ref="D5" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="F1" pin="2" pintype="passive"/>
+      <node ref="Q1" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R1" pin="1" pintype="passive"/>
+    </net>
+    <net code="7" name="/C1" class="Default">
+      <node ref="BC2" pin="1" pintype="passive"/>
+      <node ref="BC3" pin="1" pintype="passive"/>
+      <node ref="C13" pin="2" pintype="passive"/>
+      <node ref="Q8" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R31" pin="1" pintype="passive"/>
+      <node ref="R35" pin="1" pintype="passive"/>
+      <node ref="U7" pin="3" pinfunction="VSS" pintype="passive"/>
+    </net>
+    <net code="8" name="/C2" class="Default">
+      <node ref="BC4" pin="1" pintype="passive"/>
+      <node ref="BC5" pin="1" pintype="passive"/>
+      <node ref="C14" pin="2" pintype="passive"/>
+      <node ref="Q9" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R32" pin="1" pintype="passive"/>
+      <node ref="R36" pin="1" pintype="passive"/>
+      <node ref="U8" pin="3" pinfunction="VSS" pintype="passive"/>
+    </net>
+    <net code="9" name="/C3" class="Default">
+      <node ref="BC6" pin="1" pintype="passive"/>
+      <node ref="BC7" pin="1" pintype="passive"/>
+      <node ref="C15" pin="2" pintype="passive"/>
+      <node ref="Q10" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R33" pin="1" pintype="passive"/>
+      <node ref="R37" pin="1" pintype="passive"/>
+      <node ref="U9" pin="3" pinfunction="VSS" pintype="passive"/>
+    </net>
+    <net code="10" name="/CHRG" class="Default">
+      <node ref="D9" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="U5" pin="4" pinfunction="CHRG" pintype="open_collector"/>
+    </net>
+    <net code="11" name="/CSP" class="Default">
+      <node ref="L1" pin="2" pintype="passive"/>
+      <node ref="R25" pin="1" pintype="passive"/>
+      <node ref="U5" pin="13" pinfunction="CSP" pintype="input"/>
+    </net>
+    <net code="12" name="/CUT_OC" class="Default">
+      <node ref="R2" pin="2" pintype="passive"/>
+      <node ref="U2" pin="7" pintype="open_collector"/>
+    </net>
+    <net code="13" name="/DONE" class="Default">
+      <node ref="D10" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="U5" pin="5" pinfunction="DONE" pintype="open_collector"/>
+    </net>
+    <net code="14" name="/EN_G" class="Default">
+      <node ref="Q3" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="Q5" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R18" pin="2" pintype="passive"/>
+      <node ref="R19" pin="1" pintype="passive"/>
+    </net>
+    <net code="15" name="/LINK_N" class="Default">
+      <node ref="J3" pin="3" pinfunction="Pin_3" pintype="passive"/>
+      <node ref="J4" pin="2" pinfunction="Pin_2" pintype="passive"/>
+    </net>
+    <net code="16" name="/OUT_GND" class="Default">
+      <node ref="J3" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="SW1" pin="4" pinfunction="A2" pintype="passive"/>
+    </net>
+    <net code="17" name="/Q1_G" class="Default">
+      <node ref="Q1" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R1" pin="2" pintype="passive"/>
+      <node ref="R2" pin="1" pintype="passive"/>
+    </net>
+    <net code="18" name="/Q4_GD" class="Default">
+      <node ref="Q3" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R21" pin="2" pintype="passive"/>
+    </net>
+    <net code="19" name="/STACK_IN" class="Default">
+      <node ref="J3" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="Q2" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R16" pin="1" pintype="passive"/>
+    </net>
+    <net code="20" name="/SW" class="Default">
+      <node ref="D7" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="D8" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="L1" pin="1" pintype="passive"/>
+    </net>
+    <net code="21" name="/TH20" class="Default">
+      <node ref="R6" pin="2" pintype="passive"/>
+      <node ref="R7" pin="1" pintype="passive"/>
+      <node ref="U2" pin="3" pinfunction="+" pintype="input"/>
+    </net>
+    <net code="22" name="/TH50" class="Default">
+      <node ref="R5" pin="2" pintype="passive"/>
+      <node ref="R6" pin="1" pintype="passive"/>
+      <node ref="U1" pin="5" pinfunction="+" pintype="input"/>
+    </net>
+    <net code="23" name="/TH80" class="Default">
+      <node ref="R4" pin="2" pintype="passive"/>
+      <node ref="R5" pin="1" pintype="passive"/>
+      <node ref="U1" pin="3" pinfunction="+" pintype="input"/>
+    </net>
+    <net code="24" name="/THCUT" class="Default">
+      <node ref="R7" pin="2" pintype="passive"/>
+      <node ref="R8" pin="1" pintype="passive"/>
+      <node ref="U2" pin="5" pinfunction="+" pintype="input"/>
+    </net>
+    <net code="25" name="/VREF" class="Default">
+      <node ref="R3" pin="2" pintype="passive"/>
+      <node ref="R4" pin="1" pintype="passive"/>
+      <node ref="U3" pin="1" pinfunction="REF" pintype="input"/>
+      <node ref="U3" pin="2" pinfunction="K" pintype="passive"/>
+    </net>
+    <net code="26" name="/VS" class="Default">
+      <node ref="R10" pin="1" pintype="passive"/>
+      <node ref="R11" pin="2" pintype="passive"/>
+      <node ref="R9" pin="2" pintype="passive"/>
+      <node ref="U1" pin="2" pinfunction="-" pintype="input"/>
+      <node ref="U1" pin="6" pinfunction="-" pintype="input"/>
+      <node ref="U2" pin="2" pinfunction="-" pintype="input"/>
+      <node ref="U2" pin="6" pinfunction="-" pintype="input"/>
+    </net>
+    <net code="27" name="CGND" class="Default">
+      <node ref="C10" pin="2" pintype="passive"/>
+      <node ref="C11" pin="2" pintype="passive"/>
+      <node ref="C3" pin="2" pintype="passive"/>
+      <node ref="C5" pin="2" pinfunction="-" pintype="passive"/>
+      <node ref="C6" pin="2" pintype="passive"/>
+      <node ref="C7" pin="2" pintype="passive"/>
+      <node ref="C8" pin="2" pintype="passive"/>
+      <node ref="C9" pin="2" pintype="passive"/>
+      <node ref="D8" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="J1" pin="A1" pinfunction="GND" pintype="passive"/>
+      <node ref="J1" pin="A12" pinfunction="GND" pintype="passive"/>
+      <node ref="J1" pin="B1" pinfunction="GND" pintype="passive"/>
+      <node ref="J1" pin="B12" pinfunction="GND" pintype="passive"/>
+      <node ref="J1" pin="S1" pinfunction="SH" pintype="passive"/>
+      <node ref="R24" pin="2" pintype="passive"/>
+      <node ref="R30" pin="1" pintype="passive"/>
+      <node ref="RT1" pin="2" pintype="passive"/>
+      <node ref="SW1" pin="6" pinfunction="B2" pintype="passive"/>
+      <node ref="U4" pin="11" pinfunction="GND" pintype="power_in"/>
+      <node ref="U5" pin="10" pinfunction="test" pintype="input"/>
+      <node ref="U5" pin="2" pinfunction="PGND" pintype="power_in"/>
+      <node ref="U5" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U5" pin="7" pinfunction="EOC" pintype="input"/>
+    </net>
+    <net code="28" name="GND" class="Default">
+      <node ref="BC1" pin="1" pintype="passive"/>
+      <node ref="C1" pin="2" pintype="passive"/>
+      <node ref="C12" pin="2" pintype="passive"/>
+      <node ref="C2" pin="2" pintype="passive"/>
+      <node ref="D1" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="J4" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="Q3" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="Q5" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="Q7" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R10" pin="2" pintype="passive"/>
+      <node ref="R19" pin="2" pintype="passive"/>
+      <node ref="R23" pin="2" pintype="passive"/>
+      <node ref="R30" pin="2" pintype="passive"/>
+      <node ref="R8" pin="2" pintype="passive"/>
+      <node ref="SW1" pin="5" pinfunction="C2" pintype="passive"/>
+      <node ref="U1" pin="4" pinfunction="V-" pintype="power_in"/>
+      <node ref="U2" pin="4" pinfunction="V-" pintype="power_in"/>
+      <node ref="U3" pin="3" pinfunction="A" pintype="passive"/>
+      <node ref="U6" pin="3" pinfunction="VSS" pintype="passive"/>
+    </net>
+    <net code="29" name="Net-(C10-Pad1)" class="Default">
+      <node ref="C10" pin="1" pintype="passive"/>
+      <node ref="R27" pin="2" pintype="passive"/>
+    </net>
+    <net code="30" name="Net-(D1-A)" class="Default">
+      <node ref="D1" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R12" pin="2" pintype="passive"/>
+    </net>
+    <net code="31" name="Net-(D2-A)" class="Default">
+      <node ref="D2" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R13" pin="2" pintype="passive"/>
+    </net>
+    <net code="32" name="Net-(D2-K)" class="Default">
+      <node ref="D2" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="U2" pin="1" pintype="open_collector"/>
+    </net>
+    <net code="33" name="Net-(D3-A)" class="Default">
+      <node ref="D3" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R14" pin="2" pintype="passive"/>
+    </net>
+    <net code="34" name="Net-(D3-K)" class="Default">
+      <node ref="D3" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="U1" pin="7" pintype="open_collector"/>
+    </net>
+    <net code="35" name="Net-(D4-A)" class="Default">
+      <node ref="D4" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R15" pin="2" pintype="passive"/>
+    </net>
+    <net code="36" name="Net-(D4-K)" class="Default">
+      <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="U1" pin="1" pintype="open_collector"/>
+    </net>
+    <net code="37" name="Net-(D7-A)" class="Default">
+      <node ref="D7" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="Q6" pin="3" pinfunction="D" pintype="passive"/>
+    </net>
+    <net code="38" name="Net-(D9-A)" class="Default">
+      <node ref="D9" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R28" pin="2" pintype="passive"/>
+    </net>
+    <net code="39" name="Net-(D10-A)" class="Default">
+      <node ref="D10" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R29" pin="2" pintype="passive"/>
+    </net>
+    <net code="40" name="Net-(J1-CC1)" class="Default">
+      <node ref="J1" pin="A5" pinfunction="CC1" pintype="passive"/>
+      <node ref="U4" pin="7" pinfunction="CC1" pintype="bidirectional"/>
+    </net>
+    <net code="41" name="Net-(J1-CC2)" class="Default">
+      <node ref="J1" pin="B5" pinfunction="CC2" pintype="passive"/>
+      <node ref="U4" pin="6" pinfunction="CC2" pintype="bidirectional"/>
+    </net>
+    <net code="42" name="Net-(Q2-D)" class="Default">
+      <node ref="Q2" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R18" pin="1" pintype="passive"/>
+    </net>
+    <net code="43" name="Net-(Q2-G)" class="Default">
+      <node ref="Q2" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R16" pin="2" pintype="passive"/>
+      <node ref="R17" pin="1" pintype="passive"/>
+    </net>
+    <net code="44" name="Net-(Q4-G)" class="Default">
+      <node ref="Q4" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R20" pin="2" pintype="passive"/>
+      <node ref="R21" pin="1" pintype="passive"/>
+    </net>
+    <net code="45" name="Net-(Q5-G)" class="Default">
+      <node ref="Q5" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R22" pin="2" pintype="passive"/>
+      <node ref="R23" pin="1" pintype="passive"/>
+    </net>
+    <net code="46" name="Net-(Q6-G)" class="Default">
+      <node ref="Q6" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="U5" pin="16" pinfunction="DRV" pintype="output"/>
+    </net>
+    <net code="47" name="Net-(Q7-D)" class="Default">
+      <node ref="Q7" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R35" pin="2" pintype="passive"/>
+    </net>
+    <net code="48" name="Net-(Q7-G)" class="Default">
+      <node ref="Q7" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="U6" pin="6" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="49" name="Net-(Q8-D)" class="Default">
+      <node ref="Q8" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R36" pin="2" pintype="passive"/>
+    </net>
+    <net code="50" name="Net-(Q8-G)" class="Default">
+      <node ref="Q8" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="U7" pin="6" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="51" name="Net-(Q9-D)" class="Default">
+      <node ref="Q9" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R37" pin="2" pintype="passive"/>
+    </net>
+    <net code="52" name="Net-(Q9-G)" class="Default">
+      <node ref="Q9" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="U8" pin="6" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="53" name="Net-(Q10-D)" class="Default">
+      <node ref="Q10" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R38" pin="2" pintype="passive"/>
+    </net>
+    <net code="54" name="Net-(Q10-G)" class="Default">
+      <node ref="Q10" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="U9" pin="6" pinfunction="OUT" pintype="output"/>
+    </net>
+    <net code="55" name="Net-(R25-Pad2)" class="Default">
+      <node ref="R25" pin="2" pintype="passive"/>
+      <node ref="R26" pin="1" pintype="passive"/>
+    </net>
+    <net code="56" name="Net-(U4-CFG1)" class="Default">
+      <node ref="R24" pin="1" pintype="passive"/>
+      <node ref="U4" pin="9" pinfunction="CFG1" pintype="input"/>
+    </net>
+    <net code="57" name="Net-(U4-DM)" class="Default">
+      <node ref="J1" pin="A7" pinfunction="D-" pintype="passive"/>
+      <node ref="J1" pin="B7" pinfunction="D-" pintype="passive"/>
+      <node ref="U4" pin="5" pinfunction="DM" pintype="bidirectional"/>
+    </net>
+    <net code="58" name="Net-(U4-DP)" class="Default">
+      <node ref="J1" pin="A6" pinfunction="D+" pintype="passive"/>
+      <node ref="J1" pin="B6" pinfunction="D+" pintype="passive"/>
+      <node ref="U4" pin="4" pinfunction="DP" pintype="bidirectional"/>
+    </net>
+    <net code="59" name="Net-(U5-COM1)" class="Default">
+      <node ref="C9" pin="1" pintype="passive"/>
+      <node ref="U5" pin="8" pinfunction="COM1" pintype="passive"/>
+    </net>
+    <net code="60" name="Net-(U5-COM2)" class="Default">
+      <node ref="R27" pin="1" pintype="passive"/>
+      <node ref="U5" pin="9" pinfunction="COM2" pintype="passive"/>
+    </net>
+    <net code="61" name="Net-(U5-COM3)" class="Default">
+      <node ref="C11" pin="1" pintype="passive"/>
+      <node ref="U5" pin="11" pinfunction="COM3" pintype="passive"/>
+    </net>
+    <net code="62" name="Net-(U5-TEMP)" class="Default">
+      <node ref="RT1" pin="1" pintype="passive"/>
+      <node ref="U5" pin="6" pinfunction="TEMP" pintype="input"/>
+    </net>
+    <net code="63" name="Net-(U5-VG)" class="Default">
+      <node ref="C4" pin="1" pintype="passive"/>
+      <node ref="U5" pin="1" pinfunction="VG" pintype="passive"/>
+    </net>
+    <net code="64" name="Net-(U6-VDD)" class="Default">
+      <node ref="C12" pin="1" pintype="passive"/>
+      <node ref="R31" pin="2" pintype="passive"/>
+      <node ref="U6" pin="2" pinfunction="VDD" pintype="passive"/>
+    </net>
+    <net code="65" name="Net-(U7-VDD)" class="Default">
+      <node ref="C13" pin="1" pintype="passive"/>
+      <node ref="R32" pin="2" pintype="passive"/>
+      <node ref="U7" pin="2" pinfunction="VDD" pintype="passive"/>
+    </net>
+    <net code="66" name="Net-(U8-VDD)" class="Default">
+      <node ref="C14" pin="1" pintype="passive"/>
+      <node ref="R33" pin="2" pintype="passive"/>
+      <node ref="U8" pin="2" pinfunction="VDD" pintype="passive"/>
+    </net>
+    <net code="67" name="Net-(U9-VDD)" class="Default">
+      <node ref="C15" pin="1" pintype="passive"/>
+      <node ref="R34" pin="2" pintype="passive"/>
+      <node ref="U9" pin="2" pinfunction="VDD" pintype="passive"/>
+    </net>
+    <net code="68" name="VBUS" class="Default">
+      <node ref="C3" pin="1" pintype="passive"/>
+      <node ref="C4" pin="2" pintype="passive"/>
+      <node ref="C5" pin="1" pinfunction="+" pintype="passive"/>
+      <node ref="C6" pin="1" pintype="passive"/>
+      <node ref="J1" pin="A4" pinfunction="VBUS" pintype="passive"/>
+      <node ref="J1" pin="A9" pinfunction="VBUS" pintype="passive"/>
+      <node ref="J1" pin="B4" pinfunction="VBUS" pintype="passive"/>
+      <node ref="J1" pin="B9" pinfunction="VBUS" pintype="passive"/>
+      <node ref="Q6" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R28" pin="1" pintype="passive"/>
+      <node ref="R29" pin="1" pintype="passive"/>
+      <node ref="U4" pin="1" pinfunction="VHV" pintype="power_in"/>
+      <node ref="U4" pin="8" pinfunction="VBUS" pintype="input"/>
+      <node ref="U5" pin="15" pinfunction="VCC" pintype="power_in"/>
+    </net>
+    <net code="69" name="unconnected-(J1-SBU1-PadA8)" class="Default">
+      <node ref="J1" pin="A8" pinfunction="SBU1" pintype="passive+no_connect"/>
+    </net>
+    <net code="70" name="unconnected-(J1-SBU2-PadB8)" class="Default">
+      <node ref="J1" pin="B8" pinfunction="SBU2" pintype="passive+no_connect"/>
+    </net>
+    <net code="71" name="unconnected-(J4-Pin_3-Pad3)" class="Default">
+      <node ref="J4" pin="3" pinfunction="Pin_3" pintype="passive+no_connect"/>
+    </net>
+    <net code="72" name="unconnected-(U4-CFG2-Pad2)" class="Default">
+      <node ref="U4" pin="2" pinfunction="CFG2" pintype="input+no_connect"/>
+    </net>
+    <net code="73" name="unconnected-(U4-CFG3-Pad3)" class="Default">
+      <node ref="U4" pin="3" pinfunction="CFG3" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="74" name="unconnected-(U4-PG-Pad10)" class="Default">
+      <node ref="U4" pin="10" pinfunction="PG" pintype="open_collector+no_connect"/>
+    </net>
+    <net code="75" name="unconnected-(U5-NC-Pad12)" class="Default">
+      <node ref="U5" pin="12" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="76" name="unconnected-(U6-NC-Pad1)" class="Default">
+      <node ref="U6" pin="1" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="77" name="unconnected-(U6-NC-Pad4)" class="Default">
+      <node ref="U6" pin="4" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="78" name="unconnected-(U6-NC-Pad5)" class="Default">
+      <node ref="U6" pin="5" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="79" name="unconnected-(U7-NC-Pad1)" class="Default">
+      <node ref="U7" pin="1" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="80" name="unconnected-(U7-NC-Pad4)" class="Default">
+      <node ref="U7" pin="4" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="81" name="unconnected-(U7-NC-Pad5)" class="Default">
+      <node ref="U7" pin="5" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="82" name="unconnected-(U8-NC-Pad1)" class="Default">
+      <node ref="U8" pin="1" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="83" name="unconnected-(U8-NC-Pad4)" class="Default">
+      <node ref="U8" pin="4" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="84" name="unconnected-(U8-NC-Pad5)" class="Default">
+      <node ref="U8" pin="5" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="85" name="unconnected-(U9-NC-Pad1)" class="Default">
+      <node ref="U9" pin="1" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="86" name="unconnected-(U9-NC-Pad4)" class="Default">
+      <node ref="U9" pin="4" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="87" name="unconnected-(U9-NC-Pad5)" class="Default">
+      <node ref="U9" pin="5" pinfunction="NC" pintype="no_connect"/>
+    </net>
+  </nets>
+</export>
