@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Placement of BatteryPack.kicad_pcb (rev C, 100 x 100 mm, 2026-10-27): the two hobby 4S packs sit under the board (long
-axis along y, 42 mm pitch, two 20 mm straps through the slots), their balance leads come round the front edge (y = 100) to
-the right-angle XH sockets J5 (pack A, left) and J6 (pack B, right).  Top side: pack A's gauge top left, its balancers
+axis along y, 42 mm pitch, two 20 mm straps through the slots), their XT60 discharge plugs and balance leads come round the front edge
+(y = 100) to the XT60 sockets J7 / J8 and the right-angle XH sockets J5 / J6 (pack A left, pack B right).  Top side: pack A's gauge top left, its balancers
 mid left, its -V chain bottom left; the charger top right with the USB-C on the right edge; pack B's balancers mid right,
 its gauge and +V chain bottom right; the toggle bottom centre with the output header J3 beside it.
 Idempotent: re-running moves every footprint back to the table and redraws the outline, slots and board-level silk;
@@ -26,11 +26,13 @@ def at(ref, x, y, rot=0):
 
 # ---- mounting holes
 at("H1", 4, 4); at("H2", 96, 4); at("H3", 4, 96); at("H4", 96, 96)
-# ---- pack sockets (right-angle XH, opening toward the front edge), output header, toggle, link, pull-down
-at("J5", 11, 91.5); at("J6", 76, 91.5)
-at("J3", 33, 94)
-at("SW1", 52, 84)
-at("F3", 40, 80, 90); at("R30", 40, 86)
+# ---- pack sockets along the front edge: XH balance (J5 / J6, opening toward the edge) outboard, XT60 (J7 / J8, face flush
+# with the edge, "-" pin outboard) inboard; toggle and output header between the XT60s; link fuse and pull-down above
+at("J5", 10.5, 91.5); at("J6", 79.5, 91.5)
+at("J7", 36, 83.1, 180); at("J8", 69, 83.1, 180)
+at("J3", 45.5, 94.5)
+at("SW1", 49, 84)
+at("F3", 40, 70, 90); at("R30", 40, 76)
 
 
 def balancer(u, q, rv, c, rb, x0, y0):
@@ -69,19 +71,19 @@ at("C9", 76, 20); at("C10", 79.5, 20); at("C11", 73, 20); at("R27", 76, 17.5)
 at("RT1", 58, 30)
 at("R28", 97.5, 22, 90); at("D9", 97.5, 25.5, 90); at("R29", 97.5, 30, 90); at("D10", 97.5, 34, 90)
 # ---- pack B gauge, lower right: LEDs on the right edge
-for ref, y in (("D14", 66), ("D13", 70), ("D12", 74)):
+for ref, y in (("D14", 66), ("D13", 70), ("D12", 74), ("D11", 78)):
     at(ref, 97.5, y, 90)
 for ref, y in (("R57", 66), ("R56", 70), ("R55", 74)):
     at(ref, 92.5, y)
-at("R54", 43, 90); at("D11", 43, 92.5)                   # +V ON LED beside the output header, on the +OUT run to J3
 at("U16", 63, 64); at("R45", 63, 67)
 for i, ref in enumerate(("R46", "R47", "R48", "R49", "R50")):
-    at(ref, 63, 70 + 2.5 * i)
+    at(ref, 63, 69 + 2.5 * i)
 at("R51", 68, 64); at("R52", 68, 66.5); at("R53", 68, 69)
 at("C20", 70.5, 66, 90); at("U14", 76, 66); at("C21", 70.5, 74, 90); at("U15", 76, 74)
-# ---- pack B +V chain, between the toggle and J6
-at("F1", 63.5, 86, 90); at("Q1", 68, 84); at("R1", 68, 87.5); at("R2", 68, 89.5)
-at("D5", 72, 82, 90); at("D6", 84, 80, 90)
+# ---- pack B +V chain, right of its gauge (x 81-90, y 62-80), above J6
+at("F1", 83, 65, 90); at("Q1", 83, 70); at("R1", 87.5, 64); at("R2", 87.5, 66.5)
+at("R54", 87.5, 69)                                      # ON LED resistor on +OUT; its thin net runs to D11 in the LED column
+at("D5", 83, 77, 90); at("D6", 88, 76, 90)
 
 board = pcbnew.LoadBoard(BOARD)
 # idempotent: a previous run's outline, slots and board-level silk are collected now and removed at the very end
@@ -135,16 +137,16 @@ def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
 
 
 silk("LaserHAT BatteryPack rev C   2 x 4S hobby packs", 50, 2.5, 1.2)
-silk("PACK A  -V", 16, 84.5, 1.0); silk("PACK B  +V", 81, 85, 1.0)
-silk("OUT +V 0V -V", 36, 90.5, 0.9)
+silk("PACK A  -V", 15.5, 85.8, 1.0); silk("PACK B  +V", 84.5, 85.8, 1.0)
+silk("OUT +V 0V -V", 48.5, 98.9, 0.8)
 silk("USB-C PD 20V", 86, 6, 1.0)
 silk("CHRG", 94.8, 25.5, 0.8); silk("DONE", 94.8, 34, 0.8)
 for txt, y in (("80%", 10), ("50%", 14), ("20%", 18)):
     silk(txt, 6.3, y, 0.8); silk(txt, 95.1, y + 56, 0.8)
-silk("ON", 6.3, 22, 0.8); silk("ON", 46.5, 93, 0.8)
-silk("A", 6.3, 25.5, 0.8); silk("B", 95.1, 77.5, 0.8)
+silk("ON", 6.3, 22, 0.8); silk("ON", 95.1, 78, 0.8)
+silk("A", 6.3, 25.5, 0.8); silk("B", 95.1, 81.5, 0.8)
 # bottom: the pack envelopes and names (read from below)
-for (x1, x2), name in zip(PACKS, ("PACK A  (-V side, leads to J5)", "PACK B  (+V side, leads to J6)")):
+for (x1, x2), name in zip(PACKS, ("PACK A  (-V side, plugs to J7 / J5)", "PACK B  (+V side, plugs to J8 / J6)")):
     for (a, b), (c, d) in (((x1, 80), (x1, 10)), ((x1, 10), (x2, 10)), ((x2, 10), (x2, 80))):   # open toward the leads
         seg(a, b, c, d, pcbnew.B_SilkS, 0.15)
     silk(name, (x1 + x2) / 2, 48, 1.2, 90, pcbnew.B_SilkS)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Generates BatteryPack.kicad_sch (rev C: two hobby 4S packs on JST-XH balance leads, one board = +V / 0 V / -V, one USB-C PD
+Generates BatteryPack.kicad_sch (rev C: two hobby 4S packs on XT60 discharge plugs + JST-XH balance leads, one board = +V / 0 V / -V, one USB-C PD
 charger, per-cell balancers, RUN/OFF/CHARGE toggle) from sch_parts.py and sch_symbols.py, same engine as the e-stim
 module.  Then: python tools/netcheck.py and ERC.
     python gen_schematic.py
@@ -44,9 +44,12 @@ def box(x1, y1, x2, y2, title):
 
 
 # =========================================================================== 1. packs + balancers
-def pack(x0, conn, cells, u0, q0, rv0, c0, rb0, title):
+def pack(x0, conn, xt, cells, u0, q0, rv0, c0, rb0, title):
     put(conn, x0 + 6, 20, mirror=True, val_at=(0, 10.16))
     text(title, x0 + 1, 11.5, 1.6, True)
+    put(xt, x0 + 6, 41, mirror=True, ref_at=(0, -3.81), val_at=(0, -6.35))      # XT60 discharge plug: pin 1 = -, pin 2 = +
+    PWR(f"{xt}.1", length=5.08)
+    PWR(f"{xt}.2", length=5.08)
     for i, net in enumerate((cells[0][0],) + tuple(c[1] for c in cells)):
         pin = f"{conn}.{i + 1}"
         if net in ("GND", "0V", "+BAT", "+BATB"):
@@ -75,11 +78,11 @@ def pack(x0, conn, cells, u0, q0, rv0, c0, rb0, title):
         text(f"cell {n + 1}", x + 2, 26)
 
 
-box(6, 8, 208, 46, "1. TWO 4S PACKS ON JST-XH BALANCE LEADS (pin 1 = black = pack negative) AND PER-CELL BALANCERS (HY2213-BB3A, 42 mA above 4.20 V)")
-pack(6, "J5", CELLS_A, 6, 7, 31, 12, 35, "PACK A (-V side): GND .. +BAT")
-pack(108, "J6", CELLS_B, 10, 15, 58, 16, 62, "PACK B (+V side): 0V .. +BATB")
-text("Any 4S LiPo / Li-ion hobby pack with a JST-XH 2.5 mm 5-pin balance plug (XT60 lead unused).  Balancer per cell: HY2213 OUT drives an AO3400A that bleeds the cell", 7, 43)
-text("through 100 R (42 mA, 0.18 W) above 4.200 V, off at 4.19 V; 2.5 uA standing.  With the charger's 16.8 V this is the balance.  Pack B's negative is the 0 V output node.", 7, 45)
+box(6, 8, 208, 48.5, "1. TWO 4S PACKS: XT60 DISCHARGE PLUGS (J7 / J8, run + charge current) AND JST-XH BALANCE LEADS (pin 1 = black = pack negative), PER-CELL BALANCERS (HY2213-BB3A, 42 mA above 4.20 V)")
+pack(6, "J5", "J7", CELLS_A, 6, 7, 31, 12, 35, "PACK A (-V side): GND .. +BAT")
+pack(108, "J6", "J8", CELLS_B, 10, 15, 58, 16, 62, "PACK B (+V side): 0V .. +BATB")
+text("Any 4S LiPo / Li-ion hobby pack with a JST-XH 2.5 mm 5-pin balance plug and an XT60 discharge plug.  Balancer per cell: HY2213 OUT drives an AO3400A that bleeds the cell", 7, 45)
+text("through 100 R (42 mA, 0.18 W) above 4.200 V, off at 4.19 V; 2.5 uA standing.  With the charger's 16.8 V this is the balance.  Pack B's negative is the 0 V output node.", 7, 47)
 
 # =========================================================================== 2. toggle, chains, link
 box(6, 50, 100, 110, "2. RUN / OFF / CHARGE TOGGLE, OUTPUT CHAINS (+V: Q1, -V: Q11), PARALLEL LINK FOR CHARGING")
@@ -218,7 +221,7 @@ put("J3", 170, 104, mirror=True, val_at=(0, 10.16)); text("OUT: +V / 0V / -V / n
 PWR("J3.1"); PWR("J3.2"); NET("J3.3")
 for i, h in enumerate(("H1", "H2", "H3", "H4")):
     put(h, 170 + 6 * i, 126, ref_at=(0, -3.81), val_at=(0, 3.81))
-text("Packs strapped under the board (two 20 mm straps through the slots), leads to J5 / J6 at the front edge.", 159, 139)
+text("Packs strapped under the board (two 20 mm straps through the slots), XT60 plugs to J7 / J8 and balance leads to J5 / J6 at the front edge.", 159, 139)
 text("Toggle RUN powers the module; OFF; CHARGE joins the packs in parallel on the charger and opens", 159, 141)
 text("both outputs.  -V floats whenever pack A is off (OFF, CHARGE, under-voltage), +V whenever pack B", 159, 143)
 text("is: the module's fault comparator reports a missing rail.", 159, 145)

@@ -6,7 +6,8 @@ it, tools/netcheck.py proves the drawn schematic matches, tools/make_bom.py writ
 Rev C: one board, two packs, one charger.  Rev B (commit 6fa6e9d) was one 4S 18650 board, two of them stacked.
   packs     pack A (-V side): J5 = GND, C1, C2, C3, +BAT;  pack B (+V side): J6 = 0V, B1, B2, B3, +BATB.  Any 4S pack
             with a JST-XH 2.5 mm 5-pin balance plug (black = pin 1 = pack negative).  Per-cell HY2213-BB3A balancers
-            (42 mA through 100 R above 4.200 V, release 4.19 V) on both packs; the XT60 lead stays unused.
+            (42 mA through 100 R above 4.200 V, release 4.19 V) on both packs.  The XT60 discharge lead plugs into J7 / J8
+            (board-mount XT60PW-M) and carries the run and charge current; XH pins 1 and 5 parallel it.
   switch    SW1 DPDT centre-off toggle RUN / OFF / CHARGE.
             Pole 1 (common 0V = pack B negative): RUN -> +BAT (the packs in series: 0V = pack A positive = output 0 V);
             CHARGE -> GND (the two negatives joined).  Pole 2 (common +BATB): RUN -> +RUN (pack B's output chain);
@@ -44,6 +45,7 @@ FUSE1812 = "Fuse:Fuse_1812_4532Metric"
 IND = "Inductor_SMD:L_Sunlord_MWSA0603S"
 PH4 = "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"
 XH5 = "Connector_JST:JST_XH_S5B-XH-A-1_1x05_P2.50mm_Horizontal"
+XT60 = "Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal"
 USBC = "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12"
 TOGGLE = "battpack:SW_MTS-203"
 HOLE = "MountingHole:MountingHole_3.2mm_M3"
@@ -58,7 +60,7 @@ L = dict(R100k="C25803", R68k="C23231", R30k="C22984", R15k="C22809", R13k="C227
          AO3401A="C15127", AO3400A="C20917", CJ431="C3113", LM393="C7955", SS14="C2480", SS34="C8678",
          CN3704="C51659", CH224A="C42459160", HY2213="C113632", NTC="C13564",                                      # ext x4
          TOGGLE="C55160018", USBC="C165948", L22u="C408453", PH4="C131334", PTC="C12430", PTC110="C210835",      # ext x6
-         XH5="C163038",                                                                                            # ext
+         XH5="C163038", XT60="C98732",                                                                                            # ext
          LEDR="C2286", LEDY="C2296", LEDG="C2297")
 
 
@@ -88,6 +90,11 @@ def schottky(ref, val, lcsc, k, a):
 
 def ptc(ref, val, lcsc, a, b):
     return dict(ref=ref, sym="Polyfuse", value=val, fp=FUSE1812, lcsc=lcsc, nets={"1": a, "2": b})
+
+
+def xt60(ref, neg, pos):
+    """board-mount XT60PW-M (pad 1 = the footprint's "-" pin, pad 2 = "+"); mates with the pack's XT60 discharge plug"""
+    return dict(ref=ref, sym="Conn_01x02", value="XT60PW-M", fp=XT60, lcsc=L["XT60"], nets={"1": neg, "2": pos})
 
 
 def xh(ref, nets):
@@ -145,6 +152,8 @@ PARTS = [
     # ---------------------------------------------------------------- packs
     xh("J5", ["GND", "C1", "C2", "C3", "+BAT"]),
     xh("J6", ["0V", "B1", "B2", "B3", "+BATB"]),
+    xt60("J7", "GND", "+BAT"),
+    xt60("J8", "0V", "+BATB"),
     # ---------------------------------------------------------------- toggle, link, 0V pull-down
     dict(ref="SW1", sym="SW_DPDT_CO", value="CAX-MTS203M-YB-10.6JL", fp=TOGGLE, lcsc=L["TOGGLE"],
          nets={"2": "0V", "1": "+BAT", "3": "GND", "5": "+BATB", "4": "+RUN", "6": "+CHGB"}),

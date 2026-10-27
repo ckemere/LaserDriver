@@ -22,13 +22,13 @@ codes on the footprints, `tools/make_fab.py` writes `../fab/BatteryPack/` (gerbe
 
 | Block | Parts | Notes |
 |---|---|---|
-| Pack sockets | J5 (pack A, −V side), J6 (pack B, +V side): JST S5B-XH-A-1 right-angle (C163038, ext) | pin 1 = black = pack negative, 2–4 = cell taps, 5 = pack positive; the XT60 power lead stays unused (the XH pins are rated 3 A, the board draws 15 mA and charges at 0.5 A per pack).  J5 = GND, C1, C2, C3, +BAT; J6 = 0V, B1, B2, B3, +BATB |
+| Pack sockets | per pack an XT60 and a JST-XH: J7 / J5 (pack A, −V side), J8 / J6 (pack B, +V side); XT60 = Amass XT60PW-M horizontal (C98732, ext), XH = JST S5B-XH-A-1 right-angle (C163038, ext) | the XT60 discharge plug carries the run and charge current (J7 = GND / +BAT, J8 = 0V / +BATB; the plug is keyed, the footprint silk marks + and −); the balance plug gives the cell taps (XH pin 1 = black = pack negative, 2–4 = taps, 5 = pack positive; pins 1 and 5 parallel the XT60).  J5 = GND, C1, C2, C3, +BAT; J6 = 0V, B1, B2, B3, +BATB.  A pack with an XT30 lead needs an XT30-to-XT60 adapter |
 | Balancers | pack A: U6–U9 HY2213-BB3A (C113632, ext), Q7–Q10 AO3400A, R35–R38 100 R 1206, R31–R34, C12–C15; pack B: U10–U13, Q15–Q18, R62–R65, R58–R61, C16–C19 | 42 mA bleed above 4.200 V, release 4.19 V, 2.5 µA standing, per cell of both packs |
 | Toggle | SW1 MTS-203 DPDT centre-off (C55160018, ext; **JLC stock 192 on 2026-10-27**) | **RUN / OFF / CHARGE**.  Pole 1 (common 0V = pack B's negative): RUN → +BAT (packs in series, 0V = output 0 V); CHARGE → GND (negatives joined).  Pole 2 (common +BATB): RUN → +RUN (pack B's output chain); CHARGE → +CHGB → F3 → +BAT (positives joined).  OFF opens both; R30 1M holds 0V at GND |
 | Link fuse | F3 MF-MSMF110/24X-2 1.1 A PTC (C210835, ext) | in the CHARGE link between the two packs' positives: limits the equalising current if the packs are at different voltages when switched to CHARGE |
 | +V chain (pack B) | F1 100 mA PTC MF-MSMF010-2 (C12430, ext), Q1 AO3401A, R1/R2 100k, U15B (LM393), R53 1M | +RUN → F1 → +SW → Q1 → +OUT (J3.1).  Off below 12.0 V, back on above 12.8 V |
 | −V chain (pack A) | F2 100 mA PTC, Q11 AO3400A (N, in pack A's negative), R39/R40 100k, U2B (LM393), R11 470k, Q14 + D1 (ON) | GND → F2 → Q11 → −V (J3.3).  Q11's gate is +BAT/2 only in RUN (R39 from 0V); U2B pulls it low below 12.0 V, back on above 12.9 V.  Q14 lights D1 while Q11 conducts without loading −V |
-| Gauges | pack A: U3 CJ431, R3–R10, U1/U2 LM393, D2–D4 + R13–R15 on rail +G (= 0V or +CHGB via D15/D16); pack B: U16, R45–R52, U14/U15, D12–D14 + R55–R57 on +GB (= +SW or +CHGB via D5/D6), D11 + R54 ON from +OUT | per pack: green ≥ 16.0 V, green ≥ 15.2 V, yellow ≥ 14.4 V, ~1 mA each; both gauges show in RUN and CHARGE, dark in OFF |
+| Gauges | pack A: U3 CJ431, R3–R10, U1/U2 LM393, D2–D4 + R13–R15 on rail +G (= 0V or +CHGB via D15/D16); pack B: U16, R45–R52, U14/U15, D12–D14 + R55–R57 on +GB (= +SW or +CHGB via D5/D6), D11 (right-edge column) + R54 ON from +OUT | per pack: green ≥ 16.0 V, green ≥ 15.2 V, yellow ≥ 14.4 V, ~1 mA each; both gauges show in RUN and CHARGE, dark in OFF |
 | Charger | J1 USB-C (C165948, ext), U4 CH224A (C42459160, ext) + C3 + R24 120k, **Q13 AO3401A VBUS switch** + R43/R44 + Q12 AO3400A + R41/R42, U5 CN3704 (C51659, ext), Q6 AO3401A, D7/D8 SS34, L1 22 µH (C408453, ext), R25+R26 0.2 R, C4–C11, R27, RT1 NTC (C13564, ext), D9 CHRG red, D10 DONE green | PD brick negotiated to 20 V; Q13 passes VBUS to the charger only in CHARGE (Q12's gate sees +CHGB), so a brick plugged in while RUN or OFF does nothing.  1 A CC shared by the two packs in parallel, 16.8 V ±1 % CV, termination 92 mA, trickle 150 mA below 11.2 V, re-charge below 16.0 V, 18.1 V over-voltage cut, NTC stops it hot / cold.  Everything on GND (= pack A's negative = the USB-C shell) |
 | Output | J3 B4B-PH-K-S (+OUT, 0V, −V, nc) | same 4-wire cable to the module as rev B (pin 4 unused) |
 | Mounting | H1–H4 M3 at (4, 4), (96, 4), (4, 96), (96, 96); three 3.5 × 22 mm strap slots at x 3–6.5, 45.75–50.25, 90.5–94, y 39–61 | packs under the board on 40 mm standoffs (packs are up to 37 mm thick); two 20 mm hobby battery straps, each through the outer slot and the shared middle slot |
@@ -62,11 +62,13 @@ Charger: Ich = 200 mV / 0.2 R = 1 A total (0.5 A per pack when balanced; 0.4 C f
 ## Board
 
 100 × 100 mm (JLC's cheapest size tier).  Packs underneath, long axis along y, envelopes x 7–45 and 51–89, y 10–86
-(silk outlines on the back), leads round the front edge (y = 100) to the right-angle XH sockets J5 (x 11–21) and J6
-(x 76–86).  Top side: pack A's gauge top left (LEDs on the left edge at y 10–22), its balancers mid left (x 8–38,
+(silk outlines on the back), leads round the front edge (y = 100): XH sockets J5 (pins x 10.5–20.5) and J6 (x 79.5–89.5)
+outboard, XT60 sockets J7 (pins x 28.8 / 36, + on the left) and J8 (x 61.8 / 69) inboard, faces flush with the edge.
+Top side: pack A's gauge top left (LEDs on the left edge at y 10–22), its balancers mid left (x 8–38,
 y 39–61), its −V chain bottom left; the charger top right with the USB-C on the right edge at y 14, CHRG / DONE LEDs
-below it; pack B's balancers mid right (x 52–82), its gauge lower right (LEDs on the right edge at y 66–78), its +V
-chain between the toggle and J6; toggle at (52, 84), J3 at (33–39, 94), F3 / R30 at x 40.  Netclasses: Power 0.8 mm
+below it; pack B's balancers mid right (x 52–82), its gauge lower right (LEDs on the right edge at y 66–78, ON at the
+bottom), its +V chain right of the gauge (x 81–90, y 62–80); toggle at (49, 84) and J3 at (45.5–51.5, 94.5) between
+the XT60s, F3 / R30 at (40, 70–76).  Netclasses: Power 0.8 mm
 (+BAT, GND, 0V, +BATB, C1–C3, B1–B3, +RUN, +SW, +OUT, +CHGB, −V, GNDF), Charger 0.4 mm (SW, SWA, CSP, RCS, VBUS, VCHG),
 Fine 0.25 / 0.15 mm (USB-C CC1/CC2/D+/D−), Default 0.3 / 0.2 mm.  Board minimums 0.15 / 0.15 (JLC: 0.127).  No copper
 pours.  Reference designators are hidden on the silk; the silk carries PACK A / PACK B at the sockets, OUT, RUN/CHG,
@@ -77,8 +79,10 @@ LED functions, CHRG / DONE and the USB-C label.
 - **Toggle lever direction:** the silk assumes the usual toggle convention (lever away from the closed contacts):
   lever toward "RUN" closes pins 1/4 (RUN), toward "CHG" closes 3/6.  Verify with a meter on the first board; if the
   switch is the other way round, swap the two silk words in `tools/make_footprints.py` and on the board.
-- **Pack plug polarity:** JST-XH pin 1 (the socket's marked end, x 11 on J5 and x 76 on J6) must take the pack's black
-  wire.  Every 4S hobby pack wires the balance plug this way; check the first pack with a meter against the silk.
+- **Pack plug polarity:** JST-XH pin 1 (the socket's marked end, x 10.5 on J5 and x 79.5 on J6) must take the pack's black
+  wire.  Every 4S hobby pack wires the balance plug this way; check the first pack with a meter against the silk.  The
+  XT60 is keyed; check that the pack's + (the pin at the rounded side of the plug) lands on the XT60PW's + (x 28.8 / 61.8)
+  before the first pack goes in — a pack wired the wrong way round would short through the XH pins.
 - **JLC rotation:** check SOT-23, SOIC, TSSOP, the LEDs (cathode = pad 1, KENTO parts as on the HAT) and the
   electrolytic in JLC's DFM preview before ordering.
 - **USB-C:** front flush with the board edge (footprint origin 4.2 mm inside).  CH224A requests 20 V; a 5 V-only
@@ -87,7 +91,7 @@ LED functions, CHRG / DONE and the USB-C label.
   pack's XH pins; confirm DONE at ~90 mA and the balancer resistors warming on the fullest cells.  RT1 reads the board
   temperature next to the charger; a 10k fixed resistor in its place disables temperature control.
 - **Straps:** 20 mm hobby battery straps (the usual 5-inch-quad ones, 200–250 mm long); the middle slot takes both.
-- Extended parts (feeder fee each): toggle, XH sockets, PTCs, USB-C, CH224A, CN3704, inductor, electrolytic, HY2213,
+- Extended parts (feeder fee each): toggle, XH and XT60 sockets, PTCs, USB-C, CH224A, CN3704, inductor, electrolytic, HY2213,
   NTC, PH-4 header.  Everything else is basic.
 
 ## Checks before fab

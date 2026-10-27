@@ -2,7 +2,7 @@
 <export version="E">
   <design>
     <source>/home/claude-agent/Code/LaserDriver/LaserHAT/BatteryPack/BatteryPack.kicad_sch</source>
-    <date>2026-10-27T13:08:06-0500</date>
+    <date>2026-10-27T16:09:22-0500</date>
     <tool>Eeschema 9.0.8+dfsg-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
@@ -787,6 +787,38 @@
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>9933c8d2-7d34-5da5-ada2-06576e50cfa7</tstamps>
+    </comp>
+    <comp ref="J7">
+      <value>XT60PW-M</value>
+      <footprint>Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</footprint>
+      <fields>
+        <field name="LCSC Part #">C98732</field>
+        <field name="Footprint">Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Conn_01x02" description=""/>
+      <property name="LCSC Part #" value="C98732"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>79c4d033-5fdc-5e4f-b419-9071a07b1be0</tstamps>
+    </comp>
+    <comp ref="J8">
+      <value>XT60PW-M</value>
+      <footprint>Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</footprint>
+      <fields>
+        <field name="LCSC Part #">C98732</field>
+        <field name="Footprint">Connector_AMASS:AMASS_XT60PW-M_1x02_P7.20mm_Horizontal</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Conn_01x02" description=""/>
+      <property name="LCSC Part #" value="C98732"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5c698104-e429-5106-9d15-b10f66497888</tstamps>
     </comp>
     <comp ref="L1">
       <value>MWSA0603S-220MT</value>
@@ -1986,7 +2018,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>a176d352-28e3-5349-9df8-8d151203b0dd 8f520d21-417b-5184-ba9c-a87b0cba8949 1e47b48a-3205-5883-89ba-4b53cc612ecc</tstamps>
+      <tstamps>8f520d21-417b-5184-ba9c-a87b0cba8949 a176d352-28e3-5349-9df8-8d151203b0dd 1e47b48a-3205-5883-89ba-4b53cc612ecc</tstamps>
     </comp>
     <comp ref="U2">
       <value>LM393DR2G</value>
@@ -2002,7 +2034,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>e01832b5-5ad1-5457-bf2e-8a4d3a5d9478 a4f44654-f85e-552b-a688-e0f59551e95b 5f32e821-6866-5119-affb-307529133d15</tstamps>
+      <tstamps>a4f44654-f85e-552b-a688-e0f59551e95b e01832b5-5ad1-5457-bf2e-8a4d3a5d9478 5f32e821-6866-5119-affb-307529133d15</tstamps>
     </comp>
     <comp ref="U3">
       <value>CJ431</value>
@@ -2194,7 +2226,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>9aba40a0-cb1c-5248-acee-96cdd6600300 b640296e-ad7e-51de-baf5-904986b7bfae 98e1cec5-d145-53e2-abe9-02ce2323388b</tstamps>
+      <tstamps>b640296e-ad7e-51de-baf5-904986b7bfae 9aba40a0-cb1c-5248-acee-96cdd6600300 98e1cec5-d145-53e2-abe9-02ce2323388b</tstamps>
     </comp>
     <comp ref="U15">
       <value>LM393DR2G</value>
@@ -2303,6 +2335,19 @@
       <pins>
         <pin num="1" name="+" type="passive"/>
         <pin num="2" name="-" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="Conn_01x02">
+      <fields>
+        <field name="Reference">J</field>
+        <field name="Value">Conn_01x02</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="Pin_1" type="passive"/>
+        <pin num="2" name="Pin_2" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="battpack" part="Conn_01x04">
@@ -2558,6 +2603,7 @@
       <node ref="C8" pin="1" pintype="passive"/>
       <node ref="F3" pin="2" pintype="passive"/>
       <node ref="J5" pin="5" pinfunction="Pin_5" pintype="passive"/>
+      <node ref="J7" pin="2" pinfunction="Pin_2" pintype="passive"/>
       <node ref="R26" pin="2" pintype="passive"/>
       <node ref="R34" pin="1" pintype="passive"/>
       <node ref="R38" pin="1" pintype="passive"/>
@@ -2566,6 +2612,7 @@
     </net>
     <net code="2" name="+BATB" class="Power">
       <node ref="J6" pin="5" pinfunction="Pin_5" pintype="passive"/>
+      <node ref="J8" pin="2" pinfunction="Pin_2" pintype="passive"/>
       <node ref="R61" pin="1" pintype="passive"/>
       <node ref="R65" pin="1" pintype="passive"/>
       <node ref="SW1" pin="5" pinfunction="C2" pintype="passive"/>
@@ -2676,7 +2723,7 @@
       <node ref="D9" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U5" pin="4" pinfunction="CHRG" pintype="open_collector"/>
     </net>
-    <net code="17" name="/CSP" class="Default">
+    <net code="17" name="/CSP" class="Charger">
       <node ref="L1" pin="2" pintype="passive"/>
       <node ref="R25" pin="1" pintype="passive"/>
       <node ref="U5" pin="13" pinfunction="CSP" pintype="input"/>
@@ -2724,7 +2771,7 @@
       <node ref="Q12" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R44" pin="2" pintype="passive"/>
     </net>
-    <net code="27" name="/SW" class="Default">
+    <net code="27" name="/SW" class="Charger">
       <node ref="D7" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D8" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="L1" pin="1" pintype="passive"/>
@@ -2807,6 +2854,7 @@
       <node ref="D15" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="J3" pin="2" pinfunction="Pin_2" pintype="passive"/>
       <node ref="J6" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J8" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="Q15" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R30" pin="1" pintype="passive"/>
       <node ref="R39" pin="1" pintype="passive"/>
@@ -2838,6 +2886,7 @@
       <node ref="J1" pin="B12" pinfunction="GND" pintype="passive"/>
       <node ref="J1" pin="S1" pinfunction="SH" pintype="passive"/>
       <node ref="J5" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J7" pin="1" pinfunction="Pin_1" pintype="passive"/>
       <node ref="Q12" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q14" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="Q7" pin="2" pinfunction="S" pintype="passive"/>
@@ -2891,7 +2940,7 @@
       <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U1" pin="1" pintype="open_collector"/>
     </net>
-    <net code="50" name="Net-(D7-A)" class="Default">
+    <net code="50" name="Net-(D7-A)" class="Charger">
       <node ref="D7" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="Q6" pin="3" pinfunction="D" pintype="passive"/>
     </net>
@@ -2931,11 +2980,11 @@
       <node ref="D14" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U14" pin="1" pintype="open_collector"/>
     </net>
-    <net code="60" name="Net-(J1-CC1)" class="Default">
+    <net code="60" name="Net-(J1-CC1)" class="Fine">
       <node ref="J1" pin="A5" pinfunction="CC1" pintype="passive"/>
       <node ref="U4" pin="7" pinfunction="CC1" pintype="bidirectional"/>
     </net>
-    <net code="61" name="Net-(J1-CC2)" class="Default">
+    <net code="61" name="Net-(J1-CC2)" class="Fine">
       <node ref="J1" pin="B5" pinfunction="CC2" pintype="passive"/>
       <node ref="U4" pin="6" pinfunction="CC2" pintype="bidirectional"/>
     </net>
@@ -3007,7 +3056,7 @@
       <node ref="Q18" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U13" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="79" name="Net-(R25-Pad2)" class="Default">
+    <net code="79" name="Net-(R25-Pad2)" class="Charger">
       <node ref="R25" pin="2" pintype="passive"/>
       <node ref="R26" pin="1" pintype="passive"/>
     </net>
@@ -3015,12 +3064,12 @@
       <node ref="R24" pin="1" pintype="passive"/>
       <node ref="U4" pin="9" pinfunction="CFG1" pintype="input"/>
     </net>
-    <net code="81" name="Net-(U4-DM)" class="Default">
+    <net code="81" name="Net-(U4-DM)" class="Fine">
       <node ref="J1" pin="A7" pinfunction="D-" pintype="passive"/>
       <node ref="J1" pin="B7" pinfunction="D-" pintype="passive"/>
       <node ref="U4" pin="5" pinfunction="DM" pintype="bidirectional"/>
     </net>
-    <net code="82" name="Net-(U4-DP)" class="Default">
+    <net code="82" name="Net-(U4-DP)" class="Fine">
       <node ref="J1" pin="A6" pinfunction="D+" pintype="passive"/>
       <node ref="J1" pin="B6" pinfunction="D+" pintype="passive"/>
       <node ref="U4" pin="4" pinfunction="DP" pintype="bidirectional"/>
@@ -3085,7 +3134,7 @@
       <node ref="R61" pin="2" pintype="passive"/>
       <node ref="U13" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="96" name="VBUS" class="Default">
+    <net code="96" name="VBUS" class="Charger">
       <node ref="C3" pin="1" pintype="passive"/>
       <node ref="J1" pin="A4" pinfunction="VBUS" pintype="passive"/>
       <node ref="J1" pin="A9" pinfunction="VBUS" pintype="passive"/>
@@ -3096,7 +3145,7 @@
       <node ref="U4" pin="1" pinfunction="VHV" pintype="power_in"/>
       <node ref="U4" pin="8" pinfunction="VBUS" pintype="input"/>
     </net>
-    <net code="97" name="VCHG" class="Default">
+    <net code="97" name="VCHG" class="Charger">
       <node ref="C4" pin="2" pintype="passive"/>
       <node ref="C5" pin="1" pinfunction="+" pintype="passive"/>
       <node ref="C6" pin="1" pintype="passive"/>

@@ -15,11 +15,17 @@ metadata:
    D1).  Second gauge (U14–U16, R45–R57, D11–D14) on +GB/0V; +G = 0V or +CHGB via D15/D16.  VBUS switch Q13 (P) + Q12
    (gate on +CHGB): the charger sees VBUS only in CHARGE, so a brick in RUN/OFF does nothing (CH224A CFG1-floating
    behaviour is undefined, so the inhibit is on VBUS, not CFG1).  No stack cable / J4 / slave enable; CGND merged into
-   GND.  Checks: netcheck OK, ERC 0, DRC 0/0/0, path/sync 0, lcsc_check all codes (toggle stock 192), fab 134 placements /
-   43 BOM lines.  `tools/autoroute.py` now runs rip / stubs / DSN / SES each in its own process (pcbnew segfaulted
+   GND.  Checks: netcheck OK, ERC 0, DRC 0/0/0, path/sync 0, lcsc_check all codes (toggle stock 192), fab 136 placements /
+   44 BOM lines.  `tools/autoroute.py` now runs rip / stubs / DSN / SES each in its own process (pcbnew segfaulted
    otherwise), gives fine-pitch pads on 0.8 mm nets a 2 mm stub, and prunes stubs per layer; `place.py` adds copper
    keep-outs round the slots (Freerouting ignored the edge clearance there).  Not ordered.  User checks: toggle lever
-   direction, pack plug polarity vs silk, JLC rotations, first charge (README).  Datasheets in `BatteryPack/parts/ds/`
+   direction, pack plug polarity vs silk, JLC rotations, first charge (README).  Later the same day: XT60 sockets J7 / J8 (Amass XT60PW-M,
+   C98732, 15.6k stock, $0.60 vs $0.38 for an XT30PW) added at the front edge inboard of the XH sockets, so the pack's
+   discharge lead carries the run and charge current and the balance lead only the taps (XH pins 1 / 5 parallel the
+   XT60; XT30 packs need an adapter — the user chose XT60).  Pack B's ON LED moved into its LED column (R54 on +OUT
+   beside Q1, thin net to D11 at (97.5, 78)); chain B now right of gauge B (x 81–90, y 62–80), toggle (49, 84) and J3
+   (45.5, 94.5) between the XT60s.  `tools/autoroute.py`'s pipeline still ends with remove_dangling; `trim_stubs` is run
+   after it by hand (import autoroute; trim_stubs(BOARD)) and is what clears the last track_dangling warnings.  Datasheets in `BatteryPack/parts/ds/`
    (git-ignored).  Rev B (18650 clips, stacked boards) = commit 6fa6e9d.
 0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
    (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB
