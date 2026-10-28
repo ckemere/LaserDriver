@@ -83,10 +83,12 @@ for n in range(4):
     balancer(f"U{6 + n}", f"Q{7 + n}", f"R{31 + n}", f"C{12 + n}", f"R{35 + n}", x0, y0 - 10 * (n % 2))
     balancer(f"U{10 + n}", f"Q{15 + n}", f"R{58 + n}", f"C{16 + n}", f"R{62 + n}", x0, y0 + 20)
 # ---- pack A gauge, top left under the Pi: comparators, reference and ladder; its LEDs on the right edge at y 64-76
-for ref, y in (("D4", 64), ("D3", 68), ("D2", 72), ("D1", 76)):
-    at(ref, 97.5, y, 90)
-for ref, y in (("R15", 64), ("R14", 68), ("R13", 72), ("R12", 76)):
-    at(ref, 92.5, y)
+# gauge A's LEDs on the top edge next to its comparators (they were on the right edge: ~150 mm per LED net), resistors in a
+# column right of the ladder; the thumbwheel's overhang (x 6.5-19, y 9-15) does not reach them
+for ref, x in (("D4", 20), ("D3", 24), ("D2", 28), ("D1", 32)):
+    at(ref, x, 2.3)
+for ref, y in (("R15", 5), ("R14", 7.5), ("R13", 10), ("R12", 12.5)):
+    at(ref, 35, y)
 at("C1", 16, 7.5); at("U1", 16, 12); at("U2", 16, 20); at("C2", 16, 25); at("Q14", 21, 28)
 at("U3", 24, 8); at("R3", 24, 11)
 for i, ref in enumerate(("R4", "R5", "R6", "R7", "R8")):
@@ -128,6 +130,12 @@ stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pc
          or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
 stale += [z for z in board.Zones() if z.GetIsRuleArea()]
 fps = {f.GetReference(): f for f in board.GetFootprints()}
+# orientation pass (scratch orient.py, 2026-10-27): the rotation of each IC / transistor that minimises its ratsnest length
+# without courtyard overlaps; small gains (~1 mm each), kept because they also make the pin order face the partners
+ROT = {"Q11": 90, "Q13": 90, "U1": 180, "U2": 270, "U3": 90, "U4": 180, "U14": 270, "U15": 270, "U16": 90,
+       "U6": 90, "U7": 90, "U8": 90, "U9": 90, "U10": 90, "U11": 90, "U12": 90, "U13": 90}
+for ref, rot in ROT.items():
+    P[ref] = (P[ref][0], P[ref][1], rot)
 missing = [r for r in fps if r not in P]
 assert not missing, f"unplaced: {missing}"
 for ref, (x, y, rot) in P.items():
@@ -194,10 +202,12 @@ silk("LaserHAT BatteryPack rev C", 50, 5, 1.0, 0, pcbnew.B_SilkS)   # the top si
 silk("OUT +V 0V -V", 8.2, 7, 0.8, 90)
 silk("USB-C 20V", 89.5, 2.5, 0.8)
 silk("CHRG", 62, 2.5, 0.8); silk("DONE", 74.5, 2.5, 0.8)
-for txt, y in (("80%", 64), ("50%", 68), ("20%", 72)):
-    silk(txt, 95.1, y, 0.8); silk(txt, 95.1, y - 34, 0.8)
-silk("ON", 95.1, 76, 0.8); silk("ON", 95.1, 42, 0.8)
-silk("A", 95.1, 79.5, 0.8); silk("B", 95.1, 27, 0.8)
+for txt, y in (("80%", 30), ("50%", 34), ("20%", 38)):
+    silk(txt, 95.1, y, 0.8)
+silk("ON", 95.1, 42, 0.8); silk("B", 95.1, 27, 0.8)
+for txt, x in (("80%", 20), ("50%", 24), ("20%", 28), ("ON", 32)):
+    silk(txt, x, 4.6, 0.8)
+silk("A", 37.5, 2.3, 0.8)
 silk("RPi  58 x 49  M2.5", 28, 54.3, 0.8)
 # User.Comments: the LaserHAT's outline (its Edge.Cuts, read live from ../LaserDriver.kicad_pcb) with its hole MH1 on H5 and
 # the Pi's rotation, i.e. where the HAT sits when the Pi is on H5-H8; User.Drawings: the Raspberry Pi itself (85 x 56, r 3,
