@@ -4,11 +4,12 @@ axis along y, 42 mm pitch, two 20 mm straps through the slots), their XT60 disch
 (y = 100) to the XT60 sockets J7 / J8 and the right-angle XH sockets J5 / J6 (pack A left, pack B right).  Top side: pack A's gauge top left, its balancers
 mid left, its -V chain bottom left; the charger top right with the USB-C on the right edge; pack B's balancers mid right,
 its gauge and +V chain bottom right; the toggle and the output header J3 in the right column.  H5-H8 are a
-Raspberry Pi's holes (58 x 49): the Pi lies turned 90 degrees along the left edge from the top-left corner (x 0-56,
-y 0-85, ports over the top edge) on standoffs, so the HAT's south-west corner (e-stim module battery connector) is at
-(56, 85) next to J3; the HAT's outline is drawn on User.Comments and the Pi's on User.Drawings.  (The layout text
-above predates that move: gauge B's comparators are now top centre, pack B's balancers below pack A's, both LED
-columns on the right edge.)
+Raspberry Pi's holes (58 x 49): the Pi lies along the left edge (x 0-56, y 15-100) with its USB-C / HDMI face, which
+is also the face the e-stim module's electrode wires leave over, flush with the board's left edge, SD-card end up, USB /
+Ethernet over the front edge; the module hangs 9 mm past that edge at the top-left corner and its battery pads are at
+(-3..3, 16-23), so J3 sits right below them in the top-left corner (4, 4), H1 moved to (12, 4).  The HAT's outline is drawn on User.Comments
+and the Pi's on User.Drawings.  (The layout text above predates the Pi: gauge B's comparators are now top centre, pack B's
+balancers below pack A's, both LED columns on the right edge, the toggle alone in the right column.)
 Idempotent: re-running moves every footprint back to the table and redraws the outline, slots and board-level silk;
 copper is left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
 import math
@@ -31,16 +32,21 @@ def at(ref, x, y, rot=0):
 
 
 # ---- mounting holes
-at("H1", 4, 4); at("H2", 96, 4); at("H3", 4, 96); at("H4", 96, 96)
-# ---- Raspberry Pi holes (58 x 49, M2.5): the Pi lies turned 90 degrees along the left edge from the top-left corner
-# (x 0-56, y 0-85; header along the left edge, USB / Ethernet end over the top edge, SD card toward the front, micro-HDMI /
-# power edge facing east) on standoffs.  The HAT (x -1..56, y 20-85) then has its south-west corner, where the e-stim
-# module's battery connector is, at (56, 85), the module itself reaching x 65 over y 57-85: J3 sits just east of that.
-# Everything user-facing is in the right column (x > 56: charger + USB-C, CHRG / DONE, toggle, J3, both LED columns on the
-# right edge) or the front strip (y > 85: the four pack sockets); under the Pi only gauges, balancers and the -V chain.
-# PI_ROT 90 = the Pi's long axis along y, ports up; PI[0] is where the Pi's header-side / SD-end hole (the HAT's MH1) goes.
-PI_ROT = 90
-PI = ((3.5, 81.5), (3.5, 23.5), (52.5, 81.5), (52.5, 23.5))
+at("H1", 12, 4); at("H2", 96, 4); at("H3", 4, 96); at("H4", 96, 96)      # H1 8 mm in from the corner: J3 has the corner
+# ---- Raspberry Pi holes (58 x 49, M2.5): the Pi lies along the left edge (x 0-56, y 15-100) on standoffs with its
+# header along x = 56 and its "bottom" face (USB-C power, micro-HDMI, opposite the OLED bonnet) flush with the board's left
+# edge, SD-card end at y 15, USB / Ethernet end over the front edge.  The HAT (x 0..57, y 15-80) then has its south-west
+# corner at the board's top-left corner: the e-stim module (HAT x 101-127.5, y 76-109 -> here x -9..24, y 16-43) hangs 9 mm
+# past the left edge, its electrode header (-7, 27.5) points west, so the stimulation wires and the Pi's power / HDMI
+# cables all leave over the left edge; its battery pads (PS1 position, HAT x 101-108 / y 97-103 -> here x -3..3, y 16-23)
+# are right above J3 in the top-left corner.  The HAT's thumbwheel (west edge, y 81-93.5, 6 mm proud) is under the
+# module's SW corner and sticks past the board's top edge at x 6.5-19, y 9-15: J3 and its cable stay west of x 6.5.
+# Everything else user-facing is in the right column (x > 56: charger + USB-C, CHRG / DONE, toggle, both LED columns on
+# the right edge) or the front strip (y > 85: the four pack sockets); under the Pi only gauges, balancers and the -V chain.
+# PI_ROT 270 = the Pi's long axis along y, SD end up, header east; PI[0] is where the Pi's header-side / SD-end hole (the
+# HAT's MH1) goes.  (PI_ROT 90 = header west / ports up, 0 = header up / SD end west.)
+PI_ROT = 270
+PI = ((52.5, 18.5), (52.5, 76.5), (3.5, 18.5), (3.5, 76.5))
 
 
 def pi_xy(u, v):
@@ -48,15 +54,18 @@ def pi_xy(u, v):
     du, dv = u - 3.5, v - 3.5
     if PI_ROT == 90:
         du, dv = dv, -du
+    elif PI_ROT == 270:
+        du, dv = -dv, du
     return PI[0][0] + du, PI[0][1] + dv
 for ref, (x, y) in zip(("H5", "H6", "H7", "H8"), PI):
     at(ref, x, y)
-# ---- pack sockets along the front edge (under the Pi's SD end for pack A): J5 (XH balance, opening toward the edge),
-# XT60 J7 / J8 (face flush with the edge, "-" pin outboard) either side of the Pi standoff H7 (52.5, 81.5), J6 outboard;
-# toggle (lever along x) and output header J3 in the right column beside the HAT / module corner, clear of the HAT
+# ---- pack sockets along the front edge (under the Pi's USB / Ethernet end for pack A): J5 (XH balance, opening toward
+# the edge), XT60 J7 / J8 (face flush with the edge, "-" pin outboard) either side of x 52.5, J6 outboard; output header J3
+# (pins along y, cable straight up to the module's pads 36 mm above) in the top-left corner; toggle (lever along x) in the
+# right column beside the HAT's header edge
 at("J5", 10.5, 91.5); at("J6", 76.5, 91.5)
 at("J7", 35.5, 83.1, 180); at("J8", 68, 83.1, 180)
-at("J3", 70, 63)
+at("J3", 4, 4, -90)                                       # pin 1 at (4, 4), pins down to y 10; cable rises west of the thumbwheel (x > 6.5)
 at("SW1", 74, 52)
 at("F3", 46, 66, 90); at("R30", 46, 71)                  # link fuse and pull-down under the Pi, left of H7
 
@@ -107,7 +116,7 @@ at("U16", 39, 7); at("R45", 39, 10)
 for i, ref in enumerate(("R46", "R47", "R48", "R49", "R50")):
     at(ref, 39, 12 + 2.5 * i)
 at("R51", 44, 7); at("R52", 44, 9.5); at("R53", 44, 12)
-at("C20", 46.5, 9, 90); at("U14", 52, 9); at("C21", 46.5, 17, 90); at("U15", 52, 17)
+at("C20", 46.5, 9, 90); at("U14", 52, 9); at("C21", 46.5, 27, 90); at("U15", 52, 27)   # U15 below the Pi standoff H5 (52.5, 18.5)
 # ---- pack B +V chain, right of its gauge (x 81-90, y 62-80), above J6
 at("F1", 83, 65, 90); at("Q1", 83, 70); at("R1", 87.5, 64); at("R2", 87.5, 66.5)
 at("R54", 87.5, 69)                                      # ON LED resistor on +OUT; its thin net runs to D11 in the LED column
@@ -182,7 +191,7 @@ def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
 
 
 silk("LaserHAT BatteryPack rev C", 50, 5, 1.0, 0, pcbnew.B_SilkS)   # the top side is under the Pi / HAT or busy
-silk("OUT +V 0V -V", 73, 59.6, 0.8)
+silk("OUT +V 0V -V", 8.2, 7, 0.8, 90)
 silk("USB-C 20V", 89.5, 2.5, 0.8)
 silk("CHRG", 62, 2.5, 0.8); silk("DONE", 74.5, 2.5, 0.8)
 for txt, y in (("80%", 64), ("50%", 68), ("20%", 72)):
