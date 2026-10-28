@@ -36,14 +36,15 @@ controller's program (see below).
 | Gauges | pack A: U3 CJ431, R3–R10, U1/U2 LM393, D2–D4 + R13–R15 on +G; pack B: U16, R45–R52, U14/U15, D12–D14 + R55–R57 on +GB, D11 + R54 ON from +OUT | per pack: green ≥ 15.9 V, green ≥ 15.1 V, yellow ≥ 14.3 V, ~1 mA each (the ladder's R4 / R46 is 6.2k now that the rail is the pack itself, not the pack − 0.25 V) |
 | Charging interlock | U17 EL817S1 opto (C2912100, ext), R76 10k | LED from the island's VBUS; transistor holds ENB_G at 0V → +V off (and the module's fault line reports it) whenever a brick is in, so the brick's mains leakage can never reach the electrode |
 | **Charger island** (floats on CGND) | J1 USB-C (C165948, ext), U4 CH224A (C42459160, ext) + C3 + R24 120k, U18 TLV76033 LDO (C2683368, ext) + C22/C23, **Q13 AO3401A VBUS switch** + R43/R44 + Q12 2N7002 + R42, U5 CN3704 (C51659, ext), Q6 AO3401A, D7/D8 SS34, L1 22 µH (C408453, ext), R25+R26 0.2 R, C4–C11, R27, RT1 NTC (C13564, ext), R28/R29 10k | PD brick negotiated to 20 V (the CH224A's DP / DM stay open: the USB data lines belong to the MCU).  Q13 passes VBUS to the charger only while the MCU drives CHG_EN; the charger's output +CHG / CGND goes to the relay.  1 A CC into one pack at a time, 16.8 V ±1 % CV, termination 92 mA, trickle 150 mA below 11.2 V, re-charge below 16.0 V, 18.1 V over-voltage cut, NTC stops it hot / cold.  The island is the only part of the board whose potential moves (it rides on GND or on 0V); the brick is mains-isolated, so that is fine.  **Up to 2 A:** R25 + R26 = 0.1 R, L1 20 µH, a 45 W brick (the HFD2's contacts are rated 2 A) |
-| Relay | K1 Hongfa HFD2/024-M (C18198081, ext), Q19 2N7002, D19 1N4148W | 24 V coil straight from VBUS (2.9 kΩ: 7 mA at 20 V; pick-up ≤ 18 V), DPDT 2 A: released = pack A (NC: +CHG → 0V, CGND → GND), energised = pack B (NO: +CHG → +BATB, CGND → 0V).  Only ever switched with the charger off |
-| MCU | U19 STM32F042F4P6 (C81002, ext), C24–C26, R70 10k + SW2 BOOT (TS-1187A, C318884), R71/R72 and R73/R74 100k/18k senses, TP1–TP4 (SWDIO / SWCLK / GND / 3V3) | powered from VBUS through U18, so it exists only while a source is plugged in.  Reads CHRG / DONE, the connected pack and VBUS; drives the relay, CHG_EN and the four LEDs.  USB DFU bootloader on the same USB-C (see Firmware) |
+| Relay | K1 Omron G6S-2 DC12 (C1525289, ext), R86 680 R 0805, Q19 2N7002, R85 100k, D19 1N4148W | 12 V coil (1028 Ω) fed from VBUS through R86: 11.7 mA, 12 V on the coil at 20 V, must-operate 9 V (the 24 V HFD2 of the first draft had a ≤ 18 V pick-up against a 20 V bus minus cable drop: no margin).  Pin 1 = coil +, 12 = coil −; D19 flyback across the coil; R85 holds Q19 off while the MCU is in reset / DFU.  DPDT 2 A: released = pack A (NC 3 / 10: +CHG → 0V, CGND → GND), energised = pack B (NO 5 / 8: +CHG → +BATB, CGND → 0V).  Only ever switched with the charger off |
+| MCU | U19 STM32F042F4P6 (C81002, ext), C24–C26, R70 10k + SW2 BOOT (TS-1187A, C318884, in the front strip left of the middle slot), R71/R72 1M/180k + C27 100n (the connected pack) and R73/R74 100k/18k (VBUS) senses, TP1–TP4 (SWDIO / SWCLK / GND / 3V3, under the Pi) | powered from VBUS through U18, so it exists only while a source is plugged in.  Reads CHRG / DONE, the connected pack and VBUS; drives the relay, CHG_EN and the four LEDs.  USB DFU bootloader on the same USB-C (see Firmware) |
 | Status LEDs | gauge A column: D4 / D3 / D2 (80 / 50 / 20 %), D1 ON, D9 CHG (red), D10 DONE (green); gauge B column: D14 / D13 / D12, D11 ON, D17 CHG, D18 DONE; R66–R69 | the two columns are paired in the middle of the front strip (A left, B right) with the row labels between them |
-| Output | J3 B4B-PH-K-S (+OUT, 0V, −V, CAB) | same 4-wire cable to the module as rev B / C; **pin 4 (CAB) must be strapped to pin 2 (0V) in the module's plug** (a wire loop in the PH plug until the module's next rev has the socket wired that way) |
+| Output | J3 S4B-PH-K-S side-entry (+OUT, 0V, −V, CAB), opening over the top edge | same 4-wire cable to the module as rev B / C, leaving horizontally over the top edge under the Pi and rising to the module's pads outside it; **pin 4 (CAB) must be strapped to pin 2 (0V) in the module's plug** (a wire loop in the PH plug until the module's next rev has the socket wired that way) |
 | Mounting | H1–H4 M3 at (4, 4), (96.5, 3.5), (4, 96), (96, 96); three 3.5 × 22 mm strap slots at x 3–6.5, 45.75–50.25, 90.5–94, y 39–61; **H5–H8 M2.5 at (89, 52.5), (31, 52.5), (89, 3.5), (31, 3.5) = a Raspberry Pi's 58 × 49 pattern, long axis along x** | packs under the board on 40 mm standoffs (packs are up to 37 mm thick); two 20 mm hobby battery straps, each through an outer slot and the shared middle slot.  The Pi (3B+ / 4 / 5, with the HAT on it) lies along the top edge above the board on M2.5 standoffs over x 7.5–92.5, y 0–56: its "bottom" face (USB-C power, micro-HDMI, the long edge opposite the header and the OLED bonnet) is flush with the board's top edge, its header runs along y = 56, the SD-card end is at x 92.5.  The HAT covers x 27.5–92.5, y 0–56, so the e-stim module (26.5 × 33 mm, 9 mm past the HAT's edge) hangs over the top edge at the top-right corner (x 65–91.5, y −9..24) with its electrode header at (80, −7) pointing up: the stimulation wires and the Pi's power / HDMI cables all leave over the top edge.  The module's battery pads (its PS1 position) are at x 84.5–91.5, y −3..3, 36 mm up; J3 (pins x 76.5–82.5 at y 4; the Pi standoff H7 (89, 3.5) has the corner itself) is right below them, the cable rises straight up and passes west of the HAT's thumbwheel (x 88.7–98.5, y 6.5–19, 25 mm up).  **Standoffs ≥ 11 mm** (the XT60 sockets and the electrolytic are under the Pi; the relay is not).  All four Pi standoffs fall inside the pack envelopes: fix them from the top (threaded standoff + screw) or use low heads below.  The HAT's outline (its Edge.Cuts, copied by `tools/place.py` from `../LaserDriver.kicad_pcb`, MH1 on H5, rotated with the Pi) is drawn on User.Comments and the Pi's 85 × 56 outline on User.Drawings; neither goes to the gerbers |
 
-Standing draw ON: 10–16 mA (two gauges, ON LEDs); OFF: about 40 µA (balancers, the charger's sleep current through the
-relay's released contacts).  The e-stim module itself draws about 10 mA.
+Standing draw ON: 10–16 mA (two gauges, ON LEDs); OFF: about 20 µA on pack B (balancers) and about 60 µA on pack A, which
+also carries the idle charger through the relay's released contacts (CN3704 sleep ≈ 15–25 µA, the 1M sense divider 17 µA,
+D8's reverse leakage).  The e-stim module itself draws about 10 mA.
 
 ## Operation
 
@@ -69,8 +70,8 @@ Gauge rails = the packs (P-FETs, no drop).  VS = rail × 0.1357 with the output 
 × 0.1271 cut off.  Ladder from 2.495 V: 6.2k, 2k, 2k, 6.2k, 30k → TH80 2.162 V, TH50 2.054 V, TH20 1.946 V, THCUT 1.613 V →
 15.9 / 15.1 / 14.3 V (pack) and 11.9 V (cutoff) / 12.7 V (re-enable, pack B via R53 1M from +OUT) / 12.8 V (pack A via R11
 470k from Q11's gate, which sits at pack A / 2).  Charger: Ich = 200 mV / 0.2 R = 1 A (0.7 C for a 1300 mAh pack); Ieoc =
-9.17 % (EOC grounded); CH224A CFG1 120k = 20 V request.  Q13: Vgs = −VBUS/2 = −10 V (R43/R44).  MCU senses: 100k / 18k
-(16.8 V → 2.56 V, 20 V → 3.05 V).  Relay coil: 2.9 kΩ, 7 mA at 20 V.
+9.17 % (EOC grounded); CH224A CFG1 120k = 20 V request.  Q13: Vgs = −VBUS/2 = −10 V (R43/R44).  MCU senses: pack 1M / 180k
+(16.8 V → 2.56 V, 18.1 V → 2.76 V) with 100n, VBUS 100k / 18k (20 V → 3.05 V).  Relay coil: 1028 Ω + 680 Ω, 11.7 mA at 20 V.
 
 ## Firmware (`firmware/`)
 
@@ -92,12 +93,15 @@ and J6 (x 79.5–89.5) outboard, XT60 sockets J7 (pins x 28.3 / 35.5) and J8 (x 
 the USB-C J1 (50, 95.8) flush in the middle between them with C3 beside it.  Front strip (y 56–100, the only part not under
 the Pi): the two gauge LED columns at x 46 (A) and x 54 (B), rows 80 / 50 / 20 % / ON / CHG / DONE at y 62.5–75 with the
 labels between them and the resistors outboard (x 41.5 / 58.5), the toggle at (50, 83.5) with its lever along x (ON to the
-right); in the outer thirds, visible either side of the LED pair, the relay K1 standing at (84.5, 70) by pack B's sockets with
-its driver Q19 / D19 above it, and the CH224A at (15.5, 70) by pack A's (its CC lines run to J1 as fine tracks).  Under the Pi (y < 56): gauge A's comparators and ladder top left (x 8–32), its rail switch at x 8; gauge B's
+right), the BOOT button at (39, 58.5) left of the middle slot; in the outer thirds, visible either side of the LED pair, the relay K1
+at (82, 63) by pack B's sockets with its driver Q19 / D19 / R85 / R86 above it, and the CH224A at (15.5, 70) with its 1 µF
+beside it by pack A's (its CC lines run to J1 as fine tracks).  Under the Pi (y < 56): gauge A's comparators and ladder top left (x 8–32), its rail switch at x 8; gauge B's
 mirrored top right (x 70–92); pack A's balancers at x 9–38, pack B's at x 62–91 (rows y 28–52, outer columns one row up);
-the +V chain at x 61–70 and the −V chain along the top edge (x 36–54, y 3) either side of the MCU, J3 at (76.5, 4).  The
+the +V chain at x 61–70 and the −V chain along the top edge (x 36–54, y 3) either side of the MCU, J3 at (82.5, 6.8) with its
+opening on the top edge.  The
 charger island fills the centre column: MCU row at y 5–14 (U19, BOOT button, test points on the edge at y 4.3, the LDO),
-the CN3704 and its passives at y 15–22, the electrolytic, buck switch, diodes, inductor and sense resistors at y 22–35,
+the CN3704 and its compensation parts at y 15–22, the electrolytic, the buck switch with its 1 µF and freewheel diode beside
+it, the inductor and sense resistors at y 20–35, the sense dividers and VBUS switch on the slot's right flank,
 the opto U17 on the slot's left flank.  (A first layout had the relay beside the middle slot and the CH224A on the flank:
 the island was then too dense to route the MCU's LED lines and the charger output.)  Netclasses: Power 0.8 mm (GND, 0V, +BATB, C1–C3, B1–B3, +SW, +OUT, −V,
 GNDF, CGND, +CHG, CAB), Charger 0.4 mm (SW, SWA, CSP, RCS, VBUS, VCHG, RLY_K), Fine 0.25 / 0.15 mm (USB-C CC1/CC2/D+/D−),
@@ -106,7 +110,7 @@ the one node every fixed-side part shares; 0.3 mm clearance, thermal reliefs, J3
 its 0V moved between GND and +BAT with the toggle.  The charger island's parts simply sit over it (the island floats on GND
 or 0V anyway).  Rule areas keep vias out from under the Pi standoffs (r 3.0) and copper 0.5 mm away from the slots.  Routed
 by Freerouting with the last connections (fine-pitch pad exits of U5 / U19, the −V run along the top edge, a few ground
-links) finished by `../tools/maze_route.py`; 5.9 m of track, 2268 segments, 244 vias (rev C: 3.8 m / 1115 / 137 with 34
+links) finished by `../tools/maze_route.py`; 5.8 m of track, 2036 segments, 227 vias (rev C: 3.8 m / 1115 / 137 with 37
 fewer parts).  Reference designators are hidden on the silk; the silk carries OUT, BOOT,
 the test-point names, PD 20V / DFU at the USB-C, the LED row labels and A / B, PACK A / PACK B at the sockets and the
 title on the back; the toggle footprint carries ON / OFF.
@@ -123,10 +127,12 @@ title on the back; the toggle footprint carries ON / OFF.
   is keyed; check that the pack's + (the pin at the rounded side of the plug) lands on the XT60PW's + (x 28.3 / 64.5) before
   the first pack goes in — a pack wired the wrong way round would short through the XH pins.
 - **JLC rotation:** check SOT-23, SOIC, TSSOP (U5, U19), the ESSOP, the LEDs (cathode = pad 1, KENTO parts as on the
-  HAT), the opto (pin 1 dot) and the electrolytic in JLC's DFM preview before ordering.  The relay's pin 1 is marked with
-  a silk dot; it is a 16-pin DIP grid with pins 1, 4, 6, 8 / 16, 13, 11, 9 populated.
-- **Relay pick-up:** the 24 V coil must pull in from 20 V minus the cable drop (Hongfa: ≤ 18 V).  With a long or thin
-  cable, listen for the click at the first pack swap; the 12 V HFD2 with a series resistor is the fallback.
+  HAT), the opto (pin 1 dot) and the electrolytic in JLC's DFM preview before ordering.  The relay's pin 1 pad is square.
+  (An earlier draft used a Hongfa HFD2 with a home-made footprint transcribed from the datasheet's bottom view, i.e.
+  mirrored, which an audit caught; the corrected footprint stays in `battpack.pretty` but is unused.)
+- **Relay:** 12 V coil through 680 R from VBUS: 12 V on the coil at 20 V, 11 V at 19 V, must-operate 9 V.  Omron's drawing
+  marks the coil polarity (pin 1 +, pin 12 −); the footprint is KiCad's library one.  Listen for the two clicks when a brick
+  goes in (the MCU reads pack A, then pack B).
 - **First charge:** packs at any state, toggle anywhere, plug a 20 V brick in: within a second the MCU reads both packs
   (relay clicks twice) and CHG lights on the lower one.  Meter on CSP−+CHG (200 mV = 1 A) and on the connected pack's XH
   pins; every 3 minutes the charger pauses for a second and may swap.  DONE at ~90 mA per pack; both DONE = idle.  RT1 reads

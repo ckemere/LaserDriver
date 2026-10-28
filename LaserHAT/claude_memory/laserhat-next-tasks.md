@@ -56,6 +56,17 @@ metadata:
    escape 0.65 mm pitch pads, fake 6.6 mm 'holes' at the Pi standoffs keep its vias out of the no-via zones; the DRC JSON's
    unconnected pairs sometimes name a wrong second item - cluster the net geometrically to find the real gap).  DRC 0/0,
    path/sync 0, B.Cu 0V pour (4.7 cm2), 5.9 m track / 2268 segments / 244 vias, fab 166 placements / 51 BOM lines.
+   Audit by a subagent (user asked; past boards had parts not matching datasheets): BLOCKER = the home-made HFD2 relay
+   footprint transcribed the datasheet's BOTTOM view as top view (mirrored, coil reversed; the HFD2 is polarised) ->
+   switched to Omron G6S-2 DC12 (C1525289, KiCad library footprint, 12 V coil + 680 R from VBUS: must-operate 9 V vs the
+   HFD2/024's 18 V against a 20 V bus) and fixed the HFD2 footprint anyway.  Also: R71/R72 -> 1M/180k + C27 (140 uA standby
+   drain on pack A + back-powering the MCU), R85 pull-down on RELAY (chatter in DFU/reset), J3 -> S4B-PH-K-S side entry
+   (a vertical header 2-7 mm inside the Pi's edge cannot bend 4 wires in 3.5 mm), SW2 BOOT to the front strip (39, 58.5),
+   C3 next to the CH224A, D8 + C6 next to Q6 (hot loop), C25 at VDDA, C7/C8 22 uF 1206.  Verified by the audit: every IC /
+   FET / diode / LED / connector pinout and package, gate limits, thresholds, 1 A paths, no vias under standoffs.  Still
+   unverified: toggle lever direction, XT60 polarity, DFU on the TSSOP-20 (first-board checks).
+   After the fixes: re-routed from scratch (Freerouting + maze for ~10 leftovers; KiCad's DRC names the wrong partner for an
+   isolated pad, cluster the net geometrically), DRC 0/0 with the pour, 5.8 m / 2036 segments / 227 vias, fab 169 / 53.
 0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
    (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB
    that carries the cells, chargers and the stimulator circuit (DAC, Howland stage, switches, fault comparator) with

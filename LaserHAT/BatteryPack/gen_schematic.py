@@ -328,7 +328,7 @@ text("16.8 V +-1 % constant voltage, termination at 9 % (92 mA), trickle at 150 
 text("(board temperature; a 10k resistor disables it).  CHRG / DONE are read by the MCU.  Up to 2 A: R25 + R26 = 0.1 R, L1 20 uH, 45 W brick.", 139 + X, 117)
 
 # =========================================================================== 7. MCU, relay, status LEDs (island)
-box(138 + X, 126, 228 + X, 192, "7. CHARGE CONTROLLER (island): STM32F042F4P6 (USB DFU), RELAY K1 TO PACK A / B, PER-PACK CHARGING / DONE LEDs")
+box(138 + X, 126, 228 + X, 194, "7. CHARGE CONTROLLER (island): STM32F042F4P6 (USB DFU), RELAY K1 TO PACK A / B, PER-PACK CHARGING / DONE LEDs")
 put("U19", 236, 152)
 PWR("U19.16"); PWR("U19.5"); PWR("U19.15")               # VDD, VDDA, VSS
 for num in ("1", "4", "2", "17", "18", "19", "20", "6", "7", "8", "9", "10", "11", "12", "13", "14"):
@@ -345,21 +345,26 @@ for i, tpn in enumerate(("TP1", "TP2", "TP3", "TP4")):
     put(tpn, 244 + 6 * i, 170)
     (PWR if tpn in ("TP3", "TP4") else NET)(f"{tpn}.1")
 # senses: the connected pack (the charger's BAT node) and VBUS
-put("R71", 268, 136); put("R72", 268, 144)
+put("R71", 268, 136); put("R72", 268, 144); put("C27", 262, 146)
 PWR("R71.1"); W("R71.2", "R72.1"); lab("VBAT_S", 268, 140); PWR("R72.2")
+W("C27.1", (262, 141), (268, 141)); PWR("C27.2")
 put("R73", 276, 136); put("R74", 276, 144)
 PWR("R73.1"); W("R73.2", "R74.1"); lab("VBUS_S", 276, 140); PWR("R74.2")
 put("R28", 284, 136); put("R29", 290, 136)
 PWR("R28.1"); NET("R28.2"); PWR("R29.1"); NET("R29.2")    # CHRG / DONE pull-ups
-# relay: coil on VBUS through Q19, D19 flyback; contacts: released = pack A, energised = pack B
+# relay: 12 V coil from VBUS through R86 and Q19, D19 flyback, R85 keeps it off in reset; contacts: released = pack A, energised = pack B
 put("K1", 276, 160, hide_val=False)
-PWR("K1.1"); NET("K1.16")
-PWR("K1.4", length=2.54); PWR("K1.8", length=7.62); PWR("K1.6", length=12.7)
-PWR("K1.13", length=2.54); PWR("K1.9", length=7.62); PWR("K1.11", length=12.7)
+NET("K1.1"); NET("K1.12")                                 # RLY_P (coil +, from VBUS through R86), RLY_K (Q19)
+PWR("K1.4", length=2.54); PWR("K1.5", length=7.62); PWR("K1.3", length=12.7)
+PWR("K1.9", length=2.54); PWR("K1.8", length=7.62); PWR("K1.10", length=12.7)
+put("R86", 258, 160)
+PWR("R86.1"); NET("R86.2")                                # VBUS -> RLY_P
 put("Q19", 258, 184, ref_at=(5.08, 2.54), val_at=(5.08, 0))
 NET("Q19.1"); PWR("Q19.2"); NET("Q19.3")                  # gate RELAY, source CGND, drain RLY_K
-put("D19", 266, 178)
-PWR("D19.1"); NET("D19.2")                                # K = VBUS, A = RLY_K
+put("R85", 250, 190)
+NET("R85.1"); PWR("R85.2")                                # RELAY pull-down
+put("D19", 266, 176)
+NET("D19.1"); NET("D19.2")                                # K = RLY_P, A = RLY_K: flyback across the coil
 # LEDs: pack A charging (red) / done (green), pack B the same; anodes driven by the MCU through 1k / 470 R
 for k, (d, r) in enumerate((("D9", "R66"), ("D10", "R67"), ("D17", "R68"), ("D18", "R69"))):
     y = 176 + 4 * k
@@ -367,7 +372,7 @@ for k, (d, r) in enumerate((("D9", "R66"), ("D10", "R67"), ("D17", "R68"), ("D18
     PWR(f"{d}.1", length=2.54); W(f"{d}.2", f"{r}.2"); NET(f"{r}.1")
 text("U19 runs the charge: at every slot end it pauses the charger (CHG_EN low), reads the connected pack at rest (R71 / R72), compares it with the other", 139 + X, 187)
 text("pack's last resting reading and keeps or swaps the relay (RELAY high = pack B), then restarts the charger.  DONE flags the pack as full; both full = idle.", 139 + X, 189)
-text("D9 / D10 = pack A charging / done, D17 / D18 = pack B.  Program: hold SW2, plug into a PC, dfu-util (firmware/); or SWD on TP1 / TP2.", 139 + X, 191)
+text("D9 / D10 = pack A charging / done, D17 / D18 = pack B.  K1 G6S-2 12 V coil through R86 680 R from VBUS (11.7 mA; must-operate 9 V).  Program: hold SW2, plug into a PC, dfu-util; or SWD on TP1 / TP2.", 139 + X, 191)
 
 missing, unplaced, overlaps = sh.finish()
 print("missing pins:", missing)

@@ -63,9 +63,9 @@ for ref, (x, y) in zip(("H5", "H6", "H7", "H8"), PI):
 # behind the USB-C; J3 (pins along x, cable straight up to the module's pads 36 mm above) in the top-right corner
 at("J5", 10.5, 91.5); at("J6", 79.5, 91.5)
 at("J7", 35.5, 83.1, 180); at("J8", 71.7, 83.1, 180)
-at("J1", 50, 95.8); at("C3", 42.5, 92)                   # opening toward +y, face flush with the edge; C3 beside it
+at("J1", 50, 95.8)                                       # opening toward +y, face flush with the edge
 at("SW1", 50, 83.5)                                      # lever along x, parallel to the Pi; ON to the right
-at("J3", 76.5, 4)                                        # pins x 76.5-82.5, the module's pads at x 84.5-91.5 above; H7 (89, 3.5) has the corner
+at("J3", 82.5, 6.8, 180)                                 # side entry, opening over the top edge; pins x 76.5-82.5 under the module's pads (x 84.5-91.5)
 # ---- gauge LED columns, paired in the centre: A at x 46, B at x 54; rows 80 / 50 / 20 / ON / CHG / DONE, resistors outboard
 ROWS = (62.5, 65, 67.5, 70, 72.5, 75)                   # below the middle slot (y 39-61)
 for (a, b), y in zip((("D4", "D14"), ("D3", "D13"), ("D2", "D12"), ("D1", "D11"), ("D9", "D17"), ("D10", "D18")), ROWS):
@@ -94,11 +94,11 @@ for i, ref in enumerate(("R4", "R5", "R6", "R7", "R8")):
 at("R9", 30, 12.5); at("R10", 30, 15); at("R11", 30, 17.5)
 at("Q20", 8, 12); at("R77", 8, 15.5); at("R78", 8, 18); at("Q21", 8, 22); at("R79", 8, 25.5); at("R80", 8, 28)
 # ---- pack B gauge, mirrored top right (a little lower than A's: J3 is above it), and its rail switch
-at("C20", 84, 8.7); at("U14", 84, 13); at("U15", 84, 21); at("C21", 84, 24.9)
-at("U16", 76, 9.5); at("R45", 76, 12.5)
+at("C20", 84, 9.5); at("U14", 84, 13.5); at("U15", 84, 21); at("C21", 84, 24.9)
+at("U16", 76, 10.7); at("R45", 76, 13.7)
 for i, ref in enumerate(("R46", "R47", "R48", "R49", "R50")):
-    at(ref, 76, 15.5 + 2.5 * i)
-at("R51", 72, 14); at("R52", 72, 16); at("R53", 72, 18)
+    at(ref, 76, 16.7 + 2.5 * i)
+at("R51", 72, 15); at("R52", 72, 17); at("R53", 72, 19)
 at("Q23", 92, 12); at("R83", 92, 15.5); at("R84", 92, 18); at("Q24", 92, 22)
 # ---- output chains: chain B (+V) at x 61-70 below J3, chain A (-V) along the top edge between the Pi hole and the MCU
 at("Q1", 63.5, 8.5); at("R1", 68, 6.5); at("R2", 68, 8.3); at("F1", 68, 12.5, 90)
@@ -108,25 +108,26 @@ at("F2", 39.5, 3); at("Q11", 44.5, 3); at("R39", 48.5, 2.5); at("R40", 51.6, 2.5
 # the LDO well clear of the MCU's pin rows), decoupling row below it, the CN3704 with only its compensation parts beside
 # it (its pin rows need room to fan out), the buck power parts above the middle slot, the opto on the slot's left flank
 # and the sense dividers, pull-ups and VBUS switch on its right flank
-at("U19", 41, 9); at("SW2", 50, 8.5); at("U18", 56.5, 10.2)
+at("U19", 41, 9); at("U18", 56.5, 10.2); at("C25", 35.9, 8.2, 90)   # VDDA cap at pin 5
 for i, ref in enumerate(("TP1", "TP2", "TP3", "TP4")):
     at(ref, 54.5 + 2.8 * i, 4.3)
-for ref, x in (("C4", 39.5), ("C24", 42.7), ("C25", 45.9), ("R70", 49.1), ("C26", 52.3), ("C23", 55.5), ("C22", 58.7)):
+for ref, x in (("C4", 39.5), ("C24", 42.7), ("R70", 49.1), ("C26", 52.3), ("C23", 55.5), ("C22", 58.7)):
     at(ref, x, 13.5)
 at("U5", 41, 18)
 at("C9", 48.3, 16.2); at("C10", 48.3, 18); at("C11", 48.3, 19.8); at("R27", 48.3, 21.6)
-at("C6", 39, 21.8); at("RT1", 42.5, 21.8)
-at("C5", 42.1, 27); at("Q6", 49, 24.2); at("D7", 55, 24.2); at("D8", 62.2, 24.2); at("L1", 51.5, 30.2)
-at("R25", 59.3, 28.5, 90); at("R26", 59.3, 33.3, 90); at("C7", 62.8, 28.2, 90); at("C8", 62.8, 31.7, 90)
+at("RT1", 42.5, 21.8)
+at("C5", 42.1, 27); at("Q6", 49, 24.2); at("D7", 55, 24.2); at("C6", 51.5, 20.5); at("D8", 57, 20.5); at("L1", 51.5, 30.2)   # C6 + D8 tight on Q6
+at("R25", 59.3, 28.5, 90); at("R26", 59.3, 33.3, 90); at("C7", 62.8, 27.6, 90); at("C8", 62.8, 32.4, 90)
 at("U17", 41, 41, 90); at("R76", 41, 48.5)
 for ref, (x, y) in {"R71": (52.5, 37.5), "R72": (52.5, 39.3), "R73": (55.7, 37.5), "R74": (55.7, 39.3), "R28": (58.9, 37.5),
                     "R29": (58.9, 39.3), "R42": (52.5, 41.1), "R43": (55.7, 41.1), "R44": (58.9, 41.1)}.items():
     at(ref, x, y)
-at("Q12", 53.5, 44); at("Q13", 58.5, 44)
+at("Q12", 53.5, 44); at("Q13", 58.5, 44); at("C27", 52.5, 35.5)
 # ---- front strip, outer thirds (visible, either side of the LED pair): the relay with its driver on the right by pack B's
 # sockets (its contacts take 0V / +BATB from there), the PD sink on the left by pack A's (its CC lines run to J1 as fine tracks)
-at("K1", 84.5, 70, 90); at("Q19", 78.5, 57); at("D19", 83, 56.8, 90)
-at("U4", 15.5, 70, 90); at("R24", 15.5, 76); 
+at("K1", 82, 63); at("Q19", 78.5, 57); at("D19", 83, 56.8, 90); at("R85", 74.5, 57); at("R86", 74.5, 60)
+at("U4", 15.5, 70, 90); at("R24", 15.5, 76); at("C3", 15.5, 64.8)
+at("SW2", 39, 58.5)                                      # BOOT button in the front strip (left of the slot), reachable with the Pi on
 board = pcbnew.LoadBoard(BOARD)
 # idempotent: a previous run's outline, slots and board-level silk are collected now and removed at the very end
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
@@ -196,13 +197,13 @@ def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
 
 
 silk("LaserHAT BatteryPack rev D", 50, 5, 1.0, 0, pcbnew.B_SilkS)   # the top side is under the Pi / HAT or busy
-silk("OUT +V 0V -V CAB", 80, 1.0, 0.8)
+silk("OUT", 72.5, 1.0, 0.8)
 silk("PD 20V", 42.5, 96.5, 0.8, 90); silk("DFU", 57.5, 95.5, 0.8, 90)
-silk("BOOT", 50, 4.6, 0.8)
+silk("BOOT", 32.5, 58.5, 0.8)
 silk("SWDIO SWCLK GND 3V3", 60.5, 1.5, 0.8)
 for txt, y in zip(("80%", "50%", "20%", "ON", "CHG", "DONE"), ROWS):
     silk(txt, 50, y, 0.8)
-silk("A", 41.5, 60.2, 0.8); silk("B", 58.5, 60.2, 0.8)
+silk("A", 44.2, 60.5, 0.8); silk("B", 55.8, 60.5, 0.8)
 # User.Comments: the LaserHAT's outline (its Edge.Cuts, read live from ../LaserDriver.kicad_pcb) with its hole MH1 on H5 and
 # the Pi's rotation, i.e. where the HAT sits when the Pi is on H5-H8; User.Drawings: the Raspberry Pi itself (85 x 56, r 3,
 # holes 3.5 in from the SD-card end and the long edges, ports end 23.5 beyond the far holes).  Drawings only (not in the gerbers).

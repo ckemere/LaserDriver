@@ -30,20 +30,22 @@ Rev D fixes the topology and moves the switching into the charger:
             are left open so the MCU owns the USB data lines), U18 TLV76033 makes +3V3 for U19 STM32F042F4P6 (USB DFU
             bootloader: hold SW2 BOOT while plugging into a PC, or SWD on TP1 / TP2), Q13 (P) passes VBUS to VCHG only
             while the MCU drives CHG_EN (Q12), U5 CN3704 buck charger at 16.8 V, 1 A (R25 + R26 = 0.2 R), termination
-            92 mA, trickle below 11.2 V, NTC RT1, its output +CHG / CGND goes through relay K1 (HFD2, 24 V coil on VBUS,
-            Q19 driver, D19 flyback) to pack A (released: NC) or pack B (energised: NO).  The MCU reads CHRG / DONE
-            (R28 / R29 pull-ups), the connected pack (R71 / R72) and VBUS (R73 / R74), and drives D9 / D10 (pack A
+            92 mA, trickle below 11.2 V, NTC RT1, its output +CHG / CGND goes through relay K1 (Omron G6S-2 DC12, 12 V coil fed from VBUS
+            through R86 680 R, Q19 driver, R85 pull-down, D19 flyback) to pack A (released: NC) or pack B (energised: NO).  The MCU reads CHRG / DONE
+            (R28 / R29 pull-ups), the connected pack (R71 / R72 1M / 180k + C27) and VBUS (R73 / R74), and drives D9 / D10 (pack A
             charging / done) and D17 / D18 (pack B) through R66-R69.  The brick is mains-isolated, so the island riding at
             GND or at 0V is fine; it is the only part of the board whose potential moves.
   interlock U17 EL817: LED from VBUS through R76, transistor pulls ENB_G to 0V -> +V off (and -V with it: the module's
             fault line) whenever a brick is in, so the brick's mains leakage can never reach the electrode.
-  output    J3 (+OUT, 0V, -V, CAB) to the module: pins 1-3 as rev B / C, pin 4 strapped to pin 2 in the plug.
+  output    J3 (+OUT, 0V, -V, CAB) to the module, a side-entry PH socket opening over the top edge: pins 1-3 as rev B / C, pin 4
+            strapped to pin 2 in the plug.
 """
 
 R0603 = "Resistor_SMD:R_0603_1608Metric"
 R1206 = "Resistor_SMD:R_1206_3216Metric"
 C0603 = "Capacitor_SMD:C_0603_1608Metric"
 C0805 = "Capacitor_SMD:C_0805_2012Metric"
+C1206 = "Capacitor_SMD:C_1206_3216Metric"
 CPEL = "Capacitor_SMD:CP_Elec_6.3x5.4"
 SOT23 = "Package_TO_SOT_SMD:SOT-23"
 SOT23_6 = "Package_TO_SOT_SMD:SOT-23-6"
@@ -57,12 +59,12 @@ SMA = "Diode_SMD:D_SMA"
 SOD123 = "Diode_SMD:D_SOD-123"
 FUSE1812 = "Fuse:Fuse_1812_4532Metric"
 IND = "Inductor_SMD:L_Sunlord_MWSA0603S"
-PH4 = "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"
+PH4 = "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal"     # side entry: the cable leaves over the top edge
 XH5 = "Connector_JST:JST_XH_S5B-XH-A-1_1x05_P2.50mm_Horizontal"
 XT60 = "battpack:XT60PW-M"                              # KiCad's AMASS_XT60PW-M footprint + our 3D model (battpack.3dshapes)
 USBC = "Connector_USB:USB_C_Receptacle_HRO_TYPE-C-31-M-12"
 TOGGLE = "battpack:SW_MTS-202"
-RELAY = "battpack:Relay_HFD2"
+RELAY = "Relay_THT:Relay_DPDT_Omron_G6S-2"
 OPTO = "battpack:EL817S1"
 PUSH = "Button_Switch_SMD:SW_Push_1P1T_XKB_TS-1187A"
 TP = "TestPoint:TestPoint_Pad_1.5x1.5mm"
@@ -74,12 +76,12 @@ HOLE25 = "MountingHole:MountingHole_2.7mm_M2.5"
 # functions are in the net names and on the silk.
 L = dict(R100k="C25803", R68k="C23231", R30k="C22984", R18k="C25810", R15k="C22809", R13k="C22797", R12k="C22790",
          R10k="C25804", R6k8="C23212", R6k2="C4260", R2k="C22975", R1M="C22935", R470k="C23178", R120k="C25808",
-         R1k="C21190", R470="C23179", R120="C22787", R100="C22775", R100_1206="C17901", R0R1_1206="C25334",
-         C100n="C14663", C1u50="C15849", C470p="C1620", C220n="C21120", C10u25="C15850", C22u50el="C2836438",   # el: ext
+         R1k="C21190", R470="C23179", R680_0805="C17798", R180k="C22827", R120="C22787", R100="C22775", R100_1206="C17901", R0R1_1206="C25334",
+         C100n="C14663", C1u50="C15849", C470p="C1620", C220n="C21120", C22u25="C12891", C22u50el="C2836438",   # el: ext
          AO3401A="C15127", AO3400A="C20917", N7002="C8545", CJ431="C3113", LM393="C7955", SS14="C2480", SS34="C8678",
          D4148="C81598", CN3704="C51659", CH224A="C42459160", HY2213="C113632", NTC="C13564",                   # ext x4
-         STM32="C81002", RELAY="C18198081", OPTO="C2912100", LDO="C2683368",                                    # ext x4
-         TOGGLE="C55159891", USBC="C165948", L22u="C408453", PH4="C131334", PTC="C12430",                       # ext x5
+         STM32="C81002", RELAY="C1525289", OPTO="C2912100", LDO="C2683368",                                      # ext x4
+         TOGGLE="C55159891", USBC="C165948", L22u="C408453", PH4="C157926", PTC="C12430",                       # ext x5
          XH5="C163038", XT60="C98732", PUSH="C318884",                                                           # ext x2
          LEDR="C2286", LEDY="C2296", LEDG="C2297")
 
@@ -255,8 +257,8 @@ PARTS = [
     dict(ref="L1", sym="L", value="MWSA0603S-220MT", fp=IND, lcsc=L["L22u"], nets={"1": "SW", "2": "CSP"}),   # Sunlord
     R("R25", "0.1R", "CSP", "RCS", L["R0R1_1206"], fp=R1206),      # 200 mV / 0.2 R = 1 A
     R("R26", "0.1R", "RCS", "+CHG", L["R0R1_1206"], fp=R1206),
-    C("C7", "10u", "+CHG", "CGND", L["C10u25"], fp=C0805),
-    C("C8", "10u", "+CHG", "CGND", L["C10u25"], fp=C0805),
+    C("C7", "22u", "+CHG", "CGND", L["C22u25"], fp=C1206),            # 25 V 1206: ~10 uF left at 16.8 V DC bias
+    C("C8", "22u", "+CHG", "CGND", L["C22u25"], fp=C1206),
     dict(ref="RT1", sym="Thermistor", value="NCP18XH103F03RB", fp=R0603, lcsc=L["NTC"], nets={"1": "TEMP", "2": "CGND"}),
     C("C9", "470p", "COM1", "CGND", L["C470p"]),
     R("R27", "120", "COM2", "COM2C", L["R120"]),
@@ -265,10 +267,12 @@ PARTS = [
     R("R28", "10k", "+3V3", "CHRG", L["R10k"]),          # CN3704's open-drain flags -> MCU
     R("R29", "10k", "+3V3", "DONE", L["R10k"]),
     # ---------------------------------------------------------------- relay: charger output to pack A (released) or pack B
-    dict(ref="K1", sym="HFD2", value="HFD2/024-M", fp=RELAY, lcsc=L["RELAY"],
-         nets={"1": "VBUS", "16": "RLY_K", "4": "+CHG", "6": "0V", "8": "+BATB", "13": "CGND", "11": "GND", "9": "0V"}),
+    dict(ref="K1", sym="G6S2", value="G6S-2 DC12", fp=RELAY, lcsc=L["RELAY"],
+         nets={"1": "RLY_P", "12": "RLY_K", "4": "+CHG", "3": "0V", "5": "+BATB", "9": "CGND", "10": "GND", "8": "0V"}),
+    R("R86", "680", "VBUS", "RLY_P", L["R680_0805"], fp="Resistor_SMD:R_0805_2012Metric"),   # 12 V coil (1028 R) on 20 V: 11.7 mA, 12 V
     nmos2("Q19", "RELAY", "CGND", "RLY_K"),
-    dict(ref="D19", sym="D", value="1N4148W", fp=SOD123, lcsc=L["D4148"], nets={"1": "VBUS", "2": "RLY_K"}),   # flyback
+    R("R85", "100k", "RELAY", "CGND", L["R100k"]),       # coil off while the MCU is in reset / DFU
+    dict(ref="D19", sym="D", value="1N4148W", fp=SOD123, lcsc=L["D4148"], nets={"1": "RLY_P", "2": "RLY_K"}),   # flyback across the coil
     # ---------------------------------------------------------------- MCU: STM32F042F4P6, USB DFU, senses, LEDs
     dict(ref="U19", sym="STM32F042F4", value="STM32F042F4P6", fp=TSSOP20, lcsc=L["STM32"],
          nets={"1": "BOOT0", "2": "LED_DB", "3": None, "4": "NRST", "5": "+3V3", "6": "VBAT_S", "7": "VBUS_S",
@@ -279,8 +283,9 @@ PARTS = [
     C("C26", "100n", "NRST", "CGND", L["C100n"]),
     R("R70", "10k", "BOOT0", "CGND", L["R10k"]),
     dict(ref="SW2", sym="SW_Push", value="TS-1187A-B-A-B", fp=PUSH, lcsc=L["PUSH"], nets={"1": "BOOT0", "2": "+3V3"}),
-    R("R71", "100k", "+CHG", "VBAT_S", L["R100k"]),      # 16.8 V -> 2.56 V (18.1 V OV cut -> 2.76 V)
-    R("R72", "18k", "VBAT_S", "CGND", L["R18k"]),
+    R("R71", "1M", "+CHG", "VBAT_S", L["R1M"]),          # 16.8 V -> 2.56 V (18.1 V OV cut -> 2.76 V); 1M: 17 uA on pack A when idle
+    R("R72", "180k", "VBAT_S", "CGND", L["R180k"]),
+    C("C27", "100n", "VBAT_S", "CGND", L["C100n"]),      # holds the ADC input (the divider is 150k source impedance)
     R("R73", "100k", "VBUS", "VBUS_S", L["R100k"]),      # 20 V -> 3.05 V
     R("R74", "18k", "VBUS_S", "CGND", L["R18k"]),
     led("D9", "KT-0603R", L["LEDR"], "CGND", "D9_A", fp=LED0603),      # pack A charging
@@ -293,7 +298,7 @@ PARTS = [
     R("R69", "470", "LED_DB", "D18_A", L["R470"]),
     tp("TP1", "SWDIO"), tp("TP2", "SWCLK"), tp("TP3", "CGND"), tp("TP4", "+3V3"),
     # ---------------------------------------------------------------- output and mounting
-    dict(ref="J3", sym="Conn_01x04", value="B4B-PH-K-S(LF)(SN)", fp=PH4, lcsc=L["PH4"],
+    dict(ref="J3", sym="Conn_01x04", value="S4B-PH-K-S(LF)(SN)", fp=PH4, lcsc=L["PH4"],
          nets={"1": "+OUT", "2": "0V", "3": "-V", "4": "CAB"}),
     dict(ref="H1", sym="MountingHole", value="M3", fp=HOLE, lcsc="", nets={}),
     dict(ref="H2", sym="MountingHole", value="M3", fp=HOLE, lcsc="", nets={}),

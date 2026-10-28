@@ -296,3 +296,11 @@ ic_symbol("EL817", "U", 12.7, 10.16,
 # TLV760 LDO, SOT-23: 2 IN, 1 OUT, 3 GND (as on the e-stim module)
 ic_symbol("TLV760", "U", 12.7, 10.16, left=[("2", "IN", 0, "power_in")], right=[("1", "OUT", 0, "power_out")],
           bottom=[("3", "GND", 0, "power_in")])
+
+# Omron G6S-2 DPDT signal relay, single side stable (rev D final): coil 1 (+) / 12 (-); pole 1: 4 common, 3 NC, 5 NO; pole 2:
+# 9 common, 10 NC, 8 NO (datasheet "Terminal Arrangement", G6S-2 PCB terminal type; KiCad's Relay_DPDT_Omron_G6S-2 footprint)
+ic_symbol("G6S2", "K", 15.24, 20.32,
+          left=[("1", "+", 5.08, "passive"), ("12", "-", -5.08, "passive")],
+          right=[("4", "COM1", 7.62, "passive"), ("5", "NO1", 5.08, "passive"), ("3", "NC1", 2.54, "passive"),
+                 ("9", "COM2", -2.54, "passive"), ("8", "NO2", -5.08, "passive"), ("10", "NC2", -7.62, "passive")],
+          gfx_extra="\n    " + _relay_gfx)

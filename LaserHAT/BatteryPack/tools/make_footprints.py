@@ -130,17 +130,19 @@ def toggle2():
 def relay():
     # Hongfa HFD2 single-side-stable DPDT signal relay (drawing HFD2 2023 rev 1.00): body 20.2 x 10.2 x 10.6 mm, 8 pins
     # 0.5 x 0.25 on a DIP-16 grid (2.54 mm pitch, rows 7.62 apart), holes 1.0 mm.  Top view with the orientation mark at
-    # the lower left: back row (-y) 1, 4, 6, 8 from the left; front row (+y) 16, 13, 11, 9.  1 / 16 coil, 4 / 13 commons,
+    # the lower right (pin 16): back row (-y) 8, 6, 4, 1 from the left; front row (+y) 9, 11, 13, 16.  1 / 16 coil, 4 / 13 commons,
     # 6 / 11 NC, 8 / 9 NO.  Origin at the body centre.
     b = []
-    for num, col in (("1", 0), ("4", 3), ("6", 5), ("8", 7)):
+    # The datasheet's PCB layout is a BOTTOM view (1-4-6-8 over 16-13-11-9, mark at the pin-16 corner); mirrored here for
+    # the top view (audit 2026-10-28: the first version transcribed the bottom view as is and would have reversed the coil).
+    for num, col in (("8", 0), ("6", 2), ("4", 4), ("1", 7)):
         b.append(pad_th(num, -8.89 + 2.54 * col, -3.81, 1.0, 1.7, "circle" if num != "1" else "rect"))
-    for num, col in (("16", 0), ("13", 3), ("11", 5), ("9", 7)):
+    for num, col in (("9", 0), ("11", 2), ("13", 4), ("16", 7)):
         b.append(pad_th(num, -8.89 + 2.54 * col, 3.81, 1.0, 1.7))
     b.append(rect(-10.1, -5.1, 10.1, 5.1, "F.Fab"))
     b.append(rect(-10.6, -5.6, 10.6, 5.6, "F.CrtYd", 0.05))
     b.append(rect(-10.3, -5.3, 10.3, 5.3, "F.SilkS", 0.12))
-    b.append(f'  (fp_circle (center -11.0 -3.81) (end -10.75 -3.81) (stroke (width 0.12) (type solid)) (fill solid) (layer "F.SilkS") (uuid "{U()}"))')   # pin 1 dot
+    b.append(f'  (fp_circle (center 11.0 3.81) (end 11.25 3.81) (stroke (width 0.12) (type solid)) (fill solid) (layer "F.SilkS") (uuid "{U()}"))')   # orientation mark at pin 16
     b.append(f'  (fp_text user "A" (at 3.81 -5.9 0) (layer "F.Fab") (uuid "{U()}") (effects (font (size 0.8 0.8) (thickness 0.12))))')
     return footprint("Relay_HFD2",
                      "Hongfa HFD2 DPDT signal relay, single side stable, 20.2 x 10.2 x 10.6 mm, DIP-16 grid",
