@@ -61,12 +61,12 @@ for ref, (x, y) in zip(("H5", "H6", "H7", "H8"), PI):
     at(ref, x, y)
 # ---- pack sockets along the front edge (under the Pi's USB / Ethernet end for pack A): J5 (XH balance, opening toward
 # the edge), XT60 J7 / J8 (face flush with the edge, "-" pin outboard) either side of x 52.5, J6 outboard; output header J3
-# (pins along y, cable straight up to the module's pads 36 mm above) in the top-left corner; toggle (lever along x) in the
-# right column beside the HAT's header edge
+# (pins along y, cable straight up to the module's pads 36 mm above) in the top-left corner; toggle (lever along y, parallel to the Pi, RUN up) in
+# the right column beside the HAT's header edge
 at("J5", 10.5, 91.5); at("J6", 76.5, 91.5)
 at("J7", 35.5, 83.1, 180); at("J8", 68, 83.1, 180)
 at("J3", 4, 4, -90)                                       # pin 1 at (4, 4), pins down to y 10; cable rises west of the thumbwheel (x > 6.5)
-at("SW1", 74, 52)
+at("SW1", 74, 52, 90)                                   # lever along y like the Pi; RUN up (y 44), CHG down (y 60)
 at("F3", 46, 66, 90); at("R30", 46, 71)                  # link fuse and pull-down under the Pi, left of H7
 
 
