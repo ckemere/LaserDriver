@@ -32,6 +32,8 @@ PASSES = int(sys.argv[sys.argv.index("--passes") + 1]) if "--passes" in sys.argv
 KEEP_STUBS = "--keep-stubs" in sys.argv
 CLEANUP_ONLY = "--cleanup-only" in sys.argv                  # just drop unused stubs and report
 STUB_BEYOND = 0.8                                       # mm past the pad tip
+STUB_REFS = {"U5", "U19"}                               # every signal pad of these gets a 0.2 mm escape stub too (fine-pitch rows that got boxed in)
+PREROUTE = os.path.join(WORK, "preroute.json")         # optional hand pre-routes (maze_io format), added locked after the rip
 STUB_MIN = 0.3                                          # shortest useful stub past the tip
 CLR = 0.25                                              # keep this far from any other pad
 mm = pcbnew.FromMM
@@ -68,7 +70,8 @@ def add_stubs(board):
             continue
         sx, sy = pad.GetSize().x / 1e6, pad.GetSize().y / 1e6
         w = width(pad.GetNetname())
-        if w <= min(sx, sy) + 0.05:
+        forced = fp.GetReference() in STUB_REFS and w <= min(sx, sy) + 0.05
+        if w <= min(sx, sy) + 0.05 and not forced:
             continue
         ang = math.radians(pad.GetOrientation().AsDegrees())
         # pad long axis in board coordinates (KiCad: y down, angles counter-clockwise on screen)
@@ -81,7 +84,7 @@ def add_stubs(board):
         dx, dy = (pc.x - fc.x) / 1e6, (pc.y - fc.y) / 1e6
         if dx * ax + dy * ay < 0:
             ax, ay = -ax, -ay
-        sw = min(sx, sy)
+        sw = 0.2 if forced else min(sx, sy)
         # fine-pitch pads (TSSOP) on wide nets get a long stub, so the wide track attaches clear of the neighbours' tracks
         L = half + STUB_BEYOND + (1.2 if (w >= 0.6 and sw < 0.5) else 0.0)
         px, py = pc.x / 1e6, pc.y / 1e6
@@ -235,6 +238,15 @@ def stage(name):
     board = pcbnew.LoadBoard(BOARD)
     if name == "rip":
         print("ripped", rip(board), "tracks/vias")
+        if os.path.exists(PREROUTE):
+            sys.path.insert(0, os.path.join(ROOT, "..", "tools"))
+            r = json.load(open(PREROUTE))
+            for t in r["tracks"]:
+                tr = pcbnew.PCB_TRACK(board)
+                tr.SetStart(pcbnew.VECTOR2I(mm(t["a"][0]), mm(t["a"][1]))); tr.SetEnd(pcbnew.VECTOR2I(mm(t["b"][0]), mm(t["b"][1])))
+                tr.SetWidth(mm(t["w"])); tr.SetLayer(pcbnew.F_Cu if t["layer"] == "F" else pcbnew.B_Cu)
+                tr.SetNet(board.FindNet(t["net"])); tr.SetLocked(True); board.Add(tr)
+            print("pre-routed", len(r["tracks"]), "locked tracks from", PREROUTE)
     elif name == "stubs":
         print("stubs:", add_stubs(board))
     elif name == "dsn":

@@ -67,6 +67,17 @@ metadata:
    unverified: toggle lever direction, XT60 polarity, DFU on the TSSOP-20 (first-board checks).
    After the fixes: re-routed from scratch (Freerouting + maze for ~10 leftovers; KiCad's DRC names the wrong partner for an
    isolated pad, cluster the net geometrically), DRC 0/0 with the pour, 5.8 m / 2036 segments / 227 vias, fab 169 / 53.
+   Second audit (2026-10-28, a fresh subagent told nothing of the first): BLOCKER = a single DPDT relay's poles are not
+   simultaneous; with the island tied to one pack, the mismatched intermediate states put 33.6 V across the charger (C7/C8
+   25 V, CN3704 BAT 28 V) or short C7/C8 through the contacts -> added K2 (LINK, second G6S-2, both poles NO in series with
+   +CHG / CGND, PF1, R88 / Q25 / R87 / D20): firmware opens K2, moves K1, closes K2; K2 also open when idle / unpowered
+   (island off both packs: no idle drain).  Also: L1 22 -> 33 uH (CN3704 table), C28 10n Q13 gate soft start, R86 1206
+   (93 mW), XT60 drills 2.9 / 0.8x1.9 (Amass 2025 drawing), CPL rotations corrected with the Fabrication Toolkit table
+   (tools/ref/jlc_rotations.csv; make_fab.py was writing raw KiCad angles), Power class clearance 0.3 + kicad_dru 0.5 mm
+   for the 33 V pairs, BRICK_MV 18 V (coil pick-up), TP3 silk CGND.  XT60 polarity: no Amass drawing states it; footprint
+   = KiCad convention (- at the bevelled end) = hobby wiring; meter check on the first board stays.  Not taken: XH PTCs,
+   LDO series resistor, 0805 1 uF.  Schematic: K2 in its own box 7B (box 7 extended downward hit the A1 title block at
+   x >= 284 / y >= 216 units).
 0g. **Ideas to come back to (user, 2026-10-27; not scheduled, nothing built):**
    (a) **Stimulator on the battery board.**  Since the e-stim module needs its own pack board anyway, consider one PCB
    that carries the cells, chargers and the stimulator circuit (DAC, Howland stage, switches, fault comparator) with

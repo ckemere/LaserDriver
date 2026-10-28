@@ -279,6 +279,8 @@ put("Q13", 143 + X, 46, rot=180, ref_at=(-6.35, -1.27), val_at=(-6.35, 1.27))
 PWR("Q13.2")                                              # source <- VBUS (top)
 e = PWR("Q13.3"); FLAG(e, up=(0, 1))                       # drain -> VCHG (bottom)
 put("R43", 153 + X, 40); put("R44", 153 + X, 52)
+put("C28", 137 + X, 54)
+PWR("C28.1"); NET("C28.2")                                # VBUS - Q13_G: soft start of the VBUS switch
 PWR("R43.1"); W("R43.2", "R44.1"); W("Q13.1", (153 + X, 46)); lab("Q13_G", 149 + X, 46)
 NET("R44.2")                                              # Q13_GD
 put("Q12", 165 + X, 50, ref_at=(5.08, 2.54), val_at=(5.08, 0))
@@ -331,7 +333,7 @@ text("(board temperature; a 10k resistor disables it).  CHRG / DONE are read by 
 box(138 + X, 126, 228 + X, 194, "7. CHARGE CONTROLLER (island): STM32F042F4P6 (USB DFU), RELAY K1 TO PACK A / B, PER-PACK CHARGING / DONE LEDs")
 put("U19", 236, 152)
 PWR("U19.16"); PWR("U19.5"); PWR("U19.15")               # VDD, VDDA, VSS
-for num in ("1", "4", "2", "17", "18", "19", "20", "6", "7", "8", "9", "10", "11", "12", "13", "14"):
+for num in ("1", "4", "2", "3", "17", "18", "19", "20", "6", "7", "8", "9", "10", "11", "12", "13", "14"):
     NET(f"U19.{num}")
 put("R70", 214, 158)
 NET("R70.1"); PWR("R70.2")                                # BOOT0 pull-down
@@ -355,8 +357,8 @@ PWR("R28.1"); NET("R28.2"); PWR("R29.1"); NET("R29.2")    # CHRG / DONE pull-ups
 # relay: 12 V coil from VBUS through R86 and Q19, D19 flyback, R85 keeps it off in reset; contacts: released = pack A, energised = pack B
 put("K1", 276, 160, hide_val=False)
 NET("K1.1"); NET("K1.12")                                 # RLY_P (coil +, from VBUS through R86), RLY_K (Q19)
-PWR("K1.4", length=2.54); PWR("K1.5", length=7.62); PWR("K1.3", length=12.7)
-PWR("K1.9", length=2.54); PWR("K1.8", length=7.62); PWR("K1.10", length=12.7)
+NET("K1.4", length=2.54); PWR("K1.5", length=7.62); PWR("K1.3", length=12.7)      # COM1 = CHG_K from K2
+NET("K1.9", length=2.54); PWR("K1.8", length=7.62); PWR("K1.10", length=12.7)     # COM2 = CGND_K from K2
 put("R86", 258, 160)
 PWR("R86.1"); NET("R86.2")                                # VBUS -> RLY_P
 put("Q19", 258, 184, ref_at=(5.08, 2.54), val_at=(5.08, 0))
@@ -365,14 +367,28 @@ put("R85", 250, 190)
 NET("R85.1"); PWR("R85.2")                                # RELAY pull-down
 put("D19", 266, 176)
 NET("D19.1"); NET("D19.2")                                # K = RLY_P, A = RLY_K: flyback across the coil
-# LEDs: pack A charging (red) / done (green), pack B the same; anodes driven by the MCU through 1k / 470 R
+# LEDs: pack A charging (red)# LEDs: pack A charging (red) / done (green), pack B the same; anodes driven by the MCU through 1k / 470 R
 for k, (d, r) in enumerate((("D9", "R66"), ("D10", "R67"), ("D17", "R68"), ("D18", "R69"))):
     y = 176 + 4 * k
     put(d, 220, y); put(r, 226, y, rot=270)
     PWR(f"{d}.1", length=2.54); W(f"{d}.2", f"{r}.2"); NET(f"{r}.1")
-text("U19 runs the charge: at every slot end it pauses the charger (CHG_EN low), reads the connected pack at rest (R71 / R72), compares it with the other", 139 + X, 187)
-text("pack's last resting reading and keeps or swaps the relay (RELAY high = pack B), then restarts the charger.  DONE flags the pack as full; both full = idle.", 139 + X, 189)
-text("D9 / D10 = pack A charging / done, D17 / D18 = pack B.  K1 G6S-2 12 V coil through R86 680 R from VBUS (11.7 mA; must-operate 9 V).  Program: hold SW2, plug into a PC, dfu-util; or SWD on TP1 / TP2.", 139 + X, 191)
+# 7B: K2 (LINK), both poles in series with the island's +CHG / CGND, open while K1 moves (and whenever the MCU is off)
+box(138 + X, 195, 211 + X, 228, "7B. LINK RELAY K2: ISOLATES THE ISLAND WHILE K1 MOVES (a DPDT's poles are not simultaneous); THE ALGORITHM")
+put("K2", 256, 206, hide_val=False)
+NET("K2.1"); NET("K2.12")
+PWR("K2.4", length=7.62); NET("K2.5", length=2.54)        # COM1 = +CHG (island), NO1 = CHG_K -> K1
+PWR("K2.9", length=7.62); NET("K2.8", length=2.54)        # COM2 = CGND (island), NO2 = CGND_K -> K1
+put("R88", 222, 199, rot=90)
+PWR("R88.1"); NET("R88.2")                                # VBUS -> RLY2_P
+put("D20", 228, 204)
+NET("D20.1"); NET("D20.2")                                # K = RLY2_P, A = RLY2_K
+put("Q25", 216, 212, mirror=True, ref_at=(-5.08, 2.54), val_at=(-5.08, 0))
+NET("Q25.1"); PWR("Q25.2"); NET("Q25.3")                  # gate LINK, source CGND, drain RLY2_K
+put("R87", 236, 218, rot=90)
+NET("R87.1"); PWR("R87.2")                                # LINK pull-down
+text("U19 runs the charge: at every slot end it pauses the charger (CHG_EN low), reads the connected pack at rest (R71 / R72) and compares it", 139 + X, 221)
+text("with the other pack's last resting reading; to swap it opens K2, moves K1 (RELAY high = pack B), closes K2 and restarts the charger.", 139 + X, 223)
+text("DONE flags a pack full; both full = idle with K2 open.  Coils: 12 V through 680 R from VBUS (11.7 mA each; must-operate 9 V).  Program: SW2 + dfu-util, or SWD.", 139 + X, 225)
 
 missing, unplaced, overlaps = sh.finish()
 print("missing pins:", missing)

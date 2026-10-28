@@ -115,17 +115,18 @@ for ref, x in (("C4", 39.5), ("C24", 42.7), ("R70", 49.1), ("C26", 52.3), ("C23"
     at(ref, x, 13.5)
 at("U5", 41, 18)
 at("C9", 48.3, 16.2); at("C10", 48.3, 18); at("C11", 48.3, 19.8); at("R27", 48.3, 21.6)
-at("RT1", 42.5, 21.8)
+at("RT1", 36.5, 24.5)                                  # NTC: left of C5, clear of U5's bottom pins (COM1 / COM2 exits)
 at("C5", 42.1, 27); at("Q6", 49, 24.2); at("D7", 55, 24.2); at("C6", 51.5, 20.5); at("D8", 57, 20.5); at("L1", 51.5, 30.2)   # C6 + D8 tight on Q6
 at("R25", 59.3, 28.5, 90); at("R26", 59.3, 33.3, 90); at("C7", 62.8, 27.6, 90); at("C8", 62.8, 32.4, 90)
 at("U17", 41, 41, 90); at("R76", 41, 48.5)
 for ref, (x, y) in {"R71": (52.5, 37.5), "R72": (52.5, 39.3), "R73": (55.7, 37.5), "R74": (55.7, 39.3), "R28": (58.9, 37.5),
                     "R29": (58.9, 39.3), "R42": (52.5, 41.1), "R43": (55.7, 41.1), "R44": (58.9, 41.1)}.items():
     at(ref, x, y)
-at("Q12", 53.5, 44); at("Q13", 58.5, 44); at("C27", 52.5, 35.5)
+at("Q12", 53.5, 44); at("Q13", 58.5, 44); at("C27", 52.5, 35.5); at("C28", 58.9, 47.3)
 # ---- front strip, outer thirds (visible, either side of the LED pair): the relay with its driver on the right by pack B's
 # sockets (its contacts take 0V / +BATB from there), the PD sink on the left by pack A's (its CC lines run to J1 as fine tracks)
-at("K1", 82, 63); at("Q19", 78.5, 57); at("D19", 83, 56.8, 90); at("R85", 74.5, 57); at("R86", 74.5, 60)
+at("K1", 83, 63); at("Q19", 78.5, 57); at("D19", 83, 56.8, 90); at("R85", 74.5, 57); at("R86", 74.5, 60.2)
+at("K2", 74, 63); at("Q25", 69.5, 57); at("D20", 70, 61.5, 90); at("R87", 65.5, 57); at("R88", 65.5, 60.2)   # LINK relay beside K1
 at("U4", 15.5, 70, 90); at("R24", 15.5, 76); at("C3", 15.5, 64.8)
 at("SW2", 39, 58.5)                                      # BOOT button in the front strip (left of the slot), reachable with the Pi on
 board = pcbnew.LoadBoard(BOARD)
@@ -200,7 +201,7 @@ silk("LaserHAT BatteryPack rev D", 50, 5, 1.0, 0, pcbnew.B_SilkS)   # the top si
 silk("OUT", 72.5, 1.0, 0.8)
 silk("PD 20V", 42.5, 96.5, 0.8, 90); silk("DFU", 57.5, 95.5, 0.8, 90)
 silk("BOOT", 32.5, 58.5, 0.8)
-silk("SWDIO SWCLK GND 3V3", 60.5, 1.5, 0.8)
+silk("SWDIO SWCLK CGND 3V3", 60.5, 1.5, 0.8)
 for txt, y in zip(("80%", "50%", "20%", "ON", "CHG", "DONE"), ROWS):
     silk(txt, 50, y, 0.8)
 silk("A", 44.2, 60.5, 0.8); silk("B", 55.8, 60.5, 0.8)

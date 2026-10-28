@@ -17,8 +17,10 @@
  *      full for this session.
  *   3. at the end of a slot: charger off, 1 s rest, read the connected pack, swap to the other pack if that one is not
  *      full and its last resting reading is lower by more than SWAP_MV; a flagged pack is never reconnected.
- *   4. both full (or absent): charger off, relay released, both DONE LEDs on.
- * The relay only moves with the charger off (dry switching).  The IWDG resets the MCU if the loop ever stalls.
+ *   4. both full (or absent): charger off, K2 open (island off the packs), both DONE LEDs on.
+ * K1 (pack A / B) only moves with the charger off and K2 (LINK, both poles of the island's +CHG / CGND) open, so the
+ * island is never tied to a pack half-way through K1's transfer; K2 then closes and the charger restarts.  The IWDG
+ * resets the MCU if the loop ever stalls; in reset / DFU both coils are off (pull-downs), i.e. the island is isolated.
  *
  * Bare metal, HSI 8 MHz, SysTick 1 ms, no USB in the application (the ROM DFU bootloader does the flashing).
  */
@@ -53,10 +55,11 @@
 enum { PIN_VBAT = 0, PIN_VBUS = 1, PIN_CHRG = 2, PIN_DONE = 3, PIN_RELAY = 4, PIN_CHG_EN = 5, PIN_LED_CA = 6, PIN_LED_DA = 7 };
 #define PIN_LED_CB 1      /* PB1 */
 #define PIN_LED_DB 0      /* PF0 */
+#define PIN_LINK   1      /* PF1: K2, both poles of the island's +CHG / CGND; open while K1 moves */
 
 #define SLOT_S      180   /* seconds per charging slot before the packs are compared again */
 #define SWAP_MV      50   /* swap when the other pack rests this much lower */
-#define BRICK_MV  15000   /* below this the source is a PC port (DFU) or a weak charger: do nothing */
+#define BRICK_MV  18000   /* below this the source is a PC port (DFU) or a weak charger: do nothing (the 12 V coils need > 15 V on VBUS) */
 #define ABSENT_MV  9000   /* a pack reading below this is not there (or beyond saving) */
 #define DONE_MS    2000   /* DONE must be asserted this long */
 #define SILENT_MS  5000   /* neither CHRG nor DONE this long after power-up = the IC refuses this pack */
@@ -77,7 +80,7 @@ static void gpio_init(void)
     /* PA0 / PA1 analog (11), PA2 / PA3 input (00), PA4-PA7 output (01) */
     MODER(GPIOA) = (MODER(GPIOA) & ~0x0000FFFFu) | 0x0000550Fu;
     MODER(GPIOB) = (MODER(GPIOB) & ~(3u << (2 * PIN_LED_CB))) | (1u << (2 * PIN_LED_CB));
-    MODER(GPIOF) = (MODER(GPIOF) & ~(3u << (2 * PIN_LED_DB))) | (1u << (2 * PIN_LED_DB));
+    MODER(GPIOF) = (MODER(GPIOF) & ~((3u << (2 * PIN_LED_DB)) | (3u << (2 * PIN_LINK)))) | (1u << (2 * PIN_LED_DB)) | (1u << (2 * PIN_LINK));
     PUPDR(GPIOA) &= ~0x000000F0u;                                 /* CHRG / DONE: external 10k pull-ups */
 }
 
@@ -110,7 +113,17 @@ static uint32_t adc_read(int ch)
 static uint32_t mv(int ch) { return adc_read(ch) * 21633u / 4095u; }
 
 static void charger(int on) { pin_set(GPIOA, PIN_CHG_EN, on); }
-static void relay(int pack_b) { pin_set(GPIOA, PIN_RELAY, pack_b); }
+static void link(int on) { pin_set(GPIOF, PIN_LINK, on); }
+/* move K1 only with the island isolated: open K2, wait for its contacts, move K1, wait, close K2 (G6S-2 operate / release 5 ms max) */
+static void relay(int pack_b)
+{
+    static int current = -1;
+    if (pack_b == current) { link(1); return; }
+    link(0); delay(30);
+    pin_set(GPIOA, PIN_RELAY, pack_b); delay(30);
+    link(1); delay(30);
+    current = pack_b;
+}
 static void leds(int ca, int da, int cb, int db)
 {
     pin_set(GPIOA, PIN_LED_CA, ca); pin_set(GPIOA, PIN_LED_DA, da);
@@ -139,7 +152,7 @@ int main(void)
 
     int done[2] = {0, 0};
     uint32_t rest[2] = {0, 0};
-    charger(0); relay(0); leds(0, 0, 0, 0);
+    charger(0); link(0); leds(0, 0, 0, 0);
 
     /* not a brick: blink both charging LEDs slowly (DFU / weak source), never charge */
     while (mv(PIN_VBUS) < BRICK_MV) {
@@ -154,7 +167,7 @@ int main(void)
     for (;;) {
         kick();
         if (done[0] && done[1]) {                                 /* both full or absent: idle */
-            charger(0); relay(0);
+            charger(0); link(0);                                  /* island off the packs: no idle drain, nothing lifted by leakage */
             leds(0, rest[0] >= ABSENT_MV, 0, rest[1] >= ABSENT_MV);
             delay(500);
             continue;

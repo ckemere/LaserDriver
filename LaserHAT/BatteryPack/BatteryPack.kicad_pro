@@ -421,6 +421,18 @@
       {
         "netclass": "Fine",
         "pattern": "/USB_DM"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "/CHG_K"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "/CGND_K"
+      },
+      {
+        "netclass": "Charger",
+        "pattern": "/RLY2_K"
       }
     ]
   },

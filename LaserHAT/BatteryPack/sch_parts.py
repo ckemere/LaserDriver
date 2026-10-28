@@ -30,8 +30,9 @@ Rev D fixes the topology and moves the switching into the charger:
             are left open so the MCU owns the USB data lines), U18 TLV76033 makes +3V3 for U19 STM32F042F4P6 (USB DFU
             bootloader: hold SW2 BOOT while plugging into a PC, or SWD on TP1 / TP2), Q13 (P) passes VBUS to VCHG only
             while the MCU drives CHG_EN (Q12), U5 CN3704 buck charger at 16.8 V, 1 A (R25 + R26 = 0.2 R), termination
-            92 mA, trickle below 11.2 V, NTC RT1, its output +CHG / CGND goes through relay K1 (Omron G6S-2 DC12, 12 V coil fed from VBUS
-            through R86 680 R, Q19 driver, R85 pull-down, D19 flyback) to pack A (released: NC) or pack B (energised: NO).  The MCU reads CHRG / DONE
+            92 mA, trickle below 11.2 V, NTC RT1, its output +CHG / CGND goes through relay K2 (LINK: both poles NO, open while K1 moves and
+            whenever the MCU is unpowered, so the island is never tied to a pack half-way) and relay K1 (Omron G6S-2 DC12, 12 V coils fed from VBUS
+            through R86 / R88 680 R, Q19 / Q25 drivers, R85 / R87 pull-downs, D19 / D20 flyback) to pack A (released: NC) or pack B (energised: NO).  The MCU reads CHRG / DONE
             (R28 / R29 pull-ups), the connected pack (R71 / R72 1M / 180k + C27) and VBUS (R73 / R74), and drives D9 / D10 (pack A
             charging / done) and D17 / D18 (pack B) through R66-R69.  The brick is mains-isolated, so the island riding at
             GND or at 0V is fine; it is the only part of the board whose potential moves.
@@ -76,12 +77,12 @@ HOLE25 = "MountingHole:MountingHole_2.7mm_M2.5"
 # functions are in the net names and on the silk.
 L = dict(R100k="C25803", R68k="C23231", R30k="C22984", R18k="C25810", R15k="C22809", R13k="C22797", R12k="C22790",
          R10k="C25804", R6k8="C23212", R6k2="C4260", R2k="C22975", R1M="C22935", R470k="C23178", R120k="C25808",
-         R1k="C21190", R470="C23179", R680_0805="C17798", R180k="C22827", R120="C22787", R100="C22775", R100_1206="C17901", R0R1_1206="C25334",
+         R1k="C21190", R470="C23179", R680_0805="C17798", R680_1206="C17975", C10n="C57112", R180k="C22827", R120="C22787", R100="C22775", R100_1206="C17901", R0R1_1206="C25334",
          C100n="C14663", C1u50="C15849", C470p="C1620", C220n="C21120", C22u25="C12891", C22u50el="C2836438",   # el: ext
          AO3401A="C15127", AO3400A="C20917", N7002="C8545", CJ431="C3113", LM393="C7955", SS14="C2480", SS34="C8678",
          D4148="C81598", CN3704="C51659", CH224A="C42459160", HY2213="C113632", NTC="C13564",                   # ext x4
          STM32="C81002", RELAY="C1525289", OPTO="C2912100", LDO="C2683368",                                      # ext x4
-         TOGGLE="C55159891", USBC="C165948", L22u="C408453", PH4="C157926", PTC="C12430",                       # ext x5
+         TOGGLE="C55159891", USBC="C165948", L33u="C408454", PH4="C157926", PTC="C12430",                       # ext x5
          XH5="C163038", XT60="C98732", PUSH="C318884",                                                           # ext x2
          LEDR="C2286", LEDY="C2296", LEDG="C2297")
 
@@ -242,6 +243,7 @@ PARTS = [
     pmos("Q13", "Q13_G", "VBUS", "VCHG"),                # VBUS reaches the charger only while the MCU says so
     R("R43", "100k", "VBUS", "Q13_G", L["R100k"]),
     R("R44", "100k", "Q13_G", "Q13_GD", L["R100k"]),     # Vgs(Q13) = -VBUS/2 = -10 V
+    C("C28", "10n", "VBUS", "Q13_G", L["C10n"]),         # 0.5 ms gate ramp: VCHG's 23 uF charges softly instead of as a spike from the brick
     nmos2("Q12", "CHG_EN", "CGND", "Q13_GD"),
     R("R42", "100k", "CHG_EN", "CGND", L["R100k"]),      # charger off while the MCU is in reset / DFU
     # ---------------------------------------------------------------- CN3704 buck charger (island): +CHG / CGND to the relay
@@ -254,7 +256,7 @@ PARTS = [
     pmos("Q6", "DRV", "VCHG", "SWA"),                    # buck switch
     schottky("D7", "SS34", L["SS34"], "SW", "SWA"),      # blocks battery -> input through Q6's body diode
     schottky("D8", "SS34", L["SS34"], "SW", "CGND"),     # freewheel
-    dict(ref="L1", sym="L", value="MWSA0603S-220MT", fp=IND, lcsc=L["L22u"], nets={"1": "SW", "2": "CSP"}),   # Sunlord
+    dict(ref="L1", sym="L", value="MWSA0603S-330MT", fp=IND, lcsc=L["L33u"], nets={"1": "SW", "2": "CSP"}),   # Sunlord 33 uH: CN3704 table 2 (1 A, 20 V in); 2.5 A sat
     R("R25", "0.1R", "CSP", "RCS", L["R0R1_1206"], fp=R1206),      # 200 mV / 0.2 R = 1 A
     R("R26", "0.1R", "RCS", "+CHG", L["R0R1_1206"], fp=R1206),
     C("C7", "22u", "+CHG", "CGND", L["C22u25"], fp=C1206),            # 25 V 1206: ~10 uF left at 16.8 V DC bias
@@ -268,14 +270,23 @@ PARTS = [
     R("R29", "10k", "+3V3", "DONE", L["R10k"]),
     # ---------------------------------------------------------------- relay: charger output to pack A (released) or pack B
     dict(ref="K1", sym="G6S2", value="G6S-2 DC12", fp=RELAY, lcsc=L["RELAY"],
-         nets={"1": "RLY_P", "12": "RLY_K", "4": "+CHG", "3": "0V", "5": "+BATB", "9": "CGND", "10": "GND", "8": "0V"}),
-    R("R86", "680", "VBUS", "RLY_P", L["R680_0805"], fp="Resistor_SMD:R_0805_2012Metric"),   # 12 V coil (1028 R) on 20 V: 11.7 mA, 12 V
+         nets={"1": "RLY_P", "12": "RLY_K", "4": "CHG_K", "3": "0V", "5": "+BATB", "9": "CGND_K", "10": "GND", "8": "0V"}),
+    R("R86", "680", "VBUS", "RLY_P", L["R680_1206"], fp="Resistor_SMD:R_1206_3216Metric"),   # 12 V coil (1028 R) on 20 V: 11.7 mA, 12 V; 93 mW -> 1206
     nmos2("Q19", "RELAY", "CGND", "RLY_K"),
     R("R85", "100k", "RELAY", "CGND", L["R100k"]),       # coil off while the MCU is in reset / DFU
     dict(ref="D19", sym="D", value="1N4148W", fp=SOD123, lcsc=L["D4148"], nets={"1": "RLY_P", "2": "RLY_K"}),   # flyback across the coil
+    # K2 (LINK) isolates the island while K1 transfers: a DPDT relay's two poles are not guaranteed to move together, and with
+    # the island still tied to one pack the mismatched intermediate states put 33.6 V across the charger or short C7 / C8
+    # through the contacts.  Firmware: open K2, move K1, close K2 (both poles NO; NC contacts unused).
+    dict(ref="K2", sym="G6S2", value="G6S-2 DC12", fp=RELAY, lcsc=L["RELAY"],
+         nets={"1": "RLY2_P", "12": "RLY2_K", "4": "+CHG", "5": "CHG_K", "3": None, "9": "CGND", "8": "CGND_K", "10": None}),
+    R("R88", "680", "VBUS", "RLY2_P", L["R680_1206"], fp="Resistor_SMD:R_1206_3216Metric"),
+    nmos2("Q25", "LINK", "CGND", "RLY2_K"),
+    R("R87", "100k", "LINK", "CGND", L["R100k"]),        # island isolated while the MCU is in reset / DFU
+    dict(ref="D20", sym="D", value="1N4148W", fp=SOD123, lcsc=L["D4148"], nets={"1": "RLY2_P", "2": "RLY2_K"}),
     # ---------------------------------------------------------------- MCU: STM32F042F4P6, USB DFU, senses, LEDs
     dict(ref="U19", sym="STM32F042F4", value="STM32F042F4P6", fp=TSSOP20, lcsc=L["STM32"],
-         nets={"1": "BOOT0", "2": "LED_DB", "3": None, "4": "NRST", "5": "+3V3", "6": "VBAT_S", "7": "VBUS_S",
+         nets={"1": "BOOT0", "2": "LED_DB", "3": "LINK", "4": "NRST", "5": "+3V3", "6": "VBAT_S", "7": "VBUS_S",
                "8": "CHRG", "9": "DONE", "10": "RELAY", "11": "CHG_EN", "12": "LED_CA", "13": "LED_DA", "14": "LED_CB",
                "15": "CGND", "16": "+3V3", "17": "USB_DM", "18": "USB_DP", "19": "SWDIO", "20": "SWCLK"}),
     C("C24", "100n", "+3V3", "CGND", L["C100n"]),        # VDD

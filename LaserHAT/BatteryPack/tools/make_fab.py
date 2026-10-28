@@ -4,6 +4,7 @@
 import csv
 import io
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -36,11 +37,26 @@ subprocess.run([KICAD_CLI, "pcb", "export", "pos", "--format", "csv", "--units",
                check=True, capture_output=True)
 by_ref = {p["ref"]: p for p in PARTS}
 fitted = {r for r, p in by_ref.items() if p["lcsc"] and not p.get("dnp")}
+# JLC's rotation convention differs from KiCad's for many packages; the same table and formula as the Fabrication Toolkit
+# (bennymeg/Fabrication-Toolkit plugins/transformations.csv, copied to tools/ref/jlc_rotations.csv), which the HAT is ordered with
+ROT_DB = [(re.compile(row["footprint"]), float(row["rotation"])) for row in csv.DictReader(
+    open(os.path.join(HERE, "ref", "jlc_rotations.csv"), newline=""), fieldnames=["footprint", "rotation", "x", "y"])
+          if row["footprint"] != "Regex To Match"]
+def jlc_rotation(fpid, rot, side):
+    name = fpid.split(":", 1)[1] if ":" in fpid else fpid
+    if side != "top":
+        rot = 180.0 - rot
+    for rx, off in ROT_DB:
+        if rx.search(fpid if ":" in rx.pattern else name):
+            rot += off
+            break
+    return rot % 360.0
 cpl = [["Designator", "Mid X", "Mid Y", "Layer", "Rotation"]]
 for r in csv.DictReader(open(pos, newline="")):
     ref = r["Ref"]
     if ref in fitted:
-        cpl.append([ref, r["PosX"], r["PosY"], "Top" if r["Side"] == "top" else "Bottom", r["Rot"]])
+        cpl.append([ref, r["PosX"], r["PosY"], "Top" if r["Side"] == "top" else "Bottom",
+                    f"{jlc_rotation(by_ref[ref]['fp'], float(r['Rot']), r['Side']):g}"])
 buf = io.StringIO(); csv.writer(buf, lineterminator="\r\n").writerows(cpl)
 open(os.path.join(OUT, "BatteryPack_cpl.csv"), "w", newline="").write(buf.getvalue())
 os.remove(pos)
