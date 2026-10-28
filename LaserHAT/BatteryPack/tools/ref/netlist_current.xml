@@ -2,14 +2,14 @@
 <export version="E">
   <design>
     <source>/home/claude-agent/Code/LaserDriver/LaserHAT/BatteryPack/BatteryPack.kicad_sch</source>
-    <date>2026-10-27T16:35:58-0500</date>
+    <date>2026-10-28T10:51:46-0500</date>
     <tool>Eeschema 9.0.8+dfsg-1</tool>
     <sheet number="1" name="/" tstamps="/">
       <title_block>
-        <title>Battery board for the LaserHAT e-stim module: two 4S hobby packs, one charger</title>
+        <title>Battery board for the LaserHAT e-stim module: two 4S hobby packs in series, one floating charger</title>
         <company>Kemere lab</company>
-        <rev>C</rev>
-        <date>2026-10-27</date>
+        <rev>D</rev>
+        <date>2026-10-28</date>
         <source>BatteryPack.kicad_sch</source>
         <comment number="1" value=""/>
         <comment number="2" value=""/>
@@ -360,6 +360,86 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>7b87d2c9-3d69-5910-ae37-4a88c48fd267</tstamps>
     </comp>
+    <comp ref="C22">
+      <value>1u</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C15849</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC Part #" value="C15849"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a87bbabd-d46f-57c7-8534-a25d3f4127b7</tstamps>
+    </comp>
+    <comp ref="C23">
+      <value>1u</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C15849</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC Part #" value="C15849"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>b5c420cc-a6c3-5cb5-883b-4c68b636290b</tstamps>
+    </comp>
+    <comp ref="C24">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC Part #" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4bc8bb1c-e899-568e-9716-76dcb05b3347</tstamps>
+    </comp>
+    <comp ref="C25">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC Part #" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>9dfe87b9-d11c-5f21-a3d0-618d4eac0752</tstamps>
+    </comp>
+    <comp ref="C26">
+      <value>100n</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C14663</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="C" description=""/>
+      <property name="LCSC Part #" value="C14663"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7f7248bc-c7c6-5181-bc2a-12167d34ca2e</tstamps>
+    </comp>
     <comp ref="D1">
       <value>KT-0603R</value>
       <footprint>LED_SMD:LED_0603_1608Metric</footprint>
@@ -423,38 +503,6 @@
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>3b459ad9-44b2-5020-b793-ff55321a01e8</tstamps>
-    </comp>
-    <comp ref="D5">
-      <value>SS14</value>
-      <footprint>Diode_SMD:D_SMA</footprint>
-      <fields>
-        <field name="LCSC Part #">C2480</field>
-        <field name="Footprint">Diode_SMD:D_SMA</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC Part #" value="C2480"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>bc02c695-ea99-51bc-9827-63644836449c</tstamps>
-    </comp>
-    <comp ref="D6">
-      <value>SS14</value>
-      <footprint>Diode_SMD:D_SMA</footprint>
-      <fields>
-        <field name="LCSC Part #">C2480</field>
-        <field name="Footprint">Diode_SMD:D_SMA</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC Part #" value="C2480"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>4b05986b-4c9e-5538-ac01-b077e8cf0f22</tstamps>
     </comp>
     <comp ref="D7">
       <value>SS34</value>
@@ -584,37 +632,53 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>3712a919-1a61-501c-af81-6cb2159dcd34</tstamps>
     </comp>
-    <comp ref="D15">
-      <value>SS14</value>
-      <footprint>Diode_SMD:D_SMA</footprint>
+    <comp ref="D17">
+      <value>KT-0603R</value>
+      <footprint>LED_SMD:LED_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC Part #">C2480</field>
-        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="LCSC Part #">C2286</field>
+        <field name="Footprint">LED_SMD:LED_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC Part #" value="C2480"/>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC Part #" value="C2286"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>e4d3e89c-85a4-5d81-8ae0-ab8e4edb6c57</tstamps>
+      <tstamps>5cbec2a0-8cf7-5ee3-a08c-38b89f01ac8f</tstamps>
     </comp>
-    <comp ref="D16">
-      <value>SS14</value>
-      <footprint>Diode_SMD:D_SMA</footprint>
+    <comp ref="D18">
+      <value>KT-0805G</value>
+      <footprint>LED_SMD:LED_0805_2012Metric</footprint>
       <fields>
-        <field name="LCSC Part #">C2480</field>
-        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="LCSC Part #">C2297</field>
+        <field name="Footprint">LED_SMD:LED_0805_2012Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="battpack" part="D_Schottky" description=""/>
-      <property name="LCSC Part #" value="C2480"/>
+      <libsource lib="battpack" part="LED" description=""/>
+      <property name="LCSC Part #" value="C2297"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>f6578c11-739a-56e8-87d2-623bafc5b0ec</tstamps>
+      <tstamps>d48b0219-f57f-5d1b-b83d-65779f69c15f</tstamps>
+    </comp>
+    <comp ref="D19">
+      <value>1N4148W</value>
+      <footprint>Diode_SMD:D_SOD-123</footprint>
+      <fields>
+        <field name="LCSC Part #">C81598</field>
+        <field name="Footprint">Diode_SMD:D_SOD-123</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="D" description=""/>
+      <property name="LCSC Part #" value="C81598"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>7764fe2f-8c66-5c70-ae17-ccc499c7ed5e</tstamps>
     </comp>
     <comp ref="F1">
       <value>MF-MSMF010-2</value>
@@ -647,22 +711,6 @@
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>9eb4f0f3-5b5a-587b-9042-356c85066be6</tstamps>
-    </comp>
-    <comp ref="F3">
-      <value>MF-MSMF110/24X-2</value>
-      <footprint>Fuse:Fuse_1812_4532Metric</footprint>
-      <fields>
-        <field name="LCSC Part #">C210835</field>
-        <field name="Footprint">Fuse:Fuse_1812_4532Metric</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="battpack" part="Polyfuse" description=""/>
-      <property name="LCSC Part #" value="C210835"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>0f798c30-dd37-52b5-80a0-f44e04759617</tstamps>
     </comp>
     <comp ref="H1">
       <value>M3</value>
@@ -880,6 +928,22 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>5c698104-e429-5106-9d15-b10f66497888</tstamps>
     </comp>
+    <comp ref="K1">
+      <value>HFD2/024-M</value>
+      <footprint>battpack:Relay_HFD2</footprint>
+      <fields>
+        <field name="LCSC Part #">C18198081</field>
+        <field name="Footprint">battpack:Relay_HFD2</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="HFD2" description=""/>
+      <property name="LCSC Part #" value="C18198081"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2d65c817-383d-551d-a17b-391c8d1932ba</tstamps>
+    </comp>
     <comp ref="L1">
       <value>MWSA0603S-220MT</value>
       <footprint>Inductor_SMD:L_Sunlord_MWSA0603S</footprint>
@@ -1009,16 +1073,16 @@
       <tstamps>1fdf3d24-90de-54f0-bd24-d45c7d1de77d</tstamps>
     </comp>
     <comp ref="Q12">
-      <value>AO3400A</value>
+      <value>2N7002</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <fields>
-        <field name="LCSC Part #">C20917</field>
+        <field name="LCSC Part #">C8545</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
-      <property name="LCSC Part #" value="C20917"/>
+      <property name="LCSC Part #" value="C8545"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1120,6 +1184,102 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>7891091f-be37-5205-bc77-abb9271c1b55</tstamps>
     </comp>
+    <comp ref="Q19">
+      <value>2N7002</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC Part #">C8545</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC Part #" value="C8545"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>401e58f4-2df0-5cd6-b492-5daad0f75821</tstamps>
+    </comp>
+    <comp ref="Q20">
+      <value>AO3401A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC Part #">C15127</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
+      <property name="LCSC Part #" value="C15127"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>684ae9bd-f61a-5bd4-85e0-f52bbb79f44a</tstamps>
+    </comp>
+    <comp ref="Q21">
+      <value>2N7002</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC Part #">C8545</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC Part #" value="C8545"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>4667771e-8460-50b3-838e-01f99c6868de</tstamps>
+    </comp>
+    <comp ref="Q22">
+      <value>2N7002</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC Part #">C8545</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC Part #" value="C8545"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>13454d25-8066-5f64-a7e1-76865a2c8e9d</tstamps>
+    </comp>
+    <comp ref="Q23">
+      <value>AO3401A</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC Part #">C15127</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_PMOS_GSD" description=""/>
+      <property name="LCSC Part #" value="C15127"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>21d2ce3d-e3fc-5fd0-9e2f-f53a1d4a42d7</tstamps>
+    </comp>
+    <comp ref="Q24">
+      <value>2N7002</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC Part #">C8545</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="Q_NMOS_GSD" description=""/>
+      <property name="LCSC Part #" value="C8545"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d4538b30-21c5-5a0c-98b2-a2bcb0978fb0</tstamps>
+    </comp>
     <comp ref="R1">
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -1169,16 +1329,16 @@
       <tstamps>f9cb4b70-3b2d-5846-adff-30feefbb402b</tstamps>
     </comp>
     <comp ref="R4">
-      <value>6.8k</value>
+      <value>6.2k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC Part #">C23212</field>
+        <field name="LCSC Part #">C4260</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC Part #" value="C23212"/>
+      <property name="LCSC Part #" value="C4260"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -1425,52 +1585,36 @@
       <tstamps>8ca45f59-d9ea-5301-8be6-5247d29a8f42</tstamps>
     </comp>
     <comp ref="R28">
-      <value>15k</value>
+      <value>10k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC Part #">C22809</field>
+        <field name="LCSC Part #">C25804</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC Part #" value="C22809"/>
+      <property name="LCSC Part #" value="C25804"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>3d89d737-0bea-5af9-8bf4-2f2996daa930</tstamps>
     </comp>
     <comp ref="R29">
-      <value>15k</value>
+      <value>10k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC Part #">C22809</field>
+        <field name="LCSC Part #">C25804</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC Part #" value="C22809"/>
+      <property name="LCSC Part #" value="C25804"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>9aa45596-26df-5292-9bed-9fa5f4e29850</tstamps>
-    </comp>
-    <comp ref="R30">
-      <value>1M</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="LCSC Part #">C22935</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC Part #" value="C22935"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>6fcd1237-bfb0-54cf-b591-b011cfbd3747</tstamps>
     </comp>
     <comp ref="R31">
       <value>100</value>
@@ -1632,22 +1776,6 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>ad550726-cdd9-595f-a1c2-9be8d8ab7931</tstamps>
     </comp>
-    <comp ref="R41">
-      <value>100k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <fields>
-        <field name="LCSC Part #">C25803</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet"/>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC Part #" value="C25803"/>
-      <property name="Sheetname" value=""/>
-      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
-      <sheetpath names="/" tstamps="/"/>
-      <tstamps>8f23948b-9f96-5b2c-b359-c9020d3d4cab</tstamps>
-    </comp>
     <comp ref="R42">
       <value>100k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -1713,16 +1841,16 @@
       <tstamps>9909ae2a-1e4d-5ce8-813b-08bb2f57218e</tstamps>
     </comp>
     <comp ref="R46">
-      <value>6.8k</value>
+      <value>6.2k</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <fields>
-        <field name="LCSC Part #">C23212</field>
+        <field name="LCSC Part #">C4260</field>
         <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
       <libsource lib="battpack" part="R" description=""/>
-      <property name="LCSC Part #" value="C23212"/>
+      <property name="LCSC Part #" value="C4260"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
@@ -2032,6 +2160,294 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>ca9dda22-54a4-522c-9b15-5f9116704346</tstamps>
     </comp>
+    <comp ref="R66">
+      <value>1k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C21190</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C21190"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>746d7bbf-6284-5e8a-ba6b-7f8e8abae2e0</tstamps>
+    </comp>
+    <comp ref="R67">
+      <value>470</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C23179</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C23179"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>38d79e6e-3ed5-5741-b6c9-6f83e4b8d45a</tstamps>
+    </comp>
+    <comp ref="R68">
+      <value>1k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C21190</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C21190"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>69e0ad0a-fa60-5de6-8f5d-d1bbfe644b38</tstamps>
+    </comp>
+    <comp ref="R69">
+      <value>470</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C23179</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C23179"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a3d2ded9-8193-5fbd-8b39-4ec6281de6fb</tstamps>
+    </comp>
+    <comp ref="R70">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25804</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25804"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>77de25a2-095c-5559-939b-9e2a5bce859e</tstamps>
+    </comp>
+    <comp ref="R71">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>71dc4a99-b3e7-58b3-9c0b-b57a099a2a4f</tstamps>
+    </comp>
+    <comp ref="R72">
+      <value>18k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25810</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25810"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>e35dbfdb-9a56-563f-8105-c1a723b7d58c</tstamps>
+    </comp>
+    <comp ref="R73">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>42653687-54e0-517f-8e8e-2b835a62cfd1</tstamps>
+    </comp>
+    <comp ref="R74">
+      <value>18k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25810</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25810"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>c57b23d4-7714-5ce4-b8e1-bc04182b2979</tstamps>
+    </comp>
+    <comp ref="R76">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25804</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25804"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>02bcea5e-6a01-595e-85d5-d584d88308e3</tstamps>
+    </comp>
+    <comp ref="R77">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5c482fa0-8ab0-506e-915e-432cfc0e9ce1</tstamps>
+    </comp>
+    <comp ref="R78">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>0fbdd9b8-20c5-59b5-a975-2603d1b943f7</tstamps>
+    </comp>
+    <comp ref="R79">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3430b9da-25f3-5866-85e2-feac1d729abc</tstamps>
+    </comp>
+    <comp ref="R80">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5292a728-2e8c-5c66-8f3f-ff13c70f6294</tstamps>
+    </comp>
+    <comp ref="R81">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C22935</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C22935"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>d8983664-2493-5fd0-9a76-d65ff84259cb</tstamps>
+    </comp>
+    <comp ref="R82">
+      <value>1M</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C22935</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C22935"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>03efdf72-4ab7-5d43-bb39-2f97a846f60e</tstamps>
+    </comp>
+    <comp ref="R83">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8781722a-d81c-58e6-9107-a2e9b2b90c76</tstamps>
+    </comp>
+    <comp ref="R84">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <fields>
+        <field name="LCSC Part #">C25803</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="R" description=""/>
+      <property name="LCSC Part #" value="C25803"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>175eb3a1-ce84-5ed6-9033-48d6df0efddc</tstamps>
+    </comp>
     <comp ref="RT1">
       <value>NCP18XH103F03RB</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
@@ -2049,20 +2465,96 @@
       <tstamps>b795291f-e918-5eca-ade7-1ead64dfc421</tstamps>
     </comp>
     <comp ref="SW1">
-      <value>CAX-MTS203M-YB-10.6JL</value>
-      <footprint>battpack:SW_MTS-203</footprint>
+      <value>CAX-MTS202B2-BB-20.5JL</value>
+      <footprint>battpack:SW_MTS-202</footprint>
       <fields>
-        <field name="LCSC Part #">C55160018</field>
-        <field name="Footprint">battpack:SW_MTS-203</field>
+        <field name="LCSC Part #">C55159891</field>
+        <field name="Footprint">battpack:SW_MTS-202</field>
         <field name="Datasheet"/>
         <field name="Description"/>
       </fields>
-      <libsource lib="battpack" part="SW_DPDT_CO" description=""/>
-      <property name="LCSC Part #" value="C55160018"/>
+      <libsource lib="battpack" part="SW_DPDT" description=""/>
+      <property name="LCSC Part #" value="C55159891"/>
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
       <tstamps>9f04e3d6-2981-5340-a1c4-5f23cad05c80</tstamps>
+    </comp>
+    <comp ref="SW2">
+      <value>TS-1187A-B-A-B</value>
+      <footprint>Button_Switch_SMD:SW_Push_1P1T_XKB_TS-1187A</footprint>
+      <fields>
+        <field name="LCSC Part #">C318884</field>
+        <field name="Footprint">Button_Switch_SMD:SW_Push_1P1T_XKB_TS-1187A</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="SW_Push" description=""/>
+      <property name="LCSC Part #" value="C318884"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>87a3e846-43a8-5820-a56e-c2ad4b149962</tstamps>
+    </comp>
+    <comp ref="TP1">
+      <value>SWDIO</value>
+      <footprint>TestPoint:TestPoint_Pad_1.5x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_1.5x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="TestPoint" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>a1a1bb28-83d4-56e6-a5b4-3fe430bcafba</tstamps>
+    </comp>
+    <comp ref="TP2">
+      <value>SWCLK</value>
+      <footprint>TestPoint:TestPoint_Pad_1.5x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_1.5x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="TestPoint" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>8643237e-3aba-554f-b5b6-fc6454ec0e61</tstamps>
+    </comp>
+    <comp ref="TP3">
+      <value>CGND</value>
+      <footprint>TestPoint:TestPoint_Pad_1.5x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_1.5x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="TestPoint" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>3e641b61-23c1-559e-a077-c7c849e6148b</tstamps>
+    </comp>
+    <comp ref="TP4">
+      <value>+3V3</value>
+      <footprint>TestPoint:TestPoint_Pad_1.5x1.5mm</footprint>
+      <fields>
+        <field name="Footprint">TestPoint:TestPoint_Pad_1.5x1.5mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="TestPoint" description=""/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <property name="exclude_from_bom"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>2a36e890-aa9c-5ff7-957e-408a13a01dc3</tstamps>
     </comp>
     <comp ref="U1">
       <value>LM393DR2G</value>
@@ -2078,7 +2570,7 @@
       <property name="Sheetname" value=""/>
       <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
       <sheetpath names="/" tstamps="/"/>
-      <tstamps>8f520d21-417b-5184-ba9c-a87b0cba8949 a176d352-28e3-5349-9df8-8d151203b0dd 1e47b48a-3205-5883-89ba-4b53cc612ecc</tstamps>
+      <tstamps>a176d352-28e3-5349-9df8-8d151203b0dd 8f520d21-417b-5184-ba9c-a87b0cba8949 1e47b48a-3205-5883-89ba-4b53cc612ecc</tstamps>
     </comp>
     <comp ref="U2">
       <value>LM393DR2G</value>
@@ -2320,6 +2812,54 @@
       <sheetpath names="/" tstamps="/"/>
       <tstamps>62d26fa9-e8d5-596b-97c3-f89faec83e42</tstamps>
     </comp>
+    <comp ref="U17">
+      <value>EL817S1(C)(TU)-F</value>
+      <footprint>battpack:EL817S1</footprint>
+      <fields>
+        <field name="LCSC Part #">C2912100</field>
+        <field name="Footprint">battpack:EL817S1</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="EL817" description=""/>
+      <property name="LCSC Part #" value="C2912100"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>5fe981a3-d2a6-5942-85fe-88604c778d23</tstamps>
+    </comp>
+    <comp ref="U18">
+      <value>TLV76033DBZR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
+      <fields>
+        <field name="LCSC Part #">C2683368</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="TLV760" description=""/>
+      <property name="LCSC Part #" value="C2683368"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>26492ca9-4b8c-5a52-908c-3016b3649872</tstamps>
+    </comp>
+    <comp ref="U19">
+      <value>STM32F042F4P6</value>
+      <footprint>Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm</footprint>
+      <fields>
+        <field name="LCSC Part #">C81002</field>
+        <field name="Footprint">Package_SO:TSSOP-20_4.4x6.5mm_P0.65mm</field>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="battpack" part="STM32F042F4" description=""/>
+      <property name="LCSC Part #" value="C81002"/>
+      <property name="Sheetname" value=""/>
+      <property name="Sheetfile" value="BatteryPack.kicad_sch"/>
+      <sheetpath names="/" tstamps="/"/>
+      <tstamps>534c8f2e-b8ba-55fe-92c7-d1b20bd68ef7</tstamps>
+    </comp>
   </components>
   <libparts>
     <libpart lib="battpack" part="C">
@@ -2441,6 +2981,19 @@
         <pin num="5" name="Pin_5" type="passive"/>
       </pins>
     </libpart>
+    <libpart lib="battpack" part="D">
+      <fields>
+        <field name="Reference">D</field>
+        <field name="Value">D</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="K" type="passive"/>
+        <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
     <libpart lib="battpack" part="D_Schottky">
       <fields>
         <field name="Reference">D</field>
@@ -2452,6 +3005,40 @@
       <pins>
         <pin num="1" name="K" type="passive"/>
         <pin num="2" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="EL817">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">EL817</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="A" type="passive"/>
+        <pin num="2" name="K" type="passive"/>
+        <pin num="3" name="E" type="passive"/>
+        <pin num="4" name="C" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="HFD2">
+      <fields>
+        <field name="Reference">K</field>
+        <field name="Value">HFD2</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="+" type="passive"/>
+        <pin num="4" name="COM1" type="passive"/>
+        <pin num="6" name="NC1" type="passive"/>
+        <pin num="8" name="NO1" type="passive"/>
+        <pin num="9" name="NO2" type="passive"/>
+        <pin num="11" name="NC2" type="passive"/>
+        <pin num="13" name="COM2" type="passive"/>
+        <pin num="16" name="-" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="battpack" part="HY2213">
@@ -2579,10 +3166,41 @@
         <pin num="2" name="" type="passive"/>
       </pins>
     </libpart>
-    <libpart lib="battpack" part="SW_DPDT_CO">
+    <libpart lib="battpack" part="STM32F042F4">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">STM32F042F4</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="BOOT0" type="input"/>
+        <pin num="2" name="PF0" type="bidirectional"/>
+        <pin num="3" name="PF1" type="bidirectional"/>
+        <pin num="4" name="NRST" type="input"/>
+        <pin num="5" name="VDDA" type="power_in"/>
+        <pin num="6" name="PA0" type="bidirectional"/>
+        <pin num="7" name="PA1" type="bidirectional"/>
+        <pin num="8" name="PA2" type="bidirectional"/>
+        <pin num="9" name="PA3" type="bidirectional"/>
+        <pin num="10" name="PA4" type="bidirectional"/>
+        <pin num="11" name="PA5" type="bidirectional"/>
+        <pin num="12" name="PA6" type="bidirectional"/>
+        <pin num="13" name="PA7" type="bidirectional"/>
+        <pin num="14" name="PB1" type="bidirectional"/>
+        <pin num="15" name="VSS" type="power_in"/>
+        <pin num="16" name="VDD" type="power_in"/>
+        <pin num="17" name="PA9/USB_DM" type="bidirectional"/>
+        <pin num="18" name="PA10/USB_DP" type="bidirectional"/>
+        <pin num="19" name="PA13/SWDIO" type="bidirectional"/>
+        <pin num="20" name="PA14/SWCLK" type="bidirectional"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="SW_DPDT">
       <fields>
         <field name="Reference">SW</field>
-        <field name="Value">SW_DPDT_CO</field>
+        <field name="Value">SW_DPDT</field>
         <field name="Footprint"/>
         <field name="Datasheet"/>
         <field name="Description"/>
@@ -2594,6 +3212,19 @@
         <pin num="4" name="A2" type="passive"/>
         <pin num="5" name="C2" type="passive"/>
         <pin num="6" name="B2" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="SW_Push">
+      <fields>
+        <field name="Reference">SW</field>
+        <field name="Value">SW_Push</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="1" type="passive"/>
+        <pin num="2" name="2" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="battpack" part="TL431_SOT23">
@@ -2608,6 +3239,32 @@
         <pin num="1" name="REF" type="input"/>
         <pin num="2" name="K" type="passive"/>
         <pin num="3" name="A" type="passive"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="TLV760">
+      <fields>
+        <field name="Reference">U</field>
+        <field name="Value">TLV760</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="OUT" type="power_out"/>
+        <pin num="2" name="IN" type="power_in"/>
+        <pin num="3" name="GND" type="power_in"/>
+      </pins>
+    </libpart>
+    <libpart lib="battpack" part="TestPoint">
+      <fields>
+        <field name="Reference">TP</field>
+        <field name="Value">TestPoint</field>
+        <field name="Footprint"/>
+        <field name="Datasheet"/>
+        <field name="Description"/>
+      </fields>
+      <pins>
+        <pin num="1" name="" type="passive"/>
       </pins>
     </libpart>
     <libpart lib="battpack" part="Thermistor">
@@ -2658,37 +3315,41 @@
     </library>
   </libraries>
   <nets>
-    <net code="1" name="+BAT" class="Power">
-      <node ref="C7" pin="1" pintype="passive"/>
-      <node ref="C8" pin="1" pintype="passive"/>
-      <node ref="F3" pin="2" pintype="passive"/>
-      <node ref="J5" pin="5" pinfunction="Pin_5" pintype="passive"/>
-      <node ref="J7" pin="2" pinfunction="Pin_2" pintype="passive"/>
-      <node ref="R26" pin="2" pintype="passive"/>
-      <node ref="R34" pin="1" pintype="passive"/>
-      <node ref="R38" pin="1" pintype="passive"/>
-      <node ref="SW1" pin="1" pinfunction="A1" pintype="passive"/>
-      <node ref="U5" pin="14" pinfunction="BAT" pintype="input"/>
+    <net code="1" name="+3V3" class="Default">
+      <node ref="C23" pin="1" pintype="passive"/>
+      <node ref="C24" pin="1" pintype="passive"/>
+      <node ref="C25" pin="1" pintype="passive"/>
+      <node ref="R28" pin="1" pintype="passive"/>
+      <node ref="R29" pin="1" pintype="passive"/>
+      <node ref="SW2" pin="2" pinfunction="2" pintype="passive"/>
+      <node ref="TP4" pin="1" pintype="passive"/>
+      <node ref="U18" pin="1" pinfunction="OUT" pintype="power_out"/>
+      <node ref="U19" pin="16" pinfunction="VDD" pintype="power_in"/>
+      <node ref="U19" pin="5" pinfunction="VDDA" pintype="power_in"/>
     </net>
     <net code="2" name="+BATB" class="Power">
+      <node ref="F1" pin="1" pintype="passive"/>
       <node ref="J6" pin="5" pinfunction="Pin_5" pintype="passive"/>
       <node ref="J8" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="K1" pin="8" pinfunction="NO1" pintype="passive"/>
+      <node ref="Q23" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R61" pin="1" pintype="passive"/>
       <node ref="R65" pin="1" pintype="passive"/>
-      <node ref="SW1" pin="5" pinfunction="C2" pintype="passive"/>
+      <node ref="R83" pin="1" pintype="passive"/>
+      <node ref="SW1" pin="4" pinfunction="A2" pintype="passive"/>
     </net>
-    <net code="3" name="+CHGB" class="Power">
-      <node ref="D16" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="D6" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="F3" pin="1" pintype="passive"/>
-      <node ref="R41" pin="1" pintype="passive"/>
-      <node ref="SW1" pin="6" pinfunction="B2" pintype="passive"/>
+    <net code="3" name="+CHG" class="Default">
+      <node ref="C7" pin="1" pintype="passive"/>
+      <node ref="C8" pin="1" pintype="passive"/>
+      <node ref="K1" pin="4" pinfunction="COM1" pintype="passive"/>
+      <node ref="R26" pin="2" pintype="passive"/>
+      <node ref="R71" pin="1" pintype="passive"/>
+      <node ref="U5" pin="14" pinfunction="BAT" pintype="input"/>
     </net>
     <net code="4" name="+G" class="Default">
       <node ref="C1" pin="1" pintype="passive"/>
       <node ref="C2" pin="1" pintype="passive"/>
-      <node ref="D15" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="D16" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="Q20" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R12" pin="1" pintype="passive"/>
       <node ref="R13" pin="1" pintype="passive"/>
       <node ref="R14" pin="1" pintype="passive"/>
@@ -2701,8 +3362,7 @@
     <net code="5" name="+GB" class="Default">
       <node ref="C20" pin="1" pintype="passive"/>
       <node ref="C21" pin="1" pintype="passive"/>
-      <node ref="D5" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="D6" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="Q23" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R45" pin="1" pintype="passive"/>
       <node ref="R51" pin="1" pintype="passive"/>
       <node ref="R55" pin="1" pintype="passive"/>
@@ -2717,21 +3377,16 @@
       <node ref="R53" pin="1" pintype="passive"/>
       <node ref="R54" pin="1" pintype="passive"/>
     </net>
-    <net code="7" name="+RUN" class="Power">
-      <node ref="F1" pin="1" pintype="passive"/>
-      <node ref="SW1" pin="4" pinfunction="A2" pintype="passive"/>
-    </net>
-    <net code="8" name="+SW" class="Power">
-      <node ref="D5" pin="2" pinfunction="A" pintype="passive"/>
+    <net code="7" name="+SW" class="Power">
       <node ref="F1" pin="2" pintype="passive"/>
       <node ref="Q1" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R1" pin="1" pintype="passive"/>
     </net>
-    <net code="9" name="/-V" class="Power">
+    <net code="8" name="/-V" class="Power">
       <node ref="J3" pin="3" pinfunction="Pin_3" pintype="passive"/>
       <node ref="Q11" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="10" name="/B1" class="Power">
+    <net code="9" name="/B1" class="Power">
       <node ref="C17" pin="2" pintype="passive"/>
       <node ref="J6" pin="2" pinfunction="Pin_2" pintype="passive"/>
       <node ref="Q16" pin="2" pinfunction="S" pintype="passive"/>
@@ -2739,7 +3394,7 @@
       <node ref="R62" pin="1" pintype="passive"/>
       <node ref="U11" pin="3" pinfunction="VSS" pintype="passive"/>
     </net>
-    <net code="11" name="/B2" class="Power">
+    <net code="10" name="/B2" class="Power">
       <node ref="C18" pin="2" pintype="passive"/>
       <node ref="J6" pin="3" pinfunction="Pin_3" pintype="passive"/>
       <node ref="Q17" pin="2" pinfunction="S" pintype="passive"/>
@@ -2747,13 +3402,18 @@
       <node ref="R63" pin="1" pintype="passive"/>
       <node ref="U12" pin="3" pinfunction="VSS" pintype="passive"/>
     </net>
-    <net code="12" name="/B3" class="Power">
+    <net code="11" name="/B3" class="Power">
       <node ref="C19" pin="2" pintype="passive"/>
       <node ref="J6" pin="4" pinfunction="Pin_4" pintype="passive"/>
       <node ref="Q18" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R60" pin="1" pintype="passive"/>
       <node ref="R64" pin="1" pintype="passive"/>
       <node ref="U13" pin="3" pinfunction="VSS" pintype="passive"/>
+    </net>
+    <net code="12" name="/BOOT0" class="Default">
+      <node ref="R70" pin="1" pintype="passive"/>
+      <node ref="SW2" pin="1" pinfunction="1" pintype="passive"/>
+      <node ref="U19" pin="1" pinfunction="BOOT0" pintype="input"/>
     </net>
     <net code="13" name="/C1" class="Power">
       <node ref="C13" pin="2" pintype="passive"/>
@@ -2779,37 +3439,81 @@
       <node ref="R37" pin="1" pintype="passive"/>
       <node ref="U9" pin="3" pinfunction="VSS" pintype="passive"/>
     </net>
-    <net code="16" name="/CHRG" class="Default">
-      <node ref="D9" pin="1" pinfunction="K" pintype="passive"/>
+    <net code="16" name="/CAB" class="Default">
+      <node ref="J3" pin="4" pinfunction="Pin_4" pintype="passive"/>
+      <node ref="Q22" pin="2" pinfunction="S" pintype="passive"/>
+    </net>
+    <net code="17" name="/CHG_EN" class="Default">
+      <node ref="Q12" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R42" pin="1" pintype="passive"/>
+      <node ref="U19" pin="11" pinfunction="PA5" pintype="bidirectional"/>
+    </net>
+    <net code="18" name="/CHRG" class="Default">
+      <node ref="R28" pin="2" pintype="passive"/>
+      <node ref="U19" pin="8" pinfunction="PA2" pintype="bidirectional"/>
       <node ref="U5" pin="4" pinfunction="CHRG" pintype="open_collector"/>
     </net>
-    <net code="17" name="/CSP" class="Charger">
+    <net code="19" name="/CSP" class="Charger">
       <node ref="L1" pin="2" pintype="passive"/>
       <node ref="R25" pin="1" pintype="passive"/>
       <node ref="U5" pin="13" pinfunction="CSP" pintype="input"/>
     </net>
-    <net code="18" name="/CUT_OCB" class="Default">
-      <node ref="R2" pin="2" pintype="passive"/>
-      <node ref="U15" pin="7" pintype="open_collector"/>
-    </net>
-    <net code="19" name="/D1_K" class="Default">
+    <net code="20" name="/D1_K" class="Default">
       <node ref="D1" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="Q14" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="20" name="/DONE" class="Default">
-      <node ref="D10" pin="1" pinfunction="K" pintype="passive"/>
+    <net code="21" name="/DONE" class="Default">
+      <node ref="R29" pin="2" pintype="passive"/>
+      <node ref="U19" pin="9" pinfunction="PA3" pintype="bidirectional"/>
       <node ref="U5" pin="5" pinfunction="DONE" pintype="open_collector"/>
     </net>
-    <net code="21" name="/GNDF" class="Power">
+    <net code="22" name="/ENB_G" class="Default">
+      <node ref="Q22" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R81" pin="2" pintype="passive"/>
+      <node ref="U15" pin="7" pintype="open_collector"/>
+      <node ref="U17" pin="4" pinfunction="C" pintype="passive"/>
+    </net>
+    <net code="23" name="/EN_A" class="Default">
+      <node ref="R39" pin="1" pintype="passive"/>
+      <node ref="R79" pin="1" pintype="passive"/>
+      <node ref="SW1" pin="2" pinfunction="C1" pintype="passive"/>
+    </net>
+    <net code="24" name="/EN_B" class="Default">
+      <node ref="Q24" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R81" pin="1" pintype="passive"/>
+      <node ref="R82" pin="1" pintype="passive"/>
+      <node ref="SW1" pin="5" pinfunction="C2" pintype="passive"/>
+    </net>
+    <net code="25" name="/GNDF" class="Power">
       <node ref="F2" pin="2" pintype="passive"/>
       <node ref="Q11" pin="2" pinfunction="S" pintype="passive"/>
     </net>
-    <net code="22" name="/Q1_G" class="Default">
+    <net code="26" name="/LED_CA" class="Default">
+      <node ref="R66" pin="1" pintype="passive"/>
+      <node ref="U19" pin="12" pinfunction="PA6" pintype="bidirectional"/>
+    </net>
+    <net code="27" name="/LED_CB" class="Default">
+      <node ref="R68" pin="1" pintype="passive"/>
+      <node ref="U19" pin="14" pinfunction="PB1" pintype="bidirectional"/>
+    </net>
+    <net code="28" name="/LED_DA" class="Default">
+      <node ref="R67" pin="1" pintype="passive"/>
+      <node ref="U19" pin="13" pinfunction="PA7" pintype="bidirectional"/>
+    </net>
+    <net code="29" name="/LED_DB" class="Default">
+      <node ref="R69" pin="1" pintype="passive"/>
+      <node ref="U19" pin="2" pinfunction="PF0" pintype="bidirectional"/>
+    </net>
+    <net code="30" name="/NRST" class="Default">
+      <node ref="C26" pin="1" pintype="passive"/>
+      <node ref="U19" pin="4" pinfunction="NRST" pintype="input"/>
+    </net>
+    <net code="31" name="/Q1_G" class="Default">
       <node ref="Q1" pin="1" pinfunction="G" pintype="input"/>
       <node ref="R1" pin="2" pintype="passive"/>
       <node ref="R2" pin="1" pintype="passive"/>
     </net>
-    <net code="23" name="/Q11_G" class="Default">
+    <net code="32" name="/Q11_G" class="Default">
       <node ref="Q11" pin="1" pinfunction="G" pintype="input"/>
       <node ref="Q14" pin="1" pinfunction="G" pintype="input"/>
       <node ref="R11" pin="1" pintype="passive"/>
@@ -2817,78 +3521,137 @@
       <node ref="R40" pin="1" pintype="passive"/>
       <node ref="U2" pin="7" pintype="open_collector"/>
     </net>
-    <net code="24" name="/Q12_G" class="Default">
-      <node ref="Q12" pin="1" pinfunction="G" pintype="input"/>
-      <node ref="R41" pin="2" pintype="passive"/>
-      <node ref="R42" pin="1" pintype="passive"/>
-    </net>
-    <net code="25" name="/Q13_G" class="Default">
+    <net code="33" name="/Q13_G" class="Default">
       <node ref="Q13" pin="1" pinfunction="G" pintype="input"/>
       <node ref="R43" pin="2" pintype="passive"/>
       <node ref="R44" pin="1" pintype="passive"/>
     </net>
-    <net code="26" name="/Q13_GD" class="Default">
+    <net code="34" name="/Q13_GD" class="Default">
       <node ref="Q12" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R44" pin="2" pintype="passive"/>
     </net>
-    <net code="27" name="/SW" class="Charger">
+    <net code="35" name="/Q20_G" class="Default">
+      <node ref="Q20" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R77" pin="2" pintype="passive"/>
+      <node ref="R78" pin="1" pintype="passive"/>
+    </net>
+    <net code="36" name="/Q21_D" class="Default">
+      <node ref="Q21" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R78" pin="2" pintype="passive"/>
+    </net>
+    <net code="37" name="/Q21_G" class="Default">
+      <node ref="Q21" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R79" pin="2" pintype="passive"/>
+      <node ref="R80" pin="1" pintype="passive"/>
+    </net>
+    <net code="38" name="/Q22_D" class="Default">
+      <node ref="Q22" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R2" pin="2" pintype="passive"/>
+    </net>
+    <net code="39" name="/Q23_G" class="Default">
+      <node ref="Q23" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="R83" pin="2" pintype="passive"/>
+      <node ref="R84" pin="1" pintype="passive"/>
+    </net>
+    <net code="40" name="/Q24_D" class="Default">
+      <node ref="Q24" pin="3" pinfunction="D" pintype="passive"/>
+      <node ref="R84" pin="2" pintype="passive"/>
+    </net>
+    <net code="41" name="/RELAY" class="Default">
+      <node ref="Q19" pin="1" pinfunction="G" pintype="input"/>
+      <node ref="U19" pin="10" pinfunction="PA4" pintype="bidirectional"/>
+    </net>
+    <net code="42" name="/RLY_K" class="Default">
+      <node ref="D19" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="K1" pin="16" pinfunction="-" pintype="passive"/>
+      <node ref="Q19" pin="3" pinfunction="D" pintype="passive"/>
+    </net>
+    <net code="43" name="/SW" class="Charger">
       <node ref="D7" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D8" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="L1" pin="1" pintype="passive"/>
     </net>
-    <net code="28" name="/TH20" class="Default">
+    <net code="44" name="/SWCLK" class="Default">
+      <node ref="TP2" pin="1" pintype="passive"/>
+      <node ref="U19" pin="20" pinfunction="PA14/SWCLK" pintype="bidirectional"/>
+    </net>
+    <net code="45" name="/SWDIO" class="Default">
+      <node ref="TP1" pin="1" pintype="passive"/>
+      <node ref="U19" pin="19" pinfunction="PA13/SWDIO" pintype="bidirectional"/>
+    </net>
+    <net code="46" name="/TH20" class="Default">
       <node ref="R6" pin="2" pintype="passive"/>
       <node ref="R7" pin="1" pintype="passive"/>
       <node ref="U2" pin="3" pinfunction="+" pintype="input"/>
     </net>
-    <net code="29" name="/TH20B" class="Default">
+    <net code="47" name="/TH20B" class="Default">
       <node ref="R48" pin="2" pintype="passive"/>
       <node ref="R49" pin="1" pintype="passive"/>
       <node ref="U15" pin="3" pinfunction="+" pintype="input"/>
     </net>
-    <net code="30" name="/TH50" class="Default">
+    <net code="48" name="/TH50" class="Default">
       <node ref="R5" pin="2" pintype="passive"/>
       <node ref="R6" pin="1" pintype="passive"/>
       <node ref="U1" pin="5" pinfunction="+" pintype="input"/>
     </net>
-    <net code="31" name="/TH50B" class="Default">
+    <net code="49" name="/TH50B" class="Default">
       <node ref="R47" pin="2" pintype="passive"/>
       <node ref="R48" pin="1" pintype="passive"/>
       <node ref="U14" pin="5" pinfunction="+" pintype="input"/>
     </net>
-    <net code="32" name="/TH80" class="Default">
+    <net code="50" name="/TH80" class="Default">
       <node ref="R4" pin="2" pintype="passive"/>
       <node ref="R5" pin="1" pintype="passive"/>
       <node ref="U1" pin="3" pinfunction="+" pintype="input"/>
     </net>
-    <net code="33" name="/TH80B" class="Default">
+    <net code="51" name="/TH80B" class="Default">
       <node ref="R46" pin="2" pintype="passive"/>
       <node ref="R47" pin="1" pintype="passive"/>
       <node ref="U14" pin="3" pinfunction="+" pintype="input"/>
     </net>
-    <net code="34" name="/THCUT" class="Default">
+    <net code="52" name="/THCUT" class="Default">
       <node ref="R7" pin="2" pintype="passive"/>
       <node ref="R8" pin="1" pintype="passive"/>
       <node ref="U2" pin="6" pinfunction="-" pintype="input"/>
     </net>
-    <net code="35" name="/THCUTB" class="Default">
+    <net code="53" name="/THCUTB" class="Default">
       <node ref="R49" pin="2" pintype="passive"/>
       <node ref="R50" pin="1" pintype="passive"/>
-      <node ref="U15" pin="5" pinfunction="+" pintype="input"/>
+      <node ref="U15" pin="6" pinfunction="-" pintype="input"/>
     </net>
-    <net code="36" name="/VREF" class="Default">
+    <net code="54" name="/USB_DM" class="Default">
+      <node ref="J1" pin="A7" pinfunction="D-" pintype="passive"/>
+      <node ref="J1" pin="B7" pinfunction="D-" pintype="passive"/>
+      <node ref="U19" pin="17" pinfunction="PA9/USB_DM" pintype="bidirectional"/>
+    </net>
+    <net code="55" name="/USB_DP" class="Default">
+      <node ref="J1" pin="A6" pinfunction="D+" pintype="passive"/>
+      <node ref="J1" pin="B6" pinfunction="D+" pintype="passive"/>
+      <node ref="U19" pin="18" pinfunction="PA10/USB_DP" pintype="bidirectional"/>
+    </net>
+    <net code="56" name="/VBAT_S" class="Default">
+      <node ref="R71" pin="2" pintype="passive"/>
+      <node ref="R72" pin="1" pintype="passive"/>
+      <node ref="U19" pin="6" pinfunction="PA0" pintype="bidirectional"/>
+    </net>
+    <net code="57" name="/VBUS_S" class="Default">
+      <node ref="R73" pin="2" pintype="passive"/>
+      <node ref="R74" pin="1" pintype="passive"/>
+      <node ref="U19" pin="7" pinfunction="PA1" pintype="bidirectional"/>
+    </net>
+    <net code="58" name="/VREF" class="Default">
       <node ref="R3" pin="2" pintype="passive"/>
       <node ref="R4" pin="1" pintype="passive"/>
       <node ref="U3" pin="1" pinfunction="REF" pintype="input"/>
       <node ref="U3" pin="2" pinfunction="K" pintype="passive"/>
     </net>
-    <net code="37" name="/VREFB" class="Default">
+    <net code="59" name="/VREFB" class="Default">
       <node ref="R45" pin="2" pintype="passive"/>
       <node ref="R46" pin="1" pintype="passive"/>
       <node ref="U16" pin="1" pinfunction="REF" pintype="input"/>
       <node ref="U16" pin="2" pinfunction="K" pintype="passive"/>
     </net>
-    <net code="38" name="/VS" class="Default">
+    <net code="60" name="/VS" class="Default">
       <node ref="R10" pin="1" pintype="passive"/>
       <node ref="R11" pin="2" pintype="passive"/>
       <node ref="R9" pin="2" pintype="passive"/>
@@ -2897,416 +3660,463 @@
       <node ref="U2" pin="2" pinfunction="-" pintype="input"/>
       <node ref="U2" pin="5" pinfunction="+" pintype="input"/>
     </net>
-    <net code="39" name="/VSB" class="Default">
+    <net code="61" name="/VSB" class="Default">
       <node ref="R51" pin="2" pintype="passive"/>
       <node ref="R52" pin="1" pintype="passive"/>
       <node ref="R53" pin="2" pintype="passive"/>
       <node ref="U14" pin="2" pinfunction="-" pintype="input"/>
       <node ref="U14" pin="6" pinfunction="-" pintype="input"/>
       <node ref="U15" pin="2" pinfunction="-" pintype="input"/>
-      <node ref="U15" pin="6" pinfunction="-" pintype="input"/>
+      <node ref="U15" pin="5" pinfunction="+" pintype="input"/>
     </net>
-    <net code="40" name="0V" class="Power">
+    <net code="62" name="0V" class="Power">
       <node ref="C16" pin="2" pintype="passive"/>
       <node ref="C20" pin="2" pintype="passive"/>
       <node ref="C21" pin="2" pintype="passive"/>
       <node ref="D11" pin="1" pinfunction="K" pintype="passive"/>
-      <node ref="D15" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="J3" pin="2" pinfunction="Pin_2" pintype="passive"/>
+      <node ref="J5" pin="5" pinfunction="Pin_5" pintype="passive"/>
       <node ref="J6" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J7" pin="2" pinfunction="Pin_2" pintype="passive"/>
       <node ref="J8" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="K1" pin="6" pinfunction="NC1" pintype="passive"/>
+      <node ref="K1" pin="9" pinfunction="NO2" pintype="passive"/>
       <node ref="Q15" pin="2" pinfunction="S" pintype="passive"/>
-      <node ref="R30" pin="1" pintype="passive"/>
-      <node ref="R39" pin="1" pintype="passive"/>
+      <node ref="Q20" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="Q24" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R34" pin="1" pintype="passive"/>
+      <node ref="R38" pin="1" pintype="passive"/>
       <node ref="R50" pin="2" pintype="passive"/>
       <node ref="R52" pin="2" pintype="passive"/>
-      <node ref="SW1" pin="2" pinfunction="C1" pintype="passive"/>
+      <node ref="R77" pin="1" pintype="passive"/>
+      <node ref="R82" pin="2" pintype="passive"/>
+      <node ref="SW1" pin="1" pinfunction="A1" pintype="passive"/>
       <node ref="U10" pin="3" pinfunction="VSS" pintype="passive"/>
       <node ref="U14" pin="4" pinfunction="V-" pintype="power_in"/>
       <node ref="U15" pin="4" pinfunction="V-" pintype="power_in"/>
       <node ref="U16" pin="3" pinfunction="A" pintype="passive"/>
+      <node ref="U17" pin="3" pinfunction="E" pintype="passive"/>
     </net>
-    <net code="41" name="GND" class="Power">
-      <node ref="C1" pin="2" pintype="passive"/>
+    <net code="63" name="CGND" class="Default">
       <node ref="C10" pin="2" pintype="passive"/>
       <node ref="C11" pin="2" pintype="passive"/>
-      <node ref="C12" pin="2" pintype="passive"/>
-      <node ref="C2" pin="2" pintype="passive"/>
+      <node ref="C22" pin="2" pintype="passive"/>
+      <node ref="C23" pin="2" pintype="passive"/>
+      <node ref="C24" pin="2" pintype="passive"/>
+      <node ref="C25" pin="2" pintype="passive"/>
+      <node ref="C26" pin="2" pintype="passive"/>
       <node ref="C3" pin="2" pintype="passive"/>
       <node ref="C5" pin="2" pinfunction="-" pintype="passive"/>
       <node ref="C6" pin="2" pintype="passive"/>
       <node ref="C7" pin="2" pintype="passive"/>
       <node ref="C8" pin="2" pintype="passive"/>
       <node ref="C9" pin="2" pintype="passive"/>
+      <node ref="D10" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="D17" pin="1" pinfunction="K" pintype="passive"/>
+      <node ref="D18" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="D8" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="F2" pin="1" pintype="passive"/>
+      <node ref="D9" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="J1" pin="A1" pinfunction="GND" pintype="passive"/>
       <node ref="J1" pin="A12" pinfunction="GND" pintype="passive"/>
       <node ref="J1" pin="B1" pinfunction="GND" pintype="passive"/>
       <node ref="J1" pin="B12" pinfunction="GND" pintype="passive"/>
       <node ref="J1" pin="S1" pinfunction="SH" pintype="passive"/>
-      <node ref="J5" pin="1" pinfunction="Pin_1" pintype="passive"/>
-      <node ref="J7" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="K1" pin="13" pinfunction="COM2" pintype="passive"/>
       <node ref="Q12" pin="2" pinfunction="S" pintype="passive"/>
-      <node ref="Q14" pin="2" pinfunction="S" pintype="passive"/>
-      <node ref="Q7" pin="2" pinfunction="S" pintype="passive"/>
-      <node ref="R10" pin="2" pintype="passive"/>
+      <node ref="Q19" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R24" pin="2" pintype="passive"/>
-      <node ref="R30" pin="2" pintype="passive"/>
-      <node ref="R40" pin="2" pintype="passive"/>
       <node ref="R42" pin="2" pintype="passive"/>
-      <node ref="R8" pin="2" pintype="passive"/>
+      <node ref="R70" pin="2" pintype="passive"/>
+      <node ref="R72" pin="2" pintype="passive"/>
+      <node ref="R74" pin="2" pintype="passive"/>
       <node ref="RT1" pin="2" pintype="passive"/>
-      <node ref="SW1" pin="3" pinfunction="B1" pintype="passive"/>
-      <node ref="U1" pin="4" pinfunction="V-" pintype="power_in"/>
-      <node ref="U2" pin="4" pinfunction="V-" pintype="power_in"/>
-      <node ref="U3" pin="3" pinfunction="A" pintype="passive"/>
+      <node ref="TP3" pin="1" pintype="passive"/>
+      <node ref="U17" pin="2" pinfunction="K" pintype="passive"/>
+      <node ref="U18" pin="3" pinfunction="GND" pintype="power_in"/>
+      <node ref="U19" pin="15" pinfunction="VSS" pintype="power_in"/>
       <node ref="U4" pin="11" pinfunction="GND" pintype="power_in"/>
       <node ref="U5" pin="10" pinfunction="test" pintype="input"/>
       <node ref="U5" pin="2" pinfunction="PGND" pintype="power_in"/>
       <node ref="U5" pin="3" pinfunction="GND" pintype="power_in"/>
       <node ref="U5" pin="7" pinfunction="EOC" pintype="input"/>
+    </net>
+    <net code="64" name="GND" class="Power">
+      <node ref="C1" pin="2" pintype="passive"/>
+      <node ref="C12" pin="2" pintype="passive"/>
+      <node ref="C2" pin="2" pintype="passive"/>
+      <node ref="F2" pin="1" pintype="passive"/>
+      <node ref="J5" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="J7" pin="1" pinfunction="Pin_1" pintype="passive"/>
+      <node ref="K1" pin="11" pinfunction="NC2" pintype="passive"/>
+      <node ref="Q14" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="Q21" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="Q7" pin="2" pinfunction="S" pintype="passive"/>
+      <node ref="R10" pin="2" pintype="passive"/>
+      <node ref="R40" pin="2" pintype="passive"/>
+      <node ref="R8" pin="2" pintype="passive"/>
+      <node ref="R80" pin="2" pintype="passive"/>
+      <node ref="U1" pin="4" pinfunction="V-" pintype="power_in"/>
+      <node ref="U2" pin="4" pinfunction="V-" pintype="power_in"/>
+      <node ref="U3" pin="3" pinfunction="A" pintype="passive"/>
       <node ref="U6" pin="3" pinfunction="VSS" pintype="passive"/>
     </net>
-    <net code="42" name="Net-(C10-Pad1)" class="Default">
+    <net code="65" name="Net-(C10-Pad1)" class="Default">
       <node ref="C10" pin="1" pintype="passive"/>
       <node ref="R27" pin="2" pintype="passive"/>
     </net>
-    <net code="43" name="Net-(D1-A)" class="Default">
+    <net code="66" name="Net-(D1-A)" class="Default">
       <node ref="D1" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R12" pin="2" pintype="passive"/>
     </net>
-    <net code="44" name="Net-(D2-A)" class="Default">
+    <net code="67" name="Net-(D2-A)" class="Default">
       <node ref="D2" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R13" pin="2" pintype="passive"/>
     </net>
-    <net code="45" name="Net-(D2-K)" class="Default">
+    <net code="68" name="Net-(D2-K)" class="Default">
       <node ref="D2" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U2" pin="1" pintype="open_collector"/>
     </net>
-    <net code="46" name="Net-(D3-A)" class="Default">
+    <net code="69" name="Net-(D3-A)" class="Default">
       <node ref="D3" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R14" pin="2" pintype="passive"/>
     </net>
-    <net code="47" name="Net-(D3-K)" class="Default">
+    <net code="70" name="Net-(D3-K)" class="Default">
       <node ref="D3" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U1" pin="7" pintype="open_collector"/>
     </net>
-    <net code="48" name="Net-(D4-A)" class="Default">
+    <net code="71" name="Net-(D4-A)" class="Default">
       <node ref="D4" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R15" pin="2" pintype="passive"/>
     </net>
-    <net code="49" name="Net-(D4-K)" class="Default">
+    <net code="72" name="Net-(D4-K)" class="Default">
       <node ref="D4" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U1" pin="1" pintype="open_collector"/>
     </net>
-    <net code="50" name="Net-(D7-A)" class="Charger">
+    <net code="73" name="Net-(D7-A)" class="Charger">
       <node ref="D7" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="Q6" pin="3" pinfunction="D" pintype="passive"/>
     </net>
-    <net code="51" name="Net-(D9-A)" class="Default">
+    <net code="74" name="Net-(D9-A)" class="Default">
       <node ref="D9" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="R28" pin="2" pintype="passive"/>
+      <node ref="R66" pin="2" pintype="passive"/>
     </net>
-    <net code="52" name="Net-(D10-A)" class="Default">
+    <net code="75" name="Net-(D10-A)" class="Default">
       <node ref="D10" pin="2" pinfunction="A" pintype="passive"/>
-      <node ref="R29" pin="2" pintype="passive"/>
+      <node ref="R67" pin="2" pintype="passive"/>
     </net>
-    <net code="53" name="Net-(D11-A)" class="Default">
+    <net code="76" name="Net-(D11-A)" class="Default">
       <node ref="D11" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R54" pin="2" pintype="passive"/>
     </net>
-    <net code="54" name="Net-(D12-A)" class="Default">
+    <net code="77" name="Net-(D12-A)" class="Default">
       <node ref="D12" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R55" pin="2" pintype="passive"/>
     </net>
-    <net code="55" name="Net-(D12-K)" class="Default">
+    <net code="78" name="Net-(D12-K)" class="Default">
       <node ref="D12" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U15" pin="1" pintype="open_collector"/>
     </net>
-    <net code="56" name="Net-(D13-A)" class="Default">
+    <net code="79" name="Net-(D13-A)" class="Default">
       <node ref="D13" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R56" pin="2" pintype="passive"/>
     </net>
-    <net code="57" name="Net-(D13-K)" class="Default">
+    <net code="80" name="Net-(D13-K)" class="Default">
       <node ref="D13" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U14" pin="7" pintype="open_collector"/>
     </net>
-    <net code="58" name="Net-(D14-A)" class="Default">
+    <net code="81" name="Net-(D14-A)" class="Default">
       <node ref="D14" pin="2" pinfunction="A" pintype="passive"/>
       <node ref="R57" pin="2" pintype="passive"/>
     </net>
-    <net code="59" name="Net-(D14-K)" class="Default">
+    <net code="82" name="Net-(D14-K)" class="Default">
       <node ref="D14" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="U14" pin="1" pintype="open_collector"/>
     </net>
-    <net code="60" name="Net-(J1-CC1)" class="Fine">
+    <net code="83" name="Net-(D17-A)" class="Default">
+      <node ref="D17" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R68" pin="2" pintype="passive"/>
+    </net>
+    <net code="84" name="Net-(D18-A)" class="Default">
+      <node ref="D18" pin="2" pinfunction="A" pintype="passive"/>
+      <node ref="R69" pin="2" pintype="passive"/>
+    </net>
+    <net code="85" name="Net-(J1-CC1)" class="Fine">
       <node ref="J1" pin="A5" pinfunction="CC1" pintype="passive"/>
       <node ref="U4" pin="7" pinfunction="CC1" pintype="bidirectional"/>
     </net>
-    <net code="61" name="Net-(J1-CC2)" class="Fine">
+    <net code="86" name="Net-(J1-CC2)" class="Fine">
       <node ref="J1" pin="B5" pinfunction="CC2" pintype="passive"/>
       <node ref="U4" pin="6" pinfunction="CC2" pintype="bidirectional"/>
     </net>
-    <net code="62" name="Net-(Q6-G)" class="Default">
+    <net code="87" name="Net-(Q6-G)" class="Default">
       <node ref="Q6" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U5" pin="16" pinfunction="DRV" pintype="output"/>
     </net>
-    <net code="63" name="Net-(Q7-D)" class="Default">
+    <net code="88" name="Net-(Q7-D)" class="Default">
       <node ref="Q7" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R35" pin="2" pintype="passive"/>
     </net>
-    <net code="64" name="Net-(Q7-G)" class="Default">
+    <net code="89" name="Net-(Q7-G)" class="Default">
       <node ref="Q7" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U6" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="65" name="Net-(Q8-D)" class="Default">
+    <net code="90" name="Net-(Q8-D)" class="Default">
       <node ref="Q8" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R36" pin="2" pintype="passive"/>
     </net>
-    <net code="66" name="Net-(Q8-G)" class="Default">
+    <net code="91" name="Net-(Q8-G)" class="Default">
       <node ref="Q8" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U7" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="67" name="Net-(Q9-D)" class="Default">
+    <net code="92" name="Net-(Q9-D)" class="Default">
       <node ref="Q9" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R37" pin="2" pintype="passive"/>
     </net>
-    <net code="68" name="Net-(Q9-G)" class="Default">
+    <net code="93" name="Net-(Q9-G)" class="Default">
       <node ref="Q9" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U8" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="69" name="Net-(Q10-D)" class="Default">
+    <net code="94" name="Net-(Q10-D)" class="Default">
       <node ref="Q10" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R38" pin="2" pintype="passive"/>
     </net>
-    <net code="70" name="Net-(Q10-G)" class="Default">
+    <net code="95" name="Net-(Q10-G)" class="Default">
       <node ref="Q10" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U9" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="71" name="Net-(Q15-D)" class="Default">
+    <net code="96" name="Net-(Q15-D)" class="Default">
       <node ref="Q15" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R62" pin="2" pintype="passive"/>
     </net>
-    <net code="72" name="Net-(Q15-G)" class="Default">
+    <net code="97" name="Net-(Q15-G)" class="Default">
       <node ref="Q15" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U10" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="73" name="Net-(Q16-D)" class="Default">
+    <net code="98" name="Net-(Q16-D)" class="Default">
       <node ref="Q16" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R63" pin="2" pintype="passive"/>
     </net>
-    <net code="74" name="Net-(Q16-G)" class="Default">
+    <net code="99" name="Net-(Q16-G)" class="Default">
       <node ref="Q16" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U11" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="75" name="Net-(Q17-D)" class="Default">
+    <net code="100" name="Net-(Q17-D)" class="Default">
       <node ref="Q17" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R64" pin="2" pintype="passive"/>
     </net>
-    <net code="76" name="Net-(Q17-G)" class="Default">
+    <net code="101" name="Net-(Q17-G)" class="Default">
       <node ref="Q17" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U12" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="77" name="Net-(Q18-D)" class="Default">
+    <net code="102" name="Net-(Q18-D)" class="Default">
       <node ref="Q18" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="R65" pin="2" pintype="passive"/>
     </net>
-    <net code="78" name="Net-(Q18-G)" class="Default">
+    <net code="103" name="Net-(Q18-G)" class="Default">
       <node ref="Q18" pin="1" pinfunction="G" pintype="input"/>
       <node ref="U13" pin="6" pinfunction="OUT" pintype="output"/>
     </net>
-    <net code="79" name="Net-(R25-Pad2)" class="Charger">
+    <net code="104" name="Net-(R25-Pad2)" class="Charger">
       <node ref="R25" pin="2" pintype="passive"/>
       <node ref="R26" pin="1" pintype="passive"/>
     </net>
-    <net code="80" name="Net-(U4-CFG1)" class="Default">
+    <net code="105" name="Net-(U4-CFG1)" class="Default">
       <node ref="R24" pin="1" pintype="passive"/>
       <node ref="U4" pin="9" pinfunction="CFG1" pintype="input"/>
     </net>
-    <net code="81" name="Net-(U4-DM)" class="Fine">
-      <node ref="J1" pin="A7" pinfunction="D-" pintype="passive"/>
-      <node ref="J1" pin="B7" pinfunction="D-" pintype="passive"/>
-      <node ref="U4" pin="5" pinfunction="DM" pintype="bidirectional"/>
-    </net>
-    <net code="82" name="Net-(U4-DP)" class="Fine">
-      <node ref="J1" pin="A6" pinfunction="D+" pintype="passive"/>
-      <node ref="J1" pin="B6" pinfunction="D+" pintype="passive"/>
-      <node ref="U4" pin="4" pinfunction="DP" pintype="bidirectional"/>
-    </net>
-    <net code="83" name="Net-(U5-COM1)" class="Default">
+    <net code="106" name="Net-(U5-COM1)" class="Default">
       <node ref="C9" pin="1" pintype="passive"/>
       <node ref="U5" pin="8" pinfunction="COM1" pintype="passive"/>
     </net>
-    <net code="84" name="Net-(U5-COM2)" class="Default">
+    <net code="107" name="Net-(U5-COM2)" class="Default">
       <node ref="R27" pin="1" pintype="passive"/>
       <node ref="U5" pin="9" pinfunction="COM2" pintype="passive"/>
     </net>
-    <net code="85" name="Net-(U5-COM3)" class="Default">
+    <net code="108" name="Net-(U5-COM3)" class="Default">
       <node ref="C11" pin="1" pintype="passive"/>
       <node ref="U5" pin="11" pinfunction="COM3" pintype="passive"/>
     </net>
-    <net code="86" name="Net-(U5-TEMP)" class="Default">
+    <net code="109" name="Net-(U5-TEMP)" class="Default">
       <node ref="RT1" pin="1" pintype="passive"/>
       <node ref="U5" pin="6" pinfunction="TEMP" pintype="input"/>
     </net>
-    <net code="87" name="Net-(U5-VG)" class="Default">
+    <net code="110" name="Net-(U5-VG)" class="Default">
       <node ref="C4" pin="1" pintype="passive"/>
       <node ref="U5" pin="1" pinfunction="VG" pintype="passive"/>
     </net>
-    <net code="88" name="Net-(U6-VDD)" class="Default">
+    <net code="111" name="Net-(U6-VDD)" class="Default">
       <node ref="C12" pin="1" pintype="passive"/>
       <node ref="R31" pin="2" pintype="passive"/>
       <node ref="U6" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="89" name="Net-(U7-VDD)" class="Default">
+    <net code="112" name="Net-(U7-VDD)" class="Default">
       <node ref="C13" pin="1" pintype="passive"/>
       <node ref="R32" pin="2" pintype="passive"/>
       <node ref="U7" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="90" name="Net-(U8-VDD)" class="Default">
+    <net code="113" name="Net-(U8-VDD)" class="Default">
       <node ref="C14" pin="1" pintype="passive"/>
       <node ref="R33" pin="2" pintype="passive"/>
       <node ref="U8" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="91" name="Net-(U9-VDD)" class="Default">
+    <net code="114" name="Net-(U9-VDD)" class="Default">
       <node ref="C15" pin="1" pintype="passive"/>
       <node ref="R34" pin="2" pintype="passive"/>
       <node ref="U9" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="92" name="Net-(U10-VDD)" class="Default">
+    <net code="115" name="Net-(U10-VDD)" class="Default">
       <node ref="C16" pin="1" pintype="passive"/>
       <node ref="R58" pin="2" pintype="passive"/>
       <node ref="U10" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="93" name="Net-(U11-VDD)" class="Default">
+    <net code="116" name="Net-(U11-VDD)" class="Default">
       <node ref="C17" pin="1" pintype="passive"/>
       <node ref="R59" pin="2" pintype="passive"/>
       <node ref="U11" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="94" name="Net-(U12-VDD)" class="Default">
+    <net code="117" name="Net-(U12-VDD)" class="Default">
       <node ref="C18" pin="1" pintype="passive"/>
       <node ref="R60" pin="2" pintype="passive"/>
       <node ref="U12" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="95" name="Net-(U13-VDD)" class="Default">
+    <net code="118" name="Net-(U13-VDD)" class="Default">
       <node ref="C19" pin="1" pintype="passive"/>
       <node ref="R61" pin="2" pintype="passive"/>
       <node ref="U13" pin="2" pinfunction="VDD" pintype="passive"/>
     </net>
-    <net code="96" name="VBUS" class="Charger">
+    <net code="119" name="Net-(U17-A)" class="Default">
+      <node ref="R76" pin="2" pintype="passive"/>
+      <node ref="U17" pin="1" pinfunction="A" pintype="passive"/>
+    </net>
+    <net code="120" name="VBUS" class="Charger">
+      <node ref="C22" pin="1" pintype="passive"/>
       <node ref="C3" pin="1" pintype="passive"/>
+      <node ref="D19" pin="1" pinfunction="K" pintype="passive"/>
       <node ref="J1" pin="A4" pinfunction="VBUS" pintype="passive"/>
       <node ref="J1" pin="A9" pinfunction="VBUS" pintype="passive"/>
       <node ref="J1" pin="B4" pinfunction="VBUS" pintype="passive"/>
       <node ref="J1" pin="B9" pinfunction="VBUS" pintype="passive"/>
+      <node ref="K1" pin="1" pinfunction="+" pintype="passive"/>
       <node ref="Q13" pin="2" pinfunction="S" pintype="passive"/>
       <node ref="R43" pin="1" pintype="passive"/>
+      <node ref="R73" pin="1" pintype="passive"/>
+      <node ref="R76" pin="1" pintype="passive"/>
+      <node ref="U18" pin="2" pinfunction="IN" pintype="power_in"/>
       <node ref="U4" pin="1" pinfunction="VHV" pintype="power_in"/>
       <node ref="U4" pin="8" pinfunction="VBUS" pintype="input"/>
     </net>
-    <net code="97" name="VCHG" class="Charger">
+    <net code="121" name="VCHG" class="Charger">
       <node ref="C4" pin="2" pintype="passive"/>
       <node ref="C5" pin="1" pinfunction="+" pintype="passive"/>
       <node ref="C6" pin="1" pintype="passive"/>
       <node ref="Q13" pin="3" pinfunction="D" pintype="passive"/>
       <node ref="Q6" pin="2" pinfunction="S" pintype="passive"/>
-      <node ref="R28" pin="1" pintype="passive"/>
-      <node ref="R29" pin="1" pintype="passive"/>
       <node ref="U5" pin="15" pinfunction="VCC" pintype="power_in"/>
     </net>
-    <net code="98" name="unconnected-(J1-SBU1-PadA8)" class="Default">
+    <net code="122" name="unconnected-(J1-SBU1-PadA8)" class="Default">
       <node ref="J1" pin="A8" pinfunction="SBU1" pintype="passive+no_connect"/>
     </net>
-    <net code="99" name="unconnected-(J1-SBU2-PadB8)" class="Default">
+    <net code="123" name="unconnected-(J1-SBU2-PadB8)" class="Default">
       <node ref="J1" pin="B8" pinfunction="SBU2" pintype="passive+no_connect"/>
     </net>
-    <net code="100" name="unconnected-(J3-Pin_4-Pad4)" class="Default">
-      <node ref="J3" pin="4" pinfunction="Pin_4" pintype="passive+no_connect"/>
+    <net code="124" name="unconnected-(SW1-B1-Pad3)" class="Default">
+      <node ref="SW1" pin="3" pinfunction="B1" pintype="passive+no_connect"/>
     </net>
-    <net code="101" name="unconnected-(U4-CFG2-Pad2)" class="Default">
+    <net code="125" name="unconnected-(SW1-B2-Pad6)" class="Default">
+      <node ref="SW1" pin="6" pinfunction="B2" pintype="passive+no_connect"/>
+    </net>
+    <net code="126" name="unconnected-(U4-CFG2-Pad2)" class="Default">
       <node ref="U4" pin="2" pinfunction="CFG2" pintype="input+no_connect"/>
     </net>
-    <net code="102" name="unconnected-(U4-CFG3-Pad3)" class="Default">
+    <net code="127" name="unconnected-(U4-CFG3-Pad3)" class="Default">
       <node ref="U4" pin="3" pinfunction="CFG3" pintype="bidirectional+no_connect"/>
     </net>
-    <net code="103" name="unconnected-(U4-PG-Pad10)" class="Default">
+    <net code="128" name="unconnected-(U4-DM-Pad5)" class="Default">
+      <node ref="U4" pin="5" pinfunction="DM" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="129" name="unconnected-(U4-DP-Pad4)" class="Default">
+      <node ref="U4" pin="4" pinfunction="DP" pintype="bidirectional+no_connect"/>
+    </net>
+    <net code="130" name="unconnected-(U4-PG-Pad10)" class="Default">
       <node ref="U4" pin="10" pinfunction="PG" pintype="open_collector+no_connect"/>
     </net>
-    <net code="104" name="unconnected-(U5-NC-Pad12)" class="Default">
+    <net code="131" name="unconnected-(U5-NC-Pad12)" class="Default">
       <node ref="U5" pin="12" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="105" name="unconnected-(U6-NC-Pad1)" class="Default">
+    <net code="132" name="unconnected-(U6-NC-Pad1)" class="Default">
       <node ref="U6" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="106" name="unconnected-(U6-NC-Pad4)" class="Default">
+    <net code="133" name="unconnected-(U6-NC-Pad4)" class="Default">
       <node ref="U6" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="107" name="unconnected-(U6-NC-Pad5)" class="Default">
+    <net code="134" name="unconnected-(U6-NC-Pad5)" class="Default">
       <node ref="U6" pin="5" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="108" name="unconnected-(U7-NC-Pad1)" class="Default">
+    <net code="135" name="unconnected-(U7-NC-Pad1)" class="Default">
       <node ref="U7" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="109" name="unconnected-(U7-NC-Pad4)" class="Default">
+    <net code="136" name="unconnected-(U7-NC-Pad4)" class="Default">
       <node ref="U7" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="110" name="unconnected-(U7-NC-Pad5)" class="Default">
+    <net code="137" name="unconnected-(U7-NC-Pad5)" class="Default">
       <node ref="U7" pin="5" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="111" name="unconnected-(U8-NC-Pad1)" class="Default">
+    <net code="138" name="unconnected-(U8-NC-Pad1)" class="Default">
       <node ref="U8" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="112" name="unconnected-(U8-NC-Pad4)" class="Default">
+    <net code="139" name="unconnected-(U8-NC-Pad4)" class="Default">
       <node ref="U8" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="113" name="unconnected-(U8-NC-Pad5)" class="Default">
+    <net code="140" name="unconnected-(U8-NC-Pad5)" class="Default">
       <node ref="U8" pin="5" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="114" name="unconnected-(U9-NC-Pad1)" class="Default">
+    <net code="141" name="unconnected-(U9-NC-Pad1)" class="Default">
       <node ref="U9" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="115" name="unconnected-(U9-NC-Pad4)" class="Default">
+    <net code="142" name="unconnected-(U9-NC-Pad4)" class="Default">
       <node ref="U9" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="116" name="unconnected-(U9-NC-Pad5)" class="Default">
+    <net code="143" name="unconnected-(U9-NC-Pad5)" class="Default">
       <node ref="U9" pin="5" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="117" name="unconnected-(U10-NC-Pad1)" class="Default">
+    <net code="144" name="unconnected-(U10-NC-Pad1)" class="Default">
       <node ref="U10" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="118" name="unconnected-(U10-NC-Pad4)" class="Default">
+    <net code="145" name="unconnected-(U10-NC-Pad4)" class="Default">
       <node ref="U10" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="119" name="unconnected-(U10-NC-Pad5)" class="Default">
+    <net code="146" name="unconnected-(U10-NC-Pad5)" class="Default">
       <node ref="U10" pin="5" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="120" name="unconnected-(U11-NC-Pad1)" class="Default">
+    <net code="147" name="unconnected-(U11-NC-Pad1)" class="Default">
       <node ref="U11" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="121" name="unconnected-(U11-NC-Pad4)" class="Default">
+    <net code="148" name="unconnected-(U11-NC-Pad4)" class="Default">
       <node ref="U11" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="122" name="unconnected-(U11-NC-Pad5)" class="Default">
+    <net code="149" name="unconnected-(U11-NC-Pad5)" class="Default">
       <node ref="U11" pin="5" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="123" name="unconnected-(U12-NC-Pad1)" class="Default">
+    <net code="150" name="unconnected-(U12-NC-Pad1)" class="Default">
       <node ref="U12" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="124" name="unconnected-(U12-NC-Pad4)" class="Default">
+    <net code="151" name="unconnected-(U12-NC-Pad4)" class="Default">
       <node ref="U12" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="125" name="unconnected-(U12-NC-Pad5)" class="Default">
+    <net code="152" name="unconnected-(U12-NC-Pad5)" class="Default">
       <node ref="U12" pin="5" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="126" name="unconnected-(U13-NC-Pad1)" class="Default">
+    <net code="153" name="unconnected-(U13-NC-Pad1)" class="Default">
       <node ref="U13" pin="1" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="127" name="unconnected-(U13-NC-Pad4)" class="Default">
+    <net code="154" name="unconnected-(U13-NC-Pad4)" class="Default">
       <node ref="U13" pin="4" pinfunction="NC" pintype="no_connect"/>
     </net>
-    <net code="128" name="unconnected-(U13-NC-Pad5)" class="Default">
+    <net code="155" name="unconnected-(U13-NC-Pad5)" class="Default">
       <node ref="U13" pin="5" pinfunction="NC" pintype="no_connect"/>
+    </net>
+    <net code="156" name="unconnected-(U19-PF1-Pad3)" class="Default">
+      <node ref="U19" pin="3" pinfunction="PF1" pintype="bidirectional+no_connect"/>
     </net>
   </nets>
 </export>

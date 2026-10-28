@@ -316,10 +316,6 @@
     "netclass_patterns": [
       {
         "netclass": "Power",
-        "pattern": "+BAT"
-      },
-      {
-        "netclass": "Power",
         "pattern": "GND"
       },
       {
@@ -356,10 +352,6 @@
       },
       {
         "netclass": "Power",
-        "pattern": "+RUN"
-      },
-      {
-        "netclass": "Power",
         "pattern": "+SW"
       },
       {
@@ -368,15 +360,23 @@
       },
       {
         "netclass": "Power",
-        "pattern": "+CHGB"
-      },
-      {
-        "netclass": "Power",
         "pattern": "/-V"
       },
       {
         "netclass": "Power",
         "pattern": "/GNDF"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "CGND"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "+CHG"
+      },
+      {
+        "netclass": "Power",
+        "pattern": "/CAB"
       },
       {
         "netclass": "Charger",
@@ -403,6 +403,10 @@
         "pattern": "VCHG"
       },
       {
+        "netclass": "Charger",
+        "pattern": "/RLY_K"
+      },
+      {
         "netclass": "Fine",
         "pattern": "Net-(J1-CC1)"
       },
@@ -412,11 +416,11 @@
       },
       {
         "netclass": "Fine",
-        "pattern": "Net-(U4-DP)"
+        "pattern": "/USB_DP"
       },
       {
         "netclass": "Fine",
-        "pattern": "Net-(U4-DM)"
+        "pattern": "/USB_DM"
       }
     ]
   },

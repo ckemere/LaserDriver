@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
-"""Placement of BatteryPack.kicad_pcb (rev C, 100 x 100 mm, 2026-10-27): the two hobby 4S packs sit under the board (long
-axis along y, 42 mm pitch, two 20 mm straps through the slots), their XT60 discharge plugs and balance leads come round the front edge
-(y = 100) to the XT60 sockets J7 / J8 and the right-angle XH sockets J5 / J6 (pack A left, pack B right).  Top side: pack A's gauge top left, its balancers
-mid left, its -V chain bottom left; the charger top right with the USB-C on the right edge; pack B's balancers mid right,
-its gauge and +V chain bottom right; the toggle and the output header J3 in the right column.  H5-H8 are a
-Raspberry Pi's holes (58 x 49): the Pi lies along the left edge (x 0-56, y 15-100) with its USB-C / HDMI face, which
-is also the face the e-stim module's electrode wires leave over, flush with the board's left edge, SD-card end up, USB /
-Ethernet over the front edge; the module hangs 9 mm past that edge at the top-left corner and its battery pads are at
-(-3..3, 16-23), so J3 sits right below them in the top-left corner (4, 4), H1 moved to (12, 4).  The HAT's outline is drawn on User.Comments
-and the Pi's on User.Drawings.  (The layout text above predates the Pi: gauge B's comparators are now top centre, pack B's
-balancers below pack A's, both LED columns on the right edge, the toggle alone in the right column.)
+"""Placement of BatteryPack.kicad_pcb (rev D, 100 x 100 mm, 2026-10-28), mirror-symmetric about x = 50: pack A (-V side)
+left, pack B (+V side) right.  The two hobby 4S packs sit under the board (long axis along y, two 20 mm straps through the
+slots), their XT60 discharge plugs and balance leads come round the front edge (y = 100) to J7 / J5 (left) and J8 / J6
+(right).  The Raspberry Pi (holes H5-H8, 58 x 49) lies along the top edge (x 7.5-92.5, y 0-56) with its USB-C / HDMI face,
+which is also the face the e-stim module's electrode wires leave over, flush with the top edge, SD-card end to the right;
+the HAT covers x 27.5-92.5, y 0-56 and the e-stim module hangs 9 mm past the top edge at the top-right corner (x 65-91.5,
+y -9..24), its battery pads at x 84.5-91.5 right above J3 (84, 4).  Under the Pi: the two gauges (A left, B right), the
+balancers (A left, B right), the output chains (top right, by J3) and the charger island in the centre column (x 37-64,
+y 5-38).  Below the Pi, the user-facing strip (y 56-100): the two
+gauge LED columns paired in the centre (A at x 46, B at x 54: 80 / 50 / 20 % / ON / CHG / DONE), the ON / OFF toggle (lever
+along x, ON to the right), the CH224A and the USB-C in the middle of the front edge between the XT60s.
 Idempotent: re-running moves every footprint back to the table and redraws the outline, slots and board-level silk;
 copper is left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
 import math
@@ -31,22 +31,19 @@ def at(ref, x, y, rot=0):
     P[ref] = (x, y, rot)
 
 
-# ---- mounting holes
-at("H1", 12, 4); at("H2", 96, 4); at("H3", 4, 96); at("H4", 96, 96)      # H1 8 mm in from the corner: J3 has the corner
-# ---- Raspberry Pi holes (58 x 49, M2.5): the Pi lies along the left edge (x 0-56, y 15-100) on standoffs with its
-# header along x = 56 and its "bottom" face (USB-C power, micro-HDMI, opposite the OLED bonnet) flush with the board's left
-# edge, SD-card end at y 15, USB / Ethernet end over the front edge.  The HAT (x 0..57, y 15-80) then has its south-west
-# corner at the board's top-left corner: the e-stim module (HAT x 101-127.5, y 76-109 -> here x -9..24, y 16-43) hangs 9 mm
-# past the left edge, its electrode header (-7, 27.5) points west, so the stimulation wires and the Pi's power / HDMI
-# cables all leave over the left edge; its battery pads (PS1 position, HAT x 101-108 / y 97-103 -> here x -3..3, y 16-23)
-# are right above J3 in the top-left corner.  The HAT's thumbwheel (west edge, y 81-93.5, 6 mm proud) is under the
-# module's SW corner and sticks past the board's top edge at x 6.5-19, y 9-15: J3 and its cable stay west of x 6.5.
-# Everything else user-facing is in the right column (x > 56: charger + USB-C, CHRG / DONE, toggle, both LED columns on
-# the right edge) or the front strip (y > 85: the four pack sockets); under the Pi only gauges, balancers and the -V chain.
-# PI_ROT 270 = the Pi's long axis along y, SD end up, header east; PI[0] is where the Pi's header-side / SD-end hole (the
-# HAT's MH1) goes.  (PI_ROT 90 = header west / ports up, 0 = header up / SD end west.)
-PI_ROT = 270
-PI = ((52.5, 18.5), (52.5, 76.5), (3.5, 18.5), (3.5, 76.5))
+# ---- mounting holes (H2 a little in from the corner: J3 and the module's pads are there)
+at("H1", 4, 4); at("H2", 96.5, 3.5); at("H3", 4, 96); at("H4", 96, 96)
+# ---- Raspberry Pi holes (58 x 49, M2.5).  PI_ROT 180 = the Pi's long axis along x, its "bottom" face (USB-C power,
+# micro-HDMI, opposite the OLED bonnet) flush with the board's top edge, SD-card end at the right (x 92.5), USB / Ethernet
+# end at x 7.5, header along y = 56.  PI[0] is where the Pi's header-side / SD-end hole (the HAT's MH1) goes.  The HAT
+# (65 x 56.5, x 27.5-92.5) has its south edge on the top edge too, so the e-stim module (HAT x 101-127.5, y 76-109 -> here
+# x 65-91.5, y 24..-9) hangs 9 mm past the top edge with its electrode header at (80, -7) pointing up: stim wires and the
+# Pi's power / HDMI cables all leave over the top edge.  Its battery pads (HAT x 101-108, y 97-103 -> x 84.5-91.5, y -3..3)
+# are right above J3.  The HAT's thumbwheel (its west edge, 6 mm proud) is at x 88.7-98.5, y 6.5-19, 25 mm up: J3's cable
+# rises straight past it.  All four Pi standoffs fall inside the pack envelopes (x 31 / 89): fix them from the top
+# (threaded standoff + screw) or use low heads below.  Standoffs >= 11 mm (XT60 sockets, electrolytic under the Pi).
+PI_ROT = 180
+PI = ((89.0, 52.5), (31.0, 52.5), (89.0, 3.5), (31.0, 3.5))
 
 
 def pi_xy(u, v):
@@ -54,20 +51,27 @@ def pi_xy(u, v):
     du, dv = u - 3.5, v - 3.5
     if PI_ROT == 90:
         du, dv = dv, -du
+    elif PI_ROT == 180:
+        du, dv = -du, -dv
     elif PI_ROT == 270:
         du, dv = -dv, du
     return PI[0][0] + du, PI[0][1] + dv
 for ref, (x, y) in zip(("H5", "H6", "H7", "H8"), PI):
     at(ref, x, y)
-# ---- pack sockets along the front edge (under the Pi's USB / Ethernet end for pack A): J5 (XH balance, opening toward
-# the edge), XT60 J7 / J8 (face flush with the edge, "-" pin outboard) either side of x 52.5, J6 outboard; output header J3
-# (pins along y, cable straight up to the module's pads 36 mm above) in the top-left corner; toggle (lever along y, parallel to the Pi, RUN up) in
-# the right column beside the HAT's header edge
-at("J5", 10.5, 91.5); at("J6", 76.5, 91.5)
-at("J7", 35.5, 83.1, 180); at("J8", 68, 83.1, 180)
-at("J3", 4, 4, -90)                                       # pin 1 at (4, 4), pins down to y 10; cable rises west of the thumbwheel (x > 6.5)
-at("SW1", 74, 52, 90)                                   # lever along y like the Pi; RUN up (y 44), CHG down (y 60)
-at("F3", 46, 66, 90); at("R30", 46, 71)                  # link fuse and pull-down under the Pi, left of H7
+# ---- front edge: XH balance sockets outboard (opening toward the edge), XT60 sockets inboard (face flush with the edge,
+# pad 1 = "-" at the right for both, so both plugs have + on the left), USB-C in the middle; the CH224A and the toggle
+# behind the USB-C; J3 (pins along x, cable straight up to the module's pads 36 mm above) in the top-right corner
+at("J5", 10.5, 91.5); at("J6", 79.5, 91.5)
+at("J7", 35.5, 83.1, 180); at("J8", 71.7, 83.1, 180)
+at("J1", 50, 95.8); at("C3", 42.5, 92)                   # opening toward +y, face flush with the edge; C3 beside it
+at("SW1", 50, 83.5)                                      # lever along x, parallel to the Pi; ON to the right
+at("J3", 76.5, 4)                                        # pins x 76.5-82.5, the module's pads at x 84.5-91.5 above; H7 (89, 3.5) has the corner
+# ---- gauge LED columns, paired in the centre: A at x 46, B at x 54; rows 80 / 50 / 20 / ON / CHG / DONE, resistors outboard
+ROWS = (62.5, 65, 67.5, 70, 72.5, 75)                   # below the middle slot (y 39-61)
+for (a, b), y in zip((("D4", "D14"), ("D3", "D13"), ("D2", "D12"), ("D1", "D11"), ("D9", "D17"), ("D10", "D18")), ROWS):
+    at(a, 46, y); at(b, 54, y)
+for (a, b), y in zip((("R15", "R57"), ("R14", "R56"), ("R13", "R55"), ("R12", "R54"), ("R66", "R68"), ("R67", "R69")), ROWS):
+    at(a, 41.5, y); at(b, 58.5, y)
 
 
 def balancer(u, q, rv, c, rb, x0, y0):
@@ -76,66 +80,59 @@ def balancer(u, q, rv, c, rb, x0, y0):
     at(rv, x0 + 2, y0 + 4); at(c, x0 + 7, y0 + 4)
 
 
-# ---- balancers, all under the Pi: pack A (U6..U9, Q7..Q10, R35..R38 bleed, R31..R34, C12..C15) rows y 28-52 (right
-# column one row up), pack B (U10..U13, Q15..Q18, R62..R65, R58..R61, C16..C19) rows y 58 / 68 below them, 2 x 2 each
+# ---- balancers, all under the Pi, 2 x 2 per pack: pack A (U6..U9, Q7..Q10, R35..R38 bleed, R31..R34, C12..C15) at
+# x 9-38, pack B (U10..U13, Q15..Q18, R62..R65, R58..R61, C16..C19) at x 62-91; rows y 28-52, the outer column one row up
 for n in range(4):
-    x0, y0 = 9 + 16 * (n % 2), 38 + 10 * (n // 2)
-    balancer(f"U{6 + n}", f"Q{7 + n}", f"R{31 + n}", f"C{12 + n}", f"R{35 + n}", x0, y0 - 10 * (n % 2))
-    balancer(f"U{10 + n}", f"Q{15 + n}", f"R{58 + n}", f"C{16 + n}", f"R{62 + n}", x0, y0 + 20)
-# ---- pack A gauge, top left under the Pi: comparators, reference and ladder; its LEDs on the right edge at y 64-76
-# gauge A's LEDs on the top edge next to its comparators (they were on the right edge: ~150 mm per LED net), resistors in a
-# column right of the ladder; the thumbwheel's overhang (x 6.5-19, y 9-15) does not reach them
-for ref, x in (("D4", 20), ("D3", 24), ("D2", 28), ("D1", 32)):
-    at(ref, x, 2.3)
-for ref, y in (("R15", 5), ("R14", 7.5), ("R13", 10), ("R12", 12.5)):
-    at(ref, 35, y)
+    y0 = 38 + 10 * (n // 2) - 10 * (n % 2)
+    balancer(f"U{6 + n}", f"Q{7 + n}", f"R{31 + n}", f"C{12 + n}", f"R{35 + n}", 9 + 16 * (n % 2), y0)
+    balancer(f"U{10 + n}", f"Q{15 + n}", f"R{58 + n}", f"C{16 + n}", f"R{62 + n}", 62 + 16 * (n % 2), y0)
+# ---- pack A gauge, top left under the Pi: comparators, reference and ladder (LEDs in the centre column), its rail switch
 at("C1", 16, 7.5); at("U1", 16, 12); at("U2", 16, 20); at("C2", 16, 25); at("Q14", 21, 28)
 at("U3", 24, 8); at("R3", 24, 11)
 for i, ref in enumerate(("R4", "R5", "R6", "R7", "R8")):
     at(ref, 24, 14 + 2.5 * i)
 at("R9", 30, 12.5); at("R10", 30, 15); at("R11", 30, 17.5)
-# ---- pack A -V chain, under the Pi above J7 (x 34-48, y 62-80)
-at("F2", 46, 77, 90); at("Q11", 41, 78.5); at("R39", 36, 76); at("R40", 36, 78.5)
-at("D15", 41, 65, 90); at("D16", 41, 72.5, 90)
-# ---- charger, top right: USB-C on the right edge, CH224A, VBUS switch, CN3704 and its passives, CHRG / DONE LEDs
-at("J1", 95.8, 14, 90)                     # front flush with the right edge (courtyard +y end = 4.2 mm from origin)
-at("U4", 84, 14); at("C3", 81.5, 9.5); at("R24", 84, 18.5)
-at("Q13", 76, 9); at("R43", 71.5, 7.5); at("R44", 71.5, 10)
-at("Q12", 76, 14); at("R41", 71.5, 13.5); at("R42", 71.5, 16)
-at("C5", 64, 10); at("C6", 64, 16)
-at("U5", 82, 27); at("C4", 82, 22.5); at("Q6", 91.5, 23); at("D7", 92, 29, 90); at("L1", 86, 35)
-at("D8", 74, 31); at("R25", 70, 22); at("R26", 70, 25); at("C7", 64, 23); at("C8", 64, 26.5)
-at("C9", 76, 20); at("C10", 79.5, 20); at("C11", 73, 20); at("R27", 76, 17.5)
-at("RT1", 58, 30)
-# CHRG / DONE LEDs on the top edge (y 2.5), outside the Pi's edge (y 4), above the charger
-at("R28", 66.5, 2.5); at("D9", 70, 2.5); at("R29", 79, 2.5); at("D10", 82.5, 2.5)
-# ---- pack B gauge: comparators, reference and ladder top centre under the Pi (x 37-56, y 5-23, right of gauge A's);
-# its LEDs on the right edge at y 30-42 between D7 / L1 and the slot
-for ref, y in (("D14", 30), ("D13", 34), ("D12", 38), ("D11", 42)):
-    at(ref, 97.5, y, 90)
-at("R57", 92.5, 34); at("R56", 92.5, 38); at("R55", 96, 25)        # R55 above the column: x 92.5 / y 42 is in the slot keep-out
-at("U16", 39, 7); at("R45", 39, 10)
+at("Q20", 8, 12); at("R77", 8, 15.5); at("R78", 8, 18); at("Q21", 8, 22); at("R79", 8, 25.5); at("R80", 8, 28)
+# ---- pack B gauge, mirrored top right (a little lower than A's: J3 is above it), and its rail switch
+at("C20", 84, 8.7); at("U14", 84, 13); at("U15", 84, 21); at("C21", 84, 24.9)
+at("U16", 76, 9.5); at("R45", 76, 12.5)
 for i, ref in enumerate(("R46", "R47", "R48", "R49", "R50")):
-    at(ref, 39, 12 + 2.5 * i)
-at("R51", 44, 7); at("R52", 44, 9.5); at("R53", 44, 12)
-at("C20", 46.5, 9, 90); at("U14", 52, 9); at("C21", 46.5, 27, 90); at("U15", 52, 27)   # U15 below the Pi standoff H5 (52.5, 18.5)
-# ---- pack B +V chain, right of its gauge (x 81-90, y 62-80), above J6
-at("F1", 83, 65, 90); at("Q1", 83, 70); at("R1", 87.5, 64); at("R2", 87.5, 66.5)
-at("R54", 87.5, 69)                                      # ON LED resistor on +OUT; its thin net runs to D11 in the LED column
-at("D5", 83, 77, 90); at("D6", 88, 76, 90)
-
+    at(ref, 76, 15.5 + 2.5 * i)
+at("R51", 72, 14); at("R52", 72, 16); at("R53", 72, 18)
+at("Q23", 92, 12); at("R83", 92, 15.5); at("R84", 92, 18); at("Q24", 92, 22)
+# ---- output chains: chain B (+V) at x 61-70 below J3, chain A (-V) along the top edge between the Pi hole and the MCU
+at("Q1", 63.5, 8.5); at("R1", 68, 6.5); at("R2", 68, 8.3); at("F1", 68, 12.5, 90)
+at("Q22", 63.9, 13.5); at("R81", 63.9, 16.8); at("R82", 63.9, 18.6)
+at("F2", 39.5, 3); at("Q11", 44.5, 3); at("R39", 48.5, 2.5); at("R40", 51.6, 2.5)
+# ---- charger island (CGND), centre column under the Pi: MCU row on top (test points on the edge, the BOOT button and
+# the LDO well clear of the MCU's pin rows), decoupling row below it, the CN3704 with only its compensation parts beside
+# it (its pin rows need room to fan out), the buck power parts above the middle slot, the opto on the slot's left flank
+# and the sense dividers, pull-ups and VBUS switch on its right flank
+at("U19", 41, 9); at("SW2", 50, 8.5); at("U18", 56.5, 10.2)
+for i, ref in enumerate(("TP1", "TP2", "TP3", "TP4")):
+    at(ref, 54.5 + 2.8 * i, 4.3)
+for ref, x in (("C4", 39.5), ("C24", 42.7), ("C25", 45.9), ("R70", 49.1), ("C26", 52.3), ("C23", 55.5), ("C22", 58.7)):
+    at(ref, x, 13.5)
+at("U5", 41, 18)
+at("C9", 48.3, 16.2); at("C10", 48.3, 18); at("C11", 48.3, 19.8); at("R27", 48.3, 21.6)
+at("C6", 39, 21.8); at("RT1", 42.5, 21.8)
+at("C5", 42.1, 27); at("Q6", 49, 24.2); at("D7", 55, 24.2); at("D8", 62.2, 24.2); at("L1", 51.5, 30.2)
+at("R25", 59.3, 28.5, 90); at("R26", 59.3, 33.3, 90); at("C7", 62.8, 28.2, 90); at("C8", 62.8, 31.7, 90)
+at("U17", 41, 41, 90); at("R76", 41, 48.5)
+for ref, (x, y) in {"R71": (52.5, 37.5), "R72": (52.5, 39.3), "R73": (55.7, 37.5), "R74": (55.7, 39.3), "R28": (58.9, 37.5),
+                    "R29": (58.9, 39.3), "R42": (52.5, 41.1), "R43": (55.7, 41.1), "R44": (58.9, 41.1)}.items():
+    at(ref, x, y)
+at("Q12", 53.5, 44); at("Q13", 58.5, 44)
+# ---- front strip, outer thirds (visible, either side of the LED pair): the relay with its driver on the right by pack B's
+# sockets (its contacts take 0V / +BATB from there), the PD sink on the left by pack A's (its CC lines run to J1 as fine tracks)
+at("K1", 84.5, 70, 90); at("Q19", 78.5, 57); at("D19", 83, 56.8, 90)
+at("U4", 15.5, 70, 90); at("R24", 15.5, 76); 
 board = pcbnew.LoadBoard(BOARD)
 # idempotent: a previous run's outline, slots and board-level silk are collected now and removed at the very end
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
          or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
 stale += [z for z in board.Zones() if z.GetIsRuleArea()]
 fps = {f.GetReference(): f for f in board.GetFootprints()}
-# orientation pass (scratch orient.py, 2026-10-27): the rotation of each IC / transistor that minimises its ratsnest length
-# without courtyard overlaps; small gains (~1 mm each), kept because they also make the pin order face the partners
-ROT = {"Q11": 90, "Q13": 90, "U1": 180, "U2": 270, "U3": 90, "U4": 180, "U14": 270, "U15": 270, "U16": 90,
-       "U6": 90, "U7": 90, "U8": 90, "U9": 90, "U10": 90, "U11": 90, "U12": 90, "U13": 90}
-for ref, rot in ROT.items():
-    P[ref] = (P[ref][0], P[ref][1], rot)
 missing = [r for r in fps if r not in P]
 assert not missing, f"unplaced: {missing}"
 for ref, (x, y, rot) in P.items():
@@ -198,17 +195,14 @@ def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
     board.Add(t)
 
 
-silk("LaserHAT BatteryPack rev C", 50, 5, 1.0, 0, pcbnew.B_SilkS)   # the top side is under the Pi / HAT or busy
-silk("OUT +V 0V -V", 8.2, 7, 0.8, 90)
-silk("USB-C 20V", 89.5, 2.5, 0.8)
-silk("CHRG", 62, 2.5, 0.8); silk("DONE", 74.5, 2.5, 0.8)
-for txt, y in (("80%", 30), ("50%", 34), ("20%", 38)):
-    silk(txt, 95.1, y, 0.8)
-silk("ON", 95.1, 42, 0.8); silk("B", 95.1, 27, 0.8)
-for txt, x in (("80%", 20), ("50%", 24), ("20%", 28), ("ON", 32)):
-    silk(txt, x, 4.6, 0.8)
-silk("A", 37.5, 2.3, 0.8)
-silk("RPi  58 x 49  M2.5", 28, 54.3, 0.8)
+silk("LaserHAT BatteryPack rev D", 50, 5, 1.0, 0, pcbnew.B_SilkS)   # the top side is under the Pi / HAT or busy
+silk("OUT +V 0V -V CAB", 80, 1.0, 0.8)
+silk("PD 20V", 42.5, 96.5, 0.8, 90); silk("DFU", 57.5, 95.5, 0.8, 90)
+silk("BOOT", 50, 4.6, 0.8)
+silk("SWDIO SWCLK GND 3V3", 60.5, 1.5, 0.8)
+for txt, y in zip(("80%", "50%", "20%", "ON", "CHG", "DONE"), ROWS):
+    silk(txt, 50, y, 0.8)
+silk("A", 41.5, 60.2, 0.8); silk("B", 58.5, 60.2, 0.8)
 # User.Comments: the LaserHAT's outline (its Edge.Cuts, read live from ../LaserDriver.kicad_pcb) with its hole MH1 on H5 and
 # the Pi's rotation, i.e. where the HAT sits when the Pi is on H5-H8; User.Drawings: the Raspberry Pi itself (85 x 56, r 3,
 # holes 3.5 in from the SD-card end and the long edges, ports end 23.5 beyond the far holes).  Drawings only (not in the gerbers).
@@ -246,7 +240,7 @@ for d in hat.GetDrawings():
     n_hat += 1
 hat_bb = hat.GetBoardEdgesBoundingBox()
 hx, hy = pi_xy((hat_bb.GetLeft() + hat_bb.GetRight()) / 2e6 + hat_off.x / 1e6, (hat_bb.GetTop() + hat_bb.GetBottom()) / 2e6 + hat_off.y / 1e6)
-silk("LaserHAT outline (MH1-MH4 on H5-H8)", hx, hy - 8, 1.0, layer=pcbnew.Cmts_User)
+silk("LaserHAT outline (MH1-MH4 on H5-H8)", hx, hy + 8, 1.0, layer=pcbnew.Cmts_User)
 print("HAT outline:", n_hat, "edges; MH1 on", PI[0], "rotated", PI_ROT)
 r = 3.0
 V = lambda u, v: pcbnew.VECTOR2I(mm(u), mm(v))
@@ -256,13 +250,20 @@ for cu, cv, a0 in ((r, r, 180), (85 - r, r, 270), (85 - r, 56 - r, 0), (r, 56 - 
     shape("arc", tuple(V(cu + r * math.cos(math.radians(a)), cv + r * math.sin(math.radians(a))) for a in (a0, a0 + 45, a0 + 90)),
           pcbnew.Dwgs_User)
 px, py = pi_xy(42.5, 28)
-silk("Raspberry Pi outline (85 x 56)", px, py + 8, 1.0, layer=pcbnew.Dwgs_User)
+silk("Raspberry Pi outline (85 x 56)", px, py + 12, 1.0, layer=pcbnew.Dwgs_User)
 # bottom: the pack names at the sockets (the top side there is under the Pi), the pack envelopes and names (read from below)
-silk("PACK A  -V", 35.5, 93.5, 1.0, 0, pcbnew.B_SilkS); silk("PACK B  +V", 68, 93.5, 1.0, 0, pcbnew.B_SilkS)
+silk("PACK A  -V", 35.5, 93.5, 1.0, 0, pcbnew.B_SilkS); silk("PACK B  +V", 64.5, 93.5, 1.0, 0, pcbnew.B_SilkS)
 for (x1, x2), name in zip(PACKS, ("PACK A  (-V side, plugs to J7 / J5)", "PACK B  (+V side, plugs to J8 / J6)")):
-    for (a, b), (c, d) in (((x1, 80), (x1, 10)), ((x1, 10), (x2, 10)), ((x2, 10), (x2, 80))):   # open toward the leads
-        seg(a, b, c, d, pcbnew.B_SilkS, 0.15)
-    silk(name, (x1 + x2) / 2 + (12 if x1 > 50 else 0), 48, 1.2, 90, pcbnew.B_SilkS)   # pack B label at x 82: no vias under it
+    seg(x1, 10, x2, 10, pcbnew.B_SilkS, 0.15)                                             # open toward the leads
+    for x in (x1, x2):                                                                   # sides, skipping the Pi standoffs
+        ys = [10, 80 if x < 85 else 56]                                                  # pack B's right side stops at the relay
+        for cx, cy in PI:
+            if abs(cx - x) < 3.5 and 10 < cy < 80:
+                ys += [cy - 3.5, cy + 3.5]
+        ys.sort()
+        for ya, yb in zip(ys[0::2], ys[1::2]):
+            seg(x, ya, x, yb, pcbnew.B_SilkS, 0.15)
+    silk(name, (x1 + x2) / 2 + (12 if x1 > 50 else 0), 28 if x1 > 50 else 48, 1.2, 90, pcbnew.B_SilkS)   # pack B label at x 82, above the relay
 for d in stale:
     board.Remove(d)
 pcbnew.SaveBoard(BOARD, board)

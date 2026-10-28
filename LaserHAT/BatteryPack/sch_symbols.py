@@ -111,8 +111,10 @@ def power_symbol(name, gnd=False):
         gfx = poly([(0, 0), (0, 1.27)]) + "\n    " + poly([(-1.27, 1.27), (1.27, 1.27)], w=0.508)
         add_symbol(name, "#PWR", gfx, [("1", name, 0, 0, 270, "power_in")], power=True, ref_pos=(0, -3.81), val_pos=(0, 3.175),
                    hide_pin_numbers=True, hide_pin_names=True)
-POWER_NETS = {"+BAT": False, "+SW": False, "+OUT": False, "+RUN": False, "+CHGB": False, "+G": False, "+GB": False,
-              "+BATB": False, "VBUS": False, "VCHG": False, "GND": True, "0V": True}      # rev C: 0V = pack B's negative
+POWER_NETS = {"+SW": False, "+OUT": False, "+G": False, "+GB": False, "+BATB": False, "VBUS": False, "VCHG": False,
+              "+CHG": False, "+3V3": False, "GND": True, "0V": True, "CGND": True}
+# rev D: GND = pack A negative (-V side), 0V = pack A positive = pack B negative = the output reference, +BATB = pack B
+# positive; CGND = the floating charger island's local ground (on GND or 0V through the relay)
 for n, g in POWER_NETS.items():
     power_symbol(n, g)
 
@@ -248,3 +250,49 @@ ic_symbol("USB_C_16P", "J", 15.24, 25.4,
                  ("A7", "D-", -2.54, "passive"), ("B7", "D-", -5.08, "passive"), ("A8", "SBU1", -7.62, "passive"), ("B8", "SBU2", -10.16, "passive")],
           bottom=[("A1", "GND", -5.08, "passive"), ("B1", "GND", -2.54, "passive"), ("A12", "GND", 0, "passive"), ("B12", "GND", 2.54, "passive"),
                   ("S1", "SH", 5.08, "passive")])
+
+
+# ----------------------------------------------------------------------------- rev D (2026-10-28): series packs, floating charger
+# DPDT ON-ON toggle (MTS-202), same pins as the centre-off one: pole 1 = 1 (throw A) 2 (common) 3 (throw B), pole 2 = 4 5 6
+add_symbol("SW_DPDT", "SW", _spdt(3.81) + "\n    " + _spdt(-3.81) + "\n    " + poly([(0.2, 2.9), (0.2, -4.7)], w=0.127),
+           [("2", "C1", -5.08, 3.81, 0, "passive"), ("1", "A1", 5.08, 5.08, 180, "passive"), ("3", "B1", 5.08, 2.54, 180, "passive"),
+            ("5", "C2", -5.08, -3.81, 0, "passive"), ("4", "A2", 5.08, -2.54, 180, "passive"), ("6", "B2", 5.08, -5.08, 180, "passive")],
+           ref_pos=(0, 8.89), val_pos=(0, -8.89), hide_pin_names=True)
+# momentary push button (BOOT0), horizontal: pin 1 left, 2 right
+add_symbol("SW_Push", "SW", poly([(-2.54, 0), (-1.27, 0)]) + "\n    " + poly([(1.27, 0), (2.54, 0)]) + "\n    " +
+           poly([(-1.6, 1.6), (1.6, 1.6)], w=0.381) + "\n    " + poly([(0, 1.6), (0, 2.8)], w=0.381) + "\n    " +
+           circ(-1.27, 0, 0.3) + "\n    " + circ(1.27, 0, 0.3),
+           [("1", "1", -5.08, 0, 0, "passive"), ("2", "2", 5.08, 0, 180, "passive")],
+           ref_pos=(0, 4.45), val_pos=(0, -2.54), hide_pin_names=True)
+# STM32F042F4P6 (TSSOP-20): pin 1 BOOT0 (PB8), 2 PF0, 3 PF1, 4 NRST, 5 VDDA, 6-13 PA0-PA7, 14 PB1, 15 VSS, 16 VDD,
+# 17 PA9 (USB_DM when PA11 is remapped), 18 PA10 (USB_DP / PA12), 19 PA13 SWDIO, 20 PA14 SWCLK
+ic_symbol("STM32F042F4", "U", 25.4, 35.56,
+          left=[("1", "BOOT0", 15.24, "input"), ("4", "NRST", 12.7, "input"), ("2", "PF0", 7.62, "bidirectional"),
+                ("3", "PF1", 5.08, "bidirectional"), ("17", "PA9/USB_DM", 0, "bidirectional"), ("18", "PA10/USB_DP", -2.54, "bidirectional"),
+                ("19", "PA13/SWDIO", -7.62, "bidirectional"), ("20", "PA14/SWCLK", -10.16, "bidirectional")],
+          right=[("6", "PA0", 15.24, "bidirectional"), ("7", "PA1", 12.7, "bidirectional"), ("8", "PA2", 10.16, "bidirectional"),
+                 ("9", "PA3", 7.62, "bidirectional"), ("10", "PA4", 5.08, "bidirectional"), ("11", "PA5", 2.54, "bidirectional"),
+                 ("12", "PA6", 0, "bidirectional"), ("13", "PA7", -2.54, "bidirectional"), ("14", "PB1", -5.08, "bidirectional")],
+          top=[("16", "VDD", -2.54, "power_in"), ("5", "VDDA", 2.54, "power_in")],
+          bottom=[("15", "VSS", 0, "power_in")])
+# HFD2 DPDT signal relay, single side stable: coil 1 (+) / 16 (-); pole 1: 4 common, 6 NC, 8 NO; pole 2: 13 common, 11 NC, 9 NO
+_relay_gfx = (rect(-7.62, 10.16, 7.62, -10.16, fill="background") + "\n    " + rect(-6.35, 7.62, -3.81, 2.54) + "\n    " +
+              poly([(-5.08, 7.62), (-5.08, 10.16)]) + "\n    " + poly([(-5.08, 2.54), (-5.08, -10.16)]) + "\n    " +
+              poly([(0.5, 5.08), (3.3, 7.4)], w=0.381) + "\n    " + poly([(0.5, -2.54), (3.3, -0.22)], w=0.381) + "\n    " +
+              poly([(-2.54, 5.08), (0.5, 5.08)]) + "\n    " + poly([(-2.54, -2.54), (0.5, -2.54)]))
+ic_symbol("HFD2", "K", 15.24, 20.32,
+          left=[("1", "+", 5.08, "passive"), ("16", "-", -5.08, "passive")],
+          right=[("4", "COM1", 7.62, "passive"), ("8", "NO1", 5.08, "passive"), ("6", "NC1", 2.54, "passive"),
+                 ("13", "COM2", -2.54, "passive"), ("9", "NO2", -5.08, "passive"), ("11", "NC2", -7.62, "passive")],
+          gfx_extra="\n    " + _relay_gfx)
+# EL817 opto-coupler: 1 anode, 2 cathode (LED); 4 collector, 3 emitter
+_opto_gfx = ("\n    " + poly([(-4.5, 1.27), (-4.5, -1.27), (-2.5, 0), (-4.5, 1.27)], fill="outline") + "\n    " +
+             poly([(-2.5, 1.27), (-2.5, -1.27)], w=0.508) + "\n    " + poly([(-1.0, 0.6), (0.8, 0.6)], w=0.254) + "\n    " +
+             poly([(-1.0, -0.6), (0.8, -0.6)], w=0.254) + "\n    " + poly([(2.2, 2.0), (2.2, -2.0)], w=0.508) + "\n    " +
+             poly([(2.2, 0.8), (4.0, 2.54)]) + "\n    " + poly([(2.2, -0.8), (4.0, -2.54)]))
+ic_symbol("EL817", "U", 12.7, 10.16,
+          left=[("1", "A", 2.54, "passive"), ("2", "K", -2.54, "passive")],
+          right=[("4", "C", 2.54, "passive"), ("3", "E", -2.54, "passive")], gfx_extra=_opto_gfx)
+# TLV760 LDO, SOT-23: 2 IN, 1 OUT, 3 GND (as on the e-stim module)
+ic_symbol("TLV760", "U", 12.7, 10.16, left=[("2", "IN", 0, "power_in")], right=[("1", "OUT", 0, "power_out")],
+          bottom=[("3", "GND", 0, "power_in")])
