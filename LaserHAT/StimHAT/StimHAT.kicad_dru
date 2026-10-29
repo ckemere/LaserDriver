@@ -11,3 +11,6 @@
 (rule j102_one_spoke
   (condition "A.memberOfFootprint('J102')")
   (constraint min_resolved_spokes 1))
+(rule outer_pours_one_spoke
+  (condition "A.Layer == 'F.Cu' || A.Layer == 'B.Cu'")
+  (constraint min_resolved_spokes 1))

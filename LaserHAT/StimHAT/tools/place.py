@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Placement of StimHAT.kicad_pcb (2026-10-29), board coordinates = HAT coordinates - (100, 43): 65 x 57 mm HAT outline
-with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) and a 10 x 7.5 mm tab on the south-east (x 46-56, y 57-64.5).
+with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) no tab since the DC-DC left for its pod.
 Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
   * top strip (y < 17.5) and the west half: the Rev 2 HAT core, all under the Adafruit 4567 bonnet (which sits on the
     stacking header 9 mm up), parts <= 7 mm tall; J10 (vertical socket for the 0.91" OLED module, unpopulated) at
@@ -13,7 +13,7 @@ Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
     HAT side, J103 (2-pin 5 V / GND): the DC-DC pod (A0515S + filter on its own board) plugs into J102's holes and J103
     and lies flat over the band, its own isolation gap over the HAT's barrier strip at x 34-36.5
   * the isolated stimulator: block A under the bonnet's east end (x 36.5-65, y 20-35), the pocket (x 36.5-65, y 35-38.5),
-    strip B east of the BNCs (x 47.7-65, y 38.5-57) and the tab (J101 electrode header only).
+    strip B east of the BNCs (x 47.7-65, y 38.5-57) and J101 (vertical electrode header) in strip B's south.
     Barrier = 2.5 mm copper-free rule areas; only U101 / U109 / PS1 straddle it.  MH4 falls inside isolated copper:
     nylon standoff.
 Idempotent: re-running moves every footprint back to the table and redraws the outline and board-level drawings; copper
@@ -25,7 +25,7 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BOARD = os.path.join(ROOT, "StimHAT.kicad_pcb")
-W, H, TAB_X, TAB_X2, TAB_Y = 65.0, 57.0, 46.0, 56.0, 64.5
+W, H = 65.0, 57.0                          # the south-east tab went with the DC-DC (2026-10-29)
 NOTCH = (59.0, 8.0, 65.0, 16.5)
 mm = pcbnew.FromMM
 P = {}                                     # ref -> (x, y, rot, flip)
@@ -45,10 +45,10 @@ at("R8", 10.0, 20.5, 90); at("R10", 10.0, 27.5, 90)
 at("D5", 2.6, 31.5); at("R13", 5.8, 31.5)
 at("D7", 2.6, 33.1); at("R15", 5.8, 33.1)
 at("D9", 2.6, 34.7); at("R18", 5.8, 34.7)
-at("SW9", 2.2, 38.6, 270)
-at("SW7", 7.5, 45.8, 45)
+at("SW9", 10, 53.75, -90)
+at("SW7", 8.16, 43.22, 45)
 # ---- south edge: the two BNCs (rot 180 = barrel south, as on the HAT)
-at("J6", 22.8, 44.4, 180); at("J7", 38.4, 44.4, 180)
+at("J6", 24.92, 44.42, 180); at("J7", 40.92, 44.42, 180)
 # ---- core, west half under the bonnet: USB power path by the USB-C, LDOs above, MCU in the middle, UART bridge below
 at("Q5", 14.5, 14.3, 90); at("R26", 14.5, 17.6, 90); at("Q3", 14.5, 20.5, 90); at("Q4", 18.5, 17.6, 90)
 at("R21", 18.5, 14.3, 90); at("R22", 24.5, 20.5, 90)
@@ -56,9 +56,9 @@ at("U4", 23.0, 14.5, 180); at("C12", 19.7, 12.3, 0); at("C6", 26.5, 10.6, 180); 
 at("U5", 30.0, 14.5); at("R7", 26.5, 13.5, 90); at("C2", 33.3, 14.0, 90); at("JP1", 50.0, 10.0, 0)
 at("U7", 20.0, 26.0, -90)
 at("C1", 20.58, 21.1, 0); at("C16", 29.9, 31.5, 90); at("C4", 24.8, 24.3, 90); at("R4", 10.0, 30.0, 90)
-at("R3", 17.0, 34.0); at("C3", 19.5, 34.0); at("JP4", 22.5, 34.0)
+at("R3", 17.4, 34); at("C3", 19.5, 34.0); at("JP4", 22.5, 34.0)
 at("R107", 27.5, 18.3, 90); at("R108", 30.0, 18.3, 90)
-at("U6", 12.0, 35.5, 90); at("C17", 12.0, 31.3, 0)
+at("U6", 13.4, 32.65, 90); at("C17", 12.02, 27.5, 0)
 at("U8", 28.0, 32.0, 90); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
 # ---- top strip: I2C pull-ups by the header's pins 3 / 5, the EEPROM by pins 27 / 28, JP5, BSL; the OLED socket J10
 # right under the header at the west end (pins along x at y 10, pin 1 = GND east), JP1 moved to the strip's east end
@@ -72,29 +72,29 @@ at("U101", 35.25, 27.0, 0)
 at("R101", 29.0, 22.0, 90); at("R102", 29.0, 25.0, 90); at("R103", 29.0, 28.0, 90); at("C101", 30.8, 24.0, 90)
 at("U109", 42.0, 19.5, 270)
 # ---- isolated block A (x 36.5-65, y 20-34): set-point, switches, output stage, SHORT, fault detector
-at("C102", 38.6, 22.3, 270); at("C124", 40.5, 26.8, 90); at("C115", 37.5, 31.8, 90); at("C125", 38.9, 33.0, 90); at("TP101", 62.5, 27.0)
-at("U105", 44.3, 25.0); at("C114", 42.5, 28.3, 90); at("R110", 44.5, 28.3, 90); at("R109", 45.7, 22.6, 0)
-at("U106", 50.8, 25.0); at("C117", 48.3, 28.4, 90); at("R105", 49.9, 28.4, 90); at("R106", 51.6, 28.4, 90); at("C116", 53.3, 28.4, 90)
-at("R114", 46.7, 21.5); at("C120", 48.75, 21.5); at("R115", 50.75, 21.5); at("R116", 53.3, 21.5, 90); at("C121", 62.5, 21.5)
-at("U107", 57.5, 25.5, 90); at("C118", 55.9, 20.9, 0); at("C119", 59.1, 30.5, 90)
-at("U108", 43.5, 32.2); at("C126", 48.2, 32.0, 90); at("U110", 52.3, 32.0)
-at("R117", 56.3, 32.6, 90); at("R118", 58.3, 32.6, 90); at("R119", 60.3, 32.6, 90); at("R120", 62.3, 32.6, 90)
-at("R121", 64.0, 33.0, 90); at("D101", 57.0, 35.6, 90); at("C122", 54.5, 34.8); at("TP102", 62.5, 24.0)
+at("C102", 38, 23, 90); at("C124", 45.5, 21.5, 90); at("C115", 51.8, 20.45, 180); at("C125", 61.4, 38.2, 90); at("TP101", 63.55, 44.55, 0)
+at("U105", 49.95, 22.75, 180); at("C114", 47.25, 24.7, 180); at("R110", 40.85, 23.75, 0); at("R109", 43.15, 23.75, 180)
+at("U106", 58.65, 25.25, 90); at("C117", 61.15, 26.6, -90); at("R105", 54.2, 21.85, 90); at("R106", 55.75, 21.82, -90); at("C116", 56, 24.88, -90)
+at("R114", 55.24, 27.05, 0); at("C120", 55.8, 28.48, -90); at("R115", 57, 29.5, -90); at("R116", 59.15, 29.55, 0); at("C121", 53.15, 50, -90)
+at("U107", 48, 28, 180); at("C118", 52.9, 28.2, -90); at("C119", 52.6, 25.9, -90)
+at("U108", 56.88, 41.01, 180); at("C126", 51.85, 42.45, 90); at("U110", 56.94, 34.05, 0)
+at("R117", 56.05, 31.7, 180); at("R118", 53.75, 31.7, 180); at("R119", 53.15, 34.3, -90); at("R120", 41.6, 30.8, 180)
+at("R121", 39.59, 30.8, 0); at("D101", 40.85, 29.15, 0); at("C122", 56.91, 36.55, 180); at("TP102", 63.75, 21.75, 0)
 # ---- isolated strip B (x 50-65, y 36.5-54.5): LDO and -4.3 V rail, LC filter, capacitance multipliers, clamps
-at("U104", 51.8, 39.6); at("C112", 51.8, 36.9, 0); at("C111", 54.7, 39.6, 90); at("R113", 58.3, 39.0, 90)
-at("D102", 60.0, 39.0, 90); at("C113", 61.7, 39.0, 90); at("D103", 63.4, 39.0, 90)
-at("D104", 64.0, 47.0, 90)
-at("C109", 51.8, 51.0); at("C110", 54.6, 51.0, 90)
-# ---- the battery socket / pod end in the band north of the BNC bodies, the pod's 5 V end, the tab (x 46-56) with J101
+at("U104", 48, 39.5, -90); at("C112", 50.5, 39, -90); at("C111", 48, 35.5, 90); at("R113", 42, 35.5, -90)
+at("D102", 44, 35.5, 90); at("C113", 41, 33, 0); at("D103", 50.55, 36.25, 0)
+at("D104", 40, 35.5, -90)
+at("C109", 46, 35.55, 90); at("C110", 38, 35.55, -90)
+# ---- the battery socket / pod end in the band north of the BNC bodies, the pod's 5 V end, J101 in strip B
 # with the battery socket (vertical, cable from above) and the electrode header (pins out of the south edge)
 at("J102", 44.0, 40.1, 180)                 # pin 1 east: +V 44.0, 0V 42.0, -V 40.0, CAB 38.0 (= GND_ISO); housing north
 at("J103", 19.0, 40.1, 90)                  # 2-pin 5 V (west, square) / GND for the DC-DC pod, HAT side of the band
-at("J101", 51.0, 60.5, 90)                  # vertical 1x2 on the tab; pin 1 (square) = E1 west
+at("J101", 53.16, 54.15, 90)                  # vertical 1x2 on the tab; pin 1 (square) = E1 west
 
 board = pcbnew.LoadBoard(BOARD)
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User, pcbnew.User_1)
          or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
-stale += [z for z in board.Zones() if z.GetIsRuleArea() or z.GetZoneName() in ("GND plane", "GND_ISO plane")]
+stale += [z for z in board.Zones() if z.GetIsRuleArea() or z.GetZoneName() in ("GND plane", "GND_ISO plane", "GND pour F", "GND pour B", "GND_ISO pour F", "GND_ISO pour B", "+5V plane", "MSPM0_3V3 plane", "+5V_ISO plane", "+V_STIM plane")]
 board.SetCopperLayerCount(4)                                  # 4 layers (2026-10-29): In1 = ground planes, In2 = power
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 missing = [r for r in fps if r not in P]
@@ -136,10 +136,8 @@ R = 3.0
 E = pcbnew.Edge_Cuts
 seg(R, 0, W - R, 0, E, 0.1); arc(W - R, R, R, 270, 360)
 seg(W, R, W, NOTCH[1], E, 0.1); seg(W, NOTCH[1], NOTCH[0], NOTCH[1], E, 0.1); seg(NOTCH[0], NOTCH[1], NOTCH[0], NOTCH[3], E, 0.1)
-seg(NOTCH[0], NOTCH[3], W, NOTCH[3], E, 0.1); seg(W, NOTCH[3], W, H, E, 0.1)
-seg(W, H, TAB_X2, H, E, 0.1); seg(TAB_X2, H, TAB_X2, TAB_Y, E, 0.1)
-seg(TAB_X2, TAB_Y, TAB_X, TAB_Y, E, 0.1); seg(TAB_X, TAB_Y, TAB_X, H, E, 0.1)
-seg(TAB_X, H, R, H, E, 0.1); arc(R, H - R, R, 90, 180)
+seg(NOTCH[0], NOTCH[3], W, NOTCH[3], E, 0.1); seg(W, NOTCH[3], W, H - R, E, 0.1); arc(W - R, H - R, R, 0, 90)
+seg(W - R, H, R, H, E, 0.1); arc(R, H - R, R, 90, 180)
 seg(0, H - R, 0, R, E, 0.1); arc(R, R, R, 180, 270)
 
 
@@ -154,11 +152,11 @@ def keepout(pts, vias_only=False):
     board.Add(z)
 
 
-def plane(name, net, layer, pts):
+def plane(name, net, layer, pts, clearance=0.2):
     """a copper zone (filled by tools/fill_zones.py); the two ground planes on In1 are bounded by the barrier"""
     z = pcbnew.ZONE(board)
     z.SetZoneName(name); z.SetLayer(layer); z.SetNetCode(board.GetNetcodeFromNetname(net))
-    z.SetMinThickness(mm(0.2)); z.SetLocalClearance(mm(0.2))
+    z.SetMinThickness(mm(0.2)); z.SetLocalClearance(mm(clearance))
     z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
     o = z.Outline(); o.NewOutline()
     for px, py in pts:
@@ -169,9 +167,9 @@ def plane(name, net, layer, pts):
 # In1 ground planes: HAT GND everywhere west / north of the barrier (the BNC J7 area included, stopping 2.6 mm north
 # of J7's tails = 2.5 mm from J102's pads), GND_ISO under block A, the pocket, strip B and the tab; the rule areas
 # (all copper layers) keep the 2.5 mm barrier and the standoff circles copper-free
-plane("GND plane", "GND", pcbnew.In1_Cu,
-      [(0, 0), (65, 0), (65, 17.5), (34, 17.5), (34, 43.7), (45.2, 43.7), (45.2, 51.3), (43, 51.3), (43, 57), (0, 57)])
+plane("GND plane", "GND", pcbnew.In1_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
 
+# (the isolated polygons are notched under U109, whose HAT-side pads end at y 18.0: isolated copper from y 20.6 there)
 # named regions for the isolation DRC rules (StimHAT.kicad_dru): rule areas that keep nothing out by themselves, so the
 # router draws no halos; the rules disallow HAT-side copper in 'isolated_region' and isolated copper in 'hat_region'.
 # Together with the 2.5 mm strips above (which are exactly the gap between the two regions) that is the barrier.
@@ -187,18 +185,24 @@ def region(name, pts):
     board.Add(z)
 
 
-region("hat_region", [(0, 0), (65, 0), (65, 17.5), (34, 17.5), (34, 43.7), (45.2, 43.7), (45.2, 51.3), (43, 51.3), (43, 57), (0, 57)])
-region("isolated_region", [(36.5, 20), (65, 20), (65, 57), (56, 57), (56, 64.5), (46, 64.5), (46, 57), (47.7, 57), (47.7, 41.2), (36.5, 41.2)])
-plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu,
-      [(36.5, 20), (65, 20), (65, 57), (56, 57), (56, 64.5), (46, 64.5), (46, 57), (47.7, 57), (47.7, 41.2), (36.5, 41.2)])
+# F / B ground pours (same shapes, 0.25 mm clearance so hand routing keeps room) and In2 power islands: HAT side
+# +5V everywhere except the MCU area, which is MSPM0_3V3; isolated side +5V_ISO in the north-west (x < 54.5, y < 33), +V_STIM east and south of it
+plane("GND pour F", "GND", pcbnew.F_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25); plane("GND pour B", "GND", pcbnew.B_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25)
+plane("GND_ISO pour F", "GND_ISO", pcbnew.F_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)], 0.25); plane("GND_ISO pour B", "GND_ISO", pcbnew.B_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)], 0.25)
+plane("MSPM0_3V3 plane", "MSPM0_3V3", pcbnew.In2_Cu, [(13, 18), (34, 18), (34, 37), (13, 37)])
+plane("+5V plane", "+5V", pcbnew.In2_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 18), (13, 18), (13, 37), (34, 37), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
+plane("+5V_ISO plane", "+5V_ISO", pcbnew.In2_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (54.5, 20), (54.5, 33), (51, 33), (51, 34.2), (48.5, 34.2), (48.5, 33), (36.5, 33)])
+plane("+V_STIM plane", "+V_STIM", pcbnew.In2_Cu, [(54.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2), (36.5, 33), (48.5, 33), (48.5, 34.2), (51, 34.2), (51, 33), (54.5, 33)])
+region("hat_region", [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
+region("isolated_region", [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)])
+plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)])
 
 
 # isolation barrier (2.5 mm, copper-free on both layers), see the docstring
-BAR = ((34.0, 17.5, 65.0, 20.0),      # north of block A (the 2.5 mm from U109 side-1 pads is checked by the .kicad_dru rule)
-       (34.0, 17.5, 36.5, 43.7),      # west of block A and of the pocket (PS1 pin 2 at x 32.8 is HAT side)
-       (36.5, 41.2, 47.7, 43.7),      # south of the pocket: J102's pads (to y 41.0) vs the BNC J7 tails (from y 43.6)
-       (45.2, 43.7, 47.7, 57.0),      # east of the BNC J7 (its posts reach x 45.2) / west of strip B
-       (43.0, 51.3, 47.7, 57.0))      # below J7's east post: keeps HAT copper 2.5 mm from the tab's north-west corner
+BAR = ((34.0, 17.4, 65.0, 20.0),      # north of block A (U109 straddles it); 17.4: C115's pad is 2.56 mm from the HAT plane
+       (34.0, 17.5, 36.5, 43.7),      # west of block A and of J102's pocket (U101 straddles it)
+       (36.5, 41.2, 50.2, 43.7),      # south of the pocket: J102's pads (to y 41.0) vs the BNC J7 tails (from y 43.6)
+       (47.7, 43.7, 50.2, 57.0))      # east of the BNC J7 (its east post reaches x 47.7) / west of strip B
 for x1, y1, x2, y2 in BAR:
     keepout(((x1, y1), (x2, y1), (x2, y2), (x1, y2)))
     rect(x1, y1, x2, y2, pcbnew.Cmts_User, 0.1)

@@ -123,6 +123,19 @@ neighbours leave no room for two).  In2 is empty: power is routed there by hand.
 hand routing (300 open connections, DRC 0 errors / 0 warnings with the planes filled).**  `make_fab.py` exports In1 /
 In2 gerbers.
 
+**After the user's re-placement and isolated-block routing (2026-10-29, commits 03d3c56 / 912a3a7):** the tab is
+gone (J101 sits in strip B), the BNCs moved east (J6 x 24.92, J7 x 40.92) so the strip east of J7 is now x 47.7–50.2
+and the pocket's south strip y 41.2–43.7; the north strip starts at y 17.4; the isolated planes are notched under
+U109 (its HAT-side pads end at y 18.0).  `tools/place.py`'s table was synced from the board (a rerun moves nothing).
+Pours: GND / GND_ISO on In1 (planes), F and B (0.25 mm clearance, single thermal spokes allowed by
+`outer_pours_one_spoke`); In2 power islands: +5V everywhere on the HAT side except the MCU area (x 13–34, y 18–37 =
+MSPM0_3V3), +5V_ISO in the isolated block's north-west (x < 54.5, y < 33, with a tongue to y 34.2 at x 48.5–51) and
++V_STIM east and south of it.  The isolated block's power is routed: dog-bone vias from every +5V_ISO / +V_STIM pad
+into its island (`/home/.../tmp/powerfan.py`-style script, 22 vias), −V_STIM / −5V_ISO and the stragglers by
+`tools/maze_nets.py` (the maze router restricted to named nets) and by hand; `tools/stitch.py` drops a via into every
+outer-pour piece that has none (rerun it after routing: `fill_zones`, `stitch.py --apply`, `fill_zones`).  Result:
+DRC 0 errors, 123 open connections, all on the HAT side.
+
 **Rev A round 6 (2026-10-29, placement only, routing in progress by hand):** J102 beside PS1, J101 alone on a 10 mm
 tab, J10 a vertical socket at the strip's west end (JP1 → east end at (50, 10), C12 → (19.7, 12.3), C6 → (26.5, 10.6)
 to clear it), MH4 keep-out r 3.25, PS1's silk outline and 3D model.  The copper these moves invalidated was ripped:
