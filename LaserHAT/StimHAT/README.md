@@ -40,7 +40,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2) | 502 µA full scale, 0.123 µA / LSB |
 | SHORT | U108 DG418 (normally open, on while SHORT_IN is high = RELEASE low) | electrode shorted whenever RELEASE is low, including HAT-side power-down |
 | Fault detector | U110 TLV1702 window on E1 (R117 10k / R118 215k / R119 10k taps), R120 10k, R121 4.7k, D101 BAT54WS, C122 | FAULT_n low past the trip point, with +5V_ISO down, or with a rail missing |
-| Mechanical | MH1–MH4 M2.5 (HAT pattern), G1 owl logo (back), Pi 4 PoE / Pi 5 fan notch | MH4 lies in isolated copper: use a nylon standoff there |
+| Mechanical | MH1–MH4 M2.5 (HAT pattern), Pi 4 PoE / Pi 5 fan notch | MH4 lies in isolated copper: use a nylon standoff there |
 
 ## Rev 2 MCU pin map (changes against the HAT)
 
@@ -71,10 +71,20 @@ stimulator in an L: block A (x 36.5–65, y 20–34, under the bonnet's east end
 stage, SHORT, fault detector), strip B (x 50–65, y 36.5–54.5: LDO, −4.3 V rail, filter, multipliers, clamps) and the
 tab's east part (J102, J101).  PS1 stands under the tab, where nothing is below it (beyond the Pi's edge; the BNC
 barrels are on top); its two input pins and C104 sit in the HAT-side strip along the tab's west edge, fed on the bottom
-layer through the passage x 46–47.5 east of J7.  Barrier: 2.5 mm copper-free rule areas (drawn on User.Comments) plus
+layer through the passage x 46–48 east of J7.  Barrier: 2.5 mm copper-free rule areas (drawn on User.Comments) plus
 the `StimHAT.kicad_dru` rule (Isolated / IsolatedPower net classes vs everything else ≥ 2.5 mm).  Net classes: Power
 and IsolatedPower 0.3 mm, Fine (USB), Default and Isolated 0.2 mm; board minimums 0.15 / 0.15, vias 0.6 / 0.3.
 No copper pours.  User.Drawings: the bonnet outline, the 0.91" module outline, the notch note.
+
+Routing (rev A, 2026-10-29): `tools/autoroute.py --passes 500` = rip → `tools/fanout.py` (locked dog-bone stub + via on
+every netted pin of U7 and U101, alternately 0.45 / 0.95 mm out so the vias stagger, plus four GND thermal vias in U7's
+exposed pad: without them Freerouting never finished the MCU's escape) → `tools/preroute.py` (SDA_H hand-planned and
+locked: U7.21 down between the south-row vias, east under the MCU, north along x 28.3 to R107; the one connection the
+router failed on in every run) → Freerouting → import → `tools/fixups.py drop-dangling-vias` and `--trim-stubs` remove
+the fan-out vias the router did not use.  Result: 0 DRC errors, 0 unconnected, ERC 0 / 0.  The four remaining DRC
+warnings are `lib_footprint_mismatch` on J6, J7, J101 and PS1: their silk outlines hang past the board edge (BNC
+barrels, the electrode header, PS1's body), so `fixups.py silk-strip` deleted them from the board copies.
+`fab/StimHAT/StimHAT_top.png` / `_bottom.png` are the renders.
 
 ## Checks before fab
 

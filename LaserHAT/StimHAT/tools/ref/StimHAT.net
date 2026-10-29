@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/claude-agent/Code/LaserDriver/.claude/worktrees/stim-hat/LaserHAT/StimHAT/StimHAT.kicad_sch")
-    (date "2026-10-29T00:27:43-0500")
+    (date "2026-10-29T01:49:47-0500")
     (tool "Eeschema 9.0.8+dfsg-1")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
@@ -566,19 +566,6 @@
       (property (name "Sheetfile") (value "StimHAT.kicad_sch"))
       (sheetpath (names "/") (tstamps "/"))
       (tstamps "fef8ed63-0d6f-5201-8040-ca7c6030572a"))
-    (comp (ref "G1")
-      (value "OwlLogo")
-      (footprint "Footprints:OwlLogo_Laser_14mm")
-      (fields
-        (field (name "Footprint") "Footprints:OwlLogo_Laser_14mm")
-        (field (name "Datasheet"))
-        (field (name "Description")))
-      (libsource (lib "stimhat") (part "Logo") (description ""))
-      (property (name "Sheetname") (value ""))
-      (property (name "Sheetfile") (value "StimHAT.kicad_sch"))
-      (property (name "exclude_from_bom"))
-      (sheetpath (names "/") (tstamps "/"))
-      (tstamps "4ed4ac15-5c05-59a1-b584-f8c678714e0b"))
     (comp (ref "J1")
       (value "GPIO")
       (footprint "Footprints:Samtec_HLE-120-02-xxx-DV-BE-LC_2x20_P2.54mm_Horizontal")
@@ -2000,15 +1987,6 @@
       (pins
         (pin (num "1") (name "K") (type "passive"))
         (pin (num "2") (name "A") (type "passive"))))
-    (libpart (lib "stimhat") (part "Logo")
-      (fields
-        (field (name "Reference") "G")
-        (field (name "Value") "Logo")
-        (field (name "Footprint"))
-        (field (name "Datasheet"))
-        (field (name "Description")))
-      (pins
-        (pin (num "1") (name "GND") (type "passive"))))
     (libpart (lib "stimhat") (part "M24C32")
       (fields
         (field (name "Reference") "U")
@@ -2434,7 +2412,6 @@
       (node (ref "C3") (pin "2") (pintype "passive"))
       (node (ref "C4") (pin "2") (pintype "passive"))
       (node (ref "C6") (pin "2") (pintype "passive"))
-      (node (ref "G1") (pin "1") (pinfunction "GND") (pintype "passive"))
       (node (ref "J1") (pin "14") (pinfunction "GND") (pintype "passive"))
       (node (ref "J1") (pin "20") (pinfunction "GND") (pintype "passive"))
       (node (ref "J1") (pin "25") (pinfunction "GND") (pintype "passive"))

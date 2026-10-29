@@ -4,3 +4,4 @@ drc.rpt
 erc.json
 __pycache__/
 tools/ref/netlist_current.xml
+erc.rpt

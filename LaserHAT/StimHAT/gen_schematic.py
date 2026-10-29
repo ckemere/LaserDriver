@@ -323,10 +323,9 @@ text("Taps at 0.043 x (V+ + |V-|) inside each rail (0.9 V at +/-13.5 V).  FAULT_
 text("while +5V_ISO is down and when one rail is missing.  R120 / D101 shift the -V-referenced open collectors to 0..5 V.", 141, 155)
 
 # =========================================================================== 10. mounting
-box(200, 64, 240, 84, "10. MOUNTING (M2.5, Pi HAT pattern) AND LOGO")
+box(200, 64, 240, 84, "10. MOUNTING (M2.5, Pi HAT pattern)")
 for i, h in enumerate(("MH1", "MH2", "MH3", "MH4")):
     put(h, 206 + 6 * i, 72, ref_at=(0, -3.81), val_at=(0, 3.81))
-put("G1", 234, 72); PWR("G1.1", length=2.54)
 
 missing, unplaced, overlaps = sh.finish()
 print("missing pins:", missing)

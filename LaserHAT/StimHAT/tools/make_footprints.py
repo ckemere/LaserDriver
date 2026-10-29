@@ -70,7 +70,5 @@ for (x1, y1, x2, y2) in ((-3.75, -3.75, 3.75, -3.75), (3.75, -3.75, 3.75, 3.75),
 for (x1, y1, x2, y2) in ((-5.0, -5.0, 5.0, -5.0), (5.0, -5.0, 5.0, 5.0), (5.0, 5.0, -5.0, 5.0), (-5.0, 5.0, -5.0, -5.0)):
     s = pcbnew.PCB_SHAPE(j); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetLayer(pcbnew.F_CrtYd); s.SetWidth(mm(0.05))
     s.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); s.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2))); j.Add(s)
-c = pcbnew.PCB_SHAPE(j); c.SetShape(pcbnew.SHAPE_T_CIRCLE); c.SetLayer(pcbnew.F_SilkS); c.SetWidth(mm(0.12))
-c.SetStart(pcbnew.VECTOR2I(0, 0)); c.SetEnd(pcbnew.VECTOR2I(mm(1.5), 0)); j.Add(c)
 io.FootprintSave(LIB, j)
 print("saved SW_ALPS_SKRHADE010:", len(list(j.Pads())), "pads")

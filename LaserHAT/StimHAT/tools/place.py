@@ -11,7 +11,7 @@ Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
     (x 50-65, y 36.5-54.5) and the tab's east part (J102 battery socket, J101 electrode header).  PS1 (the DC-DC,
     hand-fitted) stands on the BOTTOM of the tab, where nothing is below it (beyond the Pi's edge, the BNC barrels are
     on top); its two input pins sit in the HAT-side strip along the tab's west edge (x 46-50.7), fed from under the
-    BNCs (bottom layer) through the passage x 46-47.5 east of J7.  Barrier = 2.5 mm copper-free rule areas; only
+    BNCs (bottom layer) through the passage x 46-48 east of J7.  Barrier = 2.5 mm copper-free rule areas; only
     U101 / U109 / PS1 straddle it.  MH4 falls inside isolated copper: nylon standoff.
 Idempotent: re-running moves every footprint back to the table and redraws the outline and board-level drawings; copper
 is left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
@@ -32,10 +32,9 @@ def at(ref, x, y, rot=0, flip=False):
     P[ref] = (x, y, rot, flip)
 
 
-# ---- mechanical: HAT holes and the Pi header exactly as on the Rev 2 HAT (shifted by -100, -43); logo on the back
+# ---- mechanical: HAT holes and the Pi header exactly as on the Rev 2 HAT (shifted by -100, -43)
 at("MH1", 3.5, 4.5); at("MH2", 61.5, 4.5); at("MH3", 3.5, 53.5); at("MH4", 61.5, 53.5)
 at("J1", 8.37, 5.77, -90, True)
-at("G1", 22.0, 24.0, 0, True)
 # ---- west edge, top to bottom
 at("SW10", 2.2, 13.0, -90)
 at("J5", 4.2, 24.0, -90)
@@ -48,14 +47,14 @@ at("SW7", 7.5, 45.8, 45)
 # ---- south edge: the two BNCs (rot 180 = barrel south, as on the HAT)
 at("J6", 22.8, 44.4, 180); at("J7", 38.4, 44.4, 180)
 # ---- core, west half under the bonnet: USB power path by the USB-C, LDOs above, MCU in the middle, UART bridge below
-at("Q5", 14.5, 14.5, 90); at("R26", 14.5, 18.0, 90); at("Q3", 14.5, 21.5, 90); at("Q4", 18.5, 18.0, 90)
-at("R21", 18.5, 14.5, 90); at("R22", 18.5, 21.5, 90)
+at("Q5", 14.5, 14.3, 90); at("R26", 14.5, 17.6, 90); at("Q3", 14.5, 20.5, 90); at("Q4", 18.5, 17.6, 90)
+at("R21", 18.5, 14.3, 90); at("R22", 24.5, 20.5, 90)
 at("U4", 23.0, 14.5, 180); at("C12", 17.0, 11.5); at("C6", 24.5, 10.8); at("C13", 26.5, 17.0, 90)
 at("U5", 30.0, 14.5); at("R7", 26.5, 13.5, 90); at("C2", 33.3, 14.0, 90); at("JP1", 21.0, 10.3)
 at("U7", 20.0, 26.0, -90)
-at("C1", 14.5, 26.0, 90); at("C16", 25.5, 26.0, 90); at("C4", 25.5, 30.0, 90); at("R4", 14.5, 30.0, 90)
-at("R3", 17.0, 32.5); at("C3", 19.5, 32.5); at("JP4", 22.5, 32.5)
-at("R107", 27.5, 19.0, 90); at("R108", 30.0, 19.0, 90)
+at("C1", 12.5, 26.0, 90); at("C16", 27.5, 26.0, 90); at("C4", 27.5, 29.2, 90); at("R4", 12.5, 30.0, 90)
+at("R3", 17.0, 34.0); at("C3", 19.5, 34.0); at("JP4", 22.5, 34.0)
+at("R107", 27.5, 18.3, 90); at("R108", 30.0, 18.3, 90)
 at("U6", 12.0, 35.5, 90)
 at("U8", 28.0, 32.0, 90); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
 # ---- top strip: I2C pull-ups by the header's pins 3 / 5, the EEPROM by pins 27 / 28, JP5, BSL, the OLED socket
@@ -67,15 +66,15 @@ at("J10", 57.0, 8.4, 0)
 # ---- isolation: ISO7741F across the vertical barrier (x 35.25; pins 1-8 west), ISO1640 across the horizontal one
 # (y 18.75; pins 1-4 north)
 at("U101", 35.25, 27.0, 0)
-at("R101", 30.5, 22.0, 90); at("R102", 30.5, 25.0, 90); at("R103", 30.5, 28.0, 90); at("C101", 30.5, 31.0, 90)
+at("R101", 29.0, 22.0, 90); at("R102", 29.0, 25.0, 90); at("R103", 29.0, 28.0, 90); at("C101", 32.5, 20.5, 90)
 at("U109", 42.0, 19.5, 270)
 # ---- isolated block A (x 36.5-65, y 20-34): set-point, switches, output stage, SHORT, fault detector
-at("C102", 39.3, 25.0, 90); at("C124", 39.3, 28.0, 90); at("C115", 38.9, 31.0, 90); at("TP101", 38.3, 33.6)
-at("U105", 44.0, 25.0); at("C114", 42.5, 28.6, 90); at("R109", 44.5, 28.6, 90); at("R110", 46.5, 28.6, 90)
-at("U106", 50.5, 25.0); at("R105", 49.0, 28.6, 90); at("R106", 51.0, 28.6, 90); at("C116", 53.0, 28.6, 90)
+at("C102", 40.5, 24.3, 90); at("C124", 40.5, 26.8, 90); at("C115", 37.5, 31.8, 90); at("TP101", 38.3, 34.4)
+at("U105", 44.3, 25.0); at("C114", 42.5, 28.3, 90); at("R109", 44.5, 28.3, 90); at("R110", 46.5, 28.3, 90)
+at("U106", 50.8, 25.0); at("R105", 49.0, 28.3, 90); at("R106", 51.0, 28.3, 90); at("C116", 53.0, 28.3, 90)
 at("R114", 46.8, 21.5); at("C120", 48.7, 21.5); at("R115", 50.6, 21.5); at("R116", 53.1, 21.5); at("C121", 62.5, 21.5)
 at("U107", 57.5, 25.5, 90); at("C118", 62.5, 24.0, 90); at("C119", 62.5, 27.0, 90); at("C117", 62.5, 30.5, 90)
-at("U108", 43.5, 32.3); at("U110", 51.0, 32.0)
+at("U108", 43.5, 32.2); at("U110", 51.0, 32.0)
 at("R117", 55.0, 31.5, 90); at("R118", 57.0, 31.5, 90); at("R119", 59.0, 31.5, 90); at("R120", 61.0, 31.5, 90)
 at("R121", 62.5, 33.0, 90); at("D101", 57.0, 35.6, 90); at("C122", 54.5, 34.8); at("TP102", 51.5, 35.0)
 # ---- isolated strip B (x 50-65, y 36.5-54.5): LDO and -4.3 V rail, LC filter, capacitance multipliers, clamps
@@ -156,8 +155,8 @@ def keepout(pts, vias_only=False):
 # isolation barrier (2.5 mm, copper-free on both layers), see the docstring
 BAR = ((34.0, 17.5, 65.0, 20.0),      # north of block A
        (34.0, 17.5, 36.5, 36.5),      # west of block A
-       (34.0, 34.0, 50.0, 36.5),      # south of block A, to the BNC
-       (47.5, 34.0, 50.0, 57.0),      # west of strip B (the HAT passage x 46-47.5 runs east of the BNC J7)
+       (34.0, 35.2, 50.0, 37.7),      # south of block A, down to the BNC J7 ground pads (U108 pads end at y 35)
+       (48.0, 35.2, 50.0, 57.0),      # west of strip B (the HAT passage x 46-48 runs east of the BNC J7)
        (50.0, 54.5, 53.2, 57.0),      # between the passage / tab HAT strip and strip B's south end
        (50.7, 57.0, 53.2, 69.5))      # between the tab's HAT strip (PS1 pins 1-2, C104) and its isolated part
 for x1, y1, x2, y2 in BAR:
@@ -184,7 +183,7 @@ silk("FIRE", 6.2, 37.5, 0.8, 90); silk("USB", 11.8, 24.0, 0.8, 90); silk("PWR", 
 silk("5V", 7.9, 30.4); silk("MCU", 8.2, 32.0); silk("STIM", 7.6, 35.2)
 silk("BSL", 35.0, 10.4); silk("OLED", 61.5, 18.8)
 silk("ISOLATED", 57.0, 20.9); silk("E1 E2", 59.2, 63.6); silk("+V 0V -V", 64.0, 60.0, 0.8, 90)
-silk("DC-DC", 56.0, 65.0, 0.8, 0, pcbnew.B_SilkS); silk("5V", 48.3, 61.0)
+silk("DC-DC", 55.5, 63.0, 0.8, 0, pcbnew.B_SilkS); silk("5V", 48.3, 61.0)
 # drawings: the bonnet (65 x 30.7 on the header), the 0.91" OLED module when fitted, the Pi 5 notch note
 rect(0, 0, 65, 30.7, pcbnew.Dwgs_User, 0.15); silk("Adafruit 4567 bonnet (9 mm up)", 20, 2.5, 1.0, 0, pcbnew.Dwgs_User)
 rect(19.0, 5.0, 57.0, 17.0, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module on J10", 38.0, 16.0, 0.8, 0, pcbnew.Dwgs_User)

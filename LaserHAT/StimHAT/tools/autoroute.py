@@ -270,9 +270,16 @@ def run_stage(name):
         sys.exit(f"stage {name} failed (exit {r.returncode})")
 
 
-if __name__ == "__main__":                              # the full pipeline
-    run_stage("rip")
-    run_stage("stubs")
+if __name__ == "__main__":                              # the full pipeline (--continue: keep the existing copper, route the rest)
+    if "--continue" not in sys.argv:
+        run_stage("rip")
+        run_stage("stubs")
+        r = subprocess.run([sys.executable, "-u", os.path.join(os.path.dirname(os.path.abspath(__file__)), "fanout.py")],
+                           capture_output=True, text=True)
+        print([l for l in r.stdout.splitlines() if "fan-out" in l], r.returncode)
+        r = subprocess.run([sys.executable, "-u", os.path.join(os.path.dirname(os.path.abspath(__file__)), "preroute.py")],
+                           capture_output=True, text=True)
+        print([l for l in r.stdout.splitlines() if "pre-routed" in l], r.returncode)
     run_stage("dsn")
     dsn, ses = os.path.join(WORK, "StimHAT.dsn"), os.path.join(WORK, "StimHAT.ses")
     if os.path.exists(ses):
