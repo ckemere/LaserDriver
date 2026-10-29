@@ -87,7 +87,7 @@ to 42.8 west of block A and the pocket; y 41.2–42.8 between J102's pads and J7
 and strip B; drawn on User.Comments) plus the `StimHAT.kicad_dru` rule (Isolated / IsolatedPower / Rails net classes vs
 everything else ≥ 2.5 mm) and `tht_connectors` (0.3 mm around the hand-soldered pads of J101, J102, PS1).  Net classes:
 Power and IsolatedPower 0.3 mm, Fine (USB), Default and Isolated 0.2 mm; board minimums 0.15 / 0.15, vias 0.6 / 0.3.
-Standoff keep-outs r 3.25 at all four holes.  No copper pours.  User.Drawings: the bonnet outline, the 0.91" module outline, the notch note.
+Standoff keep-outs r 3.25 at all four holes.  User.1 ("Bonnet"): the Adafruit 4567 bonnet from its EagleCAD board — outline (65 × 30.66, y 0.34–31.0, its header rows on J1's), holes, stacking socket, OLED module and active area, joystick, buttons.  User.Drawings: the standing 0.91" module, the notch note.
 
 Routing (rev A, 2026-10-29): `tools/autoroute.py --passes 500` = rip → `tools/fanout.py` (locked dog-bone stub + via on
 every netted pin of U7 and U101, alternately 0.45 / 0.95 mm out so the vias stagger, plus four GND thermal vias in U7's

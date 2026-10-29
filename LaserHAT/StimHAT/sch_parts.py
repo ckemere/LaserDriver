@@ -53,7 +53,7 @@ L = dict(R100k="C25741", R10k="C25744", R1k="C11702", R47="C137973", R4k7="C2590
          BAT54WS="C124205", Z4V3="C22399888", Z20="C173445", LEDW="C2290", LEDR="C2286",
          NPN="C20526", PNP="C53444", L10u="C139245",
          USBC="C2988369", JOY="C202415", TS1088="C720477", MSK="C431540", EEPROM="C283445", LDO="C632000",
-         LOADSW="C110466", CH340="C2977777", MCU="", BUF="C80500", PFET="C471913", DUALPNP="C154733",
+         LOADSW="C110466", CH340="C2977777", MCU="C22406180", BUF="C80500", PFET="C471913", DUALPNP="C154733",
          ISO7741="C2872241", ISO1640="C5122339", TLV760="C2867465", DAC="C1852027", OPA="C2876419",
          HC4053="C6546", DG418="C2673514", TLV1702="C2870937", PH4="C131334")
 
@@ -116,7 +116,6 @@ PARTS = [
     R("R1", "3.9k", "+3V3_PI", "ID_SDA", lcsc=L["R3k9"]),
     R("R2", "3.9k", "+3V3_PI", "ID_SCL", lcsc=L["R3k9"]),
     # ================================================================ 2. MCU, USB-UART, reset, BSL, buttons, LEDs, display socket
-    # TODO LCSC code for the MSPM0G1507SRHBR (L["MCU"] is empty: U7 is excluded from the BOM until it is filled in)
     dict(ref="U7", sym="MSPM0G3507", value="MSPM0G1507SRHBR", fp="stimhat:VQFN32_RHB_TEX", lcsc=L["MCU"],
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
                "7": "BUTTON6", "8": None, "9": None, "10": "FAULT_H", "11": "EN_H", "12": "PI_RXD", "13": "PI_TXD",

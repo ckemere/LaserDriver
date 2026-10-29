@@ -96,7 +96,7 @@ at("J102", 44.0, 40.1, 180)                 # pin 1 east: +V 44.0, 0V 42.0, -V 4
 at("J101", 51.0, 60.5, 90)                  # vertical 1x2 on the tab; pin 1 (square) = E1 west
 
 board = pcbnew.LoadBoard(BOARD)
-stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
+stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User, pcbnew.User_1)
          or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
 stale += [z for z in board.Zones() if z.GetIsRuleArea() or z.GetZoneName() in ("GND plane", "GND_ISO plane")]
 board.SetCopperLayerCount(4)                                  # 4 layers (2026-10-29): In1 = ground planes, In2 = power
@@ -209,8 +209,29 @@ silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7
 silk("BSL", 35.0, 10.4)
 silk("ISOLATED", 49.5, 18.75); silk("E1", 51.0, 63.4, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("NYLON", 61.5, 50.0, 1.0)
 silk("STIM OUT", 38.4, 53.5, 1.0, 0, pcbnew.B_SilkS); silk("TRIG IN", 22.8, 53.5, 1.0, 0, pcbnew.B_SilkS)
-# drawings: the bonnet (65 x 30.7 on the header), the 0.91" OLED module when fitted, the Pi 5 notch note
-rect(0, 0, 65, 30.7, pcbnew.Dwgs_User, 0.15); silk("Adafruit 4567 bonnet (9 mm up)", 20, 2.5, 1.0, 0, pcbnew.Dwgs_User)
+# drawings: the 0.91" OLED module when fitted, the Pi 5 notch note; the bonnet on its own layer User.1 "Bonnet"
+def circle(cx, cy, r, layer, w=0.15):
+    d = pcbnew.PCB_SHAPE(board)
+    d.SetShape(pcbnew.SHAPE_T_CIRCLE); d.SetLayer(layer); d.SetWidth(mm(w))
+    d.SetCenter(pcbnew.VECTOR2I(mm(cx), mm(cy))); d.SetEnd(pcbnew.VECTOR2I(mm(cx + r), mm(cy)))
+    board.Add(d)
+
+
+# Adafruit 128x64 1.3" OLED bonnet (4567) from Adafruit's EagleCAD board: 65 x 30.66 mm, 3 mm corner radii, four
+# 2.8 mm holes at 3.5 / 61.5 x 3.5 / 26.5 (Eagle, y up), header rows 2.54 apart.  Its header rows coincide with J1's
+# (y 3.23 / 5.77), so HAT y = 31.0 - Eagle y: the bonnet spans y 0.34-31.0, 9 mm above the HAT on the stacking header.
+BON = pcbnew.User_1
+board.SetLayerName(BON, "Bonnet")
+seg(0, 28.0, 0, 3.34, BON); arc(3, 3.34, 3, 180, 270, BON, 0.15); seg(3, 0.34, 62, 0.34, BON); arc(62, 3.34, 3, 270, 360, BON, 0.15)
+seg(65, 3.34, 65, 28.0, BON); arc(62, 28.0, 3, 0, 90, BON, 0.15); seg(62, 31.0, 3, 31.0, BON); arc(3, 28.0, 3, 90, 180, BON, 0.15)
+for hx, hy in ((3.5, 4.5), (61.5, 4.5), (3.5, 27.5), (61.5, 27.5)):
+    circle(hx, hy, 1.4, BON)
+rect(7.6, 0.8, 57.4, 8.15, BON, 0.15)                                    # the 2x20 stacking socket
+rect(15.26, 7.63, 49.76, 30.63, BON, 0.15); rect(17.8, 9.73, 47.2, 24.43, BON, 0.15)   # OLED module, active area
+rect(3.13, 12.54, 13.13, 22.54, BON, 0.15); circle(8.13, 17.54, 2.9, BON)              # 5-way joystick
+rect(58.09, 11.95, 64.09, 18.55, BON, 0.15); circle(61.09, 15.25, 1.5, BON)            # button #6
+rect(50.85, 18.43, 56.85, 25.03, BON, 0.15); circle(53.85, 21.73, 1.5, BON)            # button #5
+silk("Adafruit 4567 bonnet, 9 mm up (outline, holes, header, OLED, joystick, buttons)", 32.5, 33.0, 1.0, 0, BON)
 rect(0.0, 9.2, 38.0, 10.8, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module standing in J10 (38 x 12, 8.5 mm up)", 19.0, 19.6, 0.8, 0, pcbnew.Dwgs_User)
 silk("Pi 4 PoE / Pi 5 fan", 56.0, 7.0, 0.8, 0, pcbnew.Dwgs_User)
 for d in stale:
