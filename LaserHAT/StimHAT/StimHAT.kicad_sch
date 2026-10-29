@@ -3074,7 +3074,7 @@
     (uuid "f2363b96-35c3-5d0b-ae3d-78af6d1d653d")
     (property "Reference" "PS1" (at 187.96 173.99  0) (effects (font (size 1.27 1.27)) ))
     (property "Value" "A0515S-1WR3" (at 187.96 191.77  0) (effects (font (size 1.27 1.27)) ))
-    (property "Footprint" "estim:DCDC_SIP6_A0515S" (at 187.96 182.88 0) (effects (font (size 1.27 1.27)) (hide yes)))
+    (property "Footprint" "stimhat:DCDC_SIP6_A0515S_BodyN" (at 187.96 182.88 0) (effects (font (size 1.27 1.27)) (hide yes)))
     (property "Datasheet" "" (at 187.96 182.88 0) (effects (font (size 1.27 1.27)) (hide yes)))
     (pin "1" (uuid "0b23be42-a121-5de3-b8d8-926b7cf5a20f"))
     (pin "2" (uuid "d19bb0db-33bd-5b45-b575-2a89ee78c241"))

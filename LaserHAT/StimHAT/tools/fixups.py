@@ -208,9 +208,46 @@ def move_via(x, y, nx, ny):
     print("moved", n, "items")
 
 
+def swap_fp(ref, lib_dir, name, fpid):
+    """replace REF's footprint by LIB_DIR/NAME.kicad_mod (same pad numbers / positions assumed): keeps position,
+    orientation, side, reference, value, schematic path and pad nets; pcb_sync.py does not swap footprint ids"""
+    b = pcbnew.LoadBoard(BOARD)
+    old = [f for f in b.GetFootprints() if f.GetReference() == ref][0]
+    new = pcbnew.PCB_IO_KICAD_SEXPR().FootprintLoad(lib_dir, name)
+    new.SetFPIDAsString(fpid)
+    new.SetReference(old.GetReference()); new.SetValue(old.GetValue())
+    new.SetPath(old.GetPath())
+    nets = {p.GetNumber(): p.GetNetCode() for p in old.Pads()}
+    pos, rot, flipped = old.GetPosition(), old.GetOrientation(), old.IsFlipped()
+    b.Add(new)
+    new.SetPosition(pcbnew.VECTOR2I(pos.x, pos.y))
+    if flipped:
+        new.Flip(new.GetPosition(), False)
+    new.SetOrientation(rot)
+    for p in new.Pads():
+        p.SetNetCode(nets.get(p.GetNumber(), 0))
+    b.Remove(old)
+    pcbnew.SaveBoard(BOARD, b)
+    print("swapped", ref, "->", fpid, [(p.GetNumber(), round(p.GetPosition().x / 1e6, 2), round(p.GetPosition().y / 1e6, 2)) for p in new.Pads()])
+
+
+def drop_tiny(limit=0.02):
+    """delete track segments shorter than LIMIT mm (zero-length leftovers of the router / of point moves)"""
+    b = pcbnew.LoadBoard(BOARD)
+    kill = [t for t in b.GetTracks() if t.GetClass() == "PCB_TRACK" and t.GetLength() < mm(limit)]
+    for t in kill:
+        b.Remove(t)
+    pcbnew.SaveBoard(BOARD, b)
+    print("dropped", len(kill), "tiny segments")
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
-    if cmd == "drop-seg":
+    if cmd == "drop-tiny":
+        drop_tiny()
+    elif cmd == "swap-fp":
+        swap_fp(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
+    elif cmd == "drop-seg":
         drop_seg(*map(float, sys.argv[2:6]))
     elif cmd == "move-via":
         move_via(*map(float, sys.argv[2:6]))

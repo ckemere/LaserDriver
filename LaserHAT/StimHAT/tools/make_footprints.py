@@ -76,3 +76,20 @@ print("saved SW_ALPS_SKRHADE010:", len(list(j.Pads())), "pads")
 import subprocess
 subprocess.run(["python3", os.path.join(os.path.dirname(os.path.abspath(__file__)), "silk_dedupe.py"),
                 os.path.join(LIB, "VQFN32_RHB_TEX.kicad_mod")], check=True)   # TI ships the pin-1 star twice
+
+# A0515S SIP-6 with the body on the other side of the pin row (the module turned over about the pin axis): mounted on
+# the back of the tab the body then lies under the tab instead of hanging past its south edge.  Pure text mirror of the
+# e-stim module's footprint (y -> -y for the graphics; the pads stay on y 0, pin order unchanged); no 3D model.
+import re as _re
+src = open(os.path.join(ROOT, "..", "EStimDaughter", "estim.pretty", "DCDC_SIP6_A0515S.kicad_mod")).read()
+out = []
+for line in src.splitlines():
+    if line.strip().startswith("(model "):
+        continue
+    if line.strip().startswith(("(fp_line", "(fp_text", "(property")):
+        line = _re.sub(r"\((start|end|at) (-?[\d.]+) (-?[\d.]+)", lambda m: f"({m.group(1)} {m.group(2)} {-float(m.group(3)):g}", line)
+    line = line.replace('(footprint "DCDC_SIP6_A0515S"', '(footprint "DCDC_SIP6_A0515S_BodyN"')
+    line = line.replace('(descr "Isolated DC-DC,', '(descr "Body on the other side of the pin row (turned over about the pin axis). Isolated DC-DC,')
+    out.append(line)
+open(os.path.join(LIB, "DCDC_SIP6_A0515S_BodyN.kicad_mod"), "w").write("\n".join(out) + "\n")
+print("saved DCDC_SIP6_A0515S_BodyN")

@@ -89,7 +89,7 @@ at("C109", 51.8, 51.0); at("C110", 54.6, 51.0, 90); at("C108", 56.6, 51.0, 90)
 at("PS1", 47.3, 68.2, 0, True)              # under the tab: pins 1-2 (HAT side) x 47.3 / 49.8, pins 4-6 (isolated) x 54.9-60
 at("C104", 47.5, 65.5, 90)
 at("J102", 54.5, 60.0, 0)                   # pin 1 west: +V, 0V (GND_ISO), -V, CAB (= GND_ISO)
-at("J101", 60.5, 65.5, 270)
+at("J101", 61.27, 65.5, 270)
 
 board = pcbnew.LoadBoard(BOARD)
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
@@ -179,12 +179,12 @@ def silk(txt, x, y, size=1.0, rot=0, layer=pcbnew.F_SilkS):
 
 
 silk("StimHAT rev A", 32.5, 30.0, 1.0, 0, pcbnew.B_SilkS)
-silk("TRIG IN", 22.8, 55.5); silk("STIM OUT", 38.4, 55.5)
+silk("TRIG IN", 22.8, 42.3); silk("STIM OUT", 38.4, 42.3)
 silk("FIRE", 6.2, 37.5, 0.8, 90); silk("USB", 11.8, 24.0, 0.8, 90); silk("PWR", 6.6, 13.0, 0.8, 90)
 silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)
 silk("BSL", 35.0, 10.4); silk("OLED", 61.5, 18.8)
-silk("ISOLATED", 49.5, 18.75); silk("E1 E2", 59.2, 63.6); silk("+V 0V -V", 64.0, 60.0, 0.8, 90)
-silk("DC-DC", 55.5, 63.0, 0.8, 0, pcbnew.B_SilkS); silk("5V", 48.3, 61.0)
+silk("ISOLATED", 49.5, 18.75); silk("E2 E1", 60.0, 63.6); silk("+V", 54.5, 57.2, 0.8); silk("0V", 56.5, 57.2, 0.8); silk("-V", 58.5, 57.2, 0.8); silk("CAB", 60.5, 57.2, 0.8)
+silk("DC-DC", 55.5, 63.0, 0.8, 0, pcbnew.B_SilkS)
 # drawings: the bonnet (65 x 30.7 on the header), the 0.91" OLED module when fitted, the Pi 5 notch note
 rect(0, 0, 65, 30.7, pcbnew.Dwgs_User, 0.15); silk("Adafruit 4567 bonnet (9 mm up)", 20, 2.5, 1.0, 0, pcbnew.Dwgs_User)
 rect(19.0, 5.0, 57.0, 17.0, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module on J10", 38.0, 16.0, 0.8, 0, pcbnew.Dwgs_User)

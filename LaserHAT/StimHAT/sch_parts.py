@@ -171,7 +171,7 @@ PARTS = [
     R("R109", "4.7k", "+5V_ISO", "SDA", lcsc=L["R4k7"]),
     R("R110", "4.7k", "+5V_ISO", "SCL", lcsc=L["R4k7"]),
     # ================================================================ 5. isolated power
-    dict(ref="PS1", sym="A0515S", value="A0515S-1WR3", fp="estim:DCDC_SIP6_A0515S", lcsc="", dnp=True,
+    dict(ref="PS1", sym="A0515S", value="A0515S-1WR3", fp="stimhat:DCDC_SIP6_A0515S_BodyN", lcsc="", dnp=True,
          nets={"1": "+5V", "2": "GND", "6": "+V_RAW", "5": "GND_ISO", "4": "-V_RAW"}),
     C("C104", "4.7uF", "+5V", "GND", fp=C0603, lcsc=L["C4u7"]),
     dict(ref="J102", sym="Conn_01x04", value="B4B-PH-K-S(LF)(SN)", fp=PH4, lcsc="",

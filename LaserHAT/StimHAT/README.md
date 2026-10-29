@@ -107,6 +107,21 @@ Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), 
 (the Pi has 1.8 k on GPIO 2/3; fit them only for stand-alone use with a J10 module that lacks its own pull-ups).
 R1 / R2 (3.9 k on ID_SD / ID_SC) are fitted: the HAT design guide puts them on the HAT.
 
+Second layout review (2026-10-29), applied: PS1 now uses `stimhat:DCDC_SIP6_A0515S_BodyN` (the module turned over
+about its pin axis, same pin order), so its body lies under the tab instead of 4 mm past the south edge — fit it with
+the printed face toward the board edge, i.e. the body over the tab; J101 moved 0.77 mm east so its horizontal pins pass
+midway between PS1's pads 4/5/6 (fit PS1 first, trim its leads flush); the hand-soldered pads of J101, J102 and PS1
+keep ≥ 0.3 mm from other copper (`tht_connectors` rule in `StimHAT.kicad_dru`, proven live) — the tab's tracks were
+re-threaded for it; "E2 E1" now matches J101's pins (E1 = pin 1, the square pad, east); J102's pins are labelled
+along the row; the BNC labels moved above the bodies; the stray "5V" label went.  Noted, not changed: C114 (VREFIO)
+is 6 mm from U105.10 with two vias (no room next to the pin; 1 µF on a buffered reference, fine); J10's and the BNC
+ground legs' pads have tracks at the 0.15 mm class distance (J10 is unpopulated, the BNC legs are big pads — solder
+them without flooding); the ± rail tracks run at 0.15 mm for ~4 mm on the back near (51–58, 34–38) (IPC-2221 B4);
+FIRE / PWR / USB / DC-DC and the LED labels are 0.8 mm text; MH4: round nylon spacer / washer ≤ Ø 5.5 mm (copper at
+2.9 mm from the hole); the J1 locating holes are 0.39 mm from the neighbouring pin holes (same footprint as the Rev 2
+HAT, already built); the JLC CPL rotation table is the one the previous orders used — check U6, U7, U105 and the
+diodes in JLC's preview.
+
 Second schematic review (2026-10-29, no blocker / major): R107 / R108 4.7 k → 2.2 k (ISO1640 side-1 sink current
 was at the bottom of its 0.5–3.5 mA range); stale texts fixed.  Noted, not changed: the Pi's GPIO14 / 16 / 24 / 25 /
 26 drive MCU pins directly, so a Pi that pulls GPIO18 low without parking them (as `Pi/power_cycle.py` does, with
@@ -134,7 +149,7 @@ passage tracks are pre-routed at x 46.5 / 47.15).  The four nets the schematic h
 U5B_IN, OA_OUT) and the NC pads of U105 / U108 are in the Isolated class.  The former 0.3 mm rule between the + and −
 rails was dropped: the rails keep the 0.15 mm class clearance (IPC-2221 B4, coated, ≤ 50 V: 0.13 mm; the `Rails` class
 only marks them, 0.3 mm wide).  Standoff keep-outs exclude tracks (r 3.25 mm; MH4 r 2.85 mm — fit a round nylon
-standoff / washer ≤ Ø 5.7 mm there, nothing isolated lies under it).  Decouplers moved next to their pins (C1 / C16 /
+standoff / washer ≤ Ø 5.5 mm there, nothing isolated lies under it).  Decouplers moved next to their pins (C1 / C16 /
 C4 at U7, C17 at U6, C18 at U1, C103 at U109's side 1, C102 west of U109's side 2, C101 at U101, C116 / C117 at U106,
 C118 / C119 at U107, C125 / C126 at U108, C112 at U104); R109 sits beside the SDA lane, R110 under U105; the LEDs sit
 below the bonnet's edge (y ≥ 31.5); silk text 1.0 mm.  Noted, not changed: BNC pitch 15.6 mm (two plugs side by side

@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/claude-agent/Code/LaserDriver/.claude/worktrees/stim-hat/LaserHAT/StimHAT/StimHAT.kicad_sch")
-    (date "2026-10-29T07:01:15-0500")
+    (date "2026-10-29T07:12:51-0500")
     (tool "Eeschema 9.0.8+dfsg-1")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
@@ -836,9 +836,9 @@
       (tstamps "bc7170f3-3c24-5bc6-9981-f1d4a50a4476"))
     (comp (ref "PS1")
       (value "A0515S-1WR3")
-      (footprint "estim:DCDC_SIP6_A0515S")
+      (footprint "stimhat:DCDC_SIP6_A0515S_BodyN")
       (fields
-        (field (name "Footprint") "estim:DCDC_SIP6_A0515S")
+        (field (name "Footprint") "stimhat:DCDC_SIP6_A0515S_BodyN")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "stimhat") (part "A0515S") (description ""))
