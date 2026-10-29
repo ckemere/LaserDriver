@@ -231,7 +231,7 @@ put("D102", 102, 106, rot=90, ref_at=(2.54, -1.27), val_at=(2.54, 1.27)); PWR("D
 put("C113", 108, 106, rot=0); PWR("C113.1"); PWR("C113.2")
 text("PS1 (hand-fitted) makes +/-15 V from the HAT's 5 V, or J102 brings +/-12..16.8 V from the battery pack (pin 4 = pin 2 = GND_ISO:", 63, 109)
 text("the pack's plug interlock).  L / C filter, then Q101 / Q102 (base 4.7k / 10 uF: ~1.2 V drop, 60 dB ripple rejection above 100 Hz).  D103 / D104", 63, 111)
-text("clamp each rail to 20 V against GND_ISO (ICs are rated 25 V to their ground).  U104: +5V_ISO.  R113 / D102: -4.7 V for the 74HC4053.", 112, 68)
+text("clamp each rail to 20 V against GND_ISO (ICs are rated 25 V to their ground).  U104: +5V_ISO.  R113 / D102: -4.3 V for the 74HC4053.", 112, 68)
 
 # =========================================================================== 6. set-point
 box(6, 114, 95, 164, "6. SET-POINT: DAC60501 (I2C 0x48, 0..1.25 V = VSET_P), U106B INVERTS -> VSET_N, 74HC4053 PICKS SIGN (CATH) AND GATES (EN)")
@@ -267,7 +267,7 @@ LBL("U107.11", length=5.08); LBL("U107.10", length=7.62); LBL("U107.9", length=1
 put("C118", 86, 118); put("C119", 91, 118, rot=180)
 PWR("C118.1"); PWR("C118.2"); PWR("C119.1"); PWR("C119.2")
 text("Switch 1: CATH picks VSET_P (0) / VSET_N (1) -> SW_P.  Switch 2: EN picks 0 V (0) / SW_P (1) -> V_IN.  Switch 3: RELEASE low -> SHORT_IN high", 7, 159)
-text("(DG418 on, electrode shorted), high -> low.  Signals stay within +/-1.25 V; the 4053 runs on +5 / -4.7 V (9.7 V of its 10.5 V maximum).", 7, 161)
+text("(DG418 on, electrode shorted), high -> low.  Signals stay within +/-1.25 V; the 4053 runs on +5 / -4.3 V (<= 9.7 V worst case of its 10 V recommended maximum).", 7, 161)
 text("DAC60501Z: write GAIN (0x04) = 0x0100 first, then DAC (0x08) = code << 4; readback over the same bus.  C115 at U105 VDD, C118 / C119 at U107.", 7, 163)
 
 # =========================================================================== 7. output stage

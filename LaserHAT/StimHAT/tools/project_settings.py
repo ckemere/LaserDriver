@@ -25,8 +25,8 @@ def cls(name, clearance, width, via, drill):
 d = json.load(open(PRO))
 d["meta"]["filename"] = "StimHAT.kicad_pro"
 ns = d["net_settings"]
-ns["classes"] = [cls("Default", 0.15, 0.25, 0.6, 0.3), cls("Power", 0.15, 0.5, 0.8, 0.4), cls("Fine", 0.15, 0.2, 0.6, 0.3),
-                 cls("Isolated", 0.15, 0.25, 0.6, 0.3), cls("IsolatedPower", 0.15, 0.5, 0.8, 0.4)]
+ns["classes"] = [cls("Default", 0.15, 0.2, 0.6, 0.3), cls("Power", 0.15, 0.3, 0.6, 0.3), cls("Fine", 0.15, 0.2, 0.6, 0.3),
+                 cls("Isolated", 0.15, 0.2, 0.6, 0.3), cls("IsolatedPower", 0.15, 0.3, 0.6, 0.3)]
 pats = []
 for n in POWER:
     pats.append({"netclass": "IsolatedPower" if n in ISOLATED_NETS else "Power", "pattern": n})

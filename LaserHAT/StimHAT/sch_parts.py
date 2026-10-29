@@ -21,7 +21,7 @@ FAULT_n back) and an ISO1640 (I2C to the DAC60501, readback kept: the DACx0501 h
   * a DG418 (SPST, normally open, IN high = on) as the SHORT switch (was a DG419): closed while RELEASE is low
   * +/-V from the A0515S DC-DC (PS1, hand-fitted) or the battery pack (J102, B4B-PH-K-S), then an LC filter and a
     capacitance multiplier per rail, 20 V Zener clamps on each rail to GND_ISO (a floating GND_ISO can no longer take the
-    switches past their 25 V ratings), TLV760 for +5V_ISO, a 4.7 V Zener for -5V_ISO.
+    switches past their 25 V ratings), TLV760 for +5V_ISO, a 4.3 V Zener for -5V_ISO (-4.3 V: the 4053 then sees <= 9.7 V worst case of its 10 V maximum).
 """
 
 R0402, R0603 = "Resistor_SMD:R_0402_1005Metric", "Resistor_SMD:R_0603_1608Metric"
@@ -50,8 +50,8 @@ L = dict(R100k="C25741", R10k="C25744", R1k="C11702", R47="C137973", R4k7="C2590
          R10k01="C95204", R2k49="C861299",
          C100n="C307331", C1u="C52923", C10n="C15195", C470n="C47339", C100p="C1546", C4u7="C69335",
          C1u50="C559769", C100n50="C14663", C1u50_0805="C726584", C10u="C15850", C22u="C12891",
-         BAT54WS="C124205", Z4V7="C353517", Z20="C173445", LEDW="C2290", LEDR="C2286",
-         NPN="C20526", PNP="C53444", L10u="C95978",
+         BAT54WS="C124205", Z4V3="C22399888", Z20="C173445", LEDW="C2290", LEDR="C2286",
+         NPN="C20526", PNP="C53444", L10u="C139245",
          USBC="C2988369", JOY="C202415", TS1088="C720477", MSK="C431540", EEPROM="C283445", LDO="C632000",
          LOADSW="C110466", CH340="C2977777", MCU="C20618748", BUF="C80500", PFET="C471913", DUALPNP="C154733",
          ISO7741="C2872241", ISO1640="C5122339", TLV760="C2867465", DAC="C1852027", OPA="C2876419",
@@ -191,14 +191,14 @@ PARTS = [
     dict(ref="U104", sym="TLV760", value="TLV76050DBZR", fp=SOT23, lcsc=L["TLV760"], nets={"2": "+V_STIM", "1": "+5V_ISO", "3": "GND_ISO"}),
     C("C111", "1uF 50V", "+V_STIM", "GND_ISO", fp=C0603, lcsc=L["C1u50"]),
     C("C112", "1uF 50V", "+5V_ISO", "GND_ISO", fp=C0603, lcsc=L["C1u50"]),
-    R("R113", "4.7k", "-5V_ISO", "-V_STIM", lcsc=L["R4k7"]),
-    dict(ref="D102", sym="D_Zener", value="BZT52C4V7S", fp=SOD323, lcsc=L["Z4V7"], nets={"1": "GND_ISO", "2": "-5V_ISO"}),
+    R("R113", "4.7k", "-5V_ISO", "-V_STIM", fp=R0603, lcsc="C23162"),
+    dict(ref="D102", sym="D_Zener", value="BZT52C4V3S", fp=SOD323, lcsc=L["Z4V3"], nets={"1": "GND_ISO", "2": "-5V_ISO"}),
     C("C113", "100nF", "GND_ISO", "-5V_ISO", lcsc=L["C100n"]),
     # ================================================================ 6. set-point: DAC60501 (I2C), inverter, 74HC4053
     dict(ref="U105", sym="DAC60501", value="DAC60501ZDGSR", fp=VSSOP10, lcsc=L["DAC"],
          nets={"1": "+5V_ISO", "2": "VSET_P", "3": None, "4": "GND_ISO", "5": "+5V_ISO", "6": "SCL", "7": "GND_ISO", "8": "SDA",
                "9": None, "10": "VREFIO"}),
-    C("C114", "100nF", "VREFIO", "GND_ISO", lcsc=L["C100n"]),
+    C("C114", "1uF", "VREFIO", "GND_ISO", lcsc=L["C1u"]),
     C("C115", "100nF", "+5V_ISO", "GND_ISO", lcsc=L["C100n"]),
     dict(ref="U106", sym="OPA2192", value="OPA2192IDGKR", fp=VSSOP8, lcsc=L["OPA"],
          nets={"3": "OA_IN", "2": "ISENSE", "1": "OA_OUT", "5": "GND_ISO", "6": "U5B_IN", "7": "VSET_N", "8": "+V_STIM", "4": "-V_STIM"}),

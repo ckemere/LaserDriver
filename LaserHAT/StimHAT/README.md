@@ -35,8 +35,8 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (74LVC2G17) → PA26; PA25 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |
 | Display | J10 PinSocket 1 × 4 right-angle, unpopulated (GND, 3.3 V, SCL, SDA) | for a 0.91" 128 × 32 SSD1306 module (LCSC C5248081) lying along the top strip, instead of the bonnet |
 | Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 100k pull-downs, R107 / R108 and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
-| Isolated supply | PS1 A0515S (±15 V from the HAT's 5 V, hand-fitted, **on the back of the tab**, DNP in the BOM) or J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V), L101 / L102 10 µH + C105 / C106 10 µF, Q101 / Q102 capacitance multipliers (R111 / R112 4.7k, C107 / C108 10 µF), C109 / C110, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V7S (−4.7 V), C104 | C104 is PS1's input cap, in the HAT-side strip of the tab |
-| Set-point | U105 DAC60501 (I2C 0x48), C114 / C115, U106B OPA2192 inverter (R105 / R106 10.0k 0.1 %), U107 CD74HC4053 on +5 / −4.7 V | switch 1 (CATH) picks ±VSET, switch 2 (EN) gates it, switch 3 inverts RELEASE for the SHORT switch |
+| Isolated supply | PS1 A0515S (±15 V from the HAT's 5 V, hand-fitted, **on the back of the tab**, DNP in the BOM) or J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V), L101 / L102 10 µH + C105 / C106 10 µF, Q101 / Q102 capacitance multipliers (R111 / R112 4.7k, C107 / C108 10 µF), C109 / C110, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V), C104 | C104 is PS1's input cap, in the HAT-side strip of the tab |
+| Set-point | U105 DAC60501 (I2C 0x48), C114 / C115, U106B OPA2192 inverter (R105 / R106 10.0k 0.1 %), U107 CD74HC4053 on +5 / −4.3 V | switch 1 (CATH) picks ±VSET, switch 2 (EN) gates it, switch 3 inverts RELEASE for the SHORT switch |
 | Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2) | 502 µA full scale, 0.123 µA / LSB |
 | SHORT | U108 DG418 (normally open, on while SHORT_IN is high = RELEASE low) | electrode shorted whenever RELEASE is low, including HAT-side power-down |
 | Fault detector | U110 TLV1702 window on E1 (R117 10k / R118 215k / R119 10k taps), R120 10k, R121 4.7k, D101 BAT54WS, C122 | FAULT_n low past the trip point, with +5V_ISO down, or with a rail missing |
@@ -68,12 +68,12 @@ y 57–69.5 (HAT coordinates minus (100, 43)).  Top strip (y < 17.5) and west ha
 up, parts under 7 mm), the OLED socket J10 at the strip's east end.  West edge, top to bottom: SW10, J5, the three LEDs,
 FIRE, the joystick in the south-west corner.  Two BNCs mid-south (bodies y 36.5–57, barrels past the edge).  Isolated
 stimulator in an L: block A (x 36.5–65, y 20–34, under the bonnet's east end: isolators, DAC, inverter, 4053, output
-stage, SHORT, fault detector), strip B (x 50–65, y 36.5–54.5: LDO, −4.7 V rail, filter, multipliers, clamps) and the
+stage, SHORT, fault detector), strip B (x 50–65, y 36.5–54.5: LDO, −4.3 V rail, filter, multipliers, clamps) and the
 tab's east part (J102, J101).  PS1 stands under the tab, where nothing is below it (beyond the Pi's edge; the BNC
 barrels are on top); its two input pins and C104 sit in the HAT-side strip along the tab's west edge, fed on the bottom
 layer through the passage x 46–47.5 east of J7.  Barrier: 2.5 mm copper-free rule areas (drawn on User.Comments) plus
 the `StimHAT.kicad_dru` rule (Isolated / IsolatedPower net classes vs everything else ≥ 2.5 mm).  Net classes: Power
-and IsolatedPower 0.5 mm, Fine (USB) 0.2 mm, Default / Isolated 0.25 mm; board minimums 0.15 / 0.15, vias 0.6 / 0.3.
+and IsolatedPower 0.3 mm, Fine (USB), Default and Isolated 0.2 mm; board minimums 0.15 / 0.15, vias 0.6 / 0.3.
 No copper pours.  User.Drawings: the bonnet outline, the 0.91" module outline, the notch note.
 
 ## Checks before fab
@@ -91,4 +91,4 @@ Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), 
 - Joystick: mounted at 45°, directions line up with the board (up = away from the BNCs).  If a direction reads wrong,
   swap in firmware (BUTTON1/3/4/6).
 - First power-up with a Pi: check +3V3, MSPM0_3V3 (GPIO18 high), +5V_ISO ≈ 5.0 V, +V_STIM / −V_STIM ≈ ±13.5 V (DC-DC) or
-  pack minus ≈ 1.2 V, −5V_ISO ≈ −4.6 V, FAULT_n high; then the module checks from `../EStimDaughter/README.md`.
+  pack minus ≈ 1.2 V, −5V_ISO ≈ −4.2 V, FAULT_n high; then the module checks from `../EStimDaughter/README.md`.
