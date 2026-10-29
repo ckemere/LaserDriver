@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/claude-agent/Code/LaserDriver/.claude/worktrees/stim-hat/LaserHAT/StimHAT/StimHAT.kicad_sch")
-    (date "2026-10-29T07:47:25-0500")
+    (date "2026-10-29T10:14:00-0500")
     (tool "Eeschema 9.0.8+dfsg-1")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
@@ -651,9 +651,9 @@
       (tstamps "82876878-4464-5585-85db-eddf05f34cf8"))
     (comp (ref "J6")
       (value "BNC TRIGGER IN")
-      (footprint "Footprints:BNC_Amphenol_031-5540_031-5539_Dual")
+      (footprint "stimhat:BNC_Amphenol_031-5540_RA")
       (fields
-        (field (name "Footprint") "Footprints:BNC_Amphenol_031-5540_031-5539_Dual")
+        (field (name "Footprint") "stimhat:BNC_Amphenol_031-5540_RA")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "stimhat") (part "BNC") (description ""))
@@ -664,9 +664,9 @@
       (tstamps "9933c8d2-7d34-5da5-ada2-06576e50cfa7"))
     (comp (ref "J7")
       (value "BNC STIM OUT")
-      (footprint "Footprints:BNC_Amphenol_031-5540_031-5539_Dual")
+      (footprint "stimhat:BNC_Amphenol_031-5540_RA")
       (fields
-        (field (name "Footprint") "Footprints:BNC_Amphenol_031-5540_031-5539_Dual")
+        (field (name "Footprint") "stimhat:BNC_Amphenol_031-5540_RA")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "stimhat") (part "BNC") (description ""))
@@ -677,9 +677,9 @@
       (tstamps "79c4d033-5fdc-5e4f-b419-9071a07b1be0"))
     (comp (ref "J10")
       (value "OLED 0.91 (GND VCC SCL SDA)")
-      (footprint "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Horizontal")
+      (footprint "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical")
       (fields
-        (field (name "Footprint") "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Horizontal")
+        (field (name "Footprint") "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "stimhat") (part "Conn_01x04") (description ""))
@@ -704,9 +704,9 @@
       (tstamps "111c6507-10f8-5271-9541-40e4e24b5589"))
     (comp (ref "J102")
       (value "B4B-PH-K-S(LF)(SN)")
-      (footprint "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical")
+      (footprint "stimhat:JST_PH_B4B-PH-K_NoCrtYd")
       (fields
-        (field (name "Footprint") "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical")
+        (field (name "Footprint") "stimhat:JST_PH_B4B-PH-K_NoCrtYd")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "stimhat") (part "Conn_01x04") (description ""))

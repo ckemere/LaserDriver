@@ -95,8 +95,23 @@ for line in src.splitlines():
     line = line.replace("(size 1.8 1.8) (drill 1.0)", "(size 1.6 1.6) (drill 1.0)")   # 0.3 mm annulus: room between pins 1 and 2 for a track
     line = line.replace('(descr "Isolated DC-DC,', '(descr "Body on the other side of the pin row (turned over about the pin axis). Isolated DC-DC,')
     out.append(line)
+# 3D model (VRML, KiCad units of 0.1 in): body 19.65 x 6.00 x 10.16 on a 0.5 mm standoff, pins, white pin-1 dot on the
+# marked face (the face 5.1 mm from the pin row, board +y); KiCad's model frame has Y = board -y
+def _box(x0, y0, z0, x1, y1, z1, rgb):
+    k = 2.54
+    return ("Transform { translation %.4f %.4f %.4f children [ Shape { appearance Appearance { material Material { "
+            "diffuseColor %s } } geometry Box { size %.4f %.4f %.4f } } ] }\n"
+            % ((x0 + x1) / 2 / k, -(y0 + y1) / 2 / k, (z0 + z1) / 2 / k, rgb, (x1 - x0) / k, (y1 - y0) / k, (z1 - z0) / k))
+wrl = "#VRML V2.0 utf8\n" + _box(-2.21, -0.9, 0.5, 17.44, 5.1, 10.66, "0.12 0.12 0.12")
+for px in (0.0, 2.54, 7.62, 10.16, 12.7):
+    wrl += _box(px - 0.25, -0.25, -1.6, px + 0.25, 0.25, 0.5, "0.8 0.8 0.8")
+wrl += _box(-1.2, 5.1, 1.2, -0.4, 5.2, 2.0, "1 1 1")
+os.makedirs(os.path.join(ROOT, "stimhat.3dshapes"), exist_ok=True)
+open(os.path.join(ROOT, "stimhat.3dshapes", "DCDC_SIP6_A0515S_BodyN.wrl"), "w").write(wrl)
+assert out[-1].strip() == ")"
+out.insert(len(out) - 1, '  (model "${KIPRJMOD}/stimhat.3dshapes/DCDC_SIP6_A0515S_BodyN.wrl" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))')
 open(os.path.join(LIB, "DCDC_SIP6_A0515S_BodyN.kicad_mod"), "w").write("\n".join(out) + "\n")
-print("saved DCDC_SIP6_A0515S_BodyN")
+print("saved DCDC_SIP6_A0515S_BodyN (+ wrl)")
 
 
 # Right-angle-only BNC (Amphenol 031-5540 / 031-5431 / 031-5486): the HAT's dual footprint without the vertical
@@ -133,3 +148,36 @@ src = _re.sub(r'\(tags "[^"]*"', '(tags "BNC coaxial Amphenol 031-5540 031-5431 
 assert src.count("(pad ") == 4 and "Dwgs.User" not in src
 open(os.path.join(LIB, "BNC_Amphenol_031-5540_RA.kicad_mod"), "w").write(src)
 print("saved BNC_Amphenol_031-5540_RA")
+
+
+# JST PH B4B top-entry socket without a courtyard: J102 shares PS1's space (only one of the two is fitted), and
+# missing_courtyard is ignored in this project while courtyards_overlap is an error.  Pure text edit of KiCad's file.
+def _drop_item(text, marker):
+    i = text.index(marker)
+    start = text.rfind("\n\t(", 0, i) + 1
+    depth, j = 0, start
+    while True:
+        c = text[j]
+        if c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                break
+        j += 1
+    end = j + 1
+    if text[end] == "\n":
+        end += 1
+    return text[:start] + text[end:]
+
+
+src = open("/usr/share/kicad/footprints/Connector_JST.pretty/JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical.kicad_mod").read()
+while '(layer "F.CrtYd")' in src:
+    src = _drop_item(src, '(layer "F.CrtYd")')
+while '(layer "F.SilkS")' in src:                  # its silk would cross PS1's pad apertures
+    src = _drop_item(src, '(layer "F.SilkS")')
+src = src.replace('(footprint "JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"', '(footprint "JST_PH_B4B-PH-K_NoCrtYd"')
+src = src.replace('(property "Value" "JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"', '(property "Value" "JST_PH_B4B-PH-K_NoCrtYd"')
+src = _re.sub(r'\(descr "[^"]*"', '(descr "JST PH B4B-PH-K-S top entry, 4 pins, 2.0 mm pitch; KiCad library footprint without its courtyard and silk (shares the DC-DC PS1 space, one of the two fitted)"', src)
+open(os.path.join(LIB, "JST_PH_B4B-PH-K_NoCrtYd.kicad_mod"), "w").write(src)
+print("saved JST_PH_B4B-PH-K_NoCrtYd")

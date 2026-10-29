@@ -26,4 +26,5 @@
   (pad "4" thru_hole circle (at 7.62 0) (size 1.6 1.6) (drill 1.0) (layers "*.Cu" "*.Mask") (uuid "e7636af7-089b-488e-91d8-f3ad8edbcbfa"))
   (pad "5" thru_hole circle (at 10.16 0) (size 1.6 1.6) (drill 1.0) (layers "*.Cu" "*.Mask") (uuid "937d48c8-fdb7-48ca-9427-3f81934b1c35"))
   (pad "6" thru_hole circle (at 12.7 0) (size 1.6 1.6) (drill 1.0) (layers "*.Cu" "*.Mask") (uuid "ab21b185-c59d-4a90-91a9-68c1d317c4bb"))
+  (model "${KIPRJMOD}/stimhat.3dshapes/DCDC_SIP6_A0515S_BodyN.wrl" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )

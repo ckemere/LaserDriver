@@ -1,16 +1,20 @@
 #!/usr/bin/env python3
 """Placement of StimHAT.kicad_pcb (2026-10-29), board coordinates = HAT coordinates - (100, 43): 65 x 57 mm HAT outline
-with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) and a 7.5 mm tab on the south-east (x 46-65, y 57-64.5).
+with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) and a 10 x 7.5 mm tab on the south-east (x 46-56, y 57-64.5).
 Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
   * top strip (y < 17.5) and the west half: the Rev 2 HAT core, all under the Adafruit 4567 bonnet (which sits on the
-    stacking header 9 mm up), parts <= 7 mm tall; J10 (0.91" OLED socket, unpopulated) at the strip's east end
+    stacking header 9 mm up), parts <= 7 mm tall; J10 (vertical socket for the 0.91" OLED module, unpopulated) at
+    the strip's west end under the header: the module stands up along the header, facing south (text flipped in
+    software), pins west to east SDA SCL VCC GND
   * west edge, top to bottom: SW10 (USB power), J5 USB-C, the three LEDs, FIRE (SW9), the five-way joystick (SW7, at
     45 degrees so its directions line up with the board) in the south-west corner
   * two right-angle BNCs in the middle of the south edge (bodies x 15-46, y 43-57, barrels past the edge); PS1 (the
     DC-DC, hand-fitted) stands in the band north of them (body x 28-48, y 36.65-42.65, 10 mm tall, outside the bonnet):
-    pins 1-2 (+5V / GND) west of x 34 on the HAT side, pins 4-6 in an isolated pocket that joins block A and strip B
+    pins 1-2 (+5V / GND) west of x 34 on the HAT side, pins 4-6 in an isolated pocket that joins block A and strip B;
+    J102 (battery socket) shares that space: its pads sit 2.55 mm south of PS1's pins (same nets), its housing covers
+    PS1's holes - only one of the two is ever fitted
   * the isolated stimulator: block A under the bonnet's east end (x 36.5-65, y 20-35), the pocket (x 36.5-65, y 35-38.5),
-    strip B east of the BNCs (x 47.7-65, y 38.5-57) and the whole tab (J102 battery socket, J101 electrode header).
+    strip B east of the BNCs (x 47.7-65, y 38.5-57) and the tab (J101 electrode header only).
     Barrier = 2.5 mm copper-free rule areas; only U101 / U109 / PS1 straddle it.  MH4 falls inside isolated copper:
     nylon standoff.
 Idempotent: re-running moves every footprint back to the table and redraws the outline and board-level drawings; copper
@@ -22,7 +26,7 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BOARD = os.path.join(ROOT, "StimHAT.kicad_pcb")
-W, H, TAB_X, TAB_Y = 65.0, 57.0, 46.0, 64.5
+W, H, TAB_X, TAB_X2, TAB_Y = 65.0, 57.0, 46.0, 56.0, 64.5
 NOTCH = (59.0, 8.0, 65.0, 16.5)
 mm = pcbnew.FromMM
 P = {}                                     # ref -> (x, y, rot, flip)
@@ -49,20 +53,20 @@ at("J6", 22.8, 44.4, 180); at("J7", 38.4, 44.4, 180)
 # ---- core, west half under the bonnet: USB power path by the USB-C, LDOs above, MCU in the middle, UART bridge below
 at("Q5", 14.5, 14.3, 90); at("R26", 14.5, 17.6, 90); at("Q3", 14.5, 20.5, 90); at("Q4", 18.5, 17.6, 90)
 at("R21", 18.5, 14.3, 90); at("R22", 24.5, 20.5, 90)
-at("U4", 23.0, 14.5, 180); at("C12", 17.0, 11.5); at("C6", 24.5, 10.8); at("C13", 26.5, 17.0, 90)
-at("U5", 30.0, 14.5); at("R7", 26.5, 13.5, 90); at("C2", 33.3, 14.0, 90); at("JP1", 21.0, 10.3)
+at("U4", 23.0, 14.5, 180); at("C12", 19.7, 12.3, 0); at("C6", 26.5, 10.6, 180); at("C13", 26.5, 17.0, 90)
+at("U5", 30.0, 14.5); at("R7", 26.5, 13.5, 90); at("C2", 33.3, 14.0, 90); at("JP1", 50.0, 10.0, 0)
 at("U7", 20.0, 26.0, -90)
 at("C1", 20.58, 21.1, 0); at("C16", 29.9, 31.5, 90); at("C4", 24.8, 24.3, 90); at("R4", 10.0, 30.0, 90)
 at("R3", 17.0, 34.0); at("C3", 19.5, 34.0); at("JP4", 22.5, 34.0)
 at("R107", 27.5, 18.3, 90); at("R108", 30.0, 18.3, 90)
 at("U6", 12.0, 35.5, 90); at("C17", 12.0, 31.3, 0)
 at("U8", 28.0, 32.0, 90); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
-# ---- top strip: I2C pull-ups by the header's pins 3 / 5, the EEPROM by pins 27 / 28, JP5, BSL, the OLED socket
-# (J10's housing, when fitted, covers x 46.4-59, y 6.6-18: nothing else there)
+# ---- top strip: I2C pull-ups by the header's pins 3 / 5, the EEPROM by pins 27 / 28, JP5, BSL; the OLED socket J10
+# right under the header at the west end (pins along x at y 10, pin 1 = GND east), JP1 moved to the strip's east end
 at("R19", 12.0, 15.5, 90); at("R20", 12.0, 13.0, 90); at("C15", 7.5, 13.0, 90); at("JP5", 7.5, 16.0)
 at("SW6", 31.0, 10.4); at("C103", 45.7, 16.5, 90); at("C18", 43.4, 11.4, 0); at("R2", 35.5, 16.0, 90)
 at("U1", 40.5, 13.9); at("R1", 45.5, 11.0, 90)
-at("J10", 57.0, 8.4, 0)
+at("J10", 22.81, 10.0, 270)                 # pins x 22.81 (GND) 20.27 (VCC) 17.73 (SCL) 15.19 (SDA)
 # ---- isolation: ISO7741F across the vertical barrier (x 35.25; pins 1-8 west), ISO1640 across the horizontal one
 # (y 18.75; pins 1-4 north)
 at("U101", 35.25, 27.0, 0)
@@ -84,12 +88,12 @@ at("L101", 51.7, 43.0); at("C105", 55.4, 43.0); at("L102", 59.1, 43.0); at("C106
 at("Q101", 51.8, 47.0); at("R111", 54.3, 47.0, 90); at("C107", 56.5, 47.0, 90); at("Q102", 59.5, 47.0); at("R112", 62.3, 47.0, 90)
 at("D104", 64.0, 47.0, 90)
 at("C109", 51.8, 51.0); at("C110", 54.6, 51.0, 90); at("C108", 56.6, 51.0, 90)
-# ---- DC-DC in the band north of the BNC bodies, and the tab (x 46-65, y 57-64.5, all isolated: J102 + J101)
+# ---- DC-DC and the battery socket in the band north of the BNC bodies (one fitted), the tab (x 46-56) with J101
 # with the battery socket (vertical, cable from above) and the electrode header (pins out of the south edge)
 at("PS1", 30.3, 37.55, 0)                   # body south of the pin row (y 36.65-42.65): pins 1-2 x 30.3 / 32.8 (HAT), 4-6 x 37.9-43.0 (isolated)
-at("C104", 26.3, 38.6, 0)                   # input cap west of PS1's body (+5V west pad, GND east pad)
-at("J102", 55.5, 60.0, 0)                   # pin 1 west: +V, 0V (GND_ISO), -V, CAB (= GND_ISO)
-at("J101", 48.0, 60.5, 90)                  # vertical 1x2 west of J102; pin 1 (square) = E1 west
+at("C104", 26.0, 38.6, 0)                   # input cap west of PS1's body (+5V west pad, GND east pad)
+at("J102", 44.0, 40.1, 180)                 # pin 1 east: +V 44.0, 0V 42.0, -V 40.0, CAB 38.0 (= GND_ISO); housing over PS1's holes
+at("J101", 51.0, 60.5, 90)                  # vertical 1x2 on the tab; pin 1 (square) = E1 west
 
 board = pcbnew.LoadBoard(BOARD)
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
@@ -135,8 +139,9 @@ R = 3.0
 E = pcbnew.Edge_Cuts
 seg(R, 0, W - R, 0, E, 0.1); arc(W - R, R, R, 270, 360)
 seg(W, R, W, NOTCH[1], E, 0.1); seg(W, NOTCH[1], NOTCH[0], NOTCH[1], E, 0.1); seg(NOTCH[0], NOTCH[1], NOTCH[0], NOTCH[3], E, 0.1)
-seg(NOTCH[0], NOTCH[3], W, NOTCH[3], E, 0.1); seg(W, NOTCH[3], W, TAB_Y, E, 0.1)
-seg(W, TAB_Y, TAB_X, TAB_Y, E, 0.1); seg(TAB_X, TAB_Y, TAB_X, H, E, 0.1)
+seg(NOTCH[0], NOTCH[3], W, NOTCH[3], E, 0.1); seg(W, NOTCH[3], W, H, E, 0.1)
+seg(W, H, TAB_X2, H, E, 0.1); seg(TAB_X2, H, TAB_X2, TAB_Y, E, 0.1)
+seg(TAB_X2, TAB_Y, TAB_X, TAB_Y, E, 0.1); seg(TAB_X, TAB_Y, TAB_X, H, E, 0.1)
 seg(TAB_X, H, R, H, E, 0.1); arc(R, H - R, R, 90, 180)
 seg(0, H - R, 0, R, E, 0.1); arc(R, R, R, 180, 270)
 
@@ -155,13 +160,13 @@ def keepout(pts, vias_only=False):
 # isolation barrier (2.5 mm, copper-free on both layers), see the docstring
 BAR = ((34.0, 17.5, 65.0, 20.0),      # north of block A (the 2.5 mm from U109 side-1 pads is checked by the .kicad_dru rule)
        (34.0, 17.5, 36.5, 42.8),      # west of block A and of the pocket (PS1 pin 2 at x 32.8 is HAT side)
-       (36.5, 39.4, 47.7, 42.8),      # south of the pocket: PS1's output pads (to y 38.55) vs the BNC J7 tails (y 44.4)
+       (36.5, 41.2, 47.7, 42.8),      # south of the pocket: J102's pads (to y 41.0) vs the BNC J7 tails (y 44.4)
        (45.2, 42.8, 47.7, 57.0))      # east of the BNC J7 (its posts reach x 45.2) / west of strip B and the tab
 for x1, y1, x2, y2 in BAR:
     keepout(((x1, y1), (x2, y1), (x2, y2), (x1, y2)))
     rect(x1, y1, x2, y2, pcbnew.Cmts_User, 0.1)
 # no copper under the standoffs / screw heads (M2.5 hardware up to 6.5 mm; MH4 sits in the isolated area: nylon, wider)
-for cx, cy, r in ((3.5, 4.5, 3.25), (61.5, 4.5, 3.25), (3.5, 53.5, 3.25), (61.5, 53.5, 2.85)):
+for cx, cy, r in ((3.5, 4.5, 3.25), (61.5, 4.5, 3.25), (3.5, 53.5, 3.25), (61.5, 53.5, 3.25)):
     keepout([(cx + r * math.cos(2 * math.pi * k / 24), cy + r * math.sin(2 * math.pi * k / 24)) for k in range(24)])
 
 
@@ -177,21 +182,15 @@ def silk(txt, x, y, size=1.0, rot=0, layer=pcbnew.F_SilkS):
 
 
 silk("StimHAT rev A", 32.5, 30.0, 1.0, 0, pcbnew.B_SilkS)
-silk("TRIG IN", 22.8, 42.3); silk("STIM OUT", 38.4, 42.3)        # STIM OUT is covered when PS1 is fitted; also on the back
-silk("FIRE", 6.2, 37.5, 0.8, 90); silk("USB", 11.8, 24.0, 0.8, 90); silk("PWR", 6.6, 13.0, 0.8, 90)
-silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)
-silk("BSL", 35.0, 10.4); silk("OLED", 61.5, 18.8)
-silk("ISOLATED", 49.5, 18.75); silk("E1", 48.0, 63.4, 0.8); silk("+V", 55.3, 57.0, 0.8); silk("0V", 57.5, 57.0, 0.8); silk("-V", 59.4, 57.0, 0.8); silk("CAB", 61.9, 57.0, 0.8); silk("NYLON", 61.5, 50.0, 0.8)
+silk("FIRE", 6.2, 37.5, 1.0, 90); silk("USB", 11.8, 24.0, 1.0, 90); silk("PWR", 6.1, 13.0, 1.0, 90)
+silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)   # 0.8: no room for 1.0 between R13-R18 and the LEDs
+silk("BSL", 35.0, 10.4)
+silk("ISOLATED", 49.5, 18.75); silk("E1", 51.0, 63.4, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("NYLON", 61.5, 50.0, 1.0)
 silk("STIM OUT", 38.4, 53.5, 1.0, 0, pcbnew.B_SilkS); silk("TRIG IN", 22.8, 53.5, 1.0, 0, pcbnew.B_SilkS)
 # drawings: the bonnet (65 x 30.7 on the header), the 0.91" OLED module when fitted, the Pi 5 notch note
 rect(0, 0, 65, 30.7, pcbnew.Dwgs_User, 0.15); silk("Adafruit 4567 bonnet (9 mm up)", 20, 2.5, 1.0, 0, pcbnew.Dwgs_User)
-rect(19.0, 5.0, 57.0, 17.0, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module on J10", 38.0, 16.0, 0.8, 0, pcbnew.Dwgs_User)
+rect(0.0, 9.2, 38.0, 10.8, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module standing in J10 (38 x 12, 8.5 mm up)", 19.0, 19.6, 0.8, 0, pcbnew.Dwgs_User)
 silk("Pi 4 PoE / Pi 5 fan", 56.0, 7.0, 0.8, 0, pcbnew.Dwgs_User)
-# PS1 stands under the tab with its body past the tab's west edge by design: drop its silk outline (it would be
-# clipped by the edge; the part is hand-fitted and its pins are marked on the top side)
-for it in list(fps["PS1"].GraphicalItems()):
-    if it.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS):
-        fps["PS1"].Remove(it)
 for d in stale:
     board.Remove(d)
 pcbnew.SaveBoard(BOARD, board)

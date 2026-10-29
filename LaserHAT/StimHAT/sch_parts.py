@@ -12,7 +12,7 @@ Core (refs as on the Rev 2 HAT, nets as in its netlist, see ../CLAUDE.md "Rev 2 
   * SW7 is a five-way joystick (ALPS SKRHADE010) instead of the thumbwheel + the BACK button SW8:
       up = BUTTON4 (PA13, was wheel roll), down = BUTTON3 (PA16), centre push = BUTTON2 (PA14), left = BUTTON1 (PA21,
       BACK), right = BUTTON6 (PA3, new); FIRE stays SW9 = BUTTON5 (PA23).  All active low, common to GND.
-  * J10: unpopulated 4-pin right-angle socket for a 0.91" 128 x 32 I2C OLED module (LCSC C5248081, GND VCC SCL SDA) as
+  * J10: unpopulated 4-pin vertical socket for a 0.91" 128 x 32 I2C OLED module (standing up along the header) (LCSC C5248081, GND VCC SCL SDA) as
     the alternative to the bonnet; same Pi I2C bus, same 3.3 V.
 Stimulator (refs = the e-stim module's + 100): kbest rev E output stage, isolated by an ISO7741F (EN, CATH, RELEASE in,
 FAULT_n back) and an ISO1640 (I2C to the DAC60501, readback kept: the DACx0501 has no SPI data-out pin), with
@@ -36,8 +36,8 @@ SOIC8, SSOP16, TSSOP8, TSSOP16, VSSOP8, VSSOP10 = ("Package_SO:SOIC-8_3.9x4.9mm_
                                                     "Package_SO:VSSOP-8_3x3mm_P0.65mm", "Package_SO:VSSOP-10_3x3mm_P0.5mm")
 JEITA8 = "Package_SO:JEITA_SOIC-8_3.9x4.9mm_P1.27mm"
 HDR2V = "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
-SOCK4RA = "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Horizontal"
-PH4 = "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"       # top entry: the pack's cable comes up past the tab
+SOCK4V = "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Vertical"
+PH4 = "stimhat:JST_PH_B4B-PH-K_NoCrtYd"                            # top entry; no courtyard: it shares PS1's space
 TP = "TestPoint:TestPoint_Pad_D1.0mm"
 HOLE = "MountingHole:MountingHole_2.7mm_M2.5"
 JUMPER_R = "Jumper:SolderJumper-2_P1.3mm_Open_RoundedPad1.0x1.5mm"
@@ -139,7 +139,7 @@ PARTS = [
          nets={"1": "BUTTON4", "2": "BUTTON2", "3": "BUTTON1", "4": "BUTTON6", "5": "GND", "6": "BUTTON3"}),
     dict(ref="SW9", sym="SW_Push", value="TS-1088-AR02016", fp="Button_Switch_SMD:SW_SPST_TS-1088-xR020", lcsc=L["TS1088"],
          nets={"1": "BUTTON5", "2": "GND"}),
-    dict(ref="J10", sym="Conn_01x04", value="OLED 0.91 (GND VCC SCL SDA)", fp=SOCK4RA, lcsc="", dnp=True,
+    dict(ref="J10", sym="Conn_01x04", value="OLED 0.91 (GND VCC SCL SDA)", fp=SOCK4V, lcsc="", dnp=True,
          nets={"1": "GND", "2": "+3V3_PI", "3": "I2C_SCL", "4": "I2C_SDA"}),
     # ================================================================ 3. BNC trigger in / stim out
     dict(ref="J6", sym="BNC", value="BNC TRIGGER IN", fp="stimhat:BNC_Amphenol_031-5540_RA", lcsc="",
