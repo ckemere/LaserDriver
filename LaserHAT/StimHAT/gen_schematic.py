@@ -117,7 +117,7 @@ PWR("U1.8"); PWR("U1.4"); LBL("U1.5"); LBL("U1.6"); LBL("U1.7", length=2.54)
 put("JP1", 72, 60, ref_at=(0, -5.08), val_at=(0, 5.08)); LBL("JP1.1", length=5.08); PWR("JP1.2", length=5.08)
 put("R1", 94, 48, rot=0); put("R2", 98, 48, rot=0)
 PWR("R1.1"); LBL("R1.2"); PWR("R2.1"); LBL("R2.2")
-put("R19", 30, 60, rot=0); put("R20", 36, 60, rot=0); put("C15", 42, 60)
+put("R19", 30, 60, rot=0); put("R20", 36, 60, rot=0); put("C15", 42, 60); put("C18", 47, 60); PWR("C18.1"); PWR("C18.2")
 PWR("R19.1"); LBL("R19.2"); PWR("R20.1"); LBL("R20.2"); PWR("C15.1"); PWR("C15.2")
 
 # =========================================================================== 2. MCU
@@ -135,6 +135,7 @@ put("C3", 114, 24, rot=0); LBL("C3.1"); PWR("C3.2")
 put("JP4", 112, 32, ref_at=(0, -5.08), val_at=(0, 5.08)); LBL("JP4.1", length=5.08); LBL("JP4.2", length=5.08)
 put("U6", 124, 50, ref_at=(0, -10.16), val_at=(0, 10.16))
 LBL("U6.1"); LBL("U6.2"); LBL("U6.4"); LBL("U6.6"); LBL("U6.7"); PWR("U6.5"); PWR("U6.8", length=5.08); PWR("U6.3")
+put("C17", 104, 47); PWR("C17.1"); PWR("C17.2")                               # CH340N decoupler, on the MCU rail
 put("SW6", 112, 54, ref_at=(0, -4.45), val_at=(0, 3.81)); LBL("SW6.1", length=5.08); PWR("SW6.2", length=5.08)
 put("D7", 176, 12, rot=180); put("R15", 182, 12, rot=90)
 LBL("D7.2", length=2.54); W("D7.1", "R15.1"); PWR("R15.2")
@@ -243,12 +244,12 @@ PWR("U105.1")
 W("U105.7", (14, 131), (14, 135)); pwr_at("GND_ISO", 14, 135, (0, 1))   # A0 = AGND -> 0x48
 PWR("U105.4")
 W("U105.2", (42, 130))                                           # VSET_P
-put("C114", 32, 136); W("U105.10", (32, 131), "C114.1"); PWR("C114.2")
+put("C114", 32, 136); W("U105.10", (32, 131), "C114.1"); PWR("C114.2"); lab("VREFIO", 32, 131)
 put("C115", 12, 140); PWR("C115.1"); PWR("C115.2")
 # inverter U106B
 put("U106", 52, 140, unit=2)
 put("R105", 45.5, 141, rot=90); put("R106", 52, 147, rot=90)
-W((42, 130), (42, 141), "R105.1"); W("R105.2", "U106.6")
+W((42, 130), (42, 141), "R105.1"); W("R105.2", "U106.6"); LBL("U106.6", length=2.54)
 W((48, 141), (48, 147), "R106.1"); W("R106.2", (57, 147), (57, 140))
 W("U106.7", (57, 140)); W("U106.5", (48, 139), (48, 137)); pwr_at("GND_ISO", 48, 137, (0, -1))
 lab("VSET_P", 44, 130); lab("VSET_N", 57, 144, (0, 1))
@@ -274,9 +275,9 @@ text("DAC60501Z: write GAIN (0x04) = 0x0100 first, then DAC (0x08) = code << 4; 
 box(98, 114, 137, 154, "7. OUTPUT STAGE (floating-load V->I, I = V_IN / R116)")
 put("U106", 112, 130, unit=1)
 put("R114", 104.5, 129, rot=90); put("C120", 107, 130.5)
-LBL("R114.1", length=2.54); W("R114.2", "U106.3"); sh.wired.add(("C120", "1")); PWR("C120.2")
+LBL("R114.1", length=2.54); W("R114.2", "U106.3"); LBL("U106.3", length=2.54); sh.wired.add(("C120", "1")); PWR("C120.2")
 put("R115", 118.5, 130, rot=90); put("C121", 124.5, 130, rot=90); put("J101", 132.5, 130.5, val_at=(0, 5.08))
-W("U106.1", "R115.1"); W("R115.2", "C121.1"); W("C121.2", "J101.1"); lab("E1_OUT", 127, 130)
+W("U106.1", "R115.1"); LBL("U106.1", length=2.54); W("R115.2", "C121.1"); W("C121.2", "J101.1"); lab("E1_OUT", 127, 130)
 W((122, 130), (122, 133)); LBL(None, "E1", at=pt(122, 133), direction=(0, 1))
 put("R116", 116, 139.5); put("TP101", 112, 138)
 W("U106.2", (108, 131), (108, 138), (129, 138), (129, 131), "J101.2"); sh.wired |= {("R116", "1"), ("TP101", "1")}
@@ -288,11 +289,13 @@ PWR("C116.1"); PWR("C116.2"); PWR("C117.1"); PWR("C117.2")
 text("R116 = 2.49 k 0.1 %: 502 uA full scale (0.123 uA / LSB).  C121: 1 uF DC block.  Cable: twisted pair, shield to E2.", 99, 151)
 
 # =========================================================================== 8. SHORT switch
-box(98, 156, 137, 178, "8. SHORT (DG418, normally open: on while SHORT_IN is high = RELEASE low)")
+box(98, 156, 137, 190, "8. SHORT (DG418, normally open: on while SHORT_IN is high = RELEASE low)")
 put("U108", 118, 166, ref_at=(0, -8.89), val_at=(0, 8.89))
 LBL("U108.8", length=2.54); LBL("U108.1", length=2.54); LBL("U108.6", length=2.54)
 PWR("U108.4"); PWR("U108.5"); PWR("U108.3"); PWR("U108.7")
 text("RELEASE low (idle, HAT unpowered or faulted): E1 shorted to E2 through 20 ohm.  RELEASE high: open, tOFF 100 ns.", 99, 176)
+put("C125", 108, 183); put("C126", 113, 183, rot=180)                          # DG418 V+ / V- decouplers
+PWR("C125.1"); PWR("C125.2"); PWR("C126.1"); PWR("C126.2")
 
 # =========================================================================== 9. fault detector
 box(140, 114, 196, 158, "9. FAULT DETECTOR (TLV1702 window on E1 -> FAULT_n; low also = isolated side unpowered)")

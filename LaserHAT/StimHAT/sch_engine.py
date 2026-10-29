@@ -92,7 +92,7 @@ class Sheet:
         is_tp = p["sym"] in ("TestPoint", "MountingHole", "Logo")      # not in the BOM
         self.items.append(
             f'(symbol (lib_id "{S.LIB}:{p["sym"]}") (at {F(x)} {F(y)} {rot}){" (mirror y)" if mirror else ""} (unit {unit}) '
-            f'(exclude_from_sim no) (in_bom {"no" if is_tp else "yes"}) (on_board yes) (dnp {"yes" if p.get("dnp") else "no"})\n    (uuid "{symbol_uuid(ref, unit)}")\n    '
+            f'(exclude_from_sim no) (in_bom {"no" if is_tp or not p.get("lcsc") else "yes"}) (on_board yes) (dnp {"yes" if p.get("dnp") else "no"})\n    (uuid "{symbol_uuid(ref, unit)}")\n    '
             + "\n    ".join(props) + f"\n    {pins_txt}\n"
             f'    (instances (project "{PROJ}" (path "/{ROOT}" (reference "{ref}") (unit {unit}))))\n  )')
 

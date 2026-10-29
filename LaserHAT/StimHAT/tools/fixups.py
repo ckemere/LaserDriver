@@ -178,9 +178,43 @@ def _strip_silk(block):
         i = k
 
 
+def drop_seg(x1, y1, x2, y2):
+    """delete the track(s) with exactly these two end points (either order)"""
+    b = pcbnew.LoadBoard(BOARD)
+    def near(p, x, y):
+        return abs(p.x / 1e6 - x) < 0.01 and abs(p.y / 1e6 - y) < 0.01
+    kill = [t for t in b.GetTracks() if t.GetClass() == "PCB_TRACK"
+            and ((near(t.GetStart(), x1, y1) and near(t.GetEnd(), x2, y2)) or (near(t.GetStart(), x2, y2) and near(t.GetEnd(), x1, y1)))]
+    for t in kill:
+        b.Remove(t)
+    pcbnew.SaveBoard(BOARD, b)
+    print("dropped", len(kill), "segments")
+
+
+def move_via(x, y, nx, ny):
+    """move the via at (x, y) to (nx, ny) and drag the ends of the tracks that meet it"""
+    b = pcbnew.LoadBoard(BOARD)
+    n = 0
+    for t in b.GetTracks():
+        if t.GetClass() == "PCB_VIA":
+            if abs(t.GetPosition().x / 1e6 - x) < 0.01 and abs(t.GetPosition().y / 1e6 - y) < 0.01:
+                t.SetPosition(pcbnew.VECTOR2I(mm(nx), mm(ny))); n += 1
+        else:
+            for get, put in ((t.GetStart, t.SetStart), (t.GetEnd, t.SetEnd)):
+                p = get()
+                if abs(p.x / 1e6 - x) < 0.01 and abs(p.y / 1e6 - y) < 0.01:
+                    put(pcbnew.VECTOR2I(mm(nx), mm(ny))); n += 1
+    pcbnew.SaveBoard(BOARD, b)
+    print("moved", n, "items")
+
+
 if __name__ == "__main__":
     cmd = sys.argv[1]
-    if cmd == "silk-strip":
+    if cmd == "drop-seg":
+        drop_seg(*map(float, sys.argv[2:6]))
+    elif cmd == "move-via":
+        move_via(*map(float, sys.argv[2:6]))
+    elif cmd == "silk-strip":
         silk_strip(sys.argv[2:])
     elif cmd == "track":
         v = [float(a) for a in sys.argv[5:]]

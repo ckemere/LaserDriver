@@ -10,8 +10,8 @@ sys.path.insert(0, ROOT)
 from sch_parts import ISOLATED_NETS  # noqa: E402
 
 PRO = os.path.join(ROOT, "StimHAT.kicad_pro")
-POWER = ["+5V", "+3V3", "+3V3_PI", "MSPM0_3V3", "VBUS", "VBUS_SW", "GND",
-         "+V_RAW", "-V_RAW", "+V_F", "-V_F", "+V_STIM", "-V_STIM", "+5V_ISO", "GND_ISO"]
+POWER = ["+5V", "+3V3", "+3V3_PI", "MSPM0_3V3", "VBUS", "VBUS_SW", "GND", "+5V_ISO", "GND_ISO"]
+RAILS = ["+V_RAW", "-V_RAW", "+V_F", "-V_F", "+V_STIM", "-V_STIM"]       # up to 33.6 V between + and -: 0.2 mm
 FINE = ["USB_DP", "USB_DM", "CC1", "CC2"]
 
 
@@ -26,16 +26,21 @@ d = json.load(open(PRO))
 d["meta"]["filename"] = "StimHAT.kicad_pro"
 ns = d["net_settings"]
 ns["classes"] = [cls("Default", 0.15, 0.2, 0.6, 0.3), cls("Power", 0.15, 0.3, 0.6, 0.3), cls("Fine", 0.15, 0.2, 0.6, 0.3),
-                 cls("Isolated", 0.15, 0.2, 0.6, 0.3), cls("IsolatedPower", 0.15, 0.3, 0.6, 0.3)]
+                 cls("Isolated", 0.15, 0.2, 0.6, 0.3), cls("IsolatedPower", 0.15, 0.3, 0.6, 0.3),
+                 cls("Rails", 0.15, 0.3, 0.6, 0.3)]
 pats = []
 for n in POWER:
     pats.append({"netclass": "IsolatedPower" if n in ISOLATED_NETS else "Power", "pattern": n})
 for n in FINE:
     pats.append({"netclass": "Fine", "pattern": n})
+for n in RAILS:
+    pats.append({"netclass": "Rails", "pattern": n})
 for n in sorted(ISOLATED_NETS):
-    if n not in POWER:
+    if n not in POWER and n not in RAILS:
         pats.append({"netclass": "Isolated", "pattern": n})
         pats.append({"netclass": "Isolated", "pattern": "/" + n})
+for n in ("unconnected-(U105*", "unconnected-(U108*"):          # NC pads of isolated ICs: keep them out of the barrier rule
+    pats.append({"netclass": "Isolated", "pattern": n})
 ns["netclass_patterns"] = pats
 ns.pop("netclass_assignments", None)
 r = d["board"]["design_settings"]["rules"]

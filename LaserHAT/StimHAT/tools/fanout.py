@@ -12,7 +12,7 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), 
 BOARD = os.path.join(ROOT, "StimHAT.kicad_pcb")
 FANOUT = {"U7": (0.45, 0.95), "U101": (0.45, 1.0)}        # via centre beyond the pad tip: near, far
 SKIP_NETS = {"", "GND", "GND_ISO"}                           # the exposed pad and grounds are left to the router
-STUB_W, VIA_D, VIA_DRILL = 0.15, 0.5, 0.3
+STUB_W, VIA_D, VIA_DRILL = 0.2, 0.5, 0.3
 mm = pcbnew.FromMM
 
 

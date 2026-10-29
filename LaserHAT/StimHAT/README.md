@@ -78,20 +78,59 @@ No copper pours.  User.Drawings: the bonnet outline, the 0.91" module outline, t
 
 Routing (rev A, 2026-10-29): `tools/autoroute.py --passes 500` = rip → `tools/fanout.py` (locked dog-bone stub + via on
 every netted pin of U7 and U101, alternately 0.45 / 0.95 mm out so the vias stagger, plus four GND thermal vias in U7's
-exposed pad: without them Freerouting never finished the MCU's escape) → `tools/preroute.py` (SDA_H hand-planned and
-locked: U7.21 down between the south-row vias, east under the MCU, north along x 28.3 to R107; the one connection the
-router failed on in every run) → Freerouting → import → `tools/fixups.py drop-dangling-vias` and `--trim-stubs` remove
-the fan-out vias the router did not use.  Result: 0 DRC errors, 0 unconnected, ERC 0 / 0.  The four remaining DRC
-warnings are `lib_footprint_mismatch` on J6, J7, J101 and PS1: their silk outlines hang past the board edge (BNC
-barrels, the electrode header, PS1's body), so `fixups.py silk-strip` deleted them from the board copies.
-`fab/StimHAT/StimHAT_top.png` / `_bottom.png` are the renders.
+exposed pad: without them Freerouting never finished the MCU's escape) → `tools/preroute.py` (hand-planned, locked:
+SDA_H from U7.21 down between the south-row vias, east under the MCU and north along x 28.3 to R107; C1 into pin 4's
+via; the +5V / GND feed of the tab's HAT strip down the passage east of J7; and the tab's isolated part — −V_RAW,
++V_RAW, GND_ISO, E1_OUT, ISENSE through the corridor west of MH4 and around J102 to PS1's pins and J101, where the
+mirrored pin orders of J102 and PS1 force the three supply nets to cross on alternate layers; the router solved none
+of these reliably) → Freerouting → import → `tools/fixups.py drop-dangling-vias` and `--trim-stubs` remove the fan-out
+vias the router did not use (locked pre-routes are never trimmed).  Freerouting stops after ~300 passes with 2–9
+connections open and never the same ones; after the review's placement changes the last 2–3 (and the DRC fixes above)
+were finished by hand with `tools/fixups.py` (`track`, `via`, `move-via`, `drop-seg`): the +5V trunk to the tab runs
+from J1.4 on the back along x 7.2, then down the west edge at x 1.2 to the power LED and on along the edge; the tab's
+five isolated nets go through the corridor west of MH4 (-V_RAW front x 53.6, +V_RAW back 53.55, GND_ISO back 54.9,
+E1_OUT back 55.6, ISENSE back 56.2) and around J102, whose pin order is the mirror of PS1's; GND_ISO of the LDO area
+joins the battery socket along the east edge past MH4.  `tools/preroute.py` holds the pre-routes a fresh run starts
+from; the hand finishing is not scripted, so a full re-route restarts from the placement.  Result: 0 DRC errors,
+0 unconnected (isolation rule live), ERC 0 / 0.  The four remaining DRC warnings are `lib_footprint_mismatch` on J6,
+J7, J101 and PS1: their silk outlines hang past the board edge (BNC barrels, the electrode header, PS1's body), so
+`fixups.py silk-strip` deleted them from the board copies.  `fab/StimHAT/StimHAT_top.png` / `_bottom.png` are the
+renders.
 
 ## Checks before fab
 
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
 `python tools/drc_summary.py` (0 errors, 0 unconnected), `../tools/path_check.py StimHAT.kicad_pcb StimHAT.kicad_sch`,
 `../tools/sync_check.py StimHAT.kicad_pcb StimHAT.kicad_sch`, then `tools/stamp_fields.py` and `tools/make_fab.py`.
-Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), J10 (optional).  Not fitted: R1, R2.
+Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), J10 (optional).  Not fitted: R1, R2
+(the Pi has the ID-EEPROM pull-ups), R19, R20 (the Pi has 1.8 k on GPIO 2/3; fit them only for stand-alone use with a
+J10 module that lacks its own pull-ups).
+
+Independent schematic review (2026-10-29), applied: the CH340N (U6) now runs from MSPM0_3V3 instead of +3V3 — on +3V3
+its idle-high TXD / RTS# drove PA11 / NRST of the MCU while the Pi had the MCU rail switched off (abs-max violation and a
+back-feed that made GPIO18 power-cycles unclean; inherited from the Rev 2 HAT), so the USB-UART now disappears from the
+host while the MCU is off; C17 100 nF at U6; R3 47 k → 10 k so NRST sits at ≈ 2.75 V against the Pi's boot-time
+pull-down on GPIO16 instead of ≈ 1.6 V; C125 / C126 100 nF 50 V at the DG418's V+ / V−; R19 / R20 DNP.  Noted, not
+changed: JP1 open leaves the ID EEPROM write-enabled — close it after programming; do not terminate J7 in 50 Ω (the
+74LVC2G17 through R25 33 Ω is for high-impedance trigger inputs); −5V_ISO measures ≈ −4.0 to −4.2 V (BZT52C4V3S at
+2 mA, below its 5 mA test current), which is what the 4053 needs.
+
+Independent layout review (2026-10-29), applied: `StimHAT.kicad_dru` had never been applied — KiCad 9 silently drops
+a rule that carries a `(comment …)` entry (verified: the same rule fires without it), so the 2.5 mm barrier had not
+been checked by DRC.  The file now has no comments and is proven live by a deliberate 25 mm test before a DRC result is
+trusted.  With the rule live, three real intrusions were fixed (the I2C loop above U109 at 2.32 mm from its HAT-side
+pads — U109's SOIC pads are 1.95 mm long — now the +5V_ISO feed alone runs above U109 at y 20.65 and SCL / SDA pass
+below it; the passage tracks 2.18 mm from the pads of U104 / Q101 / C109 — those moved 0.3 mm east and the +5V / GND
+passage tracks are pre-routed at x 46.5 / 47.15).  The four nets the schematic had left unlabelled (VREFIO, OA_IN,
+U5B_IN, OA_OUT) and the NC pads of U105 / U108 are in the Isolated class.  The former 0.3 mm rule between the + and −
+rails was dropped: the rails keep the 0.15 mm class clearance (IPC-2221 B4, coated, ≤ 50 V: 0.13 mm; the `Rails` class
+only marks them, 0.3 mm wide).  Standoff keep-outs exclude tracks (r 3.25 mm; MH4 r 2.85 mm — fit a round nylon
+standoff / washer ≤ Ø 5.7 mm there, nothing isolated lies under it).  Decouplers moved next to their pins (C1 / C16 /
+C4 at U7, C17 at U6, C18 at U1, C103 at U109's side 1, C102 west of U109's side 2, C101 at U101, C116 / C117 at U106,
+C118 / C119 at U107, C125 / C126 at U108, C112 at U104); R109 sits beside the SDA lane, R110 under U105; the LEDs sit
+below the bonnet's edge (y ≥ 31.5); silk text 1.0 mm.  Noted, not changed: BNC pitch 15.6 mm (two plugs side by side
+with ≈ 1 mm between the knurls); no copper pours (GND is 0.3 mm tracks; adequate at these currents); the USB pair is
+unmatched (full speed only).
 
 ## Assembly notes and first-article checks
 
@@ -101,4 +140,4 @@ Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), 
 - Joystick: mounted at 45°, directions line up with the board (up = away from the BNCs).  If a direction reads wrong,
   swap in firmware (BUTTON1/3/4/6).
 - First power-up with a Pi: check +3V3, MSPM0_3V3 (GPIO18 high), +5V_ISO ≈ 5.0 V, +V_STIM / −V_STIM ≈ ±13.5 V (DC-DC) or
-  pack minus ≈ 1.2 V, −5V_ISO ≈ −4.2 V, FAULT_n high; then the module checks from `../EStimDaughter/README.md`.
+  pack minus ≈ 1.2 V, −5V_ISO ≈ −4.0 to −4.2 V, FAULT_n high; then the module checks from `../EStimDaughter/README.md`.

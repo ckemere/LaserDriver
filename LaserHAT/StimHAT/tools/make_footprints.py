@@ -72,3 +72,7 @@ for (x1, y1, x2, y2) in ((-5.0, -5.0, 5.0, -5.0), (5.0, -5.0, 5.0, 5.0), (5.0, 5
     s.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); s.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2))); j.Add(s)
 io.FootprintSave(LIB, j)
 print("saved SW_ALPS_SKRHADE010:", len(list(j.Pads())), "pads")
+
+import subprocess
+subprocess.run(["python3", os.path.join(os.path.dirname(os.path.abspath(__file__)), "silk_dedupe.py"),
+                os.path.join(LIB, "VQFN32_RHB_TEX.kicad_mod")], check=True)   # TI ships the pin-1 star twice

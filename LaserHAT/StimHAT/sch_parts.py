@@ -16,7 +16,7 @@ Core (refs as on the Rev 2 HAT, nets as in its netlist, see ../CLAUDE.md "Rev 2 
     the alternative to the bonnet; same Pi I2C bus, same 3.3 V.
 Stimulator (refs = the e-stim module's + 100): kbest rev E output stage, isolated by an ISO7741F (EN, CATH, RELEASE in,
 FAULT_n back) and an ISO1640 (I2C to the DAC60501, readback kept: the DACx0501 has no SPI data-out pin), with
-  * a 74HC4053 on +5 / -4.7 V for the sign / gate switches (was an ADG1436 on +/-15 V); its spare third switch inverts
+  * a 74HC4053 on +5 / -4.3 V for the sign / gate switches (was an ADG1436 on +/-15 V); its spare third switch inverts
     RELEASE for the SHORT switch
   * a DG418 (SPST, normally open, IN high = on) as the SHORT switch (was a DG419): closed while RELEASE is low
   * +/-V from the A0515S DC-DC (PS1, hand-fitted) or the battery pack (J102, B4B-PH-K-S), then an LC filter and a
@@ -106,8 +106,9 @@ PARTS = [
     C("C16", "100nF", "MSPM0_3V3", "GND", lcsc=L["C100n"]),
     dict(ref="JP5", sym="Jumper2", value="STANDALONE_3V3", fp=JUMPER_R, lcsc="", nets={"1": "+3V3", "2": "+3V3_PI"}),
     C("C15", "100nF", "+3V3_PI", "GND", lcsc=L["C100n"]),
-    R("R19", "4.7k", "+3V3_PI", "I2C_SDA", lcsc=L["R4k7"]),
-    R("R20", "4.7k", "+3V3_PI", "I2C_SCL", lcsc=L["R4k7"]),
+    C("C18", "100nF", "+3V3_PI", "GND", lcsc=L["C100n"]),
+    R("R19", "4.7k", "+3V3_PI", "I2C_SDA", lcsc=L["R4k7"]) | {"dnp": True},
+    R("R20", "4.7k", "+3V3_PI", "I2C_SCL", lcsc=L["R4k7"]) | {"dnp": True},
     # HAT ID EEPROM
     dict(ref="U1", sym="M24C32", value="M24C32-WDW6TP", fp=TSSOP8, lcsc=L["EEPROM"],
          nets={"1": None, "2": None, "3": None, "4": "GND", "5": "ID_SDA", "6": "ID_SCL", "7": "JP1_A", "8": "+3V3_PI"}),
@@ -124,11 +125,12 @@ PARTS = [
                "33": "GND"}),
     R("R4", "100k 0.1%", "ROSC", "GND", lcsc=L["R100k01"]),
     C("C4", "470nF", "VCORE", "GND", lcsc=L["C470n"]),
-    R("R3", "47k", "MSPM0_3V3", "NRST", lcsc=L["R47k"]),
+    R("R3", "10k", "MSPM0_3V3", "NRST", lcsc=L["R10k"]),
     C("C3", "10nF", "NRST", "GND", lcsc=L["C10n"]),
     dict(ref="JP4", sym="Jumper2", value="RTS_NRST", fp=JUMPER_T, lcsc="", nets={"1": "NRST", "2": "CH340_RTS"}),
     dict(ref="U6", sym="CH340N", value="CH340N", fp=JEITA8, lcsc=L["CH340"],
-         nets={"1": "USB_DP", "2": "USB_DM", "3": "GND", "4": "CH340_RTS", "5": "+3V3", "6": "MCU_UART_RX", "7": "MCU_UART_TX", "8": "+3V3"}),
+         nets={"1": "USB_DP", "2": "USB_DM", "3": "GND", "4": "CH340_RTS", "5": "MSPM0_3V3", "6": "MCU_UART_RX", "7": "MCU_UART_TX", "8": "MSPM0_3V3"}),
+    C("C17", "100nF", "MSPM0_3V3", "GND", lcsc=L["C100n"]),
     dict(ref="SW6", sym="SW_Push", value="TS-1088-AR02016", fp="Button_Switch_SMD:SW_SPST_TS-1088-xR020", lcsc=L["TS1088"],
          nets={"1": "BSL_INVOKE", "2": "MSPM0_3V3"}),
     dict(ref="D7", sym="LED", value="KT-0603R", fp=LED0603, lcsc=L["LEDR"], nets={"1": "D7_K", "2": "LED_MCU"}),
@@ -235,6 +237,8 @@ PARTS = [
     R("R121", "4.7k", "+5V_ISO", "FAULT_n", lcsc=L["R4k7"]),
     dict(ref="D101", sym="D", value="BAT54WS", fp=SOD323, lcsc=L["BAT54WS"], nets={"1": "FAULT_n", "2": "GND_ISO"}),
     C("C122", "100nF 50V", "+V_STIM", "-V_STIM", fp=C0603, lcsc=L["C100n50"]),
+    C("C125", "100nF 50V", "+V_STIM", "GND_ISO", fp=C0603, lcsc=L["C100n50"]),
+    C("C126", "100nF 50V", "GND_ISO", "-V_STIM", fp=C0603, lcsc=L["C100n50"]),
     # ================================================================ 8. mechanical
     dict(ref="MH1", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),
     dict(ref="MH2", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),

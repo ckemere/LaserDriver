@@ -127,7 +127,7 @@ def remove_track_at(path, x, y):
     """delete the one track that has an end at (x, y) mm; a separate process per call, pcbnew does not survive
     many LoadBoard/SaveBoard cycles in one interpreter"""
     board = pcbnew.LoadBoard(path)
-    hit = [t for t in board.GetTracks() if t.GetClass() == "PCB_TRACK"
+    hit = [t for t in board.GetTracks() if t.GetClass() == "PCB_TRACK" and not t.IsLocked()      # pre-routes stay
            and any(abs(p.x / 1e6 - x) < 0.01 and abs(p.y / 1e6 - y) < 0.01 for p in (t.GetStart(), t.GetEnd()))]
     if hit:
         board.Remove(hit[0])
@@ -151,8 +151,10 @@ def remove_dangling(path):
         tried.add((x, y))
         backup = os.path.join(WORK, "before_cleanup.kicad_pcb")
         shutil.copy(path, backup)
-        subprocess.run([sys.executable, os.path.abspath(__file__), "--remove-track", str(x), str(y)],
-                       capture_output=True, check=True)
+        r = subprocess.run([sys.executable, os.path.abspath(__file__), "--remove-track", str(x), str(y)],
+                           capture_output=True)
+        if r.returncode != 0:                            # nothing removable there (a locked pre-route)
+            continue
         if len(drc(path)["unconnected_items"]) > base:
             shutil.copy(backup, path)                    # that stub carries a connection: keep it
         else:
