@@ -8,7 +8,7 @@ Core (refs as on the Rev 2 HAT, nets as in its netlist, see ../CLAUDE.md "Rev 2 
       PA6  FAULT_H (TIMA0_FAULT0-capable, used as a falling-edge IRQ)   PA7  EN_H      PA12 CATH_H
       PA15 RELEASE_H                                                     PA17 SDA_H     PA22 SCL_H   (bit-banged I2C, as today)
   * NRST comes from Pi GPIO16 (header pin 36) instead of GPIO23 (pin 16): the Adafruit 4567 bonnet's joystick-right
-    grounds GPIO23, which would reset the MCU.  GPIO23 is left unconnected.  (Pi side: LASERHAT_RESET_PIN = 16.)
+    grounds GPIO23, which would reset the MCU.  GPIO23 is left unconnected.  (Pi side: LASERHAT_NRST_PIN=16 for Pi/power_cycle.py.)
   * SW7 is a five-way joystick (ALPS SKRHADE010) instead of the thumbwheel + the BACK button SW8:
       up = BUTTON4 (PA13, was wheel roll), down = BUTTON3 (PA16), centre push = BUTTON2 (PA14), left = BUTTON1 (PA21,
       BACK), right = BUTTON6 (PA3, new); FIRE stays SW9 = BUTTON5 (PA23).  All active low, common to GND.
@@ -113,8 +113,8 @@ PARTS = [
     dict(ref="U1", sym="M24C32", value="M24C32-WDW6TP", fp=TSSOP8, lcsc=L["EEPROM"],
          nets={"1": None, "2": None, "3": None, "4": "GND", "5": "ID_SDA", "6": "ID_SCL", "7": "JP1_A", "8": "+3V3_PI"}),
     dict(ref="JP1", sym="Jumper2", value="ID_WP", fp=JUMPER_R, lcsc="", nets={"1": "JP1_A", "2": "+3V3_PI"}),
-    R("R1", "3.9k", "+3V3_PI", "ID_SDA", lcsc=L["R3k9"]) | {"dnp": True},
-    R("R2", "3.9k", "+3V3_PI", "ID_SCL", lcsc=L["R3k9"]) | {"dnp": True},
+    R("R1", "3.9k", "+3V3_PI", "ID_SDA", lcsc=L["R3k9"]),
+    R("R2", "3.9k", "+3V3_PI", "ID_SCL", lcsc=L["R3k9"]),
     # ================================================================ 2. MCU, USB-UART, reset, BSL, buttons, LEDs, display socket
     dict(ref="U7", sym="MSPM0G3507", value="MSPM0G3507SRHBR", fp="stimhat:VQFN32_RHB_TEX", lcsc=L["MCU"],
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
@@ -157,8 +157,8 @@ PARTS = [
     R("R101", "100k", "EN_H", "GND", lcsc=L["R100k"]),
     R("R102", "100k", "CATH_H", "GND", lcsc=L["R100k"]),
     R("R103", "100k", "RELEASE_H", "GND", lcsc=L["R100k"]),
-    R("R107", "4.7k", "MSPM0_3V3", "SDA_H", lcsc=L["R4k7"]),
-    R("R108", "4.7k", "MSPM0_3V3", "SCL_H", lcsc=L["R4k7"]),
+    R("R107", "2.2k", "MSPM0_3V3", "SDA_H", lcsc=L["R2k2"]),
+    R("R108", "2.2k", "MSPM0_3V3", "SCL_H", lcsc=L["R2k2"]),
     dict(ref="U101", sym="ISO7741", value="ISO7741FDBQR", fp=SSOP16, lcsc=L["ISO7741"],
          nets={"1": "MSPM0_3V3", "2": "GND", "3": "RELEASE_H", "4": "EN_H", "5": "CATH_H", "6": "FAULT_H", "7": "MSPM0_3V3", "8": "GND",
                "9": "GND_ISO", "10": "+5V_ISO", "11": "FAULT_n", "12": "CATH", "13": "EN", "14": "RELEASE", "15": "GND_ISO", "16": "+5V_ISO"}),

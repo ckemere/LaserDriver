@@ -3550,7 +3550,7 @@
 				)
 			)
 		)
-		(property "Value" "4.7k"
+		(property "Value" "2.2k"
 			(at 0 1.17 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3586,7 +3586,7 @@
 				)
 			)
 		)
-		(property "LCSC Part #" "C25900"
+		(property "LCSC Part #" "C25879"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -4263,7 +4263,7 @@
 			)
 		)
 		(path "/4a374bd9-2db6-530c-8e42-2ad832b02166")
-		(attr smd dnp)
+		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
 			(end 0.153641 -0.38)
@@ -16735,7 +16735,7 @@
 				)
 			)
 		)
-		(property "Value" "4.7k"
+		(property "Value" "2.2k"
 			(at 0 1.17 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -16771,7 +16771,7 @@
 				)
 			)
 		)
-		(property "LCSC Part #" "C25900"
+		(property "LCSC Part #" "C25879"
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -20294,7 +20294,7 @@
 			)
 		)
 		(path "/e6110f0b-6267-55dc-80a2-5071061a7c0d")
-		(attr smd dnp)
+		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
 			(end 0.153641 -0.38)

@@ -195,7 +195,7 @@ text("R101-R103 hold EN / CATH / RELEASE low while the MCU pins are Hi-Z (zero c
 text("and R109 / R110 are the I2C pull-ups.  ISO1640: side 1 (pins 1-4) = MCU side, side 2 = DAC side.  C101 at U101.1, C103 at U109.1.", 7, 109)
 
 # =========================================================================== 5. isolated power
-box(62, 64, 140, 112, "5. ISOLATED POWER: A0515S (PS1) OR THE BATTERY PACK (J102), LC + CAPACITANCE MULTIPLIERS, CLAMPS, +5 / -4.7 V")
+box(62, 64, 140, 112, "5. ISOLATED POWER: A0515S (PS1) OR THE BATTERY PACK (J102), LC + CAPACITANCE MULTIPLIERS, CLAMPS, +5 / -4.3 V")
 put("PS1", 74, 72, ref_at=(0, -8.89), val_at=(0, 8.89))
 PWR("PS1.1", length=5.08); PWR("PS1.2", length=5.08)
 PWR("PS1.6", length=5.08); PWR("PS1.5", length=5.08); PWR("PS1.4", length=5.08)
@@ -206,7 +206,7 @@ put("L101", 94, 70); PWR("L101.1"); e = PWR("L101.2"); FLAG(e, up=(0, -1))
 put("L102", 94, 100); PWR("L102.1"); e = PWR("L102.2"); FLAG(e, up=(0, 1))
 put("C105", 102, 74); PWR("C105.1"); PWR("C105.2")
 put("C106", 102, 96); PWR("C106.1"); PWR("C106.2")
-# capacitance multipliers: NPN follower on +V_F (base RC 2.2k / 22 uF), PNP on -V_F
+# capacitance multipliers: NPN follower on +V_F (base RC 4.7 k / 10 uF), PNP on -V_F
 put("Q101", 112, 76, ref_at=(5.08, 2.54), val_at=(5.08, 0))
 PWR("Q101.3"); e = PWR("Q101.2"); FLAG(e, up=(1, 0))             # C <- +V_F (top), E -> +V_STIM (bottom)
 put("R111", 106, 76); PWR("R111.1")
@@ -322,7 +322,7 @@ put("U110", 172, 122, unit=3); put("C122", 176, 122)
 for s_ in ("U110.8", "U110.4", "C122.1", "C122.2"):
     PWR(s_)
 put("TP102", 190, 148); W("TP102.1", (190, 149)); pwr_at("GND_ISO", 190, 149, (0, 1))
-text("Taps at 0.043 x (V+ + |V-|) inside each rail (0.9 V at +/-13.5 V).  FAULT_n low while |E1| is past the trip point,", 141, 153)
+text("Taps at 0.043 x (V+ + |V-|) inside each rail (1.15 V at +/-13.5 V).  FAULT_n low while |E1| is past the trip point,", 141, 153)
 text("while +5V_ISO is down and when one rail is missing.  R120 / D101 shift the -V-referenced open collectors to 0..5 V.", 141, 155)
 
 # =========================================================================== 10. mounting

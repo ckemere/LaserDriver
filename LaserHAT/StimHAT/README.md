@@ -29,7 +29,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | USB-C | J5 GT-USB-7010ASV, R8 / R10 5.1k CC, Q5 AP30P30Q VBUS switch + R26 100k + SW10 MSK12C02, Q3 AP30P30Q + Q4 DMMT5401 + R21 / R22 ideal diode into +5V, D5 (white) + R13 | USB power only when SW10 enables it; the Pi's 5 V and the USB 5 V never fight |
 | 3.3 V | U4 MCP1700-3.3 (+3V3: CH340N, U5 input), U5 AP2171W (MSPM0_3V3, enabled by Pi GPIO18 through R7), C1 / C2 / C6 / C12 / C13 / C16, JP5 | JP5 feeds +3V3 onto the Pi's 3.3 V pins for stand-alone use (open it with a Pi) |
 | ID EEPROM | U1 M24C32, JP1 (WP), R1 / R2 3.9k DNP | HAT spec |
-| MCU | U7 MSPM0G3507 (VQFN-32), R4 100k 0.1 % (ROSC), C4 470n (VCORE), R3 47k + C3 10n + JP4 (reset), SW6 TS-1088 (BSL, active high), D7 + R15 (MCU LED) | pin map below |
+| MCU | U7 MSPM0G3507 (VQFN-32), R4 100k 0.1 % (ROSC), C4 470n (VCORE), R3 10k + C3 10n + JP4 (reset), SW6 TS-1088 (BSL, active high), D7 + R15 (MCU LED) | pin map below |
 | USB-UART | U6 CH340N | `MCU_UART_TX/RX`; RTS can reset the MCU through JP4 |
 | Controls | SW7 ALPS SKRHADE010 five-way joystick (mounted at 45°), SW9 TS-1088 FIRE | replaces the thumbwheel and the BACK button |
 | BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (74LVC2G17) → PA26; PA25 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |
@@ -58,7 +58,8 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | 27 | PA23 | BUTTON5 | SW9 FIRE |
 
 Everything else is as in `../CLAUDE.md`.  Firmware: the e-stim mode works unchanged (same lines, same DAC, same I2C);
-add BUTTON6 to the button mask; on the Pi, `LASERHAT_RESET_PIN=16`.  The bonnet's buttons use GPIO 4, 5, 6, 17, 22,
+add BUTTON6 to the button mask; on the Pi, `LASERHAT_NRST_PIN=16` (`Pi/power_cycle.py` defaults to 23, the bonnet's
+joystick-right pin on this board).  The bonnet's buttons use GPIO 4, 5, 6, 17, 22,
 23, 27, none of which the HAT now touches.
 
 ## Board
@@ -102,9 +103,17 @@ renders.
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
 `python tools/drc_summary.py` (0 errors, 0 unconnected), `../tools/path_check.py StimHAT.kicad_pcb StimHAT.kicad_sch`,
 `../tools/sync_check.py StimHAT.kicad_pcb StimHAT.kicad_sch`, then `tools/stamp_fields.py` and `tools/make_fab.py`.
-Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), J10 (optional).  Not fitted: R1, R2
-(the Pi has the ID-EEPROM pull-ups), R19, R20 (the Pi has 1.8 k on GPIO 2/3; fit them only for stand-alone use with a
-J10 module that lacks its own pull-ups).
+Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), J10 (optional).  Not fitted: R19, R20
+(the Pi has 1.8 k on GPIO 2/3; fit them only for stand-alone use with a J10 module that lacks its own pull-ups).
+R1 / R2 (3.9 k on ID_SD / ID_SC) are fitted: the HAT design guide puts them on the HAT.
+
+Second schematic review (2026-10-29, no blocker / major): R107 / R108 4.7 k → 2.2 k (ISO1640 side-1 sink current
+was at the bottom of its 0.5–3.5 mA range); stale texts fixed.  Noted, not changed: the Pi's GPIO14 / 16 / 24 / 25 /
+26 drive MCU pins directly, so a Pi that pulls GPIO18 low without parking them (as `Pi/power_cycle.py` does, with
+`LASERHAT_NRST_PIN=16` on this board) back-feeds MSPM0_3V3 through the MCU's clamps; JP4 (RTS → NRST) is for
+stand-alone use only (two push-pull drivers otherwise); with SW10 on, the USB-C port back-powers the Pi through the
+ideal diode — use a ≥ 3 A supply or keep SW10 off with a Pi fitted; the electrode pins have no series / TVS
+protection beyond the op-amp's clamps (a candidate for rev B: 1 k in each lead).
 
 Independent schematic review (2026-10-29), applied: the CH340N (U6) now runs from MSPM0_3V3 instead of +3V3 — on +3V3
 its idle-high TXD / RTS# drove PA11 / NRST of the MCU while the Pi had the MCU rail switched off (abs-max violation and a
