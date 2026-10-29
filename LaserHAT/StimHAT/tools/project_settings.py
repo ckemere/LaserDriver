@@ -11,7 +11,7 @@ from sch_parts import ISOLATED_NETS  # noqa: E402
 
 PRO = os.path.join(ROOT, "StimHAT.kicad_pro")
 POWER = ["+5V", "+3V3", "+3V3_PI", "MSPM0_3V3", "VBUS", "VBUS_SW", "GND", "+5V_ISO", "GND_ISO"]
-RAILS = ["+V_RAW", "-V_RAW", "+V_F", "-V_F", "+V_STIM", "-V_STIM"]       # up to 33.6 V between + and -: 0.2 mm
+RAILS = ["+V_STIM", "-V_STIM"]       # up to 33.6 V between + and -: 0.2 mm
 FINE = ["USB_DP", "USB_DM", "CC1", "CC2"]
 
 

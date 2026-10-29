@@ -3,8 +3,8 @@
 One 65 × 57 mm HAT (plus a 10 × 7.5 mm tab on the south-east) carries the Rev 2 HAT core — MSPM0G1507 (the G3507 minus CAN-FD, same pinout), CH340N USB-UART,
 USB-C power path, HAT ID EEPROM, BNC trigger in / stim out, buttons and LEDs — and the kbest constant-current
 stimulator that was the plug-in e-stim module, isolated from the Pi side by an ISO7741F and an ISO1640 and powered
-either by the A0515S DC-DC (hand-fitted, standing north of the BNC bodies) or by the battery pack (JST-PH socket in
-the same place; one of the two is fitted).  The
+by the battery pack (J102, JST-PH) or by a plug-in DC-DC pod (A0515S + LC filter + capacitance multipliers on its own
+board, 2026-10-29) that plugs into J102's holes and takes 5 V from J103.  The
 Adafruit 4567 OLED bonnet stacks on the Pi header above it as before; a 0.91" 128 × 32 I2C OLED module can be fitted
 in an unpopulated right-angle socket instead.  2-layer, JLC economic assembly (top side only).
 
@@ -36,7 +36,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (74LVC2G17) → PA26; PA25 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |
 | Display | J10 PinSocket 1 × 4 vertical, unpopulated (GND, 3.3 V, SCL, SDA) | for a 0.91" 128 × 32 SSD1306 module (LCSC C5248081) standing up along the header at the strip's west end, facing south, instead of the bonnet |
 | Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 100k pull-downs, R107 / R108 and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
-| Isolated supply | PS1 A0515S (±15 V from the HAT's 5 V, hand-fitted, **standing in the band north of the BNC bodies**, DNP in the BOM; J102 shares its space) or J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V), L101 / L102 10 µH + C105 / C106 10 µF, Q101 / Q102 capacitance multipliers (R111 / R112 4.7k, C107 / C108 10 µF), C109 / C110, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V), C104 | C104 is PS1's input cap, west of its body |
+| Isolated supply | J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V) or the DC-DC pod's 2.0 mm pins in its holes; J103 1 × 2 header (5 V, GND, unpopulated) feeds the pod; C109 / C110 10 µF, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V) | the A0515S, L101 / L102 + C105 / C106 and the Q101 / Q102 capacitance multipliers moved to the pod (see below) |
 | Set-point | U105 DAC60501 (I2C 0x48), C114 / C115, U106B OPA2192 inverter (R105 / R106 10.0k 0.1 %), U107 CD74HC4053 on +5 / −4.3 V | switch 1 (CATH) picks ±VSET, switch 2 (EN) gates it, switch 3 inverts RELEASE for the SHORT switch |
 | Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2) | 502 µA full scale, 0.123 µA / LSB |
 | SHORT | U108 DG418 (normally open, on while SHORT_IN is high = RELEASE low) | electrode shorted whenever RELEASE is low, including HAT-side power-down |
@@ -72,16 +72,13 @@ end, pins GND / 3V3 / SCL / SDA at x 22.8 / 20.3 / 17.7 / 15.2, y 10 — the 0.9
 facing south (its text flipped in software; drawn on User.Drawings); JP1 moved to the strip's east end.  West edge, top
 to bottom: SW10, J5, the three LEDs, FIRE, the joystick in the south-west corner.  Two right-angle BNCs mid-south
 (bodies y 43–57, barrels past the edge; `stimhat:BNC_Amphenol_031-5540_RA`, right-angle only — the Rev 2 HAT's dual
-footprint with the vertical 031-5539's diagonal post pad and body removed).  PS1 stands in the band the vertical BNC
-bodies would have taken (body x 28–48, y 36.65–42.65, 10 mm tall, outside the bonnet, beside the 15.6 mm BNC bodies;
-`stimhat:DCDC_SIP6_A0515S_BodyN` with a generated VRML model): pins 1–2 (+5V, GND; x 30.3 / 32.8) on the HAT side west
-of x 34 with C104 west of the body, pins 4–6 (−V, 0V, +V; x 37.9 / 40.5 / 43.0, y 37.55) in an isolated pocket that joins
-block A to strip B.  **J102 (battery socket) shares that space**: `stimhat:JST_PH_B4B-PH-K_NoCrtYd` (the library
-footprint without courtyard and silk) at (44, 40.1) rot 180, pads +V / 0V / −V / CAB at x 44 / 42 / 40 / 38, y 40.1,
-2.55 mm south of PS1's pins and on the same nets; its housing covers PS1's holes — only one of the two is ever fitted,
-and the "+V 0V −V CAB" label is on the back.  Isolated stimulator: block A (x 36.5–65, y 20–35, under the bonnet's
-east end: isolators, DAC, inverter, 4053, output stage, SHORT, fault detector), the pocket (y 35–41.2), strip B
-(x 47.7–65, y 41.2–57: LDO, −4.3 V rail, filter, multipliers, clamps) and the tab (J101 vertical electrode header,
+footprint with the vertical 031-5539's diagonal post pad and body removed).  The band the vertical BNC bodies would have taken (y 36.5–43, outside the bonnet) carries the supply
+connectors: J102 (`stimhat:JST_PH_B4B-PH-K_NoCrtYd`, the library footprint without courtyard and silk) at (44, 40.1)
+rot 180 in an isolated pocket, pads +V / 0V / −V / CAB at x 44 / 42 / 40 / 38 (label on the back), and J103 (1 × 2
+2.54 mm, pin 1 = 5 V west) at (19 / 21.54, 40.1) on the HAT side.  The DC-DC pod lies flat over the band between them
+(outline on User.Drawings, x 16.5–46), its own isolation gap over the HAT's barrier strip at x 34–36.5.  Isolated stimulator: block A (x 36.5–65, y 20–35, under the bonnet's
+east end: isolators, DAC, inverter, 4053, output stage, SHORT, fault detector), the pocket (y 35–41.2, J102), strip B
+(x 47.7–65, y 41.2–57: LDO, −4.3 V rail, decoupling, clamps) and the tab (J101 vertical electrode header,
 pin 1 = E1 west).  Nothing hangs below the HAT.  Barrier (reworked 2026-10-29 night so the router draws no 2.5 mm halos): the 2.5 mm copper-free rule areas on all
 copper layers (x 34–36.5 from y 17.5 to 43.7 west of block A and the pocket; y 41.2–43.7 between J102's pads and
 J7's tails; x 45.2–47.7 east of J7; x 43–47.7 below J7's east post, y 51.3–57, so the tab's corner stays 2.5 mm
@@ -200,11 +197,20 @@ below the bonnet's edge (y ≥ 31.5); silk text 1.0 mm.  Noted, not changed: BNC
 with ≈ 1 mm between the knurls); no copper pours (GND is 0.3 mm tracks; adequate at these currents); the USB pair is
 unmatched (full speed only).
 
+## The DC-DC pod (to be designed)
+
+The isolated supply that used to be on the HAT: A0515S-1WR3 (5 V → ±15 V, 1 W, SIP-7, Mornsun, min. load 10 %),
+C104 4.7 µF at its input, L101 / L102 10 µH + C105 / C106 10 µF per rail, then an NPN / PNP capacitance multiplier per
+rail (Q101 MMBT3904 / Q102 MMBT3906, base 4.7 k / 10 µF: ≈ 0.6 V drop per rail, 60 dB ripple rejection above 100 Hz).
+On a ≈ 30 × 6.5 mm board that lies over the band 8–10 mm above the HAT: 2 × 2.54 mm pins at its west end into J103
+(5 V, GND), 4 × 2.0 mm pins at its east end into J102's holes (+V, 0V, −V, CAB = 0V) — J102's JST socket is not
+fitted when the pod is used — and a 2.5 mm copper-free gap in the middle, over the HAT's strip at x 34–36.5.  The HAT
+keeps C109 / C110 and the 20 V clamps, so the pod needs no output capacitors of its own.
+
 ## Assembly notes and first-article checks
 
 - Standoffs: M2.5 as a HAT; **MH4 (south-east) nylon** — it sits in the isolated copper.
-- PS1 stands on the top side north of the BNC bodies, pin 1 (square pad, +5V) west; fit it before the BNCs if you
-  want room for the iron.  Do not fit PS1 and the battery pack together.
+- Fit J102 (JST) for the battery pack, or leave it off and plug the DC-DC pod into J102's holes and J103.  Never both.
 - Joystick: mounted at 45°, directions line up with the board (up = away from the BNCs).  If a direction reads wrong,
   swap in firmware (BUTTON1/3/4/6).
 - First power-up with a Pi: check +3V3, MSPM0_3V3 (GPIO18 high), +5V_ISO ≈ 5.0 V, +V_STIM / −V_STIM ≈ ±13.5 V (DC-DC) or

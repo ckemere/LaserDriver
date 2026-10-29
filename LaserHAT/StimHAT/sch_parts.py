@@ -19,9 +19,10 @@ FAULT_n back) and an ISO1640 (I2C to the DAC60501, readback kept: the DACx0501 h
   * a 74HC4053 on +5 / -4.3 V for the sign / gate switches (was an ADG1436 on +/-15 V); its spare third switch inverts
     RELEASE for the SHORT switch
   * a DG418 (SPST, normally open, IN high = on) as the SHORT switch (was a DG419): closed while RELEASE is low
-  * +/-V from the A0515S DC-DC (PS1, hand-fitted) or the battery pack (J102, B4B-PH-K-S), then an LC filter and a
-    capacitance multiplier per rail, 20 V Zener clamps on each rail to GND_ISO (a floating GND_ISO can no longer take the
-    switches past their 25 V ratings), TLV760 for +5V_ISO, a 4.3 V Zener for -5V_ISO (-4.3 V: the 4053 then sees <= 9.7 V worst case of its 10 V maximum).
+  * +/-V (12..16.8 V) come in on J102 (B4B-PH-K-S) from the battery pack, or from the DC-DC pod (A0515S + LC filter +
+    capacitance multipliers, a separate board) plugged into J102's holes and fed 5 V by J103; on the HAT only C109 /
+    C110, 20 V Zener clamps on each rail to GND_ISO (a floating GND_ISO can no longer take the switches past their
+    25 V ratings), TLV760 for +5V_ISO, a 4.3 V Zener for -5V_ISO (-4.3 V: the 4053 then sees <= 9.7 V worst case)
 """
 
 R0402, R0603 = "Resistor_SMD:R_0402_1005Metric", "Resistor_SMD:R_0603_1608Metric"
@@ -171,21 +172,12 @@ PARTS = [
     R("R109", "4.7k", "+5V_ISO", "SDA", lcsc=L["R4k7"]),
     R("R110", "4.7k", "+5V_ISO", "SCL", lcsc=L["R4k7"]),
     # ================================================================ 5. isolated power
-    dict(ref="PS1", sym="A0515S", value="A0515S-1WR3", fp="stimhat:DCDC_SIP6_A0515S_BodyN", lcsc="", dnp=True,
-         nets={"1": "+5V", "2": "GND", "6": "+V_RAW", "5": "GND_ISO", "4": "-V_RAW"}),
-    C("C104", "4.7uF", "+5V", "GND", fp=C0603, lcsc=L["C4u7"]),
+    # the DC-DC (A0515S), its LC filter and the capacitance multipliers live on a plug-in pod (2026-10-29): J102 is the
+    # only +/-V input - the battery pack's cable, or the pod's 2.0 mm pins when the JST socket is not fitted; the pod
+    # takes its 5 V from J103 on the HAT side, 25 mm west across the barrier, so it lies flat over the band
     dict(ref="J102", sym="Conn_01x04", value="B4B-PH-K-S(LF)(SN)", fp=PH4, lcsc="",
-         nets={"1": "+V_RAW", "2": "GND_ISO", "3": "-V_RAW", "4": "GND_ISO"}),
-    dict(ref="L101", sym="L", value="10uH", fp=L0805, lcsc=L["L10u"], nets={"1": "+V_RAW", "2": "+V_F"}),
-    dict(ref="L102", sym="L", value="10uH", fp=L0805, lcsc=L["L10u"], nets={"1": "-V_RAW", "2": "-V_F"}),
-    C("C105", "10uF", "+V_F", "GND_ISO", fp=C0805, lcsc=L["C10u"]),
-    C("C106", "10uF", "GND_ISO", "-V_F", fp=C0805, lcsc=L["C10u"]),
-    dict(ref="Q101", sym="Q_NPN_BEC", value="MMBT3904", fp=SOT23, lcsc=L["NPN"], nets={"1": "QB_P", "2": "+V_STIM", "3": "+V_F"}),
-    R("R111", "4.7k", "+V_F", "QB_P", lcsc=L["R4k7"]),
-    C("C107", "10uF", "QB_P", "GND_ISO", fp=C0805, lcsc=L["C10u"]),
-    dict(ref="Q102", sym="Q_PNP_BEC", value="MMBT3906", fp=SOT23, lcsc=L["PNP"], nets={"1": "QB_N", "2": "-V_STIM", "3": "-V_F"}),
-    R("R112", "4.7k", "-V_F", "QB_N", lcsc=L["R4k7"]),
-    C("C108", "10uF", "GND_ISO", "QB_N", fp=C0805, lcsc=L["C10u"]),
+         nets={"1": "+V_STIM", "2": "GND_ISO", "3": "-V_STIM", "4": "GND_ISO"}),
+    dict(ref="J103", sym="Conn_01x02", value="5V TO DC-DC POD", fp=HDR2V, lcsc="", dnp=True, nets={"1": "+5V", "2": "GND"}),
     C("C109", "10uF", "+V_STIM", "GND_ISO", fp=C0805, lcsc=L["C10u"]),
     C("C110", "10uF", "GND_ISO", "-V_STIM", fp=C0805, lcsc=L["C10u"]),
     dict(ref="D103", sym="D_Zener", value="BZT52C20S", fp=SOD323, lcsc=L["Z20"], nets={"1": "+V_STIM", "2": "GND_ISO"}),
@@ -250,8 +242,8 @@ BY_REF = {p["ref"]: p for p in PARTS}
 assert len(BY_REF) == len(PARTS), "duplicate reference"
 
 # hand-fitted parts: populated by us, not by JLC (no LCSC code, out of the BOM and CPL); DNP parts are marked dnp=True above
-HAND_FIT = {"J1", "J6", "J7", "J101", "J102"}
+HAND_FIT = {"J1", "J6", "J7", "J101", "J102", "J103"}
 # nets on the isolated side of the barrier (for the board's isolation rule): everything the stimulator references to GND_ISO
-ISOLATED_NETS = {"+V_RAW", "-V_RAW", "+V_F", "-V_F", "+V_STIM", "-V_STIM", "GND_ISO", "+5V_ISO", "-5V_ISO", "QB_P", "QB_N",
+ISOLATED_NETS = {"+V_STIM", "-V_STIM", "GND_ISO", "+5V_ISO", "-5V_ISO",
                  "EN", "CATH", "RELEASE", "FAULT_n", "SDA", "SCL", "VSET_P", "VSET_N", "U5B_IN", "SW_P", "V_IN", "OA_IN",
                  "OA_OUT", "ISENSE", "E1", "E1_OUT", "TH_P", "TH_N", "FAULT_OC", "VREFIO", "SHORT_IN"}

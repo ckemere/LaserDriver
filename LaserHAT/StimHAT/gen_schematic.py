@@ -195,34 +195,16 @@ text("R101-R103 hold EN / CATH / RELEASE low while the MCU pins are Hi-Z (zero c
 text("and R109 / R110 are the I2C pull-ups.  ISO1640: side 1 (pins 1-4) = MCU side, side 2 = DAC side.  C101 at U101.1, C103 at U109.1.", 7, 109)
 
 # =========================================================================== 5. isolated power
-box(62, 64, 140, 112, "5. ISOLATED POWER: A0515S (PS1) OR THE BATTERY PACK (J102), LC + CAPACITANCE MULTIPLIERS, CLAMPS, +5 / -4.3 V")
-put("PS1", 74, 72, ref_at=(0, -8.89), val_at=(0, 8.89))
-PWR("PS1.1", length=5.08); PWR("PS1.2", length=5.08)
-PWR("PS1.6", length=5.08); PWR("PS1.5", length=5.08); PWR("PS1.4", length=5.08)
-put("C104", 66, 80); PWR("C104.1"); PWR("C104.2")
-put("J102", 74, 92, mirror=True, val_at=(0, 8.89))
-PWR("J102.1", length=5.08); PWR("J102.2", length=5.08); PWR("J102.3", length=5.08); PWR("J102.4", length=5.08)
-put("L101", 94, 70); PWR("L101.1"); e = PWR("L101.2"); FLAG(e, up=(0, -1))
-put("L102", 94, 100); PWR("L102.1"); e = PWR("L102.2"); FLAG(e, up=(0, 1))
-put("C105", 102, 74); PWR("C105.1"); PWR("C105.2")
-put("C106", 102, 96); PWR("C106.1"); PWR("C106.2")
-# capacitance multipliers: NPN follower on +V_F (base RC 4.7 k / 10 uF), PNP on -V_F
-put("Q101", 112, 76, ref_at=(5.08, 2.54), val_at=(5.08, 0))
-PWR("Q101.3"); e = PWR("Q101.2"); FLAG(e, up=(1, 0))             # C <- +V_F (top), E -> +V_STIM (bottom)
-put("R111", 106, 76); PWR("R111.1")
-W("R111.2", (106, 79), (106, 81), (118, 81))
-W("Q101.1", (110, 76), (110, 81)); lab("QB_P", 108, 81)
-put("C107", 118, 84); W("C107.1", (118, 81)); PWR("C107.2")
-put("Q102", 112, 94, rot=180, ref_at=(-6.35, -1.27), val_at=(-6.35, 1.27))
-PWR("Q102.3"); e = PWR("Q102.2"); FLAG(e, up=(1, 0))             # C -> -V_F (bottom), E -> -V_STIM (top)
-put("R112", 106, 94, rot=180); PWR("R112.1")
-W("R112.2", (106, 91), (106, 89), (122, 89))
-W("Q102.1", (114, 94), (114, 89)); lab("QB_N", 108, 89)
-put("C108", 122, 92, rot=180); W("C108.2", (122, 89)); PWR("C108.1")
-put("C109", 126, 74); PWR("C109.1"); PWR("C109.2")
-put("C110", 126, 96); PWR("C110.1"); PWR("C110.2")
-put("D103", 132, 74, rot=90, ref_at=(2.54, -1.27), val_at=(2.54, 1.27)); PWR("D103.1"); PWR("D103.2")     # K up = +V_STIM
-put("D104", 132, 96, rot=90, ref_at=(2.54, -1.27), val_at=(2.54, 1.27)); PWR("D104.1"); PWR("D104.2")     # K up = GND_ISO
+box(62, 64, 140, 112, "5. ISOLATED POWER: THE BATTERY PACK OR THE DC-DC POD ON J102, CLAMPS, +5 / -4.3 V")
+put("J103", 72, 74, mirror=True, val_at=(0, 5.08))
+PWR("J103.1", length=5.08); PWR("J103.2", length=5.08)
+put("J102", 72, 92, mirror=True, val_at=(0, 8.89))
+e = PWR("J102.1", length=5.08); FLAG(e, up=(-1, 0)); e = PWR("J102.2", length=5.08); FLAG(e, up=(-1, 0))
+e = PWR("J102.3", length=5.08); FLAG(e, up=(-1, 0)); PWR("J102.4", length=5.08)       # the pack / pod drive +/-V_STIM and GND_ISO
+put("C109", 100, 74); PWR("C109.1"); PWR("C109.2")
+put("C110", 100, 96); PWR("C110.1"); PWR("C110.2")
+put("D103", 108, 74, rot=90, ref_at=(2.54, -1.27), val_at=(2.54, 1.27)); PWR("D103.1"); PWR("D103.2")     # K up = +V_STIM
+put("D104", 108, 96, rot=90, ref_at=(2.54, -1.27), val_at=(2.54, 1.27)); PWR("D104.1"); PWR("D104.2")     # K up = GND_ISO
 put("U104", 72, 104, ref_at=(0, -6.35), val_at=(0, 6.35))
 PWR("U104.2", length=5.08); PWR("U104.1", length=5.08); PWR("U104.3")
 put("C111", 82, 106); PWR("C111.1"); PWR("C111.2")
@@ -230,8 +212,8 @@ put("C112", 88, 106); PWR("C112.1"); PWR("C112.2")
 put("R113", 96, 106, rot=0); e = PWR("R113.1", length=2.54); FLAG(e, up=(-1, 0)); PWR("R113.2")
 put("D102", 102, 106, rot=90, ref_at=(2.54, -1.27), val_at=(2.54, 1.27)); PWR("D102.1"); PWR("D102.2")   # K up = GND_ISO, A = -5V_ISO
 put("C113", 108, 106, rot=0); PWR("C113.1"); PWR("C113.2")
-text("PS1 (hand-fitted) makes +/-15 V from the HAT's 5 V, or J102 brings +/-12..16.8 V from the battery pack (pin 4 = pin 2 = GND_ISO:", 63, 109)
-text("the pack's plug interlock).  L / C filter, then Q101 / Q102 (base 4.7k / 10 uF: ~1.2 V drop, 60 dB ripple rejection above 100 Hz).  D103 / D104", 63, 111)
+text("J102 brings +/-12..16.8 V from the battery pack (pin 4 = pin 2 = GND_ISO: the pack's plug interlock), or from the DC-DC pod", 63, 109)
+text("(A0515S + LC filter + capacitance multipliers on its own board) plugged into J102's holes and fed 5 V by J103.  D103 / D104", 63, 111)
 text("clamp each rail to 20 V against GND_ISO (ICs are rated 25 V to their ground).  U104: +5V_ISO.  R113 / D102: -4.3 V for the 74HC4053.", 112, 68)
 
 # =========================================================================== 6. set-point

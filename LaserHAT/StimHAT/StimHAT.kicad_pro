@@ -404,22 +404,6 @@
       },
       {
         "netclass": "Rails",
-        "pattern": "+V_RAW"
-      },
-      {
-        "netclass": "Rails",
-        "pattern": "-V_RAW"
-      },
-      {
-        "netclass": "Rails",
-        "pattern": "+V_F"
-      },
-      {
-        "netclass": "Rails",
-        "pattern": "-V_F"
-      },
-      {
-        "netclass": "Rails",
         "pattern": "+V_STIM"
       },
       {
@@ -505,22 +489,6 @@
       {
         "netclass": "Isolated",
         "pattern": "/OA_OUT"
-      },
-      {
-        "netclass": "Isolated",
-        "pattern": "QB_N"
-      },
-      {
-        "netclass": "Isolated",
-        "pattern": "/QB_N"
-      },
-      {
-        "netclass": "Isolated",
-        "pattern": "QB_P"
-      },
-      {
-        "netclass": "Isolated",
-        "pattern": "/QB_P"
       },
       {
         "netclass": "Isolated",
