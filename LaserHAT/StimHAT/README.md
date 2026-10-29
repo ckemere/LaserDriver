@@ -1,6 +1,6 @@
 # StimHAT — the LaserHAT Rev 2 core and the e-stim module's stimulator on one Raspberry Pi HAT (rev A, 2026-10-29)
 
-One 65 × 57 mm HAT (plus a 10 × 7.5 mm tab on the south-east) carries the Rev 2 HAT core — MSPM0G3507, CH340N USB-UART,
+One 65 × 57 mm HAT (plus a 10 × 7.5 mm tab on the south-east) carries the Rev 2 HAT core — MSPM0G1507 (the G3507 minus CAN-FD, same pinout), CH340N USB-UART,
 USB-C power path, HAT ID EEPROM, BNC trigger in / stim out, buttons and LEDs — and the kbest constant-current
 stimulator that was the plug-in e-stim module, isolated from the Pi side by an ISO7741F and an ISO1640 and powered
 either by the A0515S DC-DC (hand-fitted, standing north of the BNC bodies) or by the battery pack (JST-PH socket in
@@ -30,7 +30,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | USB-C | J5 GT-USB-7010ASV, R8 / R10 5.1k CC, Q5 AP30P30Q VBUS switch + R26 100k + SW10 MSK12C02, Q3 AP30P30Q + Q4 DMMT5401 + R21 / R22 ideal diode into +5V, D5 (white) + R13 | USB power only when SW10 enables it; the Pi's 5 V and the USB 5 V never fight |
 | 3.3 V | U4 MCP1700-3.3 (+3V3: CH340N, U5 input), U5 AP2171W (MSPM0_3V3, enabled by Pi GPIO18 through R7), C1 / C2 / C6 / C12 / C13 / C16, JP5 | JP5 feeds +3V3 onto the Pi's 3.3 V pins for stand-alone use (open it with a Pi) |
 | ID EEPROM | U1 M24C32, JP1 (WP), R1 / R2 3.9k DNP | HAT spec |
-| MCU | U7 MSPM0G3507 (VQFN-32), R4 100k 0.1 % (ROSC), C4 470n (VCORE), R3 10k + C3 10n + JP4 (reset), SW6 TS-1088 (BSL, active high), D7 + R15 (MCU LED) | pin map below |
+| MCU | U7 MSPM0G1507SRHBR (VQFN-32; the G3507 without CAN-FD, pin-compatible, better LCSC stock), R4 100k 0.1 % (ROSC), C4 470n (VCORE), R3 10k + C3 10n + JP4 (reset), SW6 TS-1088 (BSL, active high), D7 + R15 (MCU LED) | pin map below |
 | USB-UART | U6 CH340N | `MCU_UART_TX/RX`; RTS can reset the MCU through JP4 |
 | Controls | SW7 ALPS SKRHADE010 five-way joystick (mounted at 45°), SW9 TS-1088 FIRE | replaces the thumbwheel and the BACK button |
 | BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (74LVC2G17) → PA26; PA25 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |

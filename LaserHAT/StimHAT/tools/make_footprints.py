@@ -24,7 +24,7 @@ u7 = hat.FindFootprintByReference("U7")
 fp = pcbnew.FOOTPRINT(u7)
 fp.SetPosition(pcbnew.VECTOR2I(0, 0))
 fp.SetOrientationDegrees(0)
-fp.SetReference("REF**"); fp.SetValue("MSPM0G3507SRHBR")
+fp.SetReference("REF**"); fp.SetValue("MSPM0G1507SRHBR")
 fp.SetFPID(pcbnew.LIB_ID("stimhat", "VQFN32_RHB_TEX"))
 for pad in fp.Pads():
     pad.SetNet(None)

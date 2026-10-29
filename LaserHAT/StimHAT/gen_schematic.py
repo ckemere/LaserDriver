@@ -121,7 +121,7 @@ put("R19", 30, 60, rot=0); put("R20", 36, 60, rot=0); put("C15", 42, 60); put("C
 PWR("R19.1"); LBL("R19.2"); PWR("R20.1"); LBL("R20.2"); PWR("C15.1"); PWR("C15.2")
 
 # =========================================================================== 2. MCU
-box(102, 8, 200, 62, "2. MSPM0G3507 (Rev 2 pin map), USB-UART (CH340N), RESET, BSL, JOYSTICK / FIRE, LEDs, 0.91 in OLED SOCKET")
+box(102, 8, 200, 62, "2. MSPM0G1507 (Rev 2 pin map; the G3507 minus CAN-FD, same RHB pinout), USB-UART (CH340N), RESET, BSL, JOYSTICK / FIRE, LEDs, 0.91 in OLED SOCKET")
 put("U7", 152, 32, ref_at=(0, -24.13), val_at=(0, 24.13))
 PWR("U7.4"); PWR("U7.5"); PWR("U7.33", length=5.08)
 put("C4", 160, 10, rot=90); W("U7.32", (154, 10), "C4.1"); PWR("C4.2")      # VCORE cap at the top

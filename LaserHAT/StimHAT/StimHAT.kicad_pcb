@@ -20283,7 +20283,7 @@
 				)
 			)
 		)
-		(property "Value" "MSPM0G3507SRHBR"
+		(property "Value" "MSPM0G1507SRHBR"
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -20334,7 +20334,7 @@
 			)
 		)
 		(path "/765da312-ef9e-5452-b76a-3d9e82740112")
-		(attr smd)
+		(attr smd exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -2.6797 2.6797)
 			(end -2.210181 2.6797)
