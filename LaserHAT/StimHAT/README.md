@@ -147,6 +147,24 @@ from J1 to its via at (23.4, 11.85), GND of J10 / C6 / U5.2 / the J1.39 area, +3
 pads to PS1's pins (stubs), E1_OUT / ISENSE to J101, and the BNC-area GND stubs.  The fab outputs are from the
 previous commit and are stale until the board is routed again.
 
+**USB-C corner (2026-10-29 evening, after the user's isolated-block clean-up):** the user's routing closed the earlier
+opens (U107.6 / C118.2, ISENSE, SHORT_IN, OA_IN); C118's new spot (53.5, 28.2) was synced into `place.py`, U105.1's
++5V_ISO link re-added as a 0.3 mm stub on the back, and two 0.25 mm +V_STIM leftovers of the old MST stubs (plus
+their via at (46.95, 36.5)) deleted.  The USB-C power / switch / CH340 parts were then regrouped by `place.py` in the
+west corner and routed by hand (`/home/.../tmp/route_corner.py`, 0.5 mm power, 0.2 mm signals): Q5 (VBUS switch,
+(16.5, 19.9)), Q3 (ideal-diode P-FET, rot 180 at (16.5, 15.5)) and Q4 (DMMT5401 at (16.8, 10.5)) stand in one column
+east of J10 - VBUS leaves J5's upper pads along y 21.6 straight into Q5's source pins (the lower pair is tied through
+an In2 link at x 9.25), Q5's drain pins bridge Q3's drain pins across a 0.5 mm gap, +5V leaves Q3's north pins along
+y 13.97, up x 19.5 to C12 (20.6, 11.3) / Q4.5 and along y 14.5 into U4.2; IDEAL_G runs Q4.4 -> Q3's gate -> R22
+(14.1, 12.9), IDEAL_B down Q4's west column to R21 (15.66, 7.4); the VBUS_SW sense to Q4.6 and PWR_EN (Q5 gate ->
+In2 row y 20.75 -> x 9.7 -> y 13.75 -> SW10.2) are on In2, R26 (14.2, 20.8) sits on the VBUS row with its PWR_EN
+pad reached by a via.  CC: R8 (10.3, 22.75) / R10 (10.1, 27.0) straight off the pads.  USB D+/D-: the D- pair is
+joined by a 0.2 mm bar at x 8.95 past the pad ends, the D+ pair through two vias under the jack body (In2, x 6.6),
+then D+ runs down x 10.8 into U6.1 and D- down x 12.1 (between U6's pin columns) into U6.2.  C17 (16.7, 31.5) and
+JP4 (19.3, 31.3) moved east of U6 so the corridor from U7.14/15 (17.55, 26.75 / 27.25) to U6.7/6 (12.77 / 14.04,
+30.0) is free for the UART lines; R19 / R20 are north of J10, R4 / C1 north of U7.  Result: DRC 0 errors / 0 warnings,
+96 open connections (none of the USB / switch / ideal-diode nets; U7's thermal pad still needs its ground via).
+
 ## Checks before fab
 
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
