@@ -219,7 +219,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -231,7 +231,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -257,6 +257,8 @@
 			)
 		)
 		(path "/54fbeca0-464f-5857-8dee-6eedea530579")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -411,6 +413,8 @@
 			)
 		)
 		(path "/741b22f4-f9db-5d1a-870e-ff7628556e71")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.61 -0.85)
@@ -599,6 +603,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "K")
+			(pintype "passive")
 			(uuid "ca2c7a6b-ced0-4c3b-8ec2-058992ee02b3")
 		)
 		(pad "2" smd roundrect
@@ -607,6 +613,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 6 "-5V_ISO")
+			(pinfunction "A")
+			(pintype "passive")
 			(uuid "4e9da234-bcd4-496a-9091-6588d1a68791")
 		)
 		(embedded_fonts no)
@@ -652,7 +660,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -664,7 +672,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -689,6 +697,8 @@
 			)
 		)
 		(path "/f9cb4b70-3b2d-5846-adff-30feefbb402b")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -841,6 +851,8 @@
 			)
 		)
 		(path "/c53e6679-29d8-5577-b8b5-4af1c389c0d2")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -901,6 +913,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pintype "passive")
 			(uuid "ef89fb9e-0113-4f0d-a0ce-15ae73d90e0e")
 		)
 		(pad "2" smd roundrect
@@ -909,6 +922,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "c4e2b659-2452-41ce-a07e-73584bd8b44b")
 		)
 		(embedded_fonts no)
@@ -954,7 +968,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -966,7 +980,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -992,6 +1006,8 @@
 			)
 		)
 		(path "/a6188c13-7b17-5869-a6fe-151e6735f6a7")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -1107,7 +1123,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15850"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -1119,7 +1135,7 @@
 				)
 			)
 		)
-		(property "Description" "CL21A106KAYNNNE (Samsung Electro-Mechanics, 0805): 10uF ±10% 25V Ceramic Capacitor X5R 0805"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -1144,6 +1160,8 @@
 			)
 		)
 		(path "/846c10fe-fdf7-50eb-a0dd-5f62bf72fb7e")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.261252 -0.735)
@@ -1259,7 +1277,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/df73e86b8822ee2ea9fc0915b8db982b.pdf?productCode=C80500"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1271,7 +1289,7 @@
 				)
 			)
 		)
-		(property "Description" "74LVC2G17GW,125 (Nexperia, SOT-363): Schmitt trigger 1.65V~5.5V 1 2 3.6ns@3.3V,50pF SOT-363 Buffers, Drivers, Receivers, Transceivers RoHS"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1296,6 +1314,8 @@
 			)
 		)
 		(path "/91951e6f-d040-5b47-ac99-9e15a02d9fe6")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.599252 -1.11)
@@ -1478,6 +1498,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 57 "Net-(U8-1A)")
+			(pinfunction "1A")
 			(pintype "input")
 			(uuid "45caad57-a403-4c90-b05d-418a1a870d5c")
 		)
@@ -1497,6 +1518,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 43 "MCU_STIM_OUT")
+			(pinfunction "2A")
 			(pintype "input")
 			(uuid "a775acdd-f881-408b-acdb-5d5a9ad9ff8b")
 		)
@@ -1506,6 +1528,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 50 "Net-(D9-A)")
+			(pinfunction "2Y")
 			(pintype "output")
 			(uuid "62cc7af3-440b-4356-a864-5ed168d41313")
 		)
@@ -1525,6 +1548,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 42 "MCU_STIM_IN")
+			(pinfunction "1Y")
 			(pintype "output")
 			(uuid "0246257e-86fd-4a37-8a63-08244fd2ebf8")
 		)
@@ -1570,7 +1594,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/741ba14677c88fb4d9f793d97efdadf4.pdf?productCode=C471913"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1582,7 +1606,7 @@
 				)
 			)
 		)
-		(property "Description" "AP30P30Q (ALLPOWER, PDFN3333-8): P-Channel 30V 30A 1.5W Surface Mount PDFN3333-8"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -1607,6 +1631,8 @@
 			)
 		)
 		(path "/7fa1323e-b861-5377-ba58-ea29ec9af485")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 1.56 -1.61)
@@ -1924,6 +1950,8 @@
 			)
 		)
 		(path "/bc7170f3-3c24-5bc6-9981-f1d4a50a4476")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr board_only exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -1986,7 +2014,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0475ac02febf455ca9ddcfb380b0df0d.pdf?productCode=C720477"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -1999,7 +2027,7 @@
 				)
 			)
 		)
-		(property "Description" "TS-1088-AR02016 (XUNPU, SMD,4x3mm): Tactile Switch SPST 160gf 2mm SMD (SMT) Tab 4mm x 3mm Surface Mount"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2026,6 +2054,8 @@
 			)
 		)
 		(path "/3aac4a70-5e97-5216-96c2-23bf9ff3fcc0")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -2.1 -1.65)
@@ -2241,7 +2271,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/a1d5a66cf718dd88763ab794dba802b2.pdf?productCode=C2988369"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2254,7 +2284,7 @@
 				)
 			)
 		)
-		(property "Description" "GT-USB-7010ASV (G-Switch, SMD): USB-C (USB TYPE-C) Receptacle Connector 16 Position Surface Mount, Right Angle"
+		(property "Description" ""
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -2280,6 +2310,8 @@
 			)
 		)
 		(path "/82876878-4464-5585-85db-eddf05f34cf8")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -4.58 3.785)
@@ -2460,7 +2492,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 52 "Net-(J5-CC1)")
 			(pinfunction "CC1")
-			(pintype "bidirectional")
+			(pintype "passive")
 			(uuid "8516984e-55e2-48eb-b5c0-e86f5906571a")
 		)
 		(pad "A6" smd rect
@@ -2469,7 +2501,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 73 "USB_DP")
 			(pinfunction "D+")
-			(pintype "bidirectional")
+			(pintype "passive")
 			(uuid "00726076-8846-416f-bdad-187e8615ffe7")
 		)
 		(pad "A7" smd rect
@@ -2478,7 +2510,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 72 "USB_DM")
 			(pinfunction "D-")
-			(pintype "bidirectional")
+			(pintype "passive")
 			(uuid "70290314-b642-494c-951c-9dd128d1bf90")
 		)
 		(pad "A8" smd rect
@@ -2487,7 +2519,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 94 "unconnected-(J5-SBU1-PadA8)")
 			(pinfunction "SBU1")
-			(pintype "bidirectional")
+			(pintype "passive+no_connect")
 			(uuid "b9d1ab94-4667-4035-a583-04f39a2dd664")
 		)
 		(pad "A9" smd rect
@@ -2532,7 +2564,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 53 "Net-(J5-CC2)")
 			(pinfunction "CC2")
-			(pintype "bidirectional")
+			(pintype "passive")
 			(uuid "2977f539-149d-4632-a2e9-7d1ca7083283")
 		)
 		(pad "B6" smd rect
@@ -2541,7 +2573,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 73 "USB_DP")
 			(pinfunction "D+")
-			(pintype "bidirectional")
+			(pintype "passive")
 			(uuid "681a36a1-9354-49c0-aab1-cfc99129cac3")
 		)
 		(pad "B7" smd rect
@@ -2550,7 +2582,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 72 "USB_DM")
 			(pinfunction "D-")
-			(pintype "bidirectional")
+			(pintype "passive")
 			(uuid "a89148cd-4a74-4c8c-bd0b-5b09efd8ee7a")
 		)
 		(pad "B8" smd rect
@@ -2559,7 +2591,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 95 "unconnected-(J5-SBU2-PadB8)")
 			(pinfunction "SBU2")
-			(pintype "bidirectional")
+			(pintype "passive+no_connect")
 			(uuid "0f599977-32fe-4169-9bb6-402ce572b4ae")
 		)
 		(pad "B9" smd rect
@@ -2588,7 +2620,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
-			(pinfunction "SHIELD")
+			(pinfunction "SH")
 			(pintype "passive")
 			(uuid "769a24fa-5361-49f0-b648-85a06ce7140b")
 		)
@@ -2600,7 +2632,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
-			(pinfunction "SHIELD")
+			(pinfunction "SH")
 			(pintype "passive")
 			(uuid "fe37fa10-a94e-4f4a-8ced-0c099474caa5")
 		)
@@ -2612,7 +2644,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
-			(pinfunction "SHIELD")
+			(pinfunction "SH")
 			(pintype "passive")
 			(uuid "7aca8939-4edf-4021-8cc3-99adcd4e35d9")
 		)
@@ -2624,7 +2656,7 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
-			(pinfunction "SHIELD")
+			(pinfunction "SH")
 			(pintype "passive")
 			(uuid "5d3b62d1-734b-4738-aaf9-712a7ba2df9a")
 		)
@@ -2671,7 +2703,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -2683,7 +2715,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -2708,6 +2740,8 @@
 			)
 		)
 		(path "/feb2b931-576e-578d-82fa-92b43f91b0ba")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -2863,6 +2897,8 @@
 			)
 		)
 		(path "/cb47bf64-f6e9-5aac-b72a-bab73cff88c1")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(zone_connect 1)
 		(attr exclude_from_pos_files exclude_from_bom allow_soldermask_bridges)
 		(fp_rect
@@ -3104,7 +3140,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3116,7 +3152,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3141,6 +3177,8 @@
 			)
 		)
 		(path "/c06e70ba-8f3a-5089-9f1c-439caa86ff8d")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -3256,7 +3294,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3268,7 +3306,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3293,6 +3331,8 @@
 			)
 		)
 		(path "/61dff244-76ab-5a3f-ad79-b646858adef7")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -3408,7 +3448,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3420,7 +3460,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -3445,6 +3485,8 @@
 			)
 		)
 		(path "/12827696-d5db-5a16-ba78-b058c95343ed")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -3560,7 +3602,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -3572,7 +3614,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -3597,6 +3639,8 @@
 			)
 		)
 		(path "/96f43408-ba0e-51f3-a18a-e0f599ccec97")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -3749,6 +3793,8 @@
 			)
 		)
 		(path "/e9869b45-0376-593b-9d3d-3f6c059a6bd9")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -2.06 2.56)
@@ -3971,6 +4017,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 46 "MSPM0_3V3")
+			(pinfunction "VCC1")
+			(pintype "power_in")
 			(uuid "17b5d013-e92d-4238-94f4-fa07054e1e14")
 		)
 		(pad "2" smd roundrect
@@ -3979,6 +4027,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 67 "SDA_H")
+			(pinfunction "SDA1")
+			(pintype "bidirectional")
 			(uuid "96feceda-ff91-4b14-ae26-ad71d3ba5724")
 		)
 		(pad "3" smd roundrect
@@ -3987,6 +4037,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 65 "SCL_H")
+			(pinfunction "SCL1")
+			(pintype "bidirectional")
 			(uuid "b2a82d4d-d9da-4289-8627-b2ccde527b46")
 		)
 		(pad "4" smd roundrect
@@ -3995,6 +4047,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 32 "GND")
+			(pinfunction "GND1")
+			(pintype "power_in")
 			(uuid "65ba5892-1354-4966-817f-9e0c92438e50")
 		)
 		(pad "5" smd roundrect
@@ -4003,6 +4057,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "GND2")
+			(pintype "power_in")
 			(uuid "1465639c-2af6-4e1f-9e81-e993e2045153")
 		)
 		(pad "6" smd roundrect
@@ -4011,6 +4067,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 64 "SCL")
+			(pinfunction "SCL2")
+			(pintype "bidirectional")
 			(uuid "740961b3-d780-4300-8edf-df6a7ab7e5b0")
 		)
 		(pad "7" smd roundrect
@@ -4019,6 +4077,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 66 "SDA")
+			(pinfunction "SDA2")
+			(pintype "bidirectional")
 			(uuid "20b5ae94-0a6c-47aa-8b91-28d1efc6606f")
 		)
 		(pad "8" smd roundrect
@@ -4027,6 +4087,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pinfunction "VCC2")
+			(pintype "power_in")
 			(uuid "3f9686a0-3a10-443b-9990-3c88eb8d7c96")
 		)
 		(embedded_fonts no)
@@ -4072,7 +4134,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -4084,7 +4146,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -4109,6 +4171,8 @@
 			)
 		)
 		(path "/4a374bd9-2db6-530c-8e42-2ad832b02166")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -4224,7 +4288,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15850"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -4236,7 +4300,7 @@
 				)
 			)
 		)
-		(property "Description" "CL21A106KAYNNNE (Samsung Electro-Mechanics, 0805): 10uF ±10% 25V Ceramic Capacitor X5R 0805"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -4261,6 +4325,8 @@
 			)
 		)
 		(path "/aca775d5-2a1c-50b3-83dc-23634a1af8fd")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.261252 0.735)
@@ -4376,7 +4442,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/5162155576bfd231c35aa9a893d25c8c.pdf?productCode=C431540"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4389,7 +4455,7 @@
 				)
 			)
 		)
-		(property "Description" "MSK12C02 (SHOU HAN, SMD,8x2.8mm): Slide Switch SPDT 50mA @ 12V Surface Mount, Right Angle 8mm"
+		(property "Description" ""
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -4415,6 +4481,8 @@
 			)
 		)
 		(path "/c4428042-d334-5882-a97b-2b5e4396370c")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -3.45 -0.4)
@@ -4686,7 +4754,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 12 "/PWR_EN")
-			(pinfunction "B")
+			(pinfunction "C")
 			(pintype "passive")
 			(uuid "54252541-1c73-4b2b-9196-72734d12604b")
 		)
@@ -4696,7 +4764,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 96 "unconnected-(SW10-B-Pad3)")
-			(pinfunction "C")
+			(pinfunction "B")
 			(pintype "passive+no_connect")
 			(uuid "44f9f2ca-b315-4cd0-ba46-4a27b9faad69")
 		)
@@ -4780,6 +4848,8 @@
 			)
 		)
 		(path "/f6ad8588-f9f4-5f1d-8c96-80c0acfb6087")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.237258 0.5225)
@@ -4840,6 +4910,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 109 "U5B_IN")
+			(pintype "passive")
 			(uuid "7e7391a8-a7f4-4229-97b1-b9086015cb55")
 		)
 		(pad "2" smd roundrect
@@ -4848,6 +4919,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 15 "/VSET_N")
+			(pintype "passive")
 			(uuid "b8c41de9-4765-4d64-bc0b-09360b2a18f3")
 		)
 		(embedded_fonts no)
@@ -4893,7 +4965,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4905,7 +4977,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -4931,6 +5003,8 @@
 			)
 		)
 		(path "/4f4e1e31-b2fe-5855-9eea-cd9fda388f72")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -5046,7 +5120,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0475ac02febf455ca9ddcfb380b0df0d.pdf?productCode=C720477"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5059,7 +5133,7 @@
 				)
 			)
 		)
-		(property "Description" "TS-1088-AR02016 (XUNPU, SMD,4x3mm): Tactile Switch SPST 160gf 2mm SMD (SMT) Tab 4mm x 3mm Surface Mount"
+		(property "Description" ""
 			(at 0 0 270)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5086,6 +5160,8 @@
 			)
 		)
 		(path "/6ea0ead4-eb85-5ba8-8e9d-f5f1cb26efd3")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -2.1 1.65)
@@ -5329,6 +5405,8 @@
 			)
 		)
 		(path "/394c7d48-72a4-599f-9264-e006cff6774c")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr board_only exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -5391,7 +5469,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -5403,7 +5481,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -5428,6 +5506,8 @@
 			)
 		)
 		(path "/5968246d-ece9-5e23-8b93-da7456f68900")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -5543,7 +5623,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5555,7 +5635,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -5581,6 +5661,8 @@
 			)
 		)
 		(path "/9a57eb9a-3c77-54c1-9d98-16f9ebbf962a")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 0.36)
@@ -5696,7 +5778,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/72cfd1a349d992af3a1c7bc40df24196.pdf?productCode=C632000"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5709,7 +5791,7 @@
 				)
 			)
 		)
-		(property "Description" "MCP1700T-3302E/MB (MICROCHIP, SOT-89-3): 3.3V Positive Fixed SOT-89-3 Voltage Regulators - Linear, Low Drop Out (LDO) Regulators RoHS"
+		(property "Description" ""
 			(at 0 0 180)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -5736,6 +5818,8 @@
 			)
 		)
 		(path "/a5cb4ed3-fd30-5480-ac55-19defaaadbf2")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 1.36 2.36)
@@ -6014,6 +6098,8 @@
 			)
 		)
 		(path "/6a5cbe05-e0a9-5cf0-ac1f-ae59734f8d4d")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -6074,6 +6160,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "ad7dd27c-4cd2-4e43-b686-feb0bc97e2d0")
 		)
 		(pad "2" smd roundrect
@@ -6082,6 +6169,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pintype "passive")
 			(uuid "831e4458-c07b-4a2c-a91a-4f37ace819f8")
 		)
 		(embedded_fonts no)
@@ -6164,6 +6252,8 @@
 			)
 		)
 		(path "/a41ecb23-7ac6-596b-9e3e-2dbbdd6e4c66")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.14058 0.51)
@@ -6224,6 +6314,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "8bf5f664-3061-4ec8-a32d-c455baceab1a")
 		)
 		(pad "2" smd roundrect
@@ -6232,6 +6323,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pintype "passive")
 			(uuid "5fbdeb8e-7b37-43bf-8a7a-375418bfa628")
 		)
 		(embedded_fonts no)
@@ -6277,7 +6369,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -6289,7 +6381,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -6315,6 +6407,8 @@
 			)
 		)
 		(path "/1270043b-1e32-5873-8f4e-50cc5b2873f4")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -6430,7 +6524,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -6442,7 +6536,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -6467,6 +6561,8 @@
 			)
 		)
 		(path "/f4cf4662-626c-55bd-8216-1ec950d83e90")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -6621,6 +6717,8 @@
 			)
 		)
 		(path "/fef8ed63-0d6f-5201-8040-ca7c6030572a")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.61 0.85)
@@ -6809,6 +6907,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "K")
+			(pintype "passive")
 			(uuid "a22e5ec7-21c0-4ba8-8a06-5f133a3a6782")
 		)
 		(pad "2" smd roundrect
@@ -6817,6 +6917,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pinfunction "A")
+			(pintype "passive")
 			(uuid "35c70b3c-c65c-4e00-887a-67acaf34998e")
 		)
 		(embedded_fonts no)
@@ -6862,7 +6964,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -6874,7 +6976,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -6899,6 +7001,8 @@
 			)
 		)
 		(path "/fa0cee31-73e6-5f01-9815-88f0214c30bc")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -7014,7 +7118,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -7026,7 +7130,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -7051,6 +7155,8 @@
 			)
 		)
 		(path "/2ea9c923-947d-5451-82c6-e1c8998ae798")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd dnp)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -7166,7 +7272,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7178,7 +7284,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7204,6 +7310,8 @@
 			)
 		)
 		(path "/8beccdae-599c-5123-94b7-ef1f8df75dd6")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 0.36)
@@ -7319,7 +7427,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7331,7 +7439,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7356,6 +7464,8 @@
 			)
 		)
 		(path "/71f8632c-1af6-5e85-bfd1-2f485c58f10e")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -7471,7 +7581,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7483,7 +7593,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7508,6 +7618,8 @@
 			)
 		)
 		(path "/16e2d637-9852-5ed1-9cfc-6ffe83168756")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 0.38)
@@ -7623,7 +7735,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7635,7 +7747,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -7660,6 +7772,8 @@
 			)
 		)
 		(path "/40098611-7d85-52ab-b077-a0d38c629b24")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 0.38)
@@ -7775,7 +7889,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15850"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7787,7 +7901,7 @@
 				)
 			)
 		)
-		(property "Description" "CL21A106KAYNNNE (Samsung Electro-Mechanics, 0805): 10uF ±10% 25V Ceramic Capacitor X5R 0805"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -7812,6 +7926,8 @@
 			)
 		)
 		(path "/31100135-4841-5404-b03e-08b4bdaf9442")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.261252 0.735)
@@ -7964,6 +8080,8 @@
 			)
 		)
 		(path "/b470bed0-d73d-50da-8c53-3ea69249fbec")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.14058 -0.51)
@@ -8024,6 +8142,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pintype "passive")
 			(uuid "82554a9e-503b-463e-a600-691082a7cc13")
 		)
 		(pad "2" smd roundrect
@@ -8032,6 +8151,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "41aeb117-76e7-4282-9aa0-6776357d7524")
 		)
 		(embedded_fonts no)
@@ -8077,7 +8197,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -8089,7 +8209,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -8115,6 +8235,8 @@
 			)
 		)
 		(path "/0e7fa54f-a2a4-5f14-bed5-71ac2e6afc85")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -8267,6 +8389,8 @@
 			)
 		)
 		(path "/02a1fe2b-f61f-5232-a585-0f52e48d0e3c")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.14058 0.51)
@@ -8327,6 +8451,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pintype "passive")
 			(uuid "358aefdd-7681-4e3d-93d9-7d76e8c9f043")
 		)
 		(pad "2" smd roundrect
@@ -8335,6 +8460,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pintype "passive")
 			(uuid "bd472226-54c7-46b0-b9b6-0710b484e505")
 		)
 		(embedded_fonts no)
@@ -8419,6 +8545,8 @@
 			)
 		)
 		(path "/c0f47498-11de-5f2d-b94b-d12d60069751")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.61 -0.85)
@@ -8607,6 +8735,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pinfunction "K")
+			(pintype "passive")
 			(uuid "a93e9d22-1541-4546-9ab7-836ca985ed03")
 		)
 		(pad "2" smd roundrect
@@ -8615,6 +8745,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "A")
+			(pintype "passive")
 			(uuid "3bd925d2-501e-4f82-945c-32dc784d45da")
 		)
 		(embedded_fonts no)
@@ -8660,7 +8792,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8672,7 +8804,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -8698,6 +8830,8 @@
 			)
 		)
 		(path "/8be22d45-ae50-5049-a67f-8c3fffd745aa")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -8813,7 +8947,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/05b35e50c47741f69d8631d18fa1a261.pdf?productCode=C154733"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -8825,7 +8959,7 @@
 				)
 			)
 		)
-		(property "Description" "DMMT5401-7-F (DIODES, SOT-26(SC74R)): Bipolar (BJT) Transistor PNP 150V 200mA 300MHz 300mW Surface Mount SOT-26(SC74R)"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -8850,6 +8984,8 @@
 			)
 		)
 		(path "/6fdde2cd-7f0f-5a5f-8425-856a39352682")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 0.91 -1.56)
@@ -9169,7 +9305,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -9181,7 +9317,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -9206,6 +9342,8 @@
 			)
 		)
 		(path "/e0d6b8c9-0ff9-530d-8338-70ab1fc708b6")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -9358,6 +9496,8 @@
 			)
 		)
 		(path "/33e1a582-02c0-550c-8e69-0b0533d962dc")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.237258 0.5225)
@@ -9418,6 +9558,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 6 "-5V_ISO")
+			(pintype "passive")
 			(uuid "4b266114-3ecc-46a5-ba7b-92a2413aff1e")
 		)
 		(pad "2" smd roundrect
@@ -9426,6 +9567,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pintype "passive")
 			(uuid "b178b20f-79d3-4571-9684-28b47f6a72d8")
 		)
 		(embedded_fonts no)
@@ -9471,7 +9613,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -9483,7 +9625,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -9509,6 +9651,8 @@
 			)
 		)
 		(path "/b1cff2b2-e6c2-527e-b688-cdda896ad2a0")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -9661,6 +9805,8 @@
 			)
 		)
 		(path "/bb9fdaaa-7b10-52d4-8c63-8c948ab3b179")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.14058 0.51)
@@ -9721,6 +9867,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pintype "passive")
 			(uuid "e2494346-d18f-4b98-bc92-b64669852f77")
 		)
 		(pad "2" smd roundrect
@@ -9729,6 +9876,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "84e88e09-fcd4-4e94-936e-dc8e40803da7")
 		)
 		(embedded_fonts no)
@@ -9774,7 +9922,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/8238ae278d43fbd59fd57ef71ae67c27.pdf?productCode=C2290"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9786,7 +9934,7 @@
 				)
 			)
 		)
-		(property "Description" "KT-0603W (Hubei KENTO Elec, 0603): White LED Indication - Discrete 2.6V~3.1V 0603"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -9824,6 +9972,8 @@
 			)
 		)
 		(path "/bc02c695-ea99-51bc-9827-63644836449c")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.485 -0.735)
@@ -9990,7 +10140,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -10002,7 +10152,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -10028,6 +10178,8 @@
 			)
 		)
 		(path "/5035cf96-128b-52bb-83e2-ff2336924b98")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -10180,6 +10332,8 @@
 			)
 		)
 		(path "/c5a75772-5583-5ea0-8cdf-2b2d6127bf14")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.14058 0.51)
@@ -10240,6 +10394,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pintype "passive")
 			(uuid "83a77ad0-5575-452c-90c3-edc6e2173d74")
 		)
 		(pad "2" smd roundrect
@@ -10248,6 +10403,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "3a9f8019-2f2a-481f-97e1-43eb92e1dfcf")
 		)
 		(embedded_fonts no)
@@ -10293,7 +10449,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -10305,7 +10461,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -10330,6 +10486,8 @@
 			)
 		)
 		(path "/d33a6d3b-8738-531e-b925-f57f9eda1f84")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 0.38)
@@ -10445,7 +10603,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/8238ae278d43fbd59fd57ef71ae67c27.pdf?productCode=C2290"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10457,7 +10615,7 @@
 				)
 			)
 		)
-		(property "Description" "KT-0603W (Hubei KENTO Elec, 0603): White LED Indication - Discrete 2.6V~3.1V 0603"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -10495,6 +10653,8 @@
 			)
 		)
 		(path "/5777eabf-c1ed-5f0b-8101-bb73e8cb86a9")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.485 -0.735)
@@ -10698,6 +10858,8 @@
 			)
 		)
 		(path "/a6c697f1-a81b-56d2-a232-4e4a71a82a7e")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.61 -1.61)
@@ -10920,6 +11082,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 9 "/FAULT_OC")
+			(pintype "open_collector")
 			(uuid "d3524e5e-8321-4f87-8834-ea838eb4988d")
 		)
 		(pad "2" smd roundrect
@@ -10928,6 +11091,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 13 "/TH_N")
+			(pinfunction "-")
+			(pintype "input")
 			(uuid "9d289987-d9c9-4f51-904b-59b88c1c409c")
 		)
 		(pad "3" smd roundrect
@@ -10936,6 +11101,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 27 "E1")
+			(pinfunction "+")
+			(pintype "input")
 			(uuid "69136c92-6056-458a-af9d-0c12c0060e64")
 		)
 		(pad "4" smd roundrect
@@ -10944,6 +11111,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pinfunction "V-")
+			(pintype "power_in")
 			(uuid "a0c5539c-4c80-4d42-a5da-71125c408609")
 		)
 		(pad "5" smd roundrect
@@ -10952,6 +11121,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 14 "/TH_P")
+			(pinfunction "+")
+			(pintype "input")
 			(uuid "330992bd-29bd-4914-af1d-722b3e2938b8")
 		)
 		(pad "6" smd roundrect
@@ -10960,6 +11131,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 27 "E1")
+			(pinfunction "-")
+			(pintype "input")
 			(uuid "8c47f5e7-cf9a-4f6c-978a-0f81870e3283")
 		)
 		(pad "7" smd roundrect
@@ -10968,6 +11141,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 9 "/FAULT_OC")
+			(pintype "open_collector")
 			(uuid "30af6c72-96b6-4b2f-8ae9-8104f195b94e")
 		)
 		(pad "8" smd roundrect
@@ -10976,6 +11150,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pinfunction "V+")
+			(pintype "power_in")
 			(uuid "ddeae4f4-6f11-4fca-b95e-64f822bdbf6c")
 		)
 		(embedded_fonts no)
@@ -11058,6 +11234,8 @@
 			)
 		)
 		(path "/c082c3f5-d9ac-54fd-b8f9-5b55b0fd460a")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 1.61 -1.61)
@@ -11280,6 +11458,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 108 "OA_OUT")
+			(pintype "output")
 			(uuid "e46c2c81-c338-45e5-8b26-cc607f42f748")
 		)
 		(pad "2" smd roundrect
@@ -11288,6 +11467,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 38 "ISENSE")
+			(pinfunction "-")
+			(pintype "input")
 			(uuid "70a7db17-9209-4942-ae8f-c0097f52c0c9")
 		)
 		(pad "3" smd roundrect
@@ -11296,6 +11477,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 107 "OA_IN")
+			(pinfunction "+")
+			(pintype "input")
 			(uuid "efb5294b-55e3-49d0-8b4d-1f16a7f444de")
 		)
 		(pad "4" smd roundrect
@@ -11304,6 +11487,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pinfunction "V-")
+			(pintype "power_in")
 			(uuid "2aac1666-ff33-41b9-af3a-8af6d9ff455e")
 		)
 		(pad "5" smd roundrect
@@ -11312,6 +11497,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "+")
+			(pintype "input")
 			(uuid "d665f817-e315-46ed-a5d5-986720a33bb4")
 		)
 		(pad "6" smd roundrect
@@ -11320,6 +11507,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 109 "U5B_IN")
+			(pinfunction "-")
+			(pintype "input")
 			(uuid "8712e881-f956-4571-b0eb-9c62eb82d656")
 		)
 		(pad "7" smd roundrect
@@ -11328,6 +11517,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 15 "/VSET_N")
+			(pintype "output")
 			(uuid "27916f43-e5c7-4c77-bdd8-4418bf035683")
 		)
 		(pad "8" smd roundrect
@@ -11336,6 +11526,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pinfunction "V+")
+			(pintype "power_in")
 			(uuid "ceaf8e82-f8a5-45b1-ab89-0e33ae8e8f23")
 		)
 		(embedded_fonts no)
@@ -11406,6 +11598,8 @@
 			)
 		)
 		(path "/9933c8d2-7d34-5da5-ada2-06576e50cfa7")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_rect
 			(start -7.37 -12.3)
@@ -11469,6 +11663,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 54 "Net-(J6-In)")
+			(pinfunction "In")
+			(pintype "passive")
 			(uuid "9bf04817-1477-4b98-b306-9f7206ca8064")
 		)
 		(pad "2" thru_hole circle
@@ -11478,6 +11674,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Ext")
+			(pintype "passive")
 			(uuid "7bf81178-d23f-475c-8a51-104b51bea6f2")
 		)
 		(pad "2" thru_hole circle
@@ -11487,6 +11685,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Ext")
+			(pintype "passive")
 			(uuid "1678d700-c36a-4e24-a1e9-893e7fd805b6")
 		)
 		(pad "2" thru_hole circle
@@ -11496,6 +11696,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Ext")
+			(pintype "passive")
 			(uuid "485675bf-1bcc-4614-a64f-a6d5993994ac")
 		)
 		(embedded_fonts no)
@@ -11566,6 +11768,8 @@
 			)
 		)
 		(path "/b769ac78-4888-5b0a-98c0-4900c40b122a")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr through_hole exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -1.38 -1.38)
@@ -11706,6 +11910,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 3 "+5V")
+			(pinfunction "Pin_1")
+			(pintype "passive")
 			(uuid "9066a9b0-2451-4793-b61b-5f2907786ce2")
 		)
 		(pad "2" thru_hole circle
@@ -11715,6 +11921,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Pin_2")
+			(pintype "passive")
 			(uuid "19219be7-1f9c-4564-bdc5-eea74d968c6d")
 		)
 		(embedded_fonts no)
@@ -11800,6 +12008,8 @@
 			)
 		)
 		(path "/a17b5649-b50f-5790-a112-fd8fc6d8390c")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(zone_connect 1)
 		(attr exclude_from_pos_files exclude_from_bom allow_soldermask_bridges)
 		(fp_rect
@@ -12041,7 +12251,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -12053,7 +12263,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -12078,6 +12288,8 @@
 			)
 		)
 		(path "/5b6d2b4f-cdc7-5822-bcd0-5fcd25440338")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -12193,7 +12405,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12205,7 +12417,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12230,6 +12442,8 @@
 			)
 		)
 		(path "/fd917fb9-921c-58e9-b34c-cf12b2a4c030")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 0.38)
@@ -12345,7 +12559,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12357,7 +12571,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -12382,6 +12596,8 @@
 			)
 		)
 		(path "/0314c754-9aba-55a6-8235-bc402a5d5ddf")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -12534,6 +12750,8 @@
 			)
 		)
 		(path "/fdf5e35a-b08b-54e7-ba36-e34c53fb44ad")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 2.31 2.735)
@@ -12716,6 +12934,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 71 "SW_P")
+			(pinfunction "2Y1")
+			(pintype "passive")
 			(uuid "3f5a8269-bc1f-402a-bb60-606845be60cd")
 		)
 		(pad "2" smd roundrect
@@ -12724,6 +12944,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "2Y0")
+			(pintype "passive")
 			(uuid "eff3247f-bf58-416e-b9fb-3a63c1998833")
 		)
 		(pad "3" smd roundrect
@@ -12732,6 +12954,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "3Y1")
+			(pintype "passive")
 			(uuid "004ff740-5af2-4e4e-b263-f05dbb27234e")
 		)
 		(pad "4" smd roundrect
@@ -12740,6 +12964,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 68 "SHORT_IN")
+			(pinfunction "3Z")
+			(pintype "passive")
 			(uuid "47e48aff-778d-4800-858a-084ba17d0f6f")
 		)
 		(pad "5" smd roundrect
@@ -12748,6 +12974,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pinfunction "3Y0")
+			(pintype "passive")
 			(uuid "fe33a60d-1f16-4058-b8cc-5a826ee40901")
 		)
 		(pad "6" smd roundrect
@@ -12756,6 +12984,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "~{E}")
+			(pintype "input")
 			(uuid "4fb7373d-9e0f-4cee-8767-23f46569b8ff")
 		)
 		(pad "7" smd roundrect
@@ -12764,6 +12994,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 6 "-5V_ISO")
+			(pinfunction "VEE")
+			(pintype "power_in")
 			(uuid "21f6a128-ecb2-4a4b-b795-73d39bede831")
 		)
 		(pad "8" smd roundrect
@@ -12772,6 +13004,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "GND")
+			(pintype "power_in")
 			(uuid "9480b533-d364-44a9-985b-d36ed69d6ce4")
 		)
 		(pad "9" smd roundrect
@@ -12780,6 +13014,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 61 "RELEASE")
+			(pinfunction "S3")
+			(pintype "input")
 			(uuid "6e071be8-b26e-4f19-8f30-b6580490f2c7")
 		)
 		(pad "10" smd roundrect
@@ -12788,6 +13024,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 28 "EN")
+			(pinfunction "S2")
+			(pintype "input")
 			(uuid "e697a875-8e63-4d3b-9484-2b729c164a60")
 		)
 		(pad "11" smd roundrect
@@ -12796,6 +13034,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 24 "CATH")
+			(pinfunction "S1")
+			(pintype "input")
 			(uuid "17d9a1c1-e8f7-416f-b707-d62be4f74d28")
 		)
 		(pad "12" smd roundrect
@@ -12804,6 +13044,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 16 "/VSET_P")
+			(pinfunction "1Y0")
+			(pintype "passive")
 			(uuid "647f981d-22c4-47e3-b593-b4811513ea3b")
 		)
 		(pad "13" smd roundrect
@@ -12812,6 +13054,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 15 "/VSET_N")
+			(pinfunction "1Y1")
+			(pintype "passive")
 			(uuid "5d8d374a-28f2-4f04-8074-ad4cf213b6b7")
 		)
 		(pad "14" smd roundrect
@@ -12820,6 +13064,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 71 "SW_P")
+			(pinfunction "1Z")
+			(pintype "passive")
 			(uuid "f8d7deb9-3064-4fe3-8906-4336b918c521")
 		)
 		(pad "15" smd roundrect
@@ -12828,6 +13074,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 76 "V_IN")
+			(pinfunction "2Z")
+			(pintype "passive")
 			(uuid "89d15ef2-9a77-4f04-97bb-8294d6635c9d")
 		)
 		(pad "16" smd roundrect
@@ -12836,6 +13084,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pinfunction "VCC")
+			(pintype "power_in")
 			(uuid "2096535c-1c20-4c33-a9ee-41b2bf6ab287")
 		)
 		(embedded_fonts no)
@@ -12881,7 +13131,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -12893,7 +13143,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -12918,6 +13168,8 @@
 			)
 		)
 		(path "/06359fcc-4098-5439-ac0e-b1e55ab4c34b")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -13033,7 +13285,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13045,7 +13297,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13071,6 +13323,8 @@
 			)
 		)
 		(path "/05e028a5-659d-51d2-8f23-9f3ec30ce866")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -13186,7 +13440,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -13198,7 +13452,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -13223,6 +13477,8 @@
 			)
 		)
 		(path "/59d5e45b-9205-5593-8091-372366ad2a66")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -13338,7 +13594,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13351,7 +13607,7 @@
 				)
 			)
 		)
-		(property "Description" "Solder Jumper, 2-pole, open"
+		(property "Description" ""
 			(at 0 0 0)
 			(unlocked yes)
 			(layer "F.Fab")
@@ -13378,6 +13634,8 @@
 			)
 		)
 		(path "/fd761fe1-ce50-5bc3-ad61-73ef4f416209")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(zone_connect 1)
 		(attr exclude_from_pos_files exclude_from_bom allow_soldermask_bridges)
 		(fp_rect
@@ -13551,7 +13809,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13563,7 +13821,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13588,6 +13846,8 @@
 			)
 		)
 		(path "/3d15e026-20b2-526c-be68-b5f457db8484")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 0.38)
@@ -13703,7 +13963,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13715,7 +13975,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -13741,6 +14001,8 @@
 			)
 		)
 		(path "/b5ef14e2-2d2d-5e26-8e33-65998e66db62")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 0.36)
@@ -13856,7 +14118,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -13868,7 +14130,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -13893,6 +14155,8 @@
 			)
 		)
 		(path "/4a7097b6-4870-5a35-b7e7-e845ed1d56cd")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -14008,7 +14272,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/dfb41fb13385a5153365608bd440bf80.pdf?productCode=C110466"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -14020,7 +14284,7 @@
 				)
 			)
 		)
-		(property "Description" "AP2171WG-7 (DIODES, SOT-25-5): 1 Active High 1A High Side Switch SOT-25-5 Power Distribution Switches, Load Drivers RoHS"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -14045,6 +14309,8 @@
 			)
 		)
 		(path "/26144092-801c-5253-93c6-a0cf7218c547")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.91 -1.56)
@@ -14338,7 +14604,7 @@
 			(roundrect_rratio 0.25)
 			(net 103 "unconnected-(U5-~{FLG}-Pad3)")
 			(pinfunction "~{FLG}")
-			(pintype "open_collector")
+			(pintype "open_collector+no_connect")
 			(uuid "e53cbc95-34b3-4d8f-8116-69797563bd7e")
 		)
 		(pad "4" smd roundrect
@@ -14404,7 +14670,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -14416,7 +14682,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -14442,6 +14708,8 @@
 			)
 		)
 		(path "/8a8ce73c-2132-5c84-a615-3539d40e8b56")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -14557,7 +14825,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -14569,7 +14837,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -14594,6 +14862,8 @@
 			)
 		)
 		(path "/13b2cceb-9dde-5de8-a998-ca0483f81280")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -14734,6 +15004,8 @@
 			)
 		)
 		(path "/293937e8-fd87-5d48-8b51-21dc3bd81cac")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr through_hole exclude_from_pos_files exclude_from_bom dnp)
 		(fp_line
 			(start -1.33 8.95)
@@ -14903,6 +15175,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Pin_1")
+			(pintype "passive")
 			(uuid "0a275dce-32e6-4924-8473-61f1a77ef71e")
 		)
 		(pad "2" thru_hole circle
@@ -14912,6 +15186,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 2 "+3V3_PI")
+			(pinfunction "Pin_2")
+			(pintype "passive")
 			(uuid "e41c4134-6e8f-4c45-b4ad-524c2ff86d23")
 		)
 		(pad "3" thru_hole circle
@@ -14921,6 +15197,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 34 "I2C_SCL")
+			(pinfunction "Pin_3")
+			(pintype "passive")
 			(uuid "d4b5904a-d79e-4b42-907d-01906407efdb")
 		)
 		(pad "4" thru_hole circle
@@ -14930,6 +15208,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 35 "I2C_SDA")
+			(pinfunction "Pin_4")
+			(pintype "passive")
 			(uuid "468f1881-27e9-46ba-8a12-5fc4310d26ab")
 		)
 		(embedded_fonts no)
@@ -14975,7 +15255,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -14987,7 +15267,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -15012,6 +15292,8 @@
 			)
 		)
 		(path "/9777af09-2d05-570d-9a5d-34c82b064f40")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -15164,6 +15446,8 @@
 			)
 		)
 		(path "/4b72bf2d-ac02-5f24-b464-215130d72ec2")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.76 1.56)
@@ -15436,6 +15720,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pinfunction "OUT")
+			(pintype "power_out")
 			(uuid "4aa8687b-0ce4-4d23-ade5-fadb8da4d9bd")
 		)
 		(pad "2" smd roundrect
@@ -15444,6 +15730,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pinfunction "IN")
+			(pintype "power_in")
 			(uuid "81743629-257b-4cef-bd7f-725759af39f9")
 		)
 		(pad "3" smd roundrect
@@ -15452,6 +15740,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "GND")
+			(pintype "power_in")
 			(uuid "ceb19517-f7ad-4abf-ab92-74cfc8d80b1b")
 		)
 		(embedded_fonts no)
@@ -15497,7 +15787,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -15509,7 +15799,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -15534,6 +15824,8 @@
 			)
 		)
 		(path "/22050d77-eaf9-5eb6-9be6-3605f39d5bbc")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 0.38)
@@ -15649,7 +15941,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -15661,7 +15953,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -15687,6 +15979,8 @@
 			)
 		)
 		(path "/3db4ed1f-384a-59cb-a4ef-18fe1a570ccd")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 0.36)
@@ -15801,7 +16095,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/741ba14677c88fb4d9f793d97efdadf4.pdf?productCode=C471913"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -15813,7 +16107,7 @@
 				)
 			)
 		)
-		(property "Description" "AP30P30Q (ALLPOWER, PDFN3333-8): P-Channel 30V 30A 1.5W Surface Mount PDFN3333-8"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -15838,6 +16132,8 @@
 			)
 		)
 		(path "/384256d2-5465-5558-bb1e-ee8adf448702")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 1.56 -1.61)
@@ -16127,7 +16423,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -16139,7 +16435,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -16165,6 +16461,8 @@
 			)
 		)
 		(path "/29f46b94-2e28-5604-bbfa-847d986d13d6")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 0.36)
@@ -16280,7 +16578,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/aa364b66c07e650f97701dabb6c06961.pdf?productCode=C283445"
+		(property "Datasheet" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -16292,7 +16590,7 @@
 				)
 			)
 		)
-		(property "Description" "M24C32-WDW6TP (ST, TSSOP-8): 32Kbit 1MHz I2C TSSOP-8 Memory"
+		(property "Description" ""
 			(at 0 0 180)
 			(layer "F.Fab")
 			(hide yes)
@@ -16317,6 +16615,8 @@
 			)
 		)
 		(path "/8f520d21-417b-5184-ba9c-a87b0cba8949")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -2.31 -1.61)
@@ -16693,6 +16993,8 @@
 			)
 		)
 		(path "/d975b1c6-2f08-5428-a584-ab4558547933")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.237258 -0.5225)
@@ -16753,6 +17055,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 38 "ISENSE")
+			(pintype "passive")
 			(uuid "0328fe46-68d6-4157-a1e2-136b4724753c")
 		)
 		(pad "2" smd roundrect
@@ -16761,6 +17064,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "628d3d11-9604-48f5-bd9f-f14274ea083b")
 		)
 		(embedded_fonts no)
@@ -16833,6 +17137,8 @@
 			)
 		)
 		(path "/57111374-c8c9-5706-9548-c846606185e1")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -16872,6 +17178,7 @@
 			(size 1 1)
 			(layers "F.Cu" "F.Mask")
 			(net 33 "GND_ISO")
+			(pintype "passive")
 			(uuid "6c34f5c8-3c28-4805-b79a-091b49ce791d")
 		)
 		(embedded_fonts no)
@@ -16906,7 +17213,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -16918,7 +17225,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -16944,6 +17251,8 @@
 			)
 		)
 		(path "/877294b0-72a3-5ee5-8133-4801658710d2")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -17059,7 +17368,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -17071,7 +17380,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -17097,6 +17406,8 @@
 			)
 		)
 		(path "/72b930e8-b53f-54b9-b622-c4311afb2d59")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -17237,6 +17548,8 @@
 			)
 		)
 		(path "/111c6507-10f8-5271-9541-40e4e24b5589")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.38 -1.38)
@@ -17377,6 +17690,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 8 "/E1_OUT")
+			(pinfunction "Pin_1")
+			(pintype "passive")
 			(uuid "cf172c99-bf2e-418b-9dae-c4119cf80bf1")
 		)
 		(pad "2" thru_hole circle
@@ -17386,6 +17701,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 38 "ISENSE")
+			(pinfunction "Pin_2")
+			(pintype "passive")
 			(uuid "fa7163d5-39d8-4348-91b6-cf78e9da29c4")
 		)
 		(embedded_fonts no)
@@ -17431,7 +17748,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -17443,7 +17760,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -17469,6 +17786,8 @@
 			)
 		)
 		(path "/0f24ed7b-f1f6-576e-9784-f1d221c1df8e")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -17612,6 +17931,8 @@
 			)
 		)
 		(path "/2e406a9b-9321-5699-b71e-09850e284970")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr board_only exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -17674,7 +17995,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/8238ae278d43fbd59fd57ef71ae67c27.pdf?productCode=C2290"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -17686,7 +18007,7 @@
 				)
 			)
 		)
-		(property "Description" "KT-0603W (Hubei KENTO Elec, 0603): White LED Indication - Discrete 2.6V~3.1V 0603"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -17724,6 +18045,8 @@
 			)
 		)
 		(path "/3dccbaba-ce4d-57c0-a395-6fe9012f6407")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.485 -0.735)
@@ -17890,7 +18213,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -17902,7 +18225,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -17927,6 +18250,8 @@
 			)
 		)
 		(path "/33916500-afc5-5e7a-b1af-97bfc4fda859")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd dnp)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -18042,7 +18367,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C15850"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -18054,7 +18379,7 @@
 				)
 			)
 		)
-		(property "Description" "CL21A106KAYNNNE (Samsung Electro-Mechanics, 0805): 10uF ±10% 25V Ceramic Capacitor X5R 0805"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -18079,6 +18404,8 @@
 			)
 		)
 		(path "/3b2980d2-cba9-55fe-9859-3f5e28ee3bd3")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.261252 -0.735)
@@ -18194,7 +18521,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -18206,7 +18533,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -18231,6 +18558,8 @@
 			)
 		)
 		(path "/e6110f0b-6267-55dc-80a2-5071061a7c0d")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -18385,6 +18714,8 @@
 			)
 		)
 		(path "/e1cd274b-1154-5888-8836-a5c4df656cee")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -2 -2.7)
@@ -18524,6 +18855,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 46 "MSPM0_3V3")
+			(pinfunction "VCC1")
+			(pintype "power_in")
 			(uuid "5e0554fb-4f7b-43b3-a464-911eae59d879")
 		)
 		(pad "2" smd rect
@@ -18531,6 +18864,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 32 "GND")
+			(pinfunction "GND1")
+			(pintype "power_in")
 			(uuid "ed111d2c-8830-44c8-8527-b999f7abacdc")
 		)
 		(pad "3" smd rect
@@ -18538,6 +18873,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 62 "RELEASE_H")
+			(pinfunction "INA")
+			(pintype "input")
 			(uuid "cb9b36f1-ba5d-4a6e-88b7-dd4fa760b661")
 		)
 		(pad "4" smd rect
@@ -18545,6 +18882,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 29 "EN_H")
+			(pinfunction "INB")
+			(pintype "input")
 			(uuid "b881fc8b-1522-4663-9c28-6de7c757a772")
 		)
 		(pad "5" smd rect
@@ -18552,6 +18891,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 25 "CATH_H")
+			(pinfunction "INC")
+			(pintype "input")
 			(uuid "e74347e1-d49d-45bf-b49f-fb4b6d26d08a")
 		)
 		(pad "6" smd rect
@@ -18559,6 +18900,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 30 "FAULT_H")
+			(pinfunction "OUTD")
+			(pintype "output")
 			(uuid "21bffbbf-ebcb-4bba-987a-65997ec2ac91")
 		)
 		(pad "7" smd rect
@@ -18566,6 +18909,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 46 "MSPM0_3V3")
+			(pinfunction "EN1")
+			(pintype "input")
 			(uuid "17cd09e8-d277-4eb7-a97e-621b7f28614c")
 		)
 		(pad "8" smd rect
@@ -18573,6 +18918,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 32 "GND")
+			(pinfunction "GND1")
+			(pintype "passive")
 			(uuid "73cc7b1b-d78b-4afa-aea6-ee0031172722")
 		)
 		(pad "9" smd rect
@@ -18580,6 +18927,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 33 "GND_ISO")
+			(pinfunction "GND2")
+			(pintype "power_in")
 			(uuid "f60ba959-0a12-4ed7-bfa8-98f192364c5f")
 		)
 		(pad "10" smd rect
@@ -18587,6 +18936,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 4 "+5V_ISO")
+			(pinfunction "EN2")
+			(pintype "input")
 			(uuid "b00be699-4de6-4ad2-b76c-d14aae8f863f")
 		)
 		(pad "11" smd rect
@@ -18594,6 +18945,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 31 "FAULT_n")
+			(pinfunction "IND")
+			(pintype "input")
 			(uuid "6cda595c-e49b-4320-a2e3-210883d52b06")
 		)
 		(pad "12" smd rect
@@ -18601,6 +18954,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 24 "CATH")
+			(pinfunction "OUTC")
+			(pintype "output")
 			(uuid "b3c4a488-e493-4f36-94cc-1b3b4188cc97")
 		)
 		(pad "13" smd rect
@@ -18608,6 +18963,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 28 "EN")
+			(pinfunction "OUTB")
+			(pintype "output")
 			(uuid "918b176f-1fbd-422e-ad3a-dc8691efce80")
 		)
 		(pad "14" smd rect
@@ -18615,6 +18972,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 61 "RELEASE")
+			(pinfunction "OUTA")
+			(pintype "output")
 			(uuid "3812c86a-569d-44d6-a96d-c4ed9985c899")
 		)
 		(pad "15" smd rect
@@ -18622,6 +18981,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 33 "GND_ISO")
+			(pinfunction "GND2")
+			(pintype "passive")
 			(uuid "5a00465e-56c6-46de-8d8d-249bcd72a319")
 		)
 		(pad "16" smd rect
@@ -18629,6 +18990,8 @@
 			(size 1.2 0.4)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 4 "+5V_ISO")
+			(pinfunction "VCC2")
+			(pintype "power_in")
 			(uuid "07fa29e3-70fd-47a6-9f88-258e4ce0156f")
 		)
 		(embedded_fonts no)
@@ -18674,7 +19037,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://www.ti.com/lit/gpn/mspm0g3507"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -18686,7 +19049,7 @@
 				)
 			)
 		)
-		(property "Description" "MSPM0G3507SRHBR (TI, VQFN-32(5x5)): ARM Cortex-M0+ 32 Bit VQFN-32(5x5) Microcontrollers RoHS"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -18712,6 +19075,8 @@
 			)
 		)
 		(path "/765da312-ef9e-5452-b76a-3d9e82740112")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -2.6797 2.6797)
@@ -20487,6 +20852,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 35 "I2C_SDA")
+			(pinfunction "PA0/SDA")
+			(pintype "bidirectional")
 			(uuid "c04b2614-2278-42df-85c4-391762776940")
 		)
 		(pad "2" smd rect
@@ -20494,6 +20861,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 34 "I2C_SCL")
+			(pinfunction "PA1/SCL")
+			(pintype "bidirectional")
 			(uuid "173b3c40-0ef9-4370-9e10-78fb0e0c60bd")
 		)
 		(pad "3" smd rect
@@ -20501,6 +20870,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 47 "NRST")
+			(pinfunction "NRST")
+			(pintype "input")
 			(uuid "8f6f3b94-fadd-49af-bf4c-dd35d35bb003")
 		)
 		(pad "4" smd rect
@@ -20508,6 +20879,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 46 "MSPM0_3V3")
+			(pinfunction "VDD")
+			(pintype "power_in")
 			(uuid "6ebd23f1-a078-4eb0-a2f4-0c89a7afb944")
 		)
 		(pad "5" smd rect
@@ -20515,6 +20888,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 32 "GND")
+			(pinfunction "VSS")
+			(pintype "power_in")
 			(uuid "612d0345-37ab-4d7f-9c70-e5bf8d2d6020")
 		)
 		(pad "6" smd rect
@@ -20522,6 +20897,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 63 "ROSC")
+			(pinfunction "PA2/ROSC")
+			(pintype "bidirectional")
 			(uuid "532dce4a-0b66-4ff9-82dc-7a81ab8ea957")
 		)
 		(pad "7" smd rect
@@ -20529,6 +20906,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 23 "BUTTON6")
+			(pinfunction "PA3")
+			(pintype "bidirectional")
 			(uuid "61906db5-1d51-4b83-a7eb-3576690cba61")
 		)
 		(pad "8" smd rect
@@ -20536,6 +20915,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 104 "unconnected-(U7-PA4-Pad8)")
+			(pinfunction "PA4")
+			(pintype "bidirectional+no_connect")
 			(uuid "694b58f0-8ed8-48b8-accf-d605ed899b97")
 		)
 		(pad "9" smd rect
@@ -20543,6 +20924,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 105 "unconnected-(U7-PA5-Pad9)")
+			(pinfunction "PA5")
+			(pintype "bidirectional+no_connect")
 			(uuid "d4cf972a-342e-447e-8981-6af6a55b290f")
 		)
 		(pad "10" smd rect
@@ -20550,6 +20933,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 30 "FAULT_H")
+			(pinfunction "PA6")
+			(pintype "bidirectional")
 			(uuid "b2bd139f-b77a-47c4-bb59-932a761aa38f")
 		)
 		(pad "11" smd rect
@@ -20557,6 +20942,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 29 "EN_H")
+			(pinfunction "PA7")
+			(pintype "bidirectional")
 			(uuid "ae6a8400-2bb6-4dc2-beed-03e06f141093")
 		)
 		(pad "12" smd rect
@@ -20564,6 +20951,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 58 "PI_RXD")
+			(pinfunction "PA8")
+			(pintype "bidirectional")
 			(uuid "14e9c785-eb0b-494c-b797-5e7ae67ed935")
 		)
 		(pad "13" smd rect
@@ -20571,6 +20960,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 60 "PI_TXD")
+			(pinfunction "PA9")
+			(pintype "bidirectional")
 			(uuid "c727fcdb-776d-4028-bf3e-a377f0066752")
 		)
 		(pad "14" smd rect
@@ -20578,6 +20969,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 45 "MCU_UART_TX")
+			(pinfunction "PA10")
+			(pintype "bidirectional")
 			(uuid "f68d2850-0187-4e17-bb97-6ea48f9eb74c")
 		)
 		(pad "15" smd rect
@@ -20585,6 +20978,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 44 "MCU_UART_RX")
+			(pinfunction "PA11")
+			(pintype "bidirectional")
 			(uuid "ca72889a-13f2-44d8-8177-8643e8fad858")
 		)
 		(pad "16" smd rect
@@ -20592,6 +20987,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 25 "CATH_H")
+			(pinfunction "PA12")
+			(pintype "bidirectional")
 			(uuid "fc30acfa-9269-44f3-81c4-b0c764d2ab88")
 		)
 		(pad "17" smd rect
@@ -20599,6 +20996,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 21 "BUTTON4")
+			(pinfunction "PA13")
+			(pintype "bidirectional")
 			(uuid "3c50c1be-6c5d-478a-82fb-cf83b36268ed")
 		)
 		(pad "18" smd rect
@@ -20606,6 +21005,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 19 "BUTTON2")
+			(pinfunction "PA14")
+			(pintype "bidirectional")
 			(uuid "a802c725-0bb8-4ca9-86df-a5f480e7f795")
 		)
 		(pad "19" smd rect
@@ -20613,6 +21014,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 62 "RELEASE_H")
+			(pinfunction "PA15/DAC")
+			(pintype "bidirectional")
 			(uuid "4ebed301-569f-46c9-9d07-4a4f5238bec3")
 		)
 		(pad "20" smd rect
@@ -20620,6 +21023,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 20 "BUTTON3")
+			(pinfunction "PA16")
+			(pintype "bidirectional")
 			(uuid "131ffe59-0e54-4625-bb21-cd0702dc5b9d")
 		)
 		(pad "21" smd rect
@@ -20627,6 +21032,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 67 "SDA_H")
+			(pinfunction "PA17")
+			(pintype "bidirectional")
 			(uuid "48832805-084b-4124-af1b-01853b8a1fda")
 		)
 		(pad "22" smd rect
@@ -20634,6 +21041,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 17 "BSL_INVOKE")
+			(pinfunction "PA18")
+			(pintype "bidirectional")
 			(uuid "89c379b1-6f1f-4ed0-b5c0-4b41fedea92f")
 		)
 		(pad "23" smd rect
@@ -20641,6 +21050,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 70 "SWDIO")
+			(pinfunction "PA19/SWDIO")
+			(pintype "bidirectional")
 			(uuid "e2b4fcf8-8ffb-4e3c-b387-eb7c707456db")
 		)
 		(pad "24" smd rect
@@ -20648,6 +21059,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 69 "SWCLK")
+			(pinfunction "PA20/SWCLK")
+			(pintype "bidirectional")
 			(uuid "b0e7a1e8-ffd9-4a1d-b0eb-4a4b84a0e19a")
 		)
 		(pad "25" smd rect
@@ -20655,6 +21068,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 18 "BUTTON1")
+			(pinfunction "PA21")
+			(pintype "bidirectional")
 			(uuid "ab70f0c7-bc66-4824-a3ca-8fe97b9c9460")
 		)
 		(pad "26" smd rect
@@ -20662,6 +21077,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 65 "SCL_H")
+			(pinfunction "PA22")
+			(pintype "bidirectional")
 			(uuid "ace88f3d-db0e-4060-a1b3-54a3529c51fc")
 		)
 		(pad "27" smd rect
@@ -20669,6 +21086,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 22 "BUTTON5")
+			(pinfunction "PA23")
+			(pintype "bidirectional")
 			(uuid "e7a5b06e-cb34-4b8d-b365-586aa7e62655")
 		)
 		(pad "28" smd rect
@@ -20676,6 +21095,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 40 "LED_MCU")
+			(pinfunction "PA24")
+			(pintype "bidirectional")
 			(uuid "6a36da6a-1445-4376-bed3-3c50eee65321")
 		)
 		(pad "29" smd rect
@@ -20683,6 +21104,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 43 "MCU_STIM_OUT")
+			(pinfunction "PA25")
+			(pintype "bidirectional")
 			(uuid "2e9f88d3-36c2-45ca-8454-0b0a5910339c")
 		)
 		(pad "30" smd rect
@@ -20690,6 +21113,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 42 "MCU_STIM_IN")
+			(pinfunction "PA26")
+			(pintype "bidirectional")
 			(uuid "2f6a0305-1997-4e41-be17-4a641265c824")
 		)
 		(pad "31" smd rect
@@ -20697,6 +21122,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 59 "PI_TRIGGER")
+			(pinfunction "PA27")
+			(pintype "bidirectional")
 			(uuid "2afa069f-d375-4c67-beef-4e244a839673")
 		)
 		(pad "32" smd rect
@@ -20704,6 +21131,8 @@
 			(size 0.254 0.8128)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 56 "Net-(U7-VCORE)")
+			(pinfunction "VCORE")
+			(pintype "passive")
 			(uuid "ec7b047e-1888-4de8-9cd9-a4cf48c384e9")
 		)
 		(pad "33" smd rect
@@ -20711,6 +21140,8 @@
 			(size 3.556 3.556)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 32 "GND")
+			(pinfunction "EPAD")
+			(pintype "passive")
 			(uuid "d273229d-d998-4672-b62a-f444558f04ae")
 		)
 		(embedded_fonts no)
@@ -20745,7 +21176,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -20757,7 +21188,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 0)
 			(layer "F.Fab")
 			(hide yes)
@@ -20782,6 +21213,8 @@
 			)
 		)
 		(path "/fb718e3e-73e9-597c-b149-e070b71e0623")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -20897,7 +21330,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -20909,7 +21342,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -20935,6 +21368,8 @@
 			)
 		)
 		(path "/5c490064-10f7-506f-a380-f43d62abbf70")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 0.36)
@@ -21087,6 +21522,8 @@
 			)
 		)
 		(path "/f309fbda-f8b7-5571-aca6-f3bf41460cdd")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 1.61 1.61)
@@ -21309,6 +21746,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pinfunction "VDD")
+			(pintype "power_in")
 			(uuid "a43889fd-d116-46eb-b868-1bf46c08e1ef")
 		)
 		(pad "2" smd roundrect
@@ -21317,6 +21756,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 16 "/VSET_P")
+			(pinfunction "VOUT")
+			(pintype "output")
 			(uuid "411f8fc5-7783-46ec-963c-df7727528b09")
 		)
 		(pad "3" smd roundrect
@@ -21325,6 +21766,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 100 "unconnected-(U105-NC-Pad3)")
+			(pinfunction "NC")
+			(pintype "no_connect")
 			(uuid "5d7814f4-83cd-4ed0-bb8f-99b17bdf10b9")
 		)
 		(pad "4" smd roundrect
@@ -21333,6 +21776,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "AGND")
+			(pintype "power_in")
 			(uuid "a93de0ad-7993-4628-a81d-6e8cf7798a1c")
 		)
 		(pad "5" smd roundrect
@@ -21341,6 +21786,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pinfunction "SPI2C")
+			(pintype "input")
 			(uuid "72520e7f-dcf3-4edd-ba38-37151307ed59")
 		)
 		(pad "6" smd roundrect
@@ -21349,6 +21796,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 64 "SCL")
+			(pinfunction "SCL")
+			(pintype "input")
 			(uuid "b7541427-cc27-4dbe-aa7a-a7687f6424c3")
 		)
 		(pad "7" smd roundrect
@@ -21357,6 +21806,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "A0")
+			(pintype "input")
 			(uuid "bfd78271-c539-4af4-b8a4-862d941dd41f")
 		)
 		(pad "8" smd roundrect
@@ -21365,6 +21816,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 66 "SDA")
+			(pinfunction "SDA")
+			(pintype "bidirectional")
 			(uuid "eee9b321-7595-4e74-86f7-dc8916435687")
 		)
 		(pad "9" smd roundrect
@@ -21373,6 +21826,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 101 "unconnected-(U105-NC-Pad9)")
+			(pinfunction "NC")
+			(pintype "no_connect")
 			(uuid "2fb657ce-76ea-420c-9fe5-25370f3c6c0a")
 		)
 		(pad "10" smd roundrect
@@ -21381,6 +21836,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 106 "/VREFIO")
+			(pinfunction "VREFIO")
+			(pintype "passive")
 			(uuid "6372fa72-72c1-4f07-8611-02dd94e9a8aa")
 		)
 		(embedded_fonts no)
@@ -21454,6 +21911,8 @@
 			)
 		)
 		(path "/510e467e-42b6-5f4d-8c9f-450ef31b0c2e")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr board_only exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -21516,7 +21975,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -21528,7 +21987,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -21553,6 +22012,8 @@
 			)
 		)
 		(path "/2f1d5928-3029-51bb-bfdb-8e3d855ca5e8")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -21705,6 +22166,8 @@
 			)
 		)
 		(path "/f8f89b4e-f79d-50a5-b521-87bfe60a1402")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.237258 -0.5225)
@@ -21765,6 +22228,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 16 "/VSET_P")
+			(pintype "passive")
 			(uuid "490ffead-90bd-439f-b86b-e5b154e0be12")
 		)
 		(pad "2" smd roundrect
@@ -21773,6 +22237,7 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 109 "U5B_IN")
+			(pintype "passive")
 			(uuid "907a3a69-22b3-446f-bea0-4e68515e7bb4")
 		)
 		(embedded_fonts no)
@@ -21843,6 +22308,8 @@
 			)
 		)
 		(path "/79c4d033-5fdc-5e4f-b419-9071a07b1be0")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_rect
 			(start -7.37 -12.3)
@@ -21906,6 +22373,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 55 "Net-(J7-In)")
+			(pinfunction "In")
+			(pintype "passive")
 			(uuid "c9d14390-e61b-46dc-971e-50d46469c6bf")
 		)
 		(pad "2" thru_hole circle
@@ -21915,6 +22384,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Ext")
+			(pintype "passive")
 			(uuid "288c3a1c-b136-43bc-a55b-59ad1495d7d5")
 		)
 		(pad "2" thru_hole circle
@@ -21924,6 +22395,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Ext")
+			(pintype "passive")
 			(uuid "6d79ec9e-7f74-42f4-9d76-5b412509f0e6")
 		)
 		(pad "2" thru_hole circle
@@ -21933,6 +22406,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 32 "GND")
+			(pinfunction "Ext")
+			(pintype "passive")
 			(uuid "a75f4f6e-bff0-46a3-af89-ebb7b156eb24")
 		)
 		(embedded_fonts no)
@@ -22017,6 +22492,8 @@
 			)
 		)
 		(path "/3a526304-2217-5ef3-9cf6-e566ab12175f")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -1.61 -0.85)
@@ -22205,6 +22682,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 31 "FAULT_n")
+			(pinfunction "K")
+			(pintype "passive")
 			(uuid "61e8d755-ee98-4f0e-8524-44a8bca54897")
 		)
 		(pad "2" smd roundrect
@@ -22213,6 +22692,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "A")
+			(pintype "passive")
 			(uuid "44fad6a5-93fa-4901-90c5-440abd22d8c9")
 		)
 		(embedded_fonts no)
@@ -22295,6 +22776,8 @@
 			)
 		)
 		(path "/c08687c0-a3cf-5410-931e-66da3e0bb4d1")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 2.06 2.56)
@@ -22517,6 +23000,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 38 "ISENSE")
+			(pinfunction "S")
+			(pintype "passive")
 			(uuid "91b99f66-2669-4938-af61-dca437bf5a0a")
 		)
 		(pad "2" smd roundrect
@@ -22525,6 +23010,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 102 "unconnected-(U108-NC-Pad2)")
+			(pinfunction "NC")
+			(pintype "no_connect")
 			(uuid "0c79fbbe-f069-4ad8-ba10-cf910e62c463")
 		)
 		(pad "3" smd roundrect
@@ -22533,6 +23020,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 33 "GND_ISO")
+			(pinfunction "GND")
+			(pintype "power_in")
 			(uuid "dffb9ab5-484f-483e-bd80-09f1e6ac0655")
 		)
 		(pad "4" smd roundrect
@@ -22541,6 +23030,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 5 "+V_STIM")
+			(pinfunction "V+")
+			(pintype "power_in")
 			(uuid "3dbcd905-531e-4427-9d54-ddbcda788580")
 		)
 		(pad "5" smd roundrect
@@ -22549,6 +23040,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 4 "+5V_ISO")
+			(pinfunction "VL")
+			(pintype "power_in")
 			(uuid "0c05f697-42c7-4285-bb00-9f8a240c66a5")
 		)
 		(pad "6" smd roundrect
@@ -22557,6 +23050,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 68 "SHORT_IN")
+			(pinfunction "IN")
+			(pintype "input")
 			(uuid "550f0a23-65a9-495a-8f6b-d06aa3f30a78")
 		)
 		(pad "7" smd roundrect
@@ -22565,6 +23060,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 7 "-V_STIM")
+			(pinfunction "V-")
+			(pintype "power_in")
 			(uuid "e789b537-84c4-4151-841c-911736252847")
 		)
 		(pad "8" smd roundrect
@@ -22573,6 +23070,8 @@
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(roundrect_rratio 0.25)
 			(net 27 "E1")
+			(pinfunction "D")
+			(pintype "passive")
 			(uuid "3ec3947f-f528-4faa-aeae-1e87aa4b1e14")
 		)
 		(embedded_fonts no)
@@ -22618,7 +23117,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -22630,7 +23129,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -22655,6 +23154,8 @@
 			)
 		)
 		(path "/e30b50e2-f38d-5e7d-ad51-8c1d096d6785")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -22806,6 +23307,8 @@
 			)
 		)
 		(path "/369258aa-eb83-5210-a72d-f2895c5094fc")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -5 -5)
@@ -22906,6 +23409,8 @@
 			(size 1.35 1)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 21 "BUTTON4")
+			(pinfunction "A/UP")
+			(pintype "passive")
 			(thermal_bridge_angle 45)
 			(uuid "5fa6b625-956c-403b-a844-956190a146d3")
 		)
@@ -22914,6 +23419,8 @@
 			(size 1.35 1)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 19 "BUTTON2")
+			(pinfunction "CENTRE")
+			(pintype "passive")
 			(thermal_bridge_angle 45)
 			(uuid "c7f24995-0b11-4758-afc8-0ce5e4aeb7a9")
 		)
@@ -22922,6 +23429,8 @@
 			(size 1.35 1)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 18 "BUTTON1")
+			(pinfunction "C/LEFT")
+			(pintype "passive")
 			(thermal_bridge_angle 45)
 			(uuid "b7fa5d9b-ead4-48ae-afa4-db2effddfef0")
 		)
@@ -22930,6 +23439,8 @@
 			(size 1.35 1)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 23 "BUTTON6")
+			(pinfunction "B/RIGHT")
+			(pintype "passive")
 			(thermal_bridge_angle 45)
 			(uuid "34c2feb8-2e6e-4321-baf0-1a6fdd3add64")
 		)
@@ -22938,6 +23449,8 @@
 			(size 1.35 1)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 32 "GND")
+			(pinfunction "COM")
+			(pintype "passive")
 			(thermal_bridge_angle 45)
 			(uuid "91ea60d6-58d4-4f2e-8724-478f8b1fa0ca")
 		)
@@ -22946,6 +23459,8 @@
 			(size 1.35 1)
 			(layers "F.Cu" "F.Mask" "F.Paste")
 			(net 20 "BUTTON3")
+			(pinfunction "D/DOWN")
+			(pintype "passive")
 			(thermal_bridge_angle 45)
 			(uuid "7e6c5b97-2a95-4ffd-a8db-805ee769b42d")
 		)
@@ -23022,6 +23537,8 @@
 			)
 		)
 		(path "/e731bf35-77af-56d7-bff3-4d6b4d9fea6e")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr exclude_from_pos_files exclude_from_bom)
 		(fp_circle
 			(center 0 0)
@@ -23061,6 +23578,7 @@
 			(size 1 1)
 			(layers "F.Cu" "F.Mask")
 			(net 38 "ISENSE")
+			(pintype "passive")
 			(uuid "ff129fa4-6f53-4445-8611-c3098aab0ec3")
 		)
 		(embedded_fonts no)
@@ -23095,7 +23613,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/02336ea48ea44ca18c72517dd3cb7b47.pdf?productCode=C307331"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -23107,7 +23625,7 @@
 				)
 			)
 		)
-		(property "Description" "CL05B104KB54PNC (Samsung Electro-Mechanics, 0402): 100nF ±10% 50V Ceramic Capacitor X7R 0402"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -23133,6 +23651,8 @@
 			)
 		)
 		(path "/f0b7b87a-4fae-517a-bc2f-2e18784d7ab1")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.107836 -0.36)
@@ -23248,7 +23768,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/a3b2ca2c7638da2635df3f5b1d90bcc0.pdf?productCode=C2977777"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -23260,7 +23780,7 @@
 				)
 			)
 		)
-		(property "Description" "CH340N (WCH, SOP-8): 1 USB to serial 2Mbps USB 2.0 SOP-8 Interface Controllers"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "F.Fab")
 			(hide yes)
@@ -23286,6 +23806,8 @@
 			)
 		)
 		(path "/a02a1ebc-8fb4-57e9-84ab-38c48d70668f")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start 2.06 -2.56)
@@ -23650,6 +24172,8 @@
 			)
 		)
 		(path "/9376240e-68b9-5b44-b0a7-7d6fc81728a4")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr through_hole exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -1.11 -2.11)
@@ -23701,6 +24225,8 @@
 			(remove_unused_layers no)
 			(roundrect_rratio 0.208333)
 			(net 5 "+V_STIM")
+			(pinfunction "Pin_1")
+			(pintype "passive")
 			(uuid "7033da6d-ee64-4b88-8609-696193a007c8")
 		)
 		(pad "2" thru_hole oval
@@ -23710,6 +24236,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 33 "GND_ISO")
+			(pinfunction "Pin_2")
+			(pintype "passive")
 			(uuid "f972de5a-75b8-4ae8-a3f0-9e85c455ef08")
 		)
 		(pad "3" thru_hole oval
@@ -23719,6 +24247,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 7 "-V_STIM")
+			(pinfunction "Pin_3")
+			(pintype "passive")
 			(uuid "8e4399d8-89aa-4add-8b26-1acfe7fbeb76")
 		)
 		(pad "4" thru_hole oval
@@ -23728,6 +24258,8 @@
 			(layers "*.Cu" "*.Mask")
 			(remove_unused_layers no)
 			(net 33 "GND_ISO")
+			(pinfunction "Pin_4")
+			(pintype "passive")
 			(uuid "63ce0b76-c7b3-4359-8a12-57e6a7aad8e5")
 		)
 		(embedded_fonts no)
@@ -23773,7 +24305,7 @@
 				)
 			)
 		)
-		(property "Datasheet" "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25900"
+		(property "Datasheet" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -23785,7 +24317,7 @@
 				)
 			)
 		)
-		(property "Description" "0402WGF4701TCE (UNI-ROYAL, 0402): 4.7kΩ ±1% 62.5mW 0402 Thick Film Resistor"
+		(property "Description" ""
 			(at 0 0 270)
 			(layer "F.Fab")
 			(hide yes)
@@ -23810,6 +24342,8 @@
 			)
 		)
 		(path "/4e6ccc92-caf5-5ff5-83f2-21b08ed3778e")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd)
 		(fp_line
 			(start -0.153641 -0.38)
@@ -23927,7 +24461,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Datasheet" "~"
+		(property "Datasheet" ""
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -23940,7 +24474,7 @@
 				(justify mirror)
 			)
 		)
-		(property "Description" "Generic connector, double row, 02x20, odd/even pin numbering scheme (row 1 odd numbers, row 2 even numbers), script generated (kicad-library-utils/schlib/autogen/connector/)"
+		(property "Description" ""
 			(at 0 0 90)
 			(layer "B.Fab")
 			(hide yes)
@@ -23968,6 +24502,8 @@
 			)
 		)
 		(path "/98165b0d-5e52-52cc-980f-a4a1961b5c1c")
+		(sheetname "/")
+		(sheetfile "StimHAT.kicad_sch")
 		(attr smd exclude_from_pos_files exclude_from_bom)
 		(fp_line
 			(start -3.92 1.38)
@@ -24830,6 +25366,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 2 "+3V3_PI")
+			(pinfunction "3V3")
+			(pintype "passive")
 			(uuid "4d2bde11-dcc8-4123-b588-35ef21b64f2b")
 		)
 		(pad "2" smd rect
@@ -24837,6 +25375,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 3 "+5V")
+			(pinfunction "5V")
+			(pintype "passive")
 			(uuid "c1ebe356-0917-4da2-941b-6ab73c3fbc76")
 		)
 		(pad "3" smd rect
@@ -24844,6 +25384,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 35 "I2C_SDA")
+			(pinfunction "GPIO2/SDA")
+			(pintype "passive")
 			(uuid "acea1cfd-98f6-4093-8bd2-df1f2e895db9")
 		)
 		(pad "4" smd rect
@@ -24851,6 +25393,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 3 "+5V")
+			(pinfunction "5V")
+			(pintype "passive")
 			(uuid "ca0b26a5-3482-4924-9aec-c1990ad34e5b")
 		)
 		(pad "5" smd rect
@@ -24858,6 +25402,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 34 "I2C_SCL")
+			(pinfunction "GPIO3/SCL")
+			(pintype "passive")
 			(uuid "17626634-098b-4154-924e-98db3dc92ae0")
 		)
 		(pad "6" smd rect
@@ -24865,6 +25411,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "21069f1b-7b57-434f-bbb9-c72aea345832")
 		)
 		(pad "7" smd rect
@@ -24872,6 +25420,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 88 "unconnected-(J1-GPIO4-Pad7)")
+			(pinfunction "GPIO4")
+			(pintype "passive+no_connect")
 			(uuid "77134721-24aa-4b0b-bae1-d2304f1cafff")
 		)
 		(pad "8" smd rect
@@ -24879,6 +25429,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 60 "PI_TXD")
+			(pinfunction "GPIO14/TXD")
+			(pintype "passive")
 			(uuid "eac65bf4-350c-45e6-b358-def7fb002913")
 		)
 		(pad "9" smd rect
@@ -24886,6 +25438,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "133033cd-6816-4925-a19d-70c80381583d")
 		)
 		(pad "10" smd rect
@@ -24893,6 +25447,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 58 "PI_RXD")
+			(pinfunction "GPIO15/RXD")
+			(pintype "passive")
 			(uuid "7f85ff57-290e-4e23-a31b-4452a7cd1f90")
 		)
 		(pad "11" smd rect
@@ -24900,6 +25456,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 81 "unconnected-(J1-GPIO17-Pad11)")
+			(pinfunction "GPIO17")
+			(pintype "passive+no_connect")
 			(uuid "e6817cff-34b7-4c3c-8485-56c2695435ac")
 		)
 		(pad "12" smd rect
@@ -24907,6 +25465,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 41 "MCU_PWR_EN")
+			(pinfunction "GPIO18")
+			(pintype "passive")
 			(uuid "dd600069-07f1-412c-a3b8-b3cc89105d34")
 		)
 		(pad "13" smd rect
@@ -24914,6 +25474,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 87 "unconnected-(J1-GPIO27-Pad13)")
+			(pinfunction "GPIO27")
+			(pintype "passive+no_connect")
 			(uuid "7fbad8ba-843a-4b10-8946-0d4537e30000")
 		)
 		(pad "14" smd rect
@@ -24921,6 +25483,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "9fc18ed6-199e-4f73-8f9e-80ba188907c1")
 		)
 		(pad "15" smd rect
@@ -24928,6 +25492,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 85 "unconnected-(J1-GPIO22-Pad15)")
+			(pinfunction "GPIO22")
+			(pintype "passive+no_connect")
 			(uuid "67889b8c-c5cd-409b-92e3-9be6d205dea9")
 		)
 		(pad "16" smd rect
@@ -24935,6 +25501,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 86 "unconnected-(J1-GPIO23-Pad16)")
+			(pinfunction "GPIO23")
+			(pintype "passive+no_connect")
 			(uuid "f3d47477-be6f-4e5a-b112-81dcbe7c66f0")
 		)
 		(pad "17" smd rect
@@ -24942,6 +25510,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 2 "+3V3_PI")
+			(pinfunction "3V3")
+			(pintype "passive")
 			(uuid "5ad306ac-c064-40dd-9e40-1bbc7a5d56e0")
 		)
 		(pad "18" smd rect
@@ -24949,6 +25519,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 69 "SWCLK")
+			(pinfunction "GPIO24")
+			(pintype "passive")
 			(uuid "30277c96-7d5d-4fd1-a9a2-2c72f85e59d8")
 		)
 		(pad "19" smd rect
@@ -24956,6 +25528,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 77 "unconnected-(J1-GPIO10-Pad19)")
+			(pinfunction "GPIO10")
+			(pintype "passive+no_connect")
 			(uuid "16bc8406-6075-4688-bcb2-8cf7a1d9d723")
 		)
 		(pad "20" smd rect
@@ -24963,6 +25537,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "b8af39fd-edd4-4899-b3e2-967cda0bc0c6")
 		)
 		(pad "21" smd rect
@@ -24970,6 +25546,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 93 "unconnected-(J1-GPIO9-Pad21)")
+			(pinfunction "GPIO9")
+			(pintype "passive+no_connect")
 			(uuid "dfc2fa0d-9de0-4298-bedc-a6594194319c")
 		)
 		(pad "22" smd rect
@@ -24977,6 +25555,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 70 "SWDIO")
+			(pinfunction "GPIO25")
+			(pintype "passive")
 			(uuid "5dabfa52-91ec-4819-9df1-9bb2296dfb2d")
 		)
 		(pad "23" smd rect
@@ -24984,6 +25564,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 78 "unconnected-(J1-GPIO11-Pad23)")
+			(pinfunction "GPIO11")
+			(pintype "passive+no_connect")
 			(uuid "db62510b-0d78-456e-92cd-41e09cded918")
 		)
 		(pad "24" smd rect
@@ -24991,6 +25573,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 92 "unconnected-(J1-GPIO8-Pad24)")
+			(pinfunction "GPIO8")
+			(pintype "passive+no_connect")
 			(uuid "30ced584-68d6-404d-8b69-95372abf6bbe")
 		)
 		(pad "25" smd rect
@@ -24998,6 +25582,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "1cd2051b-623a-4308-abaf-dca06ef663fd")
 		)
 		(pad "26" smd rect
@@ -25005,6 +25591,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 91 "unconnected-(J1-GPIO7-Pad26)")
+			(pinfunction "GPIO7")
+			(pintype "passive+no_connect")
 			(uuid "0117e8da-5a20-49ff-a554-e00fce0b4133")
 		)
 		(pad "27" smd rect
@@ -25012,6 +25600,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 37 "ID_SDA")
+			(pinfunction "ID_SD")
+			(pintype "passive")
 			(uuid "2138a57b-3e3f-4f07-a122-fed5bd4f9e01")
 		)
 		(pad "28" smd rect
@@ -25019,6 +25609,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 36 "ID_SCL")
+			(pinfunction "ID_SC")
+			(pintype "passive")
 			(uuid "5af326a2-19d9-4574-9905-144fcbb387b8")
 		)
 		(pad "29" smd rect
@@ -25026,6 +25618,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 89 "unconnected-(J1-GPIO5-Pad29)")
+			(pinfunction "GPIO5")
+			(pintype "passive+no_connect")
 			(uuid "70c4d438-1d60-46e6-9a61-bacdae528ee4")
 		)
 		(pad "30" smd rect
@@ -25033,6 +25627,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "5c6b518a-977e-4f7a-8042-7703b6e1e90f")
 		)
 		(pad "31" smd rect
@@ -25040,6 +25636,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 90 "unconnected-(J1-GPIO6-Pad31)")
+			(pinfunction "GPIO6")
+			(pintype "passive+no_connect")
 			(uuid "dbf68f20-1850-4662-be67-f09a6bd5942e")
 		)
 		(pad "32" smd rect
@@ -25047,6 +25645,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 79 "unconnected-(J1-GPIO12-Pad32)")
+			(pinfunction "GPIO12")
+			(pintype "passive+no_connect")
 			(uuid "7eb66592-992a-4c25-a3ad-9dca40c15b6a")
 		)
 		(pad "33" smd rect
@@ -25054,6 +25654,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 80 "unconnected-(J1-GPIO13-Pad33)")
+			(pinfunction "GPIO13")
+			(pintype "passive+no_connect")
 			(uuid "f665f7a4-7756-4dde-9cf3-f7243fa3e4e2")
 		)
 		(pad "34" smd rect
@@ -25061,6 +25663,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "e2daa7b0-ec57-4c35-9a0f-bacb8922c3d8")
 		)
 		(pad "35" smd rect
@@ -25068,6 +25672,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 82 "unconnected-(J1-GPIO19-Pad35)")
+			(pinfunction "GPIO19")
+			(pintype "passive+no_connect")
 			(uuid "3ee39219-0b3f-4ded-904c-479ddf38bf84")
 		)
 		(pad "36" smd rect
@@ -25075,6 +25681,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 47 "NRST")
+			(pinfunction "GPIO16")
+			(pintype "passive")
 			(uuid "3d270e96-6143-4f5a-a82e-140e27ab4c9e")
 		)
 		(pad "37" smd rect
@@ -25082,6 +25690,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 59 "PI_TRIGGER")
+			(pinfunction "GPIO26")
+			(pintype "passive")
 			(uuid "1bf2e115-3d0e-467a-bd08-42a632442d31")
 		)
 		(pad "38" smd rect
@@ -25089,6 +25699,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 83 "unconnected-(J1-GPIO20-Pad38)")
+			(pinfunction "GPIO20")
+			(pintype "passive+no_connect")
 			(uuid "c43f2d71-fc17-4383-b2bf-fd72097df87e")
 		)
 		(pad "39" smd rect
@@ -25096,6 +25708,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 32 "GND")
+			(pinfunction "GND")
+			(pintype "passive")
 			(uuid "50286ac4-366c-4c08-ac12-2a461f631990")
 		)
 		(pad "40" smd rect
@@ -25103,6 +25717,8 @@
 			(size 1.1 1.78)
 			(layers "B.Cu" "B.Mask" "B.Paste")
 			(net 84 "unconnected-(J1-GPIO21-Pad40)")
+			(pinfunction "GPIO21")
+			(pintype "passive+no_connect")
 			(uuid "109c121f-1c2a-4976-98c9-75dccd05b28b")
 		)
 		(embedded_fonts no)
