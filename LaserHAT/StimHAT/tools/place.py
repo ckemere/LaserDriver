@@ -183,7 +183,7 @@ silk("TRIG IN", 22.8, 42.3); silk("STIM OUT", 38.4, 42.3)
 silk("FIRE", 6.2, 37.5, 0.8, 90); silk("USB", 11.8, 24.0, 0.8, 90); silk("PWR", 6.6, 13.0, 0.8, 90)
 silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)
 silk("BSL", 35.0, 10.4); silk("OLED", 61.5, 18.8)
-silk("ISOLATED", 49.5, 18.75); silk("E1", 58.2, 70.7, 0.8); silk("+V", 54.3, 57.2, 0.8); silk("0V", 56.5, 57.2, 0.8); silk("-V", 58.4, 57.2, 0.8); silk("CAB", 60.9, 57.2, 0.8); silk("NYLON", 61.5, 50.0, 0.8)
+silk("ISOLATED", 49.5, 18.75); silk("E1", 58.2, 70.7, 0.8); silk("+V", 54.3, 57.0, 0.8); silk("0V", 56.5, 57.0, 0.8); silk("-V", 58.4, 57.0, 0.8); silk("CAB", 60.9, 57.0, 0.8); silk("NYLON", 61.5, 50.0, 0.8)
 silk("DC-DC", 55.5, 61.5, 0.8, 0, pcbnew.B_SilkS)
 # drawings: the bonnet (65 x 30.7 on the header), the 0.91" OLED module when fitted, the Pi 5 notch note
 rect(0, 0, 65, 30.7, pcbnew.Dwgs_User, 0.15); silk("Adafruit 4567 bonnet (9 mm up)", 20, 2.5, 1.0, 0, pcbnew.Dwgs_User)

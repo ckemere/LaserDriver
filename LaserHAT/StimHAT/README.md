@@ -93,8 +93,8 @@ five isolated nets go through the corridor west of MH4 (-V_RAW front x 53.6, +V_
 E1_OUT back 55.6, ISENSE back 56.2) and around J102, whose pin order is the mirror of PS1's; GND_ISO of the LDO area
 joins the battery socket along the east edge past MH4.  `tools/preroute.py` holds the pre-routes a fresh run starts
 from; the hand finishing is not scripted, so a full re-route restarts from the placement.  Result: 0 DRC errors,
-0 unconnected (isolation rule live), ERC 0 / 0.  The four remaining DRC warnings are `lib_footprint_mismatch` on J6,
-J7, J101 and PS1: their silk outlines hang past the board edge (BNC barrels, the electrode header, PS1's body), so
+0 unconnected (isolation rule live), ERC 0 / 0.  The three remaining DRC warnings are `lib_footprint_mismatch` on J6,
+J7 and PS1: their silk outlines hang past the board edge (BNC barrels, PS1's body), so
 `fixups.py silk-strip` deleted them from the board copies.  `fab/StimHAT/StimHAT_top.png` / `_bottom.png` are the
 renders.
 
@@ -117,7 +117,15 @@ the tab's tracks were re-threaded for it; the +5V_ISO feed above U109 moved to y
 2.50); J102's pins are labelled along the row; the BNC labels moved above the bodies; a "NYLON" marker sits above
 MH4; the stray "5V" label went.  Assembly order on the tab: J102 and J101 first, then PS1 from the top.  **With PS1
 fitted, a Pi 4's AV jack cannot take a plug** (PS1 hangs 10 mm below the HAT right over it) and a micro-HDMI1 plug's
-overmould may touch PS1's west end — PS1 is for stand-alone / battery-less use; with a Pi, feed J102 from the pack.  Noted, not changed: C114 (VREFIO)
+overmould may touch PS1's west end — PS1 is for stand-alone / battery-less use; with a Pi, feed J102 from the pack.
+Fourth layout review (2026-10-29, after the tab rework): no blocker / major; minors noted here: the `_BodyN`
+footprint draws PS1's body 0.2 mm short on the J101 side (Mornsun: pin row 0.9 mm from the back face, so the body
+really spans y 63.1–69.1, worst case 69.45) — J101's plastic then sits ≈ 0.3 mm from PS1's pad 6, fit J101 first
+and solder PS1's pins 4–6 with a fine tip; U101.7 (ISO7741 VCC1, second pin) has no cap of its own (C101 is at pin
+1, 4.4 mm away), C116 sits at U110 rather than U106.8 — both are 100 nF-at-5 V class devices on short, quiet rails;
+the +3V3 / MSPM0_3V3 / VBUS / ±V_STIM tracks run at 0.2–0.25 mm where their class says 0.3 (≤ 250 mA, fine); USB
+D+/D− are 19 vs 34 mm long (full speed, irrelevant); run `tools/lcsc_verify.py --refresh` before ordering (10 codes
+are not in the local catalog yet).  Noted, not changed: C114 (VREFIO)
 is 6 mm from U105.10 with two vias (no room next to the pin; 1 µF on a buffered reference, fine); J10's and the BNC
 ground legs' pads have tracks at the 0.15 mm class distance (J10 is unpopulated, the BNC legs are big pads — solder
 them without flooding); the ± rail tracks run at 0.15 mm for ~4 mm on the back near (51–58, 34–38) (IPC-2221 B4);
