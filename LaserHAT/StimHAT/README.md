@@ -210,7 +210,41 @@ below the bonnet's edge (y ≥ 31.5); silk text 1.0 mm.  Noted, not changed: BNC
 with ≈ 1 mm between the knurls); no copper pours (GND is 0.3 mm tracks; adequate at these currents); the USB pair is
 unmatched (full speed only).
 
-## The DC-DC pod (to be designed)
+## MCU pin map (StimHAT, 2026-10-29)
+
+Re-optimised for this placement (annealed over every function-legal assignment; report in the session notes): each
+line leaves U7 on the side facing its destination, 0 facing violations, model crossings 81 → 41 (the rest are the
+fixed-pin SWD / BSL / UART lines, best run on the back from their fan-out vias).  The laser variant keeps the same
+positions: PWM, fault and ADC functions sit on the isolator-facing pins.
+
+| Pin | Pad | Net | Function |
+|---|---|---|---|
+| 1, 2 | PA0, PA1 | I2C_SDA, I2C_SCL | I2C0 (fail-safe pins), fixed |
+| 3 / 6 / 32 | NRST / PA2 / VCORE | NRST / ROSC / VCORE | fixed |
+| 7, 8 | PA3, PA4 | spare | I2C1, TIMG7 / TIMG8 |
+| 9 | PA5 | LED_MCU | GPIO, faces D7 |
+| 10, 11 | PA6, PA7 | BUTTON4 (up), BUTTON6 (right) | GPIO, west side toward the joystick |
+| 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | UART1 (only PA8/9 or PA17/18), fixed |
+| 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 (BSL), fixed |
+| 16, 17, 18 | PA12, PA13, PA14 | BUTTON2 (centre), BUTTON1 (left / BACK), BUTTON3 (down) | GPIO |
+| 19 | PA15 | RELEASE_H | DAC0_OUT (only pin), fixed |
+| 20 | PA16 | BUTTON5 (FIRE) | GPIO |
+| 21 | PA17 | MCU_STIM_OUT | GPIO (TIMA1_C0 / TIMG7_C0 available) |
+| 22 / 23 / 24 | PA18 / PA19 / PA20 | BSL_INVOKE / SWDIO / SWCLK | fixed |
+| 25 | PA21 | MCU_STIM_IN | TIMG8_CCP0 capture, faces U8 |
+| 26 | PA22 | CATH_H (PWM_B) | TIMA0_CCP1, faces U101.5 |
+| 27 | PA23 | EN_H (PWM_A) | TIMA0_CCP3, faces U101.4 |
+| 28, 29 | PA24, PA25 | SDA_H, SCL_H (DB_ADC_A/B) | ADC0 ch 3 / ch 2 (ADC1 has no east-side inputs), face U109 |
+| 30 | PA26 | FAULT_H | TIMA0 FAULT0 + GPIO IRQ, faces U101.6 |
+| 31 | PA27 | PI_TRIGGER | TIMG7_CCP1, unchanged |
+
+Firmware: `Firmware/board.h` / `mcu.h` carry this map as an uncommitted draft; `pwm_timer.c` / `output_mux.c`
+(CCP1 ↔ CCP3 roles), `adc.c` (ADC0 ch 3 / 2) and the GPIO IRQ bit masks still need the matching edits.  Found on the
+way: PA22 is ADC0 ch 7, never ADC1.8, so the Rev 2 HAT's compliance readback channel was wrong.  Placement hints from
+the analysis (the HAT side is hand-placed): R101–R103 in RELEASE / EN / CATH order to match U101's pads, R107 / R108
+nets swapped to match U109's SCL / SDA order, R4 and the R3 / C3 / JP4 reset network north of U7.
+
+## The DC-DC pod
 
 The isolated supply that used to be on the HAT: A0515S-1WR3 (5 V → ±15 V, 1 W, SIP-7, Mornsun, min. load 10 %),
 C104 4.7 µF at its input, L101 / L102 10 µH + C105 / C106 10 µF per rail, then an NPN / PNP capacitance multiplier per

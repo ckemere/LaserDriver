@@ -118,11 +118,14 @@ PARTS = [
     R("R2", "3.9k", "+3V3_PI", "ID_SCL", lcsc=L["R3k9"]),
     # ================================================================ 2. MCU, USB-UART, reset, BSL, buttons, LEDs, display socket
     dict(ref="U7", sym="MSPM0G3507", value="MSPM0G1507SRHBR", fp="stimhat:VQFN32_RHB_TEX", lcsc=L["MCU"],
+         # pin map re-optimised for the StimHAT placement (2026-10-29): isolator lines on the east side (TIMA0 CCP3 /
+         # CCP1 / FAULT0 and ADC0 ch3 / ch2 so the laser variant gets PWM, fault and ADC there), buttons and the LED on
+         # the west / south sides, STIM_IN on the TIMG8 capture pin; PA3 / PA4 (pins 7 / 8) spare (I2C1, TIMG7/8)
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
-               "7": "BUTTON6", "8": None, "9": None, "10": "FAULT_H", "11": "EN_H", "12": "PI_RXD", "13": "PI_TXD",
-               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "CATH_H", "17": "BUTTON4", "18": "BUTTON2", "19": "RELEASE_H",
-               "20": "BUTTON3", "21": "SDA_H", "22": "BSL_INVOKE", "23": "SWDIO", "24": "SWCLK", "25": "BUTTON1", "26": "SCL_H",
-               "27": "BUTTON5", "28": "LED_MCU", "29": "MCU_STIM_OUT", "30": "MCU_STIM_IN", "31": "PI_TRIGGER", "32": "VCORE",
+               "7": None, "8": None, "9": "LED_MCU", "10": "BUTTON4", "11": "BUTTON6", "12": "PI_RXD", "13": "PI_TXD",
+               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON2", "17": "BUTTON1", "18": "BUTTON3", "19": "RELEASE_H",
+               "20": "BUTTON5", "21": "MCU_STIM_OUT", "22": "BSL_INVOKE", "23": "SWDIO", "24": "SWCLK", "25": "MCU_STIM_IN",
+               "26": "CATH_H", "27": "EN_H", "28": "SDA_H", "29": "SCL_H", "30": "FAULT_H", "31": "PI_TRIGGER", "32": "VCORE",
                "33": "GND"}),
     R("R4", "100k 0.1%", "ROSC", "GND", lcsc=L["R100k01"]),
     C("C4", "470nF", "VCORE", "GND", lcsc=L["C470n"]),
