@@ -181,7 +181,7 @@ def silk(txt, x, y, size=1.0, rot=0, layer=pcbnew.F_SilkS):
 silk("StimHAT rev A", 32.5, 30.0, 1.0, 0, pcbnew.B_SilkS)
 silk("TRIG IN", 22.8, 55.5); silk("STIM OUT", 38.4, 55.5)
 silk("FIRE", 6.2, 37.5, 0.8, 90); silk("USB", 11.8, 24.0, 0.8, 90); silk("PWR", 6.6, 13.0, 0.8, 90)
-silk("5V", 7.9, 30.4); silk("MCU", 8.2, 32.0); silk("STIM", 7.6, 35.2)
+silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)
 silk("BSL", 35.0, 10.4); silk("OLED", 61.5, 18.8)
 silk("ISOLATED", 49.5, 18.75); silk("E1 E2", 59.2, 63.6); silk("+V 0V -V", 64.0, 60.0, 0.8, 90)
 silk("DC-DC", 55.5, 63.0, 0.8, 0, pcbnew.B_SilkS); silk("5V", 48.3, 61.0)

@@ -20,6 +20,18 @@ Key facts not obvious from the code:
   joystick right); joystick is mounted at 45 degrees.
 - pcb_sync-copied footprints share UUIDs -> run `tools/fresh_uuids.py` or KiCad's DRC pairs the wrong parts.
 - Hand-fit: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; never with the pack at the same time), J10 optional; MH4 nylon.
+- **Routed and audited 2026-10-29** (commits d7c196f, 6f0c606): Freerouting alone never finishes (2–9 leftovers per
+  run, a different set each time, stops by itself after ~300 passes); `tools/fanout.py` (locked dog-bone stubs +
+  staggered vias on every U7/U101 pin, GND thermal vias in U7's pad) and `tools/preroute.py` (SDA_H, the tab's five
+  isolated nets through the corridor west of MH4, the +5V/GND passage) get it to 2–3, the rest was finished by hand
+  with `tools/fixups.py` (track / via / move-via / drop-seg) using matplotlib renders of the copper (scratch
+  `plot_area.py` / `plot_layer.py`); re-running a full route after a placement change costs ~10 min and reshuffles the
+  leftovers, so prefer hand fixes on the current board.  **KiCad 9 silently ignores a .kicad_dru rule that has a
+  `(comment ...)` entry** — the barrier rule had never fired until the comments were removed; always prove the rule
+  file live with a deliberate 25 mm test.  `pcbnew` segfaults on `FOOTPRINT.Remove(graphic)` in this build: edit the
+  .kicad_pcb text instead (`fixups.py silk-strip`, `tools/silk_dedupe.py`).  The 4 remaining DRC warnings
+  (lib_footprint_mismatch on J6, J7, J101, PS1) are the stripped edge-overhanging silk and are expected.  No copper
+  pours by design.  Two independent audits (schematic, layout) were run and their MAJORs fixed; see `StimHAT/README.md`.
 
 **Why:** the module + HAT + pack chain had become more complex and costlier than two dedicated HATs; see the plan note.
 **How to apply:** treat StimHAT as a generated project (edit `sch_parts.py` / `gen_schematic.py` / `tools/place.py`, never
