@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "dcdcpod")(type "KiCad")(uri "${KIPRJMOD}/dcdcpod.kicad_sym")(options "")(descr "DC-DC pod project symbols"))
+)

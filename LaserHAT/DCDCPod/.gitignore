@@ -1,0 +1,8 @@
+__pycache__/
+drc*.json
+drc.rpt
+erc.json
+erc.rpt
+tools/ref/netlist_current.xml
+*.kicad_prl
+*-backups/

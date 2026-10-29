@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "dcdcpod")(type "KiCad")(uri "${KIPRJMOD}/dcdcpod.pretty")(options "")(descr "DC-DC pod footprints"))
+)

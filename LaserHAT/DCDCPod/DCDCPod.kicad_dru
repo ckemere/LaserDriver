@@ -1,0 +1,13 @@
+(version 1)
+(rule hat_copper_in_iso_region
+  (condition "A.intersectsArea('iso_region') && (A.Type != 'Pad' || A.Pad_Type != 'NPTH, mechanical') && A.NetClass != 'Iso'")
+  (constraint disallow track via pad zone))
+(rule iso_copper_in_hat_region
+  (condition "A.intersectsArea('hat_region') && A.NetClass == 'Iso'")
+  (constraint disallow track via pad zone))
+(rule isolation_gap
+  (condition "(A.NetClass == 'Iso' && B.NetClass != 'Iso') || (A.NetClass != 'Iso' && B.NetClass == 'Iso')")
+  (constraint clearance (min 2.5mm)))
+(rule tht_connectors
+  (condition "A.Pad_Type == 'Through-hole' && (A.memberOfFootprint('J1') || A.memberOfFootprint('J2') || A.memberOfFootprint('PS1'))")
+  (constraint clearance (min 0.3mm)))
