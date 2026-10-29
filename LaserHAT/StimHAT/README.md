@@ -68,8 +68,9 @@ joystick-right pin on this board).  The bonnet's buttons use GPIO 4, 5, 6, 17, 2
 65 × 57 mm with the HAT outline (3 mm radii, the Pi 4 PoE / Pi 5 fan notch at x 59–65, y 8–16.5) and a tab x 46–56,
 y 57–64.5 (HAT coordinates minus (100, 43)).  Top strip (y < 17.5) and west half: the core, all under the bonnet (9 mm
 up, parts under 7 mm); the OLED socket J10 (vertical 1 × 4, unpopulated) right under the header at the strip's west
-end, pins GND / 3V3 / SCL / SDA at x 22.8 / 20.3 / 17.7 / 15.2, y 10 — the 0.91" module (right-angle pins) lies flat over the strip, parallel to the
-header, its pin edge north = the display's top (outline on User.Drawings, x 0–38, y 10–22; it covers SW6, the BSL button); JP1 moved to the strip's east end.  West edge, top
+end, pins GND / 3V3 / SCL / SDA at x 22.8 / 20.3 / 17.7 / 15.2, y 10 — the 0.91" module comes with bare holes, so the header soldered to it decides how it
+sits: straight pins stand it along the header, long edge horizontal; right-angle pins lay it flat over the strip with
+its pin edge north (both outlines on User.Drawings; lying flat it covers SW6, the BSL button); JP1 moved to the strip's east end.  West edge, top
 to bottom: SW10, J5, the three LEDs, FIRE, the joystick in the south-west corner.  Two right-angle BNCs mid-south
 (bodies y 43–57, barrels past the edge; `stimhat:BNC_Amphenol_031-5540_RA`, right-angle only — the Rev 2 HAT's dual
 footprint with the vertical 031-5539's diagonal post pad and body removed).  The band the vertical BNC bodies would have taken (y 36.5–43, outside the bonnet) carries the supply

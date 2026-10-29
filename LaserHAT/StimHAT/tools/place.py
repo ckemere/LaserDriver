@@ -4,8 +4,9 @@ with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) no tab since the DC-DC left fo
 Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
   * top strip (y < 17.5) and the west half: the Rev 2 HAT core, all under the Adafruit 4567 bonnet (which sits on the
     stacking header 9 mm up), parts <= 7 mm tall; J10 (vertical socket for the 0.91" OLED module, unpopulated) at
-    the strip's west end under the header: the module (right-angle pins) lies flat over the strip, parallel to the
-    header, its pin edge north = the display's top; pins west to east SDA SCL VCC GND
+    the strip's west end under the header; the module comes with bare holes, so the header soldered to it decides:
+    straight pins -> it stands along the header (long edge horizontal), right-angle pins -> it lies flat over the
+    strip with its pin edge north; pins west to east SDA SCL VCC GND either way
   * west edge, top to bottom: SW10 (USB power), J5 USB-C, the three LEDs, FIRE (SW9), the five-way joystick (SW7, at
     45 degrees so its directions line up with the board) in the south-west corner
   * two right-angle BNCs in the middle of the south edge (bodies x 15-46, y 43-57, barrels past the edge); the band
@@ -248,7 +249,8 @@ rect(58.09, 11.95, 64.09, 18.55, BON, 0.15); circle(61.09, 15.25, 1.5, BON)     
 rect(50.85, 18.43, 56.85, 25.03, BON, 0.15); circle(53.85, 21.73, 1.5, BON)            # button #5
 silk("Adafruit 4567 bonnet, 9 mm up (outline, holes, header, OLED, joystick, buttons)", 32.5, 33.0, 1.0, 0, BON)
 rect(16.5, 36.8, 46.0, 43.0, pcbnew.Dwgs_User, 0.15); silk("DC-DC pod: J103 (5 V) to J102 (+/-V), lies over the band", 31.0, 35.0, 0.8, 0, pcbnew.Dwgs_User)
-rect(0.0, 10.0, 38.0, 22.0, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module lying flat on J10 (right-angle pins), 8.5 mm up, pins = top edge", 19.0, 23.2, 0.8, 0, pcbnew.Dwgs_User)
+rect(0.0, 9.2, 38.0, 10.8, pcbnew.Dwgs_User, 0.15); rect(0.0, 10.0, 38.0, 22.0, pcbnew.Dwgs_User, 0.1)
+silk("0.91in OLED module on J10 (vertical socket): straight pins -> standing along the header (strip), right-angle pins -> lying flat (rect)", 19.0, 23.2, 0.8, 0, pcbnew.Dwgs_User)
 silk("Pi 4 PoE / Pi 5 fan", 56.0, 7.0, 0.8, 0, pcbnew.Dwgs_User)
 for d in stale:
     board.Remove(d)
