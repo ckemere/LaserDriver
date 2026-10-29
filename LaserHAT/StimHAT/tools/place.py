@@ -4,8 +4,8 @@ with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) no tab since the DC-DC left fo
 Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
   * top strip (y < 17.5) and the west half: the Rev 2 HAT core, all under the Adafruit 4567 bonnet (which sits on the
     stacking header 9 mm up), parts <= 7 mm tall; J10 (vertical socket for the 0.91" OLED module, unpopulated) at
-    the strip's west end under the header: the module stands up along the header, facing south (text flipped in
-    software), pins west to east SDA SCL VCC GND
+    the strip's west end under the header: the module (right-angle pins) lies flat over the strip, parallel to the
+    header, its pin edge north = the display's top; pins west to east SDA SCL VCC GND
   * west edge, top to bottom: SW10 (USB power), J5 USB-C, the three LEDs, FIRE (SW9), the five-way joystick (SW7, at
     45 degrees so its directions line up with the board) in the south-west corner
   * two right-angle BNCs in the middle of the south edge (bodies x 15-46, y 43-57, barrels past the edge); the band
@@ -185,14 +185,10 @@ def region(name, pts):
     board.Add(z)
 
 
-# F / B ground pours (same shapes, 0.25 mm clearance so hand routing keeps room) and In2 power islands: HAT side
-# +5V everywhere except the MCU area, which is MSPM0_3V3; isolated side +5V_ISO in the north-west (x < 54.5, y < 33), +V_STIM east and south of it
+# F / B ground pours (same shapes, 0.25 mm clearance so hand routing keeps room)
 plane("GND pour F", "GND", pcbnew.F_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25); plane("GND pour B", "GND", pcbnew.B_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25)
 plane("GND_ISO pour F", "GND_ISO", pcbnew.F_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)], 0.25); plane("GND_ISO pour B", "GND_ISO", pcbnew.B_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)], 0.25)
-plane("MSPM0_3V3 plane", "MSPM0_3V3", pcbnew.In2_Cu, [(13, 18), (34, 18), (34, 37), (13, 37)])
-plane("+5V plane", "+5V", pcbnew.In2_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 18), (13, 18), (13, 37), (34, 37), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
-plane("+5V_ISO plane", "+5V_ISO", pcbnew.In2_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (54.5, 20), (54.5, 33), (51, 33), (51, 34.2), (48.5, 34.2), (48.5, 33), (36.5, 33)])
-plane("+V_STIM plane", "+V_STIM", pcbnew.In2_Cu, [(54.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2), (36.5, 33), (48.5, 33), (48.5, 34.2), (51, 34.2), (51, 33), (54.5, 33)])
+# In2 is a routing layer for the power nets (tracks, no islands - user's call 2026-10-29)
 region("hat_region", [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
 region("isolated_region", [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)])
 plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)])
@@ -252,7 +248,7 @@ rect(58.09, 11.95, 64.09, 18.55, BON, 0.15); circle(61.09, 15.25, 1.5, BON)     
 rect(50.85, 18.43, 56.85, 25.03, BON, 0.15); circle(53.85, 21.73, 1.5, BON)            # button #5
 silk("Adafruit 4567 bonnet, 9 mm up (outline, holes, header, OLED, joystick, buttons)", 32.5, 33.0, 1.0, 0, BON)
 rect(16.5, 36.8, 46.0, 43.0, pcbnew.Dwgs_User, 0.15); silk("DC-DC pod: J103 (5 V) to J102 (+/-V), lies over the band", 31.0, 35.0, 0.8, 0, pcbnew.Dwgs_User)
-rect(0.0, 9.2, 38.0, 10.8, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module standing in J10 (38 x 12, 8.5 mm up)", 19.0, 19.6, 0.8, 0, pcbnew.Dwgs_User)
+rect(0.0, 10.0, 38.0, 22.0, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module lying flat on J10 (right-angle pins), 8.5 mm up, pins = top edge", 19.0, 23.2, 0.8, 0, pcbnew.Dwgs_User)
 silk("Pi 4 PoE / Pi 5 fan", 56.0, 7.0, 0.8, 0, pcbnew.Dwgs_User)
 for d in stale:
     board.Remove(d)
