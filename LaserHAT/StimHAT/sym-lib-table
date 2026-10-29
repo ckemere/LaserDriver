@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "stimhat")(type "KiCad")(uri "${KIPRJMOD}/stimhat.kicad_sym")(options "")(descr "StimHAT project symbols"))
+)

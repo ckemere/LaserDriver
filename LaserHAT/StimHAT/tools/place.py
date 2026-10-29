@@ -1,0 +1,200 @@
+#!/usr/bin/env python3
+"""Placement of StimHAT.kicad_pcb (2026-10-29), board coordinates = HAT coordinates - (100, 43): 65 x 57 mm HAT outline
+with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) and a 12.5 mm tab on the south-east (x 46-65, y 57-69.5).
+Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
+  * top strip (y < 17.5) and the west half: the Rev 2 HAT core, all under the Adafruit 4567 bonnet (which sits on the
+    stacking header 9 mm up), parts <= 7 mm tall; J10 (0.91" OLED socket, unpopulated) at the strip's east end
+  * west edge, top to bottom: SW10 (USB power), J5 USB-C, the three LEDs, FIRE (SW9), the five-way joystick (SW7, at
+    45 degrees so its directions line up with the board) in the south-west corner
+  * two BNCs in the middle of the south edge (bodies x 15-46, y 36.5-57, barrels past the edge)
+  * the isolated stimulator in an L: block A under the bonnet's east end (x 36.5-65, y 20-34), strip B east of the BNCs
+    (x 50-65, y 36.5-54.5) and the tab's east part (J102 battery socket, J101 electrode header).  PS1 (the DC-DC,
+    hand-fitted) stands on the BOTTOM of the tab, where nothing is below it (beyond the Pi's edge, the BNC barrels are
+    on top); its two input pins sit in the HAT-side strip along the tab's west edge (x 46-50.7), fed from under the
+    BNCs (bottom layer) through the passage x 46-47.5 east of J7.  Barrier = 2.5 mm copper-free rule areas; only
+    U101 / U109 / PS1 straddle it.  MH4 falls inside isolated copper: nylon standoff.
+Idempotent: re-running moves every footprint back to the table and redraws the outline and board-level drawings; copper
+is left alone (rip it up first with tools/autoroute.py if the placement changes).      $KICAD_PY tools/place.py"""
+import math
+import os
+
+import pcbnew
+
+ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
+BOARD = os.path.join(ROOT, "StimHAT.kicad_pcb")
+W, H, TAB_X, TAB_Y = 65.0, 57.0, 46.0, 69.5
+NOTCH = (59.0, 8.0, 65.0, 16.5)
+mm = pcbnew.FromMM
+P = {}                                     # ref -> (x, y, rot, flip)
+
+
+def at(ref, x, y, rot=0, flip=False):
+    P[ref] = (x, y, rot, flip)
+
+
+# ---- mechanical: HAT holes and the Pi header exactly as on the Rev 2 HAT (shifted by -100, -43); logo on the back
+at("MH1", 3.5, 4.5); at("MH2", 61.5, 4.5); at("MH3", 3.5, 53.5); at("MH4", 61.5, 53.5)
+at("J1", 8.37, 5.77, -90, True)
+at("G1", 22.0, 24.0, 0, True)
+# ---- west edge, top to bottom
+at("SW10", 2.2, 13.0, -90)
+at("J5", 4.2, 24.0, -90)
+at("R8", 10.0, 20.5, 90); at("R10", 10.0, 27.5, 90)
+at("D5", 2.6, 30.4); at("R13", 5.8, 30.4)
+at("D7", 2.6, 32.0); at("R15", 5.8, 32.0)
+at("D9", 2.6, 33.6); at("R18", 5.8, 33.6)
+at("SW9", 2.2, 37.5, 270)
+at("SW7", 7.5, 45.8, 45)
+# ---- south edge: the two BNCs (rot 180 = barrel south, as on the HAT)
+at("J6", 22.8, 44.4, 180); at("J7", 38.4, 44.4, 180)
+# ---- core, west half under the bonnet: USB power path by the USB-C, LDOs above, MCU in the middle, UART bridge below
+at("Q5", 14.5, 14.5, 90); at("R26", 14.5, 18.0, 90); at("Q3", 14.5, 21.5, 90); at("Q4", 18.5, 18.0, 90)
+at("R21", 18.5, 14.5, 90); at("R22", 18.5, 21.5, 90)
+at("U4", 23.0, 14.5, 180); at("C12", 17.0, 11.5); at("C6", 24.5, 10.8); at("C13", 26.5, 17.0, 90)
+at("U5", 30.0, 14.5); at("R7", 26.5, 13.5, 90); at("C2", 33.3, 14.0, 90); at("JP1", 21.0, 10.3)
+at("U7", 20.0, 26.0, -90)
+at("C1", 14.5, 26.0, 90); at("C16", 25.5, 26.0, 90); at("C4", 25.5, 30.0, 90); at("R4", 14.5, 30.0, 90)
+at("R3", 17.0, 32.5); at("C3", 19.5, 32.5); at("JP4", 22.5, 32.5)
+at("R107", 27.5, 19.0, 90); at("R108", 30.0, 19.0, 90)
+at("U6", 12.0, 35.5, 90)
+at("U8", 28.0, 32.0, 90); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
+# ---- top strip: I2C pull-ups by the header's pins 3 / 5, the EEPROM by pins 27 / 28, JP5, BSL, the OLED socket
+# (J10's housing, when fitted, covers x 46.4-59, y 6.6-18: nothing else there)
+at("R19", 12.0, 15.5, 90); at("R20", 12.0, 13.0, 90); at("C15", 7.5, 13.0, 90); at("JP5", 7.5, 16.0)
+at("SW6", 31.0, 10.4); at("C103", 35.5, 13.5, 90); at("R2", 35.5, 16.0, 90)
+at("U1", 40.5, 13.9); at("R1", 45.5, 11.0, 90)
+at("J10", 57.0, 8.4, 0)
+# ---- isolation: ISO7741F across the vertical barrier (x 35.25; pins 1-8 west), ISO1640 across the horizontal one
+# (y 18.75; pins 1-4 north)
+at("U101", 35.25, 27.0, 0)
+at("R101", 30.5, 22.0, 90); at("R102", 30.5, 25.0, 90); at("R103", 30.5, 28.0, 90); at("C101", 30.5, 31.0, 90)
+at("U109", 42.0, 19.5, 270)
+# ---- isolated block A (x 36.5-65, y 20-34): set-point, switches, output stage, SHORT, fault detector
+at("C102", 39.3, 25.0, 90); at("C124", 39.3, 28.0, 90); at("C115", 38.9, 31.0, 90); at("TP101", 38.3, 33.6)
+at("U105", 44.0, 25.0); at("C114", 42.5, 28.6, 90); at("R109", 44.5, 28.6, 90); at("R110", 46.5, 28.6, 90)
+at("U106", 50.5, 25.0); at("R105", 49.0, 28.6, 90); at("R106", 51.0, 28.6, 90); at("C116", 53.0, 28.6, 90)
+at("R114", 46.8, 21.5); at("C120", 48.7, 21.5); at("R115", 50.6, 21.5); at("R116", 53.1, 21.5); at("C121", 62.5, 21.5)
+at("U107", 57.5, 25.5, 90); at("C118", 62.5, 24.0, 90); at("C119", 62.5, 27.0, 90); at("C117", 62.5, 30.5, 90)
+at("U108", 43.5, 32.3); at("U110", 51.0, 32.0)
+at("R117", 55.0, 31.5, 90); at("R118", 57.0, 31.5, 90); at("R119", 59.0, 31.5, 90); at("R120", 61.0, 31.5, 90)
+at("R121", 62.5, 33.0, 90); at("D101", 57.0, 35.6, 90); at("C122", 54.5, 34.8); at("TP102", 51.5, 35.0)
+# ---- isolated strip B (x 50-65, y 36.5-54.5): LDO and -4.7 V rail, LC filter, capacitance multipliers, clamps
+at("U104", 51.5, 39.0); at("C111", 54.5, 39.0, 90); at("C112", 56.5, 39.0, 90); at("R113", 58.3, 39.0, 90)
+at("D102", 60.0, 39.0, 90); at("C113", 61.7, 39.0, 90); at("D103", 63.4, 39.0, 90)
+at("L101", 51.7, 43.0); at("C105", 55.4, 43.0); at("L102", 59.1, 43.0); at("C106", 62.8, 43.0)
+at("Q101", 51.5, 47.0); at("R111", 54.3, 47.0, 90); at("C107", 56.5, 47.0, 90); at("Q102", 59.5, 47.0); at("R112", 62.3, 47.0, 90)
+at("D104", 64.0, 47.0, 90)
+at("C109", 51.4, 51.0); at("C110", 54.6, 51.0, 90); at("C108", 57.0, 51.0, 90)
+# ---- tab (x 46-65, y 57-69.5): HAT strip along the west edge with the DC-DC's input pins and C104, isolated east part
+# with the battery socket (vertical, cable from above) and the electrode header (pins out of the south edge)
+at("PS1", 47.3, 68.2, 0, True)              # under the tab: pins 1-2 (HAT side) x 47.3 / 49.8, pins 4-6 (isolated) x 54.9-60
+at("C104", 47.5, 65.5, 90)
+at("J102", 54.5, 60.0, 0)                   # pin 1 west: +V, 0V (GND_ISO), -V, CAB (= GND_ISO)
+at("J101", 60.5, 65.5, 270)
+
+board = pcbnew.LoadBoard(BOARD)
+stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
+         or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
+stale += [z for z in board.Zones() if z.GetIsRuleArea()]
+fps = {f.GetReference(): f for f in board.GetFootprints()}
+missing = [r for r in fps if r not in P]
+assert not missing, f"unplaced: {missing}"
+for ref, (x, y, rot, flip) in P.items():
+    f = fps[ref]
+    if f.IsFlipped() != flip:
+        f.Flip(f.GetPosition(), False)
+    f.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
+    f.SetOrientationDegrees(rot)
+    f.Reference().SetVisible(False)             # no designators or values on the silk (function labels instead)
+    f.Value().SetVisible(False)
+
+
+def seg(x1, y1, x2, y2, layer=pcbnew.F_SilkS, w=0.15):
+    d = pcbnew.PCB_SHAPE(board)
+    d.SetShape(pcbnew.SHAPE_T_SEGMENT); d.SetLayer(layer); d.SetWidth(mm(w))
+    d.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); d.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2)))
+    board.Add(d)
+
+
+def arc(cx, cy, r, a0, a1, layer=pcbnew.Edge_Cuts, w=0.1):
+    """arc on circle (cx, cy, r) from angle a0 to a1 (degrees, screen coordinates: y down)"""
+    pts = [pcbnew.VECTOR2I(mm(cx + r * math.cos(math.radians(a))), mm(cy + r * math.sin(math.radians(a))))
+           for a in (a0, (a0 + a1) / 2, a1)]
+    d = pcbnew.PCB_SHAPE(board)
+    d.SetShape(pcbnew.SHAPE_T_ARC); d.SetLayer(layer); d.SetWidth(mm(w))
+    d.SetArcGeometry(*pts)
+    board.Add(d)
+
+
+def rect(x1, y1, x2, y2, layer, w):
+    for (a, b), (c, d) in (((x1, y1), (x2, y1)), ((x2, y1), (x2, y2)), ((x2, y2), (x1, y2)), ((x1, y2), (x1, y1))):
+        seg(a, b, c, d, layer, w)
+
+
+# outline: 3 mm radii on the three HAT corners, square tab and notch
+R = 3.0
+E = pcbnew.Edge_Cuts
+seg(R, 0, W - R, 0, E, 0.1); arc(W - R, R, R, 270, 360)
+seg(W, R, W, NOTCH[1], E, 0.1); seg(W, NOTCH[1], NOTCH[0], NOTCH[1], E, 0.1); seg(NOTCH[0], NOTCH[1], NOTCH[0], NOTCH[3], E, 0.1)
+seg(NOTCH[0], NOTCH[3], W, NOTCH[3], E, 0.1); seg(W, NOTCH[3], W, TAB_Y, E, 0.1)
+seg(W, TAB_Y, TAB_X, TAB_Y, E, 0.1); seg(TAB_X, TAB_Y, TAB_X, H, E, 0.1)
+seg(TAB_X, H, R, H, E, 0.1); arc(R, H - R, R, 90, 180)
+seg(0, H - R, 0, R, E, 0.1); arc(R, R, R, 180, 270)
+
+
+def keepout(pts, vias_only=False):
+    z = pcbnew.ZONE(board)
+    z.SetIsRuleArea(True); z.SetDoNotAllowTracks(not vias_only); z.SetDoNotAllowVias(True); z.SetDoNotAllowCopperPour(True)
+    z.SetDoNotAllowPads(False); z.SetDoNotAllowFootprints(False)
+    z.SetLayerSet(pcbnew.LSET.AllCuMask(2))
+    o = z.Outline(); o.NewOutline()
+    for px, py in pts:
+        o.Append(mm(px), mm(py))
+    board.Add(z)
+
+
+# isolation barrier (2.5 mm, copper-free on both layers), see the docstring
+BAR = ((34.0, 17.5, 65.0, 20.0),      # north of block A
+       (34.0, 17.5, 36.5, 36.5),      # west of block A
+       (34.0, 34.0, 50.0, 36.5),      # south of block A, to the BNC
+       (47.5, 34.0, 50.0, 57.0),      # west of strip B (the HAT passage x 46-47.5 runs east of the BNC J7)
+       (50.0, 54.5, 53.2, 57.0),      # between the passage / tab HAT strip and strip B's south end
+       (50.7, 57.0, 53.2, 69.5))      # between the tab's HAT strip (PS1 pins 1-2, C104) and its isolated part
+for x1, y1, x2, y2 in BAR:
+    keepout(((x1, y1), (x2, y1), (x2, y2), (x1, y2)))
+    rect(x1, y1, x2, y2, pcbnew.Cmts_User, 0.1)
+for cx, cy in ((3.5, 4.5), (61.5, 4.5), (3.5, 53.5), (61.5, 53.5)):      # no vias under the standoffs
+    keepout([(cx + 3.0 * math.cos(2 * math.pi * k / 24), cy + 3.0 * math.sin(2 * math.pi * k / 24)) for k in range(24)], vias_only=True)
+
+
+def silk(txt, x, y, size=0.8, rot=0, layer=pcbnew.F_SilkS):
+    t = pcbnew.PCB_TEXT(board)
+    t.SetText(txt); t.SetLayer(layer)
+    t.SetPosition(pcbnew.VECTOR2I(mm(x), mm(y)))
+    t.SetTextSize(pcbnew.VECTOR2I(mm(size), mm(size))); t.SetTextThickness(mm(0.15 * size))
+    t.SetTextAngleDegrees(rot)
+    if layer == pcbnew.B_SilkS:
+        t.SetMirrored(True)
+    board.Add(t)
+
+
+silk("StimHAT rev A", 32.5, 30.0, 1.0, 0, pcbnew.B_SilkS)
+silk("TRIG IN", 22.8, 55.5); silk("STIM OUT", 38.4, 55.5)
+silk("FIRE", 6.2, 37.5, 0.8, 90); silk("USB", 11.8, 24.0, 0.8, 90); silk("PWR", 6.6, 13.0, 0.8, 90)
+silk("5V", 7.9, 30.4); silk("MCU", 8.2, 32.0); silk("STIM", 7.6, 35.2)
+silk("BSL", 35.0, 10.4); silk("OLED", 61.5, 18.8)
+silk("ISOLATED", 57.0, 20.9); silk("E1 E2", 59.2, 63.6); silk("+V 0V -V", 64.0, 60.0, 0.8, 90)
+silk("DC-DC", 56.0, 65.0, 0.8, 0, pcbnew.B_SilkS); silk("5V", 48.3, 61.0)
+# drawings: the bonnet (65 x 30.7 on the header), the 0.91" OLED module when fitted, the Pi 5 notch note
+rect(0, 0, 65, 30.7, pcbnew.Dwgs_User, 0.15); silk("Adafruit 4567 bonnet (9 mm up)", 20, 2.5, 1.0, 0, pcbnew.Dwgs_User)
+rect(19.0, 5.0, 57.0, 17.0, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module on J10", 38.0, 16.0, 0.8, 0, pcbnew.Dwgs_User)
+silk("Pi 4 PoE / Pi 5 fan", 56.0, 7.0, 0.8, 0, pcbnew.Dwgs_User)
+# PS1 stands under the tab with its body past the tab's west edge by design: drop its silk outline (it would be
+# clipped by the edge; the part is hand-fitted and its pins are marked on the top side)
+for it in list(fps["PS1"].GraphicalItems()):
+    if it.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS):
+        fps["PS1"].Remove(it)
+for d in stale:
+    board.Remove(d)
+pcbnew.SaveBoard(BOARD, board)
+print("placed", len(P), "footprints; saved", BOARD)

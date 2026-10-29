@@ -1,0 +1,9 @@
+(version 1)
+(rule isolation_barrier
+  (comment "2.5 mm between the stimulator's isolated nets (classes Isolated / IsolatedPower) and everything on the HAT side; only the isolators, PS1 and the HAT-side resistors' own pads bridge it")
+  (condition "((A.NetClass == 'Isolated' || A.NetClass == 'IsolatedPower') && !(B.NetClass == 'Isolated' || B.NetClass == 'IsolatedPower')) || ((B.NetClass == 'Isolated' || B.NetClass == 'IsolatedPower') && !(A.NetClass == 'Isolated' || A.NetClass == 'IsolatedPower'))")
+  (constraint clearance (min 2.5mm)))
+(rule rails_30v
+  (comment "0.3 mm between the +V_STIM-side and -V_STIM-side nets (up to 33.6 V apart on battery rails)")
+  (condition "(A.Type == 'Track' || A.Type == 'Via' || B.Type == 'Track' || B.Type == 'Via') && ((A.NetName == '+V_STIM' && B.NetName == '-V_STIM') || (A.NetName == '-V_STIM' && B.NetName == '+V_STIM') || (A.NetName == '+V_F' && B.NetName == '-V_F') || (A.NetName == '-V_F' && B.NetName == '+V_F') || (A.NetName == '+V_RAW' && B.NetName == '-V_RAW') || (A.NetName == '-V_RAW' && B.NetName == '+V_RAW'))")
+  (constraint clearance (min 0.3mm)))

@@ -1,0 +1,6 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "stimhat")(type "KiCad")(uri "${KIPRJMOD}/stimhat.pretty")(options "")(descr "StimHAT footprints"))
+  (lib (name "Footprints")(type "KiCad")(uri "${KIPRJMOD}/../Footprints.pretty")(options "")(descr "LaserHAT project footprints"))
+  (lib (name "estim")(type "KiCad")(uri "${KIPRJMOD}/../EStimDaughter/estim.pretty")(options "")(descr "e-stim module footprints"))
+)
