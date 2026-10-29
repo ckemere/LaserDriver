@@ -110,6 +110,15 @@ finishing is not scripted, so a full re-route restarts from the placement.  Resu
 (isolation rule live), ERC 0 / 0.  The one remaining DRC warning is `lib_footprint_mismatch` on PS1 (stamped fields).
 `fab/StimHAT/StimHAT_top.png` / `_bottom.png` are the renders.
 
+**Four layers (2026-10-29 night):** JLC 4-layer 1.6 mm.  In1 carries two ground planes made by `tools/place.py`
+(`plane()`): HAT GND west / north of the barrier (x < 34, y < 17.5, and the BNC J7 area down to y 43.6) and GND_ISO
+under block A, the pocket, strip B and the tab; the rule areas (now on all four copper layers) keep the 2.5 mm barrier
+and the standoff circles copper-free, `../tools/fill_zones.py` refills them (islands always removed), and
+`j102_one_spoke` in the `.kicad_dru` lets J102's two 0V pads connect to the plane with a single thermal spoke (their
+neighbours leave no room for two).  In2 is empty: power is routed there by hand.  **All copper was ripped for the
+hand routing (300 open connections, DRC 0 errors / 0 warnings with the planes filled).**  `make_fab.py` exports In1 /
+In2 gerbers.
+
 **Rev A round 6 (2026-10-29, placement only, routing in progress by hand):** J102 beside PS1, J101 alone on a 10 mm
 tab, J10 a vertical socket at the strip's west end (JP1 → east end at (50, 10), C12 → (19.7, 12.3), C6 → (26.5, 10.6)
 to clear it), MH4 keep-out r 3.25, PS1's silk outline and 3D model.  The copper these moves invalidated was ripped:

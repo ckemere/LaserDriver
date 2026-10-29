@@ -5,3 +5,6 @@
 (rule tht_connectors
   (condition "A.Pad_Type == 'Through-hole' && (A.memberOfFootprint('J101') || A.memberOfFootprint('J102') || A.memberOfFootprint('PS1'))")
   (constraint clearance (min 0.3mm)))
+(rule j102_one_spoke
+  (condition "A.memberOfFootprint('J102')")
+  (constraint min_resolved_spokes 1))

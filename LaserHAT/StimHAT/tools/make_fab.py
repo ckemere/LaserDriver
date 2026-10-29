@@ -21,7 +21,7 @@ KICAD_CLI = shutil.which("kicad-cli") or "kicad-cli"
 os.makedirs(OUT, exist_ok=True)
 g = os.path.join(OUT, "gerbers")
 shutil.rmtree(g, ignore_errors=True); os.makedirs(g)
-subprocess.run([KICAD_CLI, "pcb", "export", "gerbers", "--layers", "F.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
+subprocess.run([KICAD_CLI, "pcb", "export", "gerbers", "--layers", "F.Cu,In1.Cu,In2.Cu,B.Cu,F.Paste,B.Paste,F.SilkS,B.SilkS,F.Mask,B.Mask,Edge.Cuts",
                 "--no-x2", "--subtract-soldermask", "-o", g + "/", BOARD], check=True, capture_output=True)
 subprocess.run([KICAD_CLI, "pcb", "export", "drill", "--format", "excellon", "--excellon-units", "mm", "--excellon-separate-th",
                 "--generate-map", "--map-format", "gerberx2", "-o", g + "/", BOARD], check=True, capture_output=True)

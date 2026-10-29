@@ -98,7 +98,8 @@ at("J101", 51.0, 60.5, 90)                  # vertical 1x2 on the tab; pin 1 (sq
 board = pcbnew.LoadBoard(BOARD)
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
          or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
-stale += [z for z in board.Zones() if z.GetIsRuleArea()]
+stale += [z for z in board.Zones() if z.GetIsRuleArea() or z.GetZoneName() in ("GND plane", "GND_ISO plane")]
+board.SetCopperLayerCount(4)                                  # 4 layers (2026-10-29): In1 = ground planes, In2 = power
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 missing = [r for r in fps if r not in P]
 assert not missing, f"unplaced: {missing}"
@@ -150,11 +151,32 @@ def keepout(pts, vias_only=False):
     z = pcbnew.ZONE(board)
     z.SetIsRuleArea(True); z.SetDoNotAllowTracks(not vias_only); z.SetDoNotAllowVias(True); z.SetDoNotAllowCopperPour(True)
     z.SetDoNotAllowPads(False); z.SetDoNotAllowFootprints(False)
-    z.SetLayerSet(pcbnew.LSET.AllCuMask(2))
+    z.SetLayerSet(pcbnew.LSET.AllCuMask(board.GetCopperLayerCount()))
     o = z.Outline(); o.NewOutline()
     for px, py in pts:
         o.Append(mm(px), mm(py))
     board.Add(z)
+
+
+def plane(name, net, layer, pts):
+    """a copper zone (filled by tools/fill_zones.py); the two ground planes on In1 are bounded by the barrier"""
+    z = pcbnew.ZONE(board)
+    z.SetZoneName(name); z.SetLayer(layer); z.SetNetCode(board.GetNetcodeFromNetname(net))
+    z.SetMinThickness(mm(0.2)); z.SetLocalClearance(mm(0.2))
+    z.SetIslandRemovalMode(pcbnew.ISLAND_REMOVAL_MODE_ALWAYS)
+    o = z.Outline(); o.NewOutline()
+    for px, py in pts:
+        o.Append(mm(px), mm(py))
+    board.Add(z)
+
+
+# In1 ground planes: HAT GND everywhere west / north of the barrier (the BNC J7 area included, stopping 2.6 mm north
+# of J7's tails = 2.5 mm from J102's pads), GND_ISO under block A, the pocket, strip B and the tab; the rule areas
+# (all copper layers) keep the 2.5 mm barrier and the standoff circles copper-free
+plane("GND plane", "GND", pcbnew.In1_Cu,
+      [(0, 0), (65, 0), (65, 17.5), (34, 17.5), (34, 43.6), (45.2, 43.6), (45.2, 57), (0, 57)])
+plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu,
+      [(36.5, 20), (65, 20), (65, 57), (56, 57), (56, 64.5), (46, 64.5), (46, 57), (47.7, 57), (47.7, 41.2), (36.5, 41.2)])
 
 
 # isolation barrier (2.5 mm, copper-free on both layers), see the docstring
