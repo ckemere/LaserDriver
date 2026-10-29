@@ -107,13 +107,17 @@ Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), 
 (the Pi has 1.8 k on GPIO 2/3; fit them only for stand-alone use with a J10 module that lacks its own pull-ups).
 R1 / R2 (3.9 k on ID_SD / ID_SC) are fitted: the HAT design guide puts them on the HAT.
 
-Second layout review (2026-10-29), applied: PS1 now uses `stimhat:DCDC_SIP6_A0515S_BodyN` (the module turned over
-about its pin axis, same pin order), so its body lies under the tab instead of 4 mm past the south edge — fit it with
-the printed face toward the board edge, i.e. the body over the tab; J101 moved 0.77 mm east so its horizontal pins pass
-midway between PS1's pads 4/5/6 (fit PS1 first, trim its leads flush); the hand-soldered pads of J101, J102 and PS1
-keep ≥ 0.3 mm from other copper (`tht_connectors` rule in `StimHAT.kicad_dru`, proven live) — the tab's tracks were
-re-threaded for it; "E2 E1" now matches J101's pins (E1 = pin 1, the square pad, east); J102's pins are labelled
-along the row; the BNC labels moved above the bodies; the stray "5V" label went.  Noted, not changed: C114 (VREFIO)
+Second and third layout reviews (2026-10-29), applied: PS1 now uses `stimhat:DCDC_SIP6_A0515S_BodyN` (the module
+turned over about its pin axis, same pin order), so its body lies under the tab (y 62.9–69) instead of 4 mm past the
+south edge — fit it with the body over the tab; the tab grew to 15.5 mm (y 57–72.5) and J101 became a **vertical**
+1×2 header at (60.4 / 62.94, 70.7) below PS1's pin row, pin 1 (square, west, "E1") = E1, pin 2 = E2 return — the
+right-angle header's insulator sat over PS1's pads and its tails came out inside PS1's body; the hand-soldered pads
+of J101, J102 and PS1 keep ≥ 0.3 mm from other copper (`tht_connectors` rule in `StimHAT.kicad_dru`, proven live) —
+the tab's tracks were re-threaded for it; the +5V_ISO feed above U109 moved to y 20.7 (barrier 2.55 mm, was exactly
+2.50); J102's pins are labelled along the row; the BNC labels moved above the bodies; a "NYLON" marker sits above
+MH4; the stray "5V" label went.  Assembly order on the tab: J102 and J101 first, then PS1 from the top.  **With PS1
+fitted, a Pi 4's AV jack cannot take a plug** (PS1 hangs 10 mm below the HAT right over it) and a micro-HDMI1 plug's
+overmould may touch PS1's west end — PS1 is for stand-alone / battery-less use; with a Pi, feed J102 from the pack.  Noted, not changed: C114 (VREFIO)
 is 6 mm from U105.10 with two vias (no room next to the pin; 1 µF on a buffered reference, fine); J10's and the BNC
 ground legs' pads have tracks at the 0.15 mm class distance (J10 is unpopulated, the BNC legs are big pads — solder
 them without flooding); the ± rail tracks run at 0.15 mm for ~4 mm on the back near (51–58, 34–38) (IPC-2221 B4);

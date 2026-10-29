@@ -35,7 +35,7 @@ SOIC8, SSOP16, TSSOP8, TSSOP16, VSSOP8, VSSOP10 = ("Package_SO:SOIC-8_3.9x4.9mm_
                                                     "Package_SO:TSSOP-8_4.4x3mm_P0.65mm", "Package_SO:TSSOP-16_4.4x5mm_P0.65mm",
                                                     "Package_SO:VSSOP-8_3x3mm_P0.65mm", "Package_SO:VSSOP-10_3x3mm_P0.5mm")
 JEITA8 = "Package_SO:JEITA_SOIC-8_3.9x4.9mm_P1.27mm"
-HDR2RA = "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal"
+HDR2V = "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical"
 SOCK4RA = "Connector_PinSocket_2.54mm:PinSocket_1x04_P2.54mm_Horizontal"
 PH4 = "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"       # top entry: the pack's cable comes up past the tab
 TP = "TestPoint:TestPoint_Pad_D1.0mm"
@@ -223,7 +223,7 @@ PARTS = [
     R("R115", "47", "OA_OUT", "E1", lcsc=L["R47"]),
     R("R116", "2.49k 0.1%", "ISENSE", "GND_ISO", fp=R0603, lcsc=L["R2k49"]),
     C("C121", "1uF 50V", "E1", "E1_OUT", fp=C0805, lcsc=L["C1u50_0805"]),
-    dict(ref="J101", sym="Conn_01x02", value="ELECTRODE E1/E2", fp=HDR2RA, lcsc="", nets={"1": "E1_OUT", "2": "ISENSE"}),
+    dict(ref="J101", sym="Conn_01x02", value="ELECTRODE E1/E2", fp=HDR2V, lcsc="", nets={"1": "E1_OUT", "2": "ISENSE"}),
     dict(ref="TP101", sym="TestPoint", value="ISENSE", fp=TP, lcsc="", nets={"1": "ISENSE"}),
     dict(ref="TP102", sym="TestPoint", value="GND_ISO", fp=TP, lcsc="", nets={"1": "GND_ISO"}),
     dict(ref="U108", sym="DG418", value="DG418DY-T1-E3", fp=SOIC8, lcsc=L["DG418"],

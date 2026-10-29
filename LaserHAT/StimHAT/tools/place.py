@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Placement of StimHAT.kicad_pcb (2026-10-29), board coordinates = HAT coordinates - (100, 43): 65 x 57 mm HAT outline
-with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) and a 12.5 mm tab on the south-east (x 46-65, y 57-69.5).
+with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) and a 15.5 mm tab on the south-east (x 46-65, y 57-72.5).
 Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
   * top strip (y < 17.5) and the west half: the Rev 2 HAT core, all under the Adafruit 4567 bonnet (which sits on the
     stacking header 9 mm up), parts <= 7 mm tall; J10 (0.91" OLED socket, unpopulated) at the strip's east end
@@ -22,7 +22,7 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BOARD = os.path.join(ROOT, "StimHAT.kicad_pcb")
-W, H, TAB_X, TAB_Y = 65.0, 57.0, 46.0, 69.5
+W, H, TAB_X, TAB_Y = 65.0, 57.0, 46.0, 72.5
 NOTCH = (59.0, 8.0, 65.0, 16.5)
 mm = pcbnew.FromMM
 P = {}                                     # ref -> (x, y, rot, flip)
@@ -84,12 +84,12 @@ at("L101", 51.7, 43.0); at("C105", 55.4, 43.0); at("L102", 59.1, 43.0); at("C106
 at("Q101", 51.8, 47.0); at("R111", 54.3, 47.0, 90); at("C107", 56.5, 47.0, 90); at("Q102", 59.5, 47.0); at("R112", 62.3, 47.0, 90)
 at("D104", 64.0, 47.0, 90)
 at("C109", 51.8, 51.0); at("C110", 54.6, 51.0, 90); at("C108", 56.6, 51.0, 90)
-# ---- tab (x 46-65, y 57-69.5): HAT strip along the west edge with the DC-DC's input pins and C104, isolated east part
+# ---- tab (x 46-65, y 57-72.5): HAT strip along the west edge with the DC-DC's input pins and C104, isolated east part
 # with the battery socket (vertical, cable from above) and the electrode header (pins out of the south edge)
 at("PS1", 47.3, 68.2, 0, True)              # under the tab: pins 1-2 (HAT side) x 47.3 / 49.8, pins 4-6 (isolated) x 54.9-60
 at("C104", 47.5, 65.5, 90)
 at("J102", 54.5, 60.0, 0)                   # pin 1 west: +V, 0V (GND_ISO), -V, CAB (= GND_ISO)
-at("J101", 61.27, 65.5, 270)
+at("J101", 60.4, 70.7, 90)                # vertical 1x2 below PS1's pin row; pin 1 (square) = E1 west
 
 board = pcbnew.LoadBoard(BOARD)
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
@@ -158,7 +158,7 @@ BAR = ((34.0, 17.5, 65.0, 20.0),      # north of block A (the 2.5 mm from U109 s
        (34.0, 35.2, 50.0, 37.7),      # south of block A, down to the BNC J7 ground pads (U108 pads end at y 35)
        (48.0, 35.2, 50.0, 57.0),      # west of strip B (the HAT passage x 46-48 runs east of the BNC J7)
        (50.0, 54.5, 53.2, 57.0),      # between the passage / tab HAT strip and strip B's south end
-       (50.7, 57.0, 53.2, 69.5))      # between the tab's HAT strip (PS1 pins 1-2, C104) and its isolated part
+       (50.7, 57.0, 53.2, 72.5))      # between the tab's HAT strip (PS1 pins 1-2, C104) and its isolated part
 for x1, y1, x2, y2 in BAR:
     keepout(((x1, y1), (x2, y1), (x2, y2), (x1, y2)))
     rect(x1, y1, x2, y2, pcbnew.Cmts_User, 0.1)
@@ -183,8 +183,8 @@ silk("TRIG IN", 22.8, 42.3); silk("STIM OUT", 38.4, 42.3)
 silk("FIRE", 6.2, 37.5, 0.8, 90); silk("USB", 11.8, 24.0, 0.8, 90); silk("PWR", 6.6, 13.0, 0.8, 90)
 silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)
 silk("BSL", 35.0, 10.4); silk("OLED", 61.5, 18.8)
-silk("ISOLATED", 49.5, 18.75); silk("E2 E1", 60.0, 63.6); silk("+V", 54.5, 57.2, 0.8); silk("0V", 56.5, 57.2, 0.8); silk("-V", 58.5, 57.2, 0.8); silk("CAB", 60.5, 57.2, 0.8)
-silk("DC-DC", 55.5, 63.0, 0.8, 0, pcbnew.B_SilkS)
+silk("ISOLATED", 49.5, 18.75); silk("E1", 58.2, 70.7, 0.8); silk("+V", 54.3, 57.2, 0.8); silk("0V", 56.5, 57.2, 0.8); silk("-V", 58.4, 57.2, 0.8); silk("CAB", 60.9, 57.2, 0.8); silk("NYLON", 61.5, 50.0, 0.8)
+silk("DC-DC", 55.5, 61.5, 0.8, 0, pcbnew.B_SilkS)
 # drawings: the bonnet (65 x 30.7 on the header), the 0.91" OLED module when fitted, the Pi 5 notch note
 rect(0, 0, 65, 30.7, pcbnew.Dwgs_User, 0.15); silk("Adafruit 4567 bonnet (9 mm up)", 20, 2.5, 1.0, 0, pcbnew.Dwgs_User)
 rect(19.0, 5.0, 57.0, 17.0, pcbnew.Dwgs_User, 0.15); silk("0.91in OLED module on J10", 38.0, 16.0, 0.8, 0, pcbnew.Dwgs_User)

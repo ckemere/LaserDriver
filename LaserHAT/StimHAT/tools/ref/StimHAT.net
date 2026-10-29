@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/claude-agent/Code/LaserDriver/.claude/worktrees/stim-hat/LaserHAT/StimHAT/StimHAT.kicad_sch")
-    (date "2026-10-29T07:12:51-0500")
+    (date "2026-10-29T07:47:25-0500")
     (tool "Eeschema 9.0.8+dfsg-1")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
@@ -691,9 +691,9 @@
       (tstamps "293937e8-fd87-5d48-8b51-21dc3bd81cac"))
     (comp (ref "J101")
       (value "ELECTRODE E1/E2")
-      (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal")
+      (footprint "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
       (fields
-        (field (name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Horizontal")
+        (field (name "Footprint") "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "stimhat") (part "Conn_01x02") (description ""))
