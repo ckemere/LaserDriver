@@ -1,9 +1,10 @@
 # StimHAT — the LaserHAT Rev 2 core and the e-stim module's stimulator on one Raspberry Pi HAT (rev A, 2026-10-29)
 
-One 65 × 57 mm HAT (plus a 12.5 mm tab on the south-east) carries the Rev 2 HAT core — MSPM0G3507, CH340N USB-UART,
+One 65 × 57 mm HAT (plus a 7.5 mm tab on the south-east) carries the Rev 2 HAT core — MSPM0G3507, CH340N USB-UART,
 USB-C power path, HAT ID EEPROM, BNC trigger in / stim out, buttons and LEDs — and the kbest constant-current
 stimulator that was the plug-in e-stim module, isolated from the Pi side by an ISO7741F and an ISO1640 and powered
-either by the A0515S DC-DC (hand-fitted, under the tab) or by the battery pack (JST-PH socket on the tab).  The
+either by the A0515S DC-DC (hand-fitted, standing north of the BNC bodies) or by the battery pack (JST-PH socket on
+the tab).  The
 Adafruit 4567 OLED bonnet stacks on the Pi header above it as before; a 0.91" 128 × 32 I2C OLED module can be fitted
 in an unpopulated right-angle socket instead.  2-layer, JLC economic assembly (top side only).
 
@@ -35,7 +36,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (74LVC2G17) → PA26; PA25 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |
 | Display | J10 PinSocket 1 × 4 right-angle, unpopulated (GND, 3.3 V, SCL, SDA) | for a 0.91" 128 × 32 SSD1306 module (LCSC C5248081) lying along the top strip, instead of the bonnet |
 | Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 100k pull-downs, R107 / R108 and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
-| Isolated supply | PS1 A0515S (±15 V from the HAT's 5 V, hand-fitted, **on the back of the tab**, DNP in the BOM) or J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V), L101 / L102 10 µH + C105 / C106 10 µF, Q101 / Q102 capacitance multipliers (R111 / R112 4.7k, C107 / C108 10 µF), C109 / C110, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V), C104 | C104 is PS1's input cap, in the HAT-side strip of the tab |
+| Isolated supply | PS1 A0515S (±15 V from the HAT's 5 V, hand-fitted, **standing in the band north of the BNC bodies**, DNP in the BOM) or J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V), L101 / L102 10 µH + C105 / C106 10 µF, Q101 / Q102 capacitance multipliers (R111 / R112 4.7k, C107 / C108 10 µF), C109 / C110, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V), C104 | C104 is PS1's input cap, west of its body |
 | Set-point | U105 DAC60501 (I2C 0x48), C114 / C115, U106B OPA2192 inverter (R105 / R106 10.0k 0.1 %), U107 CD74HC4053 on +5 / −4.3 V | switch 1 (CATH) picks ±VSET, switch 2 (EN) gates it, switch 3 inverts RELEASE for the SHORT switch |
 | Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2) | 502 µA full scale, 0.123 µA / LSB |
 | SHORT | U108 DG418 (normally open, on while SHORT_IN is high = RELEASE low) | electrode shorted whenever RELEASE is low, including HAT-side power-down |
@@ -65,14 +66,19 @@ joystick-right pin on this board).  The bonnet's buttons use GPIO 4, 5, 6, 17, 2
 ## Board
 
 65 × 57 mm with the HAT outline (3 mm radii, the Pi 4 PoE / Pi 5 fan notch at x 59–65, y 8–16.5) and a tab x 46–65,
-y 57–69.5 (HAT coordinates minus (100, 43)).  Top strip (y < 17.5) and west half: the core, all under the bonnet (9 mm
+y 57–64.5 (HAT coordinates minus (100, 43)).  Top strip (y < 17.5) and west half: the core, all under the bonnet (9 mm
 up, parts under 7 mm), the OLED socket J10 at the strip's east end.  West edge, top to bottom: SW10, J5, the three LEDs,
-FIRE, the joystick in the south-west corner.  Two BNCs mid-south (bodies y 36.5–57, barrels past the edge).  Isolated
-stimulator in an L: block A (x 36.5–65, y 20–34, under the bonnet's east end: isolators, DAC, inverter, 4053, output
-stage, SHORT, fault detector), strip B (x 50–65, y 36.5–54.5: LDO, −4.3 V rail, filter, multipliers, clamps) and the
-tab's east part (J102, J101).  PS1 stands under the tab, where nothing is below it (beyond the Pi's edge; the BNC
-barrels are on top); its two input pins and C104 sit in the HAT-side strip along the tab's west edge, fed on the bottom
-layer through the passage x 46–48 east of J7.  Barrier: 2.5 mm copper-free rule areas (drawn on User.Comments) plus
+FIRE, the joystick in the south-west corner.  Two right-angle BNCs mid-south (bodies y 43–57, barrels past the edge;
+`stimhat:BNC_Amphenol_031-5540_RA`, right-angle only — the Rev 2 HAT's dual footprint with the vertical 031-5539's
+diagonal post pad and body removed).  PS1 stands in the band the vertical BNC bodies would have taken (body x 28–48,
+y 36.65–42.65, 10 mm tall, outside the bonnet, beside the 15.6 mm BNC bodies): pins 1–2 (+5V, GND; x 30.3 / 32.8) on
+the HAT side west of x 34 with C104 west of the body, pins 4–6 (−V, 0V, +V; x 37.9–43.0) in an isolated pocket that
+joins block A to strip B.  Isolated stimulator: block A (x 36.5–65, y 20–35, under the bonnet's east end: isolators,
+DAC, inverter, 4053, output stage, SHORT, fault detector), the pocket (y 35–39.4), strip B (x 47.7–65, y 39.4–57:
+LDO, −4.3 V rail, filter, multipliers, clamps) and the whole tab (J102 battery socket, J101 vertical electrode header
+west of it).  Nothing hangs below the HAT any more: the Pi's AV / HDMI plugs are free with PS1 fitted.  Barrier: 2.5 mm
+copper-free rule areas (x 34–36.5 from y 17.5 down to 42.8 west of block A and the pocket; y 39.4–42.8 between PS1's
+output pads and J7's tails; x 45.2–47.7 between J7's posts and strip B / the tab; drawn on User.Comments) plus
 the `StimHAT.kicad_dru` rule (Isolated / IsolatedPower net classes vs everything else ≥ 2.5 mm).  Net classes: Power
 and IsolatedPower 0.3 mm, Fine (USB), Default and Isolated 0.2 mm; board minimums 0.15 / 0.15, vias 0.6 / 0.3.
 No copper pours.  User.Drawings: the bonnet outline, the 0.91" module outline, the notch note.
@@ -81,22 +87,22 @@ Routing (rev A, 2026-10-29): `tools/autoroute.py --passes 500` = rip → `tools/
 every netted pin of U7 and U101, alternately 0.45 / 0.95 mm out so the vias stagger, plus four GND thermal vias in U7's
 exposed pad: without them Freerouting never finished the MCU's escape) → `tools/preroute.py` (hand-planned, locked:
 SDA_H from U7.21 down between the south-row vias, east under the MCU and north along x 28.3 to R107; C1 into pin 4's
-via; the +5V / GND feed of the tab's HAT strip down the passage east of J7; and the tab's isolated part — −V_RAW,
-+V_RAW, GND_ISO, E1_OUT, ISENSE through the corridor west of MH4 and around J102 to PS1's pins and J101, where the
-mirrored pin orders of J102 and PS1 force the three supply nets to cross on alternate layers; the router solved none
-of these reliably) → Freerouting → import → `tools/fixups.py drop-dangling-vias` and `--trim-stubs` remove the fan-out
+via; and the original tab's feeds — `preroute.py` still describes rev A's first tab, see the git history; the router
+solved none of these reliably) → Freerouting → import → `tools/fixups.py drop-dangling-vias` and `--trim-stubs` remove the fan-out
 vias the router did not use (locked pre-routes are never trimmed).  Freerouting stops after ~300 passes with 2–9
 connections open and never the same ones; after the review's placement changes the last 2–3 (and the DRC fixes above)
-were finished by hand with `tools/fixups.py` (`track`, `via`, `move-via`, `drop-seg`): the +5V trunk to the tab runs
-from J1.4 on the back along x 7.2, then down the west edge at x 1.2 to the power LED and on along the edge; the tab's
-five isolated nets go through the corridor west of MH4 (-V_RAW front x 53.6, +V_RAW back 53.55, GND_ISO back 54.9,
-E1_OUT back 55.6, ISENSE back 56.2) and around J102, whose pin order is the mirror of PS1's; GND_ISO of the LDO area
-joins the battery socket along the east edge past MH4.  `tools/preroute.py` holds the pre-routes a fresh run starts
-from; the hand finishing is not scripted, so a full re-route restarts from the placement.  Result: 0 DRC errors,
-0 unconnected (isolation rule live), ERC 0 / 0.  The three remaining DRC warnings are `lib_footprint_mismatch` on J6,
-J7 and PS1: their silk outlines hang past the board edge (BNC barrels, PS1's body), so
-`fixups.py silk-strip` deleted them from the board copies.  `fab/StimHAT/StimHAT_top.png` / `_bottom.png` are the
-renders.
+were finished by hand with `tools/fixups.py` (`track`, `via`, `move-via`, `drop-seg`, later `rip-region`, `swap-fp`,
+`maze`): the +5V trunk runs from J1.4 on the back along x 7.2, down the west edge at x 1.2 to the power LED, along the
+south edge on the back (y 52.5) to x 24, then up the front under J6's body to C104 and on the back to PS1 pin 1; PS1
+pin 2 (GND) reaches J7's ground tail on the back along x 33.3 / y 43.05, the BNC ground group (tails and posts) hangs
+on C104 and R24; the BNC-out line from R25 dives under PS1's input end (two vias) and runs along y 43.3 to J7; +V_RAW
+leaves pin 6 eastward on the front, −V_RAW leaves pin 4 on the back above pins 5–6 (`maze` found the rest, through
+the gap between L101 and C105); GND_ISO of the pocket joins U108's; on the tab +V_RAW / −V_RAW come down the back
+(x 53.55 / 54.2), GND_ISO goes round MH4 on the back (y 56.6) to the east edge and J102's pins 4 / 2, E1_OUT and ISENSE
+come down the front west of J102 to J101.  `tools/preroute.py` holds the pre-routes a fresh run starts from; the hand
+finishing is not scripted, so a full re-route restarts from the placement.  Result: 0 DRC errors, 0 unconnected
+(isolation rule live), ERC 0 / 0.  The one remaining DRC warning is `lib_footprint_mismatch` on PS1 (stamped fields).
+`fab/StimHAT/StimHAT_top.png` / `_bottom.png` are the renders.
 
 ## Checks before fab
 
@@ -107,21 +113,17 @@ Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), 
 (the Pi has 1.8 k on GPIO 2/3; fit them only for stand-alone use with a J10 module that lacks its own pull-ups).
 R1 / R2 (3.9 k on ID_SD / ID_SC) are fitted: the HAT design guide puts them on the HAT.
 
-Second and third layout reviews (2026-10-29), applied: PS1 now uses `stimhat:DCDC_SIP6_A0515S_BodyN` (the module
-turned over about its pin axis, same pin order), so its body lies under the tab (y 62.9–69) instead of 4 mm past the
-south edge — fit it with the body over the tab; the tab grew to 15.5 mm (y 57–72.5) and J101 became a **vertical**
-1×2 header at (60.4 / 62.94, 70.7) below PS1's pin row, pin 1 (square, west, "E1") = E1, pin 2 = E2 return — the
-right-angle header's insulator sat over PS1's pads and its tails came out inside PS1's body; the hand-soldered pads
-of J101, J102 and PS1 keep ≥ 0.3 mm from other copper (`tht_connectors` rule in `StimHAT.kicad_dru`, proven live) —
-the tab's tracks were re-threaded for it; the +5V_ISO feed above U109 moved to y 20.7 (barrier 2.55 mm, was exactly
-2.50); J102's pins are labelled along the row; the BNC labels moved above the bodies; a "NYLON" marker sits above
-MH4; the stray "5V" label went.  Assembly order on the tab: J102 and J101 first, then PS1 from the top.  **With PS1
-fitted, a Pi 4's AV jack cannot take a plug** (PS1 hangs 10 mm below the HAT right over it) and a micro-HDMI1 plug's
-overmould may touch PS1's west end — PS1 is for stand-alone / battery-less use; with a Pi, feed J102 from the pack.
-Fourth layout review (2026-10-29, after the tab rework): no blocker / major; minors noted here: the `_BodyN`
-footprint draws PS1's body 0.2 mm short on the J101 side (Mornsun: pin row 0.9 mm from the back face, so the body
-really spans y 63.1–69.1, worst case 69.45) — J101's plastic then sits ≈ 0.3 mm from PS1's pad 6, fit J101 first
-and solder PS1's pins 4–6 with a fine tip; U101.7 (ISO7741 VCC1, second pin) has no cap of its own (C101 is at pin
+Second to fourth layout reviews (2026-10-29), applied: J101 became a **vertical** 1×2 header, pin 1 (square, west,
+"E1") = E1, pin 2 = E2 return; the hand-soldered pads of J101, J102 and PS1 keep ≥ 0.3 mm from other copper
+(`tht_connectors` rule in `StimHAT.kicad_dru`, proven live); the +5V_ISO feed above U109 moved to y 20.7 (barrier
+2.55 mm, was exactly 2.50); J102's pins are labelled along the row; a "NYLON" marker sits above MH4; the stray "5V"
+label went.  **PS1 moved (2026-10-29, after the fourth review)**: the reviews had it under a lengthened tab, where its
+10 mm body hung over the Pi 4's AV jack and the HDMI1 cable and J101 collided with it; committing to the right-angle
+BNCs freed the 6.7 mm band north of their bodies, which takes PS1 standing up with `stimhat:DCDC_SIP6_A0515S_BodyN`
+(body south of the pin row, 0.9 / 5.1 mm from it per the Mornsun drawing, 1.6 mm pads so a track passes between pins
+1 and 2), the tab shrank to 7.5 mm with J101 beside J102, and nothing hangs below the HAT.  "STIM OUT" / "TRIG IN" are
+printed on both sides: the top labels sit between PS1's body and the BNCs and are hidden when PS1 is fitted.  Minors
+from the fourth review that still apply: U101.7 (ISO7741 VCC1, second pin) has no cap of its own (C101 is at pin
 1, 4.4 mm away), C116 sits at U110 rather than U106.8 — both are 100 nF-at-5 V class devices on short, quiet rails;
 the +3V3 / MSPM0_3V3 / VBUS / ±V_STIM tracks run at 0.2–0.25 mm where their class says 0.3 (≤ 250 mA, fine); USB
 D+/D− are 19 vs 34 mm long (full speed, irrelevant); run `tools/lcsc_verify.py --refresh` before ordering (10 codes
@@ -171,8 +173,8 @@ unmatched (full speed only).
 ## Assembly notes and first-article checks
 
 - Standoffs: M2.5 as a HAT; **MH4 (south-east) nylon** — it sits in the isolated copper.
-- Solder PS1 from the top (its pins come up through the tab) with the body on the back; it overhangs the tab's west
-  edge by 1.2 mm under the BNC barrel, which is on the top side.  Do not fit PS1 and the battery pack together.
+- PS1 stands on the top side north of the BNC bodies, pin 1 (square pad, +5V) west; fit it before the BNCs if you
+  want room for the iron.  Do not fit PS1 and the battery pack together.
 - Joystick: mounted at 45°, directions line up with the board (up = away from the BNCs).  If a direction reads wrong,
   swap in firmware (BUTTON1/3/4/6).
 - First power-up with a Pi: check +3V3, MSPM0_3V3 (GPIO18 high), +5V_ISO ≈ 5.0 V, +V_STIM / −V_STIM ≈ ±13.5 V (DC-DC) or

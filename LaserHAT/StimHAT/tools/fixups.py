@@ -231,6 +231,26 @@ def swap_fp(ref, lib_dir, name, fpid):
     print("swapped", ref, "->", fpid, [(p.GetNumber(), round(p.GetPosition().x / 1e6, 2), round(p.GetPosition().y / 1e6, 2)) for p in new.Pads()])
 
 
+def rip_region(x0, y0, x1, y1, nets=()):
+    """delete the tracks lying wholly inside the window (both ends) and the vias inside it, locked ones included;
+    NETS (optional) restricts it to those nets"""
+    b = pcbnew.LoadBoard(BOARD)
+    inside = lambda p: mm(x0) <= p.x <= mm(x1) and mm(y0) <= p.y <= mm(y1)
+    kill = []
+    for t in b.GetTracks():
+        if nets and t.GetNetname() not in nets:
+            continue
+        if t.GetClass() == "PCB_VIA":
+            if inside(t.GetPosition()):
+                kill.append(t)
+        elif inside(t.GetStart()) and inside(t.GetEnd()):
+            kill.append(t)
+    for t in kill:
+        b.Remove(t)
+    pcbnew.SaveBoard(BOARD, b)
+    print("ripped", len(kill), "items in", (x0, y0, x1, y1), "nets", list(nets) or "all")
+
+
 def drop_tiny(limit=0.02):
     """delete track segments shorter than LIMIT mm (zero-length leftovers of the router / of point moves)"""
     b = pcbnew.LoadBoard(BOARD)
@@ -245,6 +265,8 @@ if __name__ == "__main__":
     cmd = sys.argv[1]
     if cmd == "drop-tiny":
         drop_tiny()
+    elif cmd == "rip-region":
+        rip_region(*map(float, sys.argv[2:6]), nets=sys.argv[6:])
     elif cmd == "swap-fp":
         swap_fp(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5])
     elif cmd == "drop-seg":

@@ -77,9 +77,10 @@ import subprocess
 subprocess.run(["python3", os.path.join(os.path.dirname(os.path.abspath(__file__)), "silk_dedupe.py"),
                 os.path.join(LIB, "VQFN32_RHB_TEX.kicad_mod")], check=True)   # TI ships the pin-1 star twice
 
-# A0515S SIP-6 with the body on the other side of the pin row (the module turned over about the pin axis): mounted on
-# the back of the tab the body then lies under the tab instead of hanging past its south edge.  Pure text mirror of the
-# e-stim module's footprint (y -> -y for the graphics; the pads stay on y 0, pin order unchanged); no 3D model.
+# A0515S SIP-6 with the body on the other side of the pin row (the module turned over about the pin axis), so that it
+# stands in the band north of the BNC bodies with its body south of the pin row.  Pure text mirror of the e-stim
+# module's footprint (y -> -y for the graphics; the pads stay on y 0, pin order unchanged), body 0.9 / 5.1 mm from the
+# pin row per the Mornsun drawing, 1.6 mm pads; no 3D model.
 import re as _re
 src = open(os.path.join(ROOT, "..", "EStimDaughter", "estim.pretty", "DCDC_SIP6_A0515S.kicad_mod")).read()
 out = []
@@ -88,8 +89,47 @@ for line in src.splitlines():
         continue
     if line.strip().startswith(("(fp_line", "(fp_text", "(property")):
         line = _re.sub(r"\((start|end|at) (-?[\d.]+) (-?[\d.]+)", lambda m: f"({m.group(1)} {m.group(2)} {-float(m.group(3)):g}", line)
+    if line.strip().startswith("(fp_line"):      # body 0.9 mm behind the pin row, 5.1 ahead (Mornsun A_S-1WR3 drawing)
+        line = _re.sub(r"\((start|end) (-?[\d.]+) (-?[\d.]+)", lambda m: f"({m.group(1)} {m.group(2)} {float(m.group(3)) - 0.2:g}", line)
     line = line.replace('(footprint "DCDC_SIP6_A0515S"', '(footprint "DCDC_SIP6_A0515S_BodyN"')
+    line = line.replace("(size 1.8 1.8) (drill 1.0)", "(size 1.6 1.6) (drill 1.0)")   # 0.3 mm annulus: room between pins 1 and 2 for a track
     line = line.replace('(descr "Isolated DC-DC,', '(descr "Body on the other side of the pin row (turned over about the pin axis). Isolated DC-DC,')
     out.append(line)
 open(os.path.join(LIB, "DCDC_SIP6_A0515S_BodyN.kicad_mod"), "w").write("\n".join(out) + "\n")
 print("saved DCDC_SIP6_A0515S_BodyN")
+
+
+# Right-angle-only BNC (Amphenol 031-5540 / 031-5431 / 031-5486): the HAT's dual footprint without the vertical
+# 031-5539's diagonal post pad, its body drawing and its courtyard; silk kept inside the board edge.  Pure text edit.
+def _drop_block(text, marker):
+    """remove the s-expression block that contains MARKER (search back to its opening '(pad' / '(fp_rect')"""
+    i = text.index(marker)
+    start = max(text.rfind("\n\t(pad ", 0, i), text.rfind("\n\t(fp_rect", 0, i)) + 1
+    depth, j = 0, start
+    while True:
+        c = text[j]
+        if c == "(":
+            depth += 1
+        elif c == ")":
+            depth -= 1
+            if depth == 0:
+                break
+        j += 1
+    end = j + 1
+    if text[end] == "\n":
+        end += 1
+    return text[:start] + text[end:]
+
+
+src = open(os.path.join(ROOT, "..", "Footprints.pretty", "BNC_Amphenol_031-5540_031-5539_Dual.kicad_mod")).read()
+src = _drop_block(src, "(at -5.08 5.08)")
+src = _drop_block(src, '(layer "Dwgs.User")')
+src = src.replace("(start -7.79 -33.85)\n\t\t(end 7.79 7.96)", "(start -7.79 -33.85)\n\t\t(end 7.79 1.3)")
+src = src.replace("(start -7.37 -12.57)\n\t\t(end 7.37 1.42)", "(start -7.37 -12.3)\n\t\t(end 7.37 1.42)")
+src = src.replace('(footprint "BNC_Amphenol_031-5540_031-5539_Dual"', '(footprint "BNC_Amphenol_031-5540_RA"')
+src = src.replace('(property "Value" "BNC_Amphenol_031-5540_031-5539_Dual"', '(property "Value" "BNC_Amphenol_031-5540_RA"')
+src = _re.sub(r'\(descr "[^"]*"', '(descr "BNC jack, Amphenol 031-5540 / 031-5431 / 031-5486 right angle, front face at the board edge; Amphenol drawings 31-5540, 31-5431"', src)
+src = _re.sub(r'\(tags "[^"]*"', '(tags "BNC coaxial Amphenol 031-5540 031-5431 031-5486 right angle"', src)
+assert src.count("(pad ") == 4 and "Dwgs.User" not in src
+open(os.path.join(LIB, "BNC_Amphenol_031-5540_RA.kicad_mod"), "w").write(src)
+print("saved BNC_Amphenol_031-5540_RA")

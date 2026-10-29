@@ -142,9 +142,9 @@ PARTS = [
     dict(ref="J10", sym="Conn_01x04", value="OLED 0.91 (GND VCC SCL SDA)", fp=SOCK4RA, lcsc="", dnp=True,
          nets={"1": "GND", "2": "+3V3_PI", "3": "I2C_SCL", "4": "I2C_SDA"}),
     # ================================================================ 3. BNC trigger in / stim out
-    dict(ref="J6", sym="BNC", value="BNC TRIGGER IN", fp="Footprints:BNC_Amphenol_031-5540_031-5539_Dual", lcsc="",
+    dict(ref="J6", sym="BNC", value="BNC TRIGGER IN", fp="stimhat:BNC_Amphenol_031-5540_RA", lcsc="",
          nets={"1": "BNC_IN", "2": "GND"}),
-    dict(ref="J7", sym="BNC", value="BNC STIM OUT", fp="Footprints:BNC_Amphenol_031-5540_031-5539_Dual", lcsc="",
+    dict(ref="J7", sym="BNC", value="BNC STIM OUT", fp="stimhat:BNC_Amphenol_031-5540_RA", lcsc="",
          nets={"1": "BNC_OUT", "2": "GND"}),
     R("R23", "1k", "BUF_IN", "BNC_IN", lcsc=L["R1k"]),
     R("R24", "100k", "BUF_IN", "GND", lcsc=L["R100k"]),

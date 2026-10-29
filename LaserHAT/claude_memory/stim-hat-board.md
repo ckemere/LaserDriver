@@ -8,10 +8,11 @@ metadata:
 ---
 
 **StimHAT** (`LaserHAT/StimHAT/`, branch `worktree-stim-hat` off `battery-pack`, a git worktree at
-`.claude/worktrees/stim-hat`): one 65 x 57 mm HAT + 15.5 mm south-east tab (PS1's body under the tab, vertical
-electrode header J101 below its pin row; with PS1 fitted a Pi 4's AV jack is blocked) carrying the Rev 2 core (MSPM0G3507, CH340N,
+`.claude/worktrees/stim-hat`): one 65 x 57 mm HAT + 7.5 mm south-east tab (J102 + vertical electrode header J101
+only; PS1 stands on top in the band north of the right-angle BNC bodies - the vertical-BNC option was dropped to free
+it, 2026-10-29 late - so nothing hangs below the HAT) carrying the Rev 2 core (MSPM0G3507, CH340N,
 USB-C path, EEPROM, BNCs, FIRE, joystick) and the kbest stimulator isolated by ISO7741F + ISO1640, powered by the A0515S
-(PS1, hand-fitted on the back of the tab) or the battery pack (J102 B4B-PH-K-S).  Full record of the decisions and
+(PS1, hand-fitted, standing north of the BNCs) or the battery pack (J102 B4B-PH-K-S).  Full record of the decisions and
 rejected options in `LaserHAT/claude_memory/stim-hat-plan.md`; build details and checks in `StimHAT/README.md`.
 
 Key facts not obvious from the code:
