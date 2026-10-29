@@ -82,10 +82,17 @@ footprint without courtyard and silk) at (44, 40.1) rot 180, pads +V / 0V / −V
 and the "+V 0V −V CAB" label is on the back.  Isolated stimulator: block A (x 36.5–65, y 20–35, under the bonnet's
 east end: isolators, DAC, inverter, 4053, output stage, SHORT, fault detector), the pocket (y 35–41.2), strip B
 (x 47.7–65, y 41.2–57: LDO, −4.3 V rail, filter, multipliers, clamps) and the tab (J101 vertical electrode header,
-pin 1 = E1 west).  Nothing hangs below the HAT.  Barrier: 2.5 mm copper-free rule areas (x 34–36.5 from y 17.5 down
-to 42.8 west of block A and the pocket; y 41.2–42.8 between J102's pads and J7's tails; x 45.2–47.7 between J7's posts
-and strip B; drawn on User.Comments) plus the `StimHAT.kicad_dru` rule (Isolated / IsolatedPower / Rails net classes vs
-everything else ≥ 2.5 mm) and `tht_connectors` (0.3 mm around the hand-soldered pads of J101, J102, PS1).  Net classes:
+pin 1 = E1 west).  Nothing hangs below the HAT.  Barrier (reworked 2026-10-29 night so the router draws no 2.5 mm halos): the 2.5 mm copper-free rule areas on all
+copper layers (x 34–36.5 from y 17.5 to 43.7 west of block A and the pocket; y 41.2–43.7 between J102's pads and
+J7's tails; x 45.2–47.7 east of J7; x 43–47.7 below J7's east post, y 51.3–57, so the tab's corner stays 2.5 mm
+from HAT copper; y 17.5–20 north of block A; drawn on User.Comments) are exactly the gap between two named regions,
+`hat_region` and `isolated_region` (rule areas that keep nothing out by themselves), and `StimHAT.kicad_dru` disallows
+HAT-side copper (tracks, vias, pads, zones of any net class but Isolated / IsolatedPower / Rails) inside
+`isolated_region` and isolated copper inside `hat_region`.  The distance then follows from the geometry: any copper of
+one side lies in its region, the regions are ≥ 2.5 mm apart everywhere (checked at every corner), and the strips are
+keep-outs on all four layers.  Pads of the straddling parts U101 / U109 / PS1 / J7 lie in the strips, where they are
+allowed; their own creepage is the footprint's.  `tht_connectors` (0.3 mm around the hand-soldered pads of J101, J102
+and PS1) stays a clearance rule.  Net classes:
 Power and IsolatedPower 0.3 mm, Fine (USB), Default and Isolated 0.2 mm; board minimums 0.15 / 0.15, vias 0.6 / 0.3.
 Standoff keep-outs r 3.25 at all four holes.  User.1 ("Bonnet"): the Adafruit 4567 bonnet from its EagleCAD board — outline (65 × 30.66, y 0.34–31.0, its header rows on J1's), holes, stacking socket, OLED module and active area, joystick, buttons.  User.Drawings: the standing 0.91" module, the notch note.
 

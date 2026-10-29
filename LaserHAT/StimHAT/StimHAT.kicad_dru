@@ -1,7 +1,10 @@
 (version 1)
-(rule isolation_barrier
-  (condition "((A.NetClass == 'Isolated' || A.NetClass == 'IsolatedPower' || A.NetClass == 'Rails') && !(B.NetClass == 'Isolated' || B.NetClass == 'IsolatedPower' || B.NetClass == 'Rails')) || ((B.NetClass == 'Isolated' || B.NetClass == 'IsolatedPower' || B.NetClass == 'Rails') && !(A.NetClass == 'Isolated' || A.NetClass == 'IsolatedPower' || A.NetClass == 'Rails'))")
-  (constraint clearance (min 2.5mm)))
+(rule hat_copper_in_isolated_region
+  (condition "A.intersectsArea('isolated_region') && (A.Type != 'Pad' || A.Pad_Type != 'NPTH, mechanical') && !(A.NetClass == 'Isolated' || A.NetClass == 'IsolatedPower' || A.NetClass == 'Rails')")
+  (constraint disallow track via pad zone))
+(rule isolated_copper_in_hat_region
+  (condition "A.intersectsArea('hat_region') && (A.NetClass == 'Isolated' || A.NetClass == 'IsolatedPower' || A.NetClass == 'Rails')")
+  (constraint disallow track via pad zone))
 (rule tht_connectors
   (condition "A.Pad_Type == 'Through-hole' && (A.memberOfFootprint('J101') || A.memberOfFootprint('J102') || A.memberOfFootprint('PS1'))")
   (constraint clearance (min 0.3mm)))

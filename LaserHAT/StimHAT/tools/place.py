@@ -174,16 +174,35 @@ def plane(name, net, layer, pts):
 # of J7's tails = 2.5 mm from J102's pads), GND_ISO under block A, the pocket, strip B and the tab; the rule areas
 # (all copper layers) keep the 2.5 mm barrier and the standoff circles copper-free
 plane("GND plane", "GND", pcbnew.In1_Cu,
-      [(0, 0), (65, 0), (65, 17.5), (34, 17.5), (34, 43.6), (45.2, 43.6), (45.2, 57), (0, 57)])
+      [(0, 0), (65, 0), (65, 17.5), (34, 17.5), (34, 43.7), (45.2, 43.7), (45.2, 51.3), (43, 51.3), (43, 57), (0, 57)])
+
+# named regions for the isolation DRC rules (StimHAT.kicad_dru): rule areas that keep nothing out by themselves, so the
+# router draws no halos; the rules disallow HAT-side copper in 'isolated_region' and isolated copper in 'hat_region'.
+# Together with the 2.5 mm strips above (which are exactly the gap between the two regions) that is the barrier.
+def region(name, pts):
+    z = pcbnew.ZONE(board)
+    z.SetIsRuleArea(True); z.SetZoneName(name)
+    z.SetDoNotAllowTracks(False); z.SetDoNotAllowVias(False); z.SetDoNotAllowCopperPour(False)
+    z.SetDoNotAllowPads(False); z.SetDoNotAllowFootprints(False)
+    z.SetLayerSet(pcbnew.LSET.AllCuMask(board.GetCopperLayerCount()))
+    o = z.Outline(); o.NewOutline()
+    for px, py in pts:
+        o.Append(mm(px), mm(py))
+    board.Add(z)
+
+
+region("hat_region", [(0, 0), (65, 0), (65, 17.5), (34, 17.5), (34, 43.7), (45.2, 43.7), (45.2, 51.3), (43, 51.3), (43, 57), (0, 57)])
+region("isolated_region", [(36.5, 20), (65, 20), (65, 57), (56, 57), (56, 64.5), (46, 64.5), (46, 57), (47.7, 57), (47.7, 41.2), (36.5, 41.2)])
 plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu,
       [(36.5, 20), (65, 20), (65, 57), (56, 57), (56, 64.5), (46, 64.5), (46, 57), (47.7, 57), (47.7, 41.2), (36.5, 41.2)])
 
 
 # isolation barrier (2.5 mm, copper-free on both layers), see the docstring
 BAR = ((34.0, 17.5, 65.0, 20.0),      # north of block A (the 2.5 mm from U109 side-1 pads is checked by the .kicad_dru rule)
-       (34.0, 17.5, 36.5, 42.8),      # west of block A and of the pocket (PS1 pin 2 at x 32.8 is HAT side)
-       (36.5, 41.2, 47.7, 42.8),      # south of the pocket: J102's pads (to y 41.0) vs the BNC J7 tails (y 44.4)
-       (45.2, 42.8, 47.7, 57.0))      # east of the BNC J7 (its posts reach x 45.2) / west of strip B and the tab
+       (34.0, 17.5, 36.5, 43.7),      # west of block A and of the pocket (PS1 pin 2 at x 32.8 is HAT side)
+       (36.5, 41.2, 47.7, 43.7),      # south of the pocket: J102's pads (to y 41.0) vs the BNC J7 tails (from y 43.6)
+       (45.2, 43.7, 47.7, 57.0),      # east of the BNC J7 (its posts reach x 45.2) / west of strip B
+       (43.0, 51.3, 47.7, 57.0))      # below J7's east post: keeps HAT copper 2.5 mm from the tab's north-west corner
 for x1, y1, x2, y2 in BAR:
     keepout(((x1, y1), (x2, y1), (x2, y2), (x1, y2)))
     rect(x1, y1, x2, y2, pcbnew.Cmts_User, 0.1)
