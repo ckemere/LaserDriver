@@ -4,9 +4,9 @@ with the Pi 5 fan / PoE notch (x 59-65, y 8-16.5) no tab since the DC-DC left fo
 Layout per the plan's panel 1g (claude_memory/stim-hat-plan):
   * top strip (y < 17.5) and the west half: the Rev 2 HAT core, all under the Adafruit 4567 bonnet (which sits on the
     stacking header 9 mm up), parts <= 7 mm tall; J10 (vertical socket for the 0.91" OLED module, unpopulated) at
-    the strip's west end under the header; the module comes with bare holes, so the header soldered to it decides:
-    straight pins -> it stands along the header (long edge horizontal), right-angle pins -> it lies flat over the
-    strip with its pin edge north; pins west to east SDA SCL VCC GND either way
+    the strip's west end: a north-south column of pins (SDA north-west-most, SCL, VCC, GND south) at x 11.75; the
+    module has its 4 holes on a short edge, gets a right-angle header and lies flat eastward over the strip, parallel
+    to the Pi header
   * west edge, top to bottom: SW10 (USB power), J5 USB-C, the three LEDs, FIRE (SW9), the five-way joystick (SW7, at
     45 degrees so its directions line up with the board) in the south-west corner
   * two right-angle BNCs in the middle of the south edge (bodies x 15-46, y 43-57, barrels past the edge); the band
@@ -42,7 +42,7 @@ at("J1", 8.37, 5.77, -90, True)
 # ---- west edge, top to bottom
 at("SW10", 2.2, 13.0, -90)
 at("J5", 4.2, 24.0, -90)
-at("R8", 10.0, 20.5, 90); at("R10", 10.0, 27.5, 90)
+at("R8", 9.8, 22.8, 90); at("R10", 10.0, 27.5, 90)
 at("D5", 2.6, 31.5); at("R13", 5.8, 31.5)
 at("D7", 2.6, 33.1); at("R15", 5.8, 33.1)
 at("D9", 2.6, 34.7); at("R18", 5.8, 34.7)
@@ -51,8 +51,8 @@ at("SW7", 8.16, 43.22, 45)
 # ---- south edge: the two BNCs (rot 180 = barrel south, as on the HAT)
 at("J6", 24.92, 44.42, 180); at("J7", 40.92, 44.42, 180)
 # ---- core, west half under the bonnet: USB power path by the USB-C, LDOs above, MCU in the middle, UART bridge below
-at("Q5", 14.5, 14.3, 90); at("R26", 14.5, 17.6, 90); at("Q3", 14.5, 20.5, 90); at("Q4", 18.5, 17.6, 90)
-at("R21", 18.5, 14.3, 90); at("R22", 24.5, 20.5, 90)
+at("Q5", 15.8, 13.6, 90); at("R26", 14.5, 17.6, 90); at("Q3", 14.6, 23.6, 0); at("Q4", 18.5, 17.6, 90)
+at("R21", 19.1, 14.3, 90); at("R22", 24.5, 20.5, 90)
 at("U4", 23.0, 14.5, 180); at("C12", 19.7, 12.3, 0); at("C6", 26.5, 10.6, 180); at("C13", 26.5, 17.0, 90)
 at("U5", 30.0, 14.5); at("R7", 26.5, 13.5, 90); at("C2", 33.3, 14.0, 90); at("JP1", 50.0, 10.0, 0)
 at("U7", 20.0, 26.0, -90)
@@ -61,19 +61,19 @@ at("R3", 17.4, 34); at("C3", 19.5, 34.0); at("JP4", 22.5, 34.0)
 at("R107", 27.5, 18.3, 90); at("R108", 30.0, 18.3, 90)
 at("U6", 13.4, 32.65, 90); at("C17", 12.02, 27.5, 0)
 at("U8", 28.0, 32.0, 90); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
-# ---- top strip: I2C pull-ups by the header's pins 3 / 5, the EEPROM by pins 27 / 28, JP5, BSL; the OLED socket J10
-# right under the header at the west end (pins along x at y 10, pin 1 = GND east), JP1 moved to the strip's east end
-at("R19", 12.0, 15.5, 90); at("R20", 12.0, 13.0, 90); at("C15", 7.5, 13.0, 90); at("JP5", 7.5, 16.0)
+# ---- top strip: the EEPROM by pins 27 / 28, JP5, BSL; the OLED socket J10 (Q5 / R21 east of it, Q3 / R8 / R19 / R20 south of it)
+# at the west end as a north-south column (SDA north, GND south), JP1 moved to the strip's east end
+at("R19", 11.0, 22.8, 90); at("R20", 12.3, 22.8, 90); at("C15", 7.5, 13.0, 90); at("JP5", 7.5, 16.0)
 at("SW6", 31.0, 10.4); at("C103", 45.7, 16.5, 90); at("C18", 43.4, 11.4, 0); at("R2", 35.5, 16.0, 90)
 at("U1", 40.5, 13.9); at("R1", 45.5, 11.0, 90)
-at("J10", 22.81, 10.0, 270)                 # pins x 22.81 (GND) 20.27 (VCC) 17.73 (SCL) 15.19 (SDA)
+at("J10", 11.75, 19.5, 180)                 # pins x 22.81 (GND) 20.27 (VCC) 17.73 (SCL) 15.19 (SDA)
 # ---- isolation: ISO7741F across the vertical barrier (x 35.25; pins 1-8 west), ISO1640 across the horizontal one
 # (y 18.75; pins 1-4 north)
 at("U101", 35.25, 27.0, 0)
 at("R101", 29.0, 22.0, 90); at("R102", 29.0, 25.0, 90); at("R103", 29.0, 28.0, 90); at("C101", 30.8, 24.0, 90)
 at("U109", 42.0, 19.5, 270)
 # ---- isolated block A (x 36.5-65, y 20-34): set-point, switches, output stage, SHORT, fault detector
-at("C102", 38, 23, 90); at("C124", 45.5, 21.5, 90); at("C115", 51.8, 20.45, 180); at("C125", 61.4, 38.2, 90); at("TP101", 63.55, 44.55, 0)
+at("C102", 38, 23, 90); at("C124", 45.5, 21.5, 90); at("C115", 51.8, 20.45, 180); at("C125", 61.4, 38.2, 90); at("TP101", 62.25, 45.0, 0)
 at("U105", 49.95, 22.75, 180); at("C114", 47.25, 24.7, 180); at("R110", 40.85, 23.75, 0); at("R109", 43.15, 23.75, 180)
 at("U106", 58.65, 25.25, 90); at("C117", 61.15, 26.6, -90); at("R105", 54.2, 21.85, 90); at("R106", 55.75, 21.82, -90); at("C116", 56, 24.88, -90)
 at("R114", 55.24, 27.05, 0); at("C120", 55.8, 28.48, -90); at("R115", 57, 29.5, -90); at("R116", 59.15, 29.55, 0); at("C121", 53.15, 50, -90)
@@ -249,8 +249,8 @@ rect(58.09, 11.95, 64.09, 18.55, BON, 0.15); circle(61.09, 15.25, 1.5, BON)     
 rect(50.85, 18.43, 56.85, 25.03, BON, 0.15); circle(53.85, 21.73, 1.5, BON)            # button #5
 silk("Adafruit 4567 bonnet, 9 mm up (outline, holes, header, OLED, joystick, buttons)", 32.5, 33.0, 1.0, 0, BON)
 rect(16.5, 36.8, 46.0, 43.0, pcbnew.Dwgs_User, 0.15); silk("DC-DC pod: J103 (5 V) to J102 (+/-V), lies over the band", 31.0, 35.0, 0.8, 0, pcbnew.Dwgs_User)
-rect(0.0, 9.2, 38.0, 10.8, pcbnew.Dwgs_User, 0.15); rect(0.0, 10.0, 38.0, 22.0, pcbnew.Dwgs_User, 0.1)
-silk("0.91in OLED module on J10 (vertical socket): straight pins -> standing along the header (strip), right-angle pins -> lying flat (rect)", 19.0, 23.2, 0.8, 0, pcbnew.Dwgs_User)
+rect(11.75, 9.9, 49.75, 21.5, pcbnew.Dwgs_User, 0.1)
+silk("0.91in OLED module on J10: pins on its west (short) edge, right-angle pins into the vertical socket, lying flat eastward 8.5 mm up", 30.0, 23.0, 0.8, 0, pcbnew.Dwgs_User)
 silk("Pi 4 PoE / Pi 5 fan", 56.0, 7.0, 0.8, 0, pcbnew.Dwgs_User)
 for d in stale:
     board.Remove(d)

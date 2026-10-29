@@ -129,9 +129,11 @@ gone (J101 sits in strip B), the BNCs moved east (J6 x 24.92, J7 x 40.92) so the
 and the pocket's south strip y 41.2–43.7; the north strip starts at y 17.4; the isolated planes are notched under
 U109 (its HAT-side pads end at y 18.0).  `tools/place.py`'s table was synced from the board (a rerun moves nothing).
 Pours: GND / GND_ISO on In1 (planes), F and B (0.25 mm clearance, single thermal spokes allowed by
-`outer_pours_one_spoke`); In2 is a plain routing layer for the power nets (the islands were dropped at the user's request): the isolated
-rails run there as 0.3 mm tracks joining the fan-out vias (`tools/in2route.py`, a spanning tree with L / Z detours
-around the other vias and the rule areas).  The isolated block's power is routed: dog-bone vias from every +5V_ISO / +V_STIM pad
+`outer_pours_one_spoke`); In2 is a plain routing layer for the power nets (the islands were dropped at the user's request).  The isolated
+rails are a hand-laid 0.3 mm grid: +5V_ISO on In2 (row y 22.6 under the DAC / isolators, column x 38.52 past U101,
+row y 32.0 to the LDO side), +V_STIM on In2 (trunk y 39.5 from J102.1 to the east edge, column x 58.63, feed x 56.95
+from C116), −V_STIM on the back (row y 37.4 from J102.3 to x 59.85, column up to the output stage), −5V_ISO on the
+back; the fan-out vias on the pads are the only vias.  The isolated block's power is routed: dog-bone vias from every +5V_ISO / +V_STIM pad
 into its island (`/home/.../tmp/powerfan.py`-style script, 22 vias), −V_STIM / −5V_ISO and the stragglers by
 `tools/maze_nets.py` (the maze router restricted to named nets) and by hand; `tools/stitch.py` drops a via into every
 outer-pour piece that has none (rerun it after routing: `fill_zones`, `stitch.py --apply`, `fill_zones`).  Result:
