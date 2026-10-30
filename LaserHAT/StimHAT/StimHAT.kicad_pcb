@@ -27763,17 +27763,6 @@
 			)
 		)
 	)
-	(gr_text "FIRE"
-		(at 14 53.75 0)
-		(layer "F.SilkS")
-		(uuid "1b20e623-ff37-4b6c-b5eb-e2d461db384e")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
 	(gr_text "ISOLATED"
 		(at 49.5 18.75 0)
 		(layer "F.SilkS")
@@ -27818,6 +27807,17 @@
 			)
 		)
 	)
+	(gr_text "FIRE"
+		(at 7.5 54 90)
+		(layer "F.SilkS")
+		(uuid "1b20e623-ff37-4b6c-b5eb-e2d461db384e")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
 	(gr_text "USB"
 		(at 9.6 24.6 90)
 		(layer "F.SilkS")
@@ -27830,7 +27830,7 @@
 		)
 	)
 	(gr_text "TRIG IN"
-		(at 16.3 50 90)
+		(at 16.3 47 90)
 		(layer "F.SilkS")
 		(uuid "66fa1074-e085-42e2-a743-80e1da7e7da0")
 		(effects
@@ -27852,7 +27852,7 @@
 		)
 	)
 	(gr_text "STIM OUT"
-		(at 49.4 50 90)
+		(at 49.4 48 90)
 		(layer "F.SilkS")
 		(uuid "6622dbea-6c4d-4021-aab9-711181ed0a34")
 		(effects
