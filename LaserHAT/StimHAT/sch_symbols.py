@@ -155,7 +155,7 @@ add_symbol("SW_SPDT", "SW", poly([(-2.54, 0), (-1.27, 0)]) + "\n    " + poly([(-
 # ALPS SKRHADE010 five-way: 1 A (up), 2 centre push, 3 C (left), 4 B (right), 5 common, 6 D (down); directions with the
 # package mounted at 45 degrees (the stem moves along the package diagonals)
 box_symbol("Joystick5", "SW",
-           [("1", "A/UP", "passive"), ("3", "C/LEFT", "passive"), ("6", "D/DOWN", "passive"), ("4", "B/RIGHT", "passive"),
+           [("1", "A/DOWN", "passive"), ("3", "C/RIGHT", "passive"), ("6", "D/UP", "passive"), ("4", "B/LEFT", "passive"),
             ("2", "CENTRE", "passive")],
            [("5", "COM", "passive")], width=15.24)
 

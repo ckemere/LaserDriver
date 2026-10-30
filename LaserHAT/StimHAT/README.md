@@ -6,7 +6,7 @@ stimulator that was the plug-in e-stim module, isolated from the Pi side by an I
 by the battery pack (J102, JST-PH) or by a plug-in DC-DC pod (A0515S + LC filter + capacitance multipliers on its own
 board, 2026-10-29) that plugs into J102's holes and takes 5 V from J103.  The
 Adafruit 4567 OLED bonnet stacks on the Pi header above it as before; a 0.91" 128 × 32 I2C OLED module can be fitted
-in an unpopulated right-angle socket instead.  2-layer, JLC economic assembly (top side only).
+in an unpopulated right-angle socket instead.  4-layer, JLC economic assembly (top side only).
 
 The design discussion that led here is in `../claude_memory/stim-hat-plan.md`; the panel-1g floorplan is what the
 board follows.
@@ -28,14 +28,14 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 |---|---|---|
 | Pi header | J1 Samtec HLE-120-02 SMD socket with pass-through holes (hand-fitted) | as the Rev 2 HAT; a Pi fitted with an extended-pin header lets the bonnet stack above |
 | USB-C | J5 GT-USB-7010ASV, R8 / R10 5.1k CC, Q5 AP30P30Q VBUS switch + R26 100k + SW10 MSK12C02, Q3 AP30P30Q + Q4 DMMT5401 + R21 / R22 ideal diode into +5V, D5 (white) + R13 | USB power only when SW10 enables it; the Pi's 5 V and the USB 5 V never fight |
-| 3.3 V | U4 MCP1700-3.3 (+3V3: CH340N, U5 input), U5 AP2171W (MSPM0_3V3, enabled by Pi GPIO18 through R7), C1 / C2 / C6 / C12 / C13 / C16, JP5 | JP5 feeds +3V3 onto the Pi's 3.3 V pins for stand-alone use (open it with a Pi) |
+| 3.3 V | U4 MCP1700-3.3 (+3V3: CH340N, U5 input), U5 AP2171W (MSPM0_3V3, enabled by Pi GPIO10 through R7), C1 / C2 / C6 / C12 / C13 / C16, JP5 | JP5 feeds +3V3 onto the Pi's 3.3 V pins for stand-alone use (open it with a Pi) |
 | ID EEPROM | U1 M24C32, JP1 (WP), R1 / R2 3.9k DNP | HAT spec |
-| MCU | U7 MSPM0G1507SRHBR (VQFN-32; the G3507 without CAN-FD, pin-compatible, better LCSC stock), R4 100k 0.1 % (ROSC), C4 470n (VCORE), R3 10k + C3 10n + JP4 (reset), SW6 TS-1088 (BSL, active high), D7 + R15 (MCU LED) | pin map below |
+| MCU | U7 MSPM0G1507SRHBR (VQFN-32; the G3507 without CAN-FD, pin-compatible, better LCSC stock), R4 100k 0.1 % (ROSC), C4 470n (VCORE), R3 4.7k + C3 10n + JP4 (reset), SW6 TS-1088 (BSL, active high), D7 + R15 (MCU LED) | pin map below |
 | USB-UART | U6 CH340N | `MCU_UART_TX/RX`; RTS can reset the MCU through JP4 |
-| Controls | SW7 ALPS SKRHADE010 five-way joystick (mounted at 45°), SW9 TS-1088 FIRE | replaces the thumbwheel and the BACK button |
-| BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (74LVC2G17) → PA26; PA25 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |
+| Controls | SW7 ALPS SKRHADE010 five-way joystick (mounted at 135°), SW9 TS-1088 FIRE | replaces the thumbwheel and the BACK button |
+| BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (SN74LVC2G17) → PA21; PA17 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |
 | Display | J10 PinSocket 1 × 4 vertical, unpopulated (GND, 3.3 V, SCL, SDA) | for a 0.91" 128 × 32 SSD1306 module (LCSC C5248081) standing up along the header at the strip's west end, facing south, instead of the bonnet |
-| Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 10k pull-downs, R107 / R108 and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
+| Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 10k pull-downs, R107 / R108 2.2k and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
 | Isolated supply | J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V) or the DC-DC pod's 2.0 mm pins in its holes; J103 1 × 2 header (5 V, GND, unpopulated) feeds the pod; C109 / C110 10 µF, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V) | the A0515S, L101 / L102 + C105 / C106 and the Q101 / Q102 capacitance multipliers moved to the pod (see below) |
 | Set-point | U105 DAC60501 (I2C 0x48), C114 / C115, U106B OPA2192 inverter (R105 / R106 10.0k 0.1 %), U107 CD74HC4053 on +5 / −4.3 V | switch 1 (CATH) picks ±VSET, switch 2 (EN) gates it, switch 3 inverts RELEASE for the SHORT switch |
 | Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2), TP101 (ISENSE) / TP102 (GND_ISO) test points | 502 µA full scale, 0.123 µA / LSB |
@@ -279,6 +279,36 @@ Reviewed and deliberately not changed (round 2):
   SW7, U105, U107 and U108 / U109 vs U6 in JLC's placement preview.
 * U108 DG418 stock is 205 pcs at JLC and no other DG418 code has stock: order promptly or buy 20 at LCSC as spares.
 
+## Pre-order audit round 3 (2026-10-30)
+
+Three fresh agents (schematic, layout / fab, parts / stock / sync) re-audited 00d0f6b.  No blocker, no new major in
+the schematic or the parts; everything of rounds 1–2 verified live.  Fixed:
+
+* **Vias tangent to paste-covered pads** (the via-in-pad class of round 2, three more): C127.1's +5V_ISO via
+  (hole 23 % inside the pad opening – a starved 0402 joint) moved to (45.14, 30.90); C112.1's via to (49.70, 38.56)
+  and U108.4's to (60.65, 38.98), each with a 0.25 mm stub into the pad.  Hole-to-opening ≥ 0.15 mm now.
+* **CPL rotation table** (`tools/ref/jlc_rotations.csv`, a copy of the Fabrication Toolkit's
+  `transformations.csv`): the two `^VSSOP-10_-` rows were a typo that never matched, so U105 got no offset, and
+  `^VSSOP-8_` had contradictory 180 / 270 rows with the first winning while the specific 3 × 3 mm row used a name
+  KiCad does not (`3.0x3.0mm`).  The Toolkit itself has the same rows and the same first-match logic, so the
+  2026-10-01 e-stim upload (VSSOP-8 +180, VSSOP-10 +0) inherited the accident – and that board's isolated side
+  never ran (ISO1640 symbol swap), so no VSSOP placement was ever confirmed.  The table now gives every SO-family
+  body (SOIC / SSOP / TSSOP / MSOP / VSSOP) the same +270: U105 90, U106 0, U110 270 in the CPL.  **JLC's
+  orientation is per part, so the placement preview is a hard gate: check U105, U106, U110 first, then U101, U107,
+  U108, U109 vs U6 (JEITA SOIC gets 0), SW7, Q3 / Q5, D101–D104, D5 / D7 / D9, J5, SW10, and rotate in the preview as
+  needed.**  `fab/README.md` corrected (the committed HAT / e-stim CPLs are raw KiCad exports; the uploads carried
+  the Toolkit's offsets).
+* Stale texts: README (2-layer, GPIO18 for MCU_PWR_EN, R3 10k, 45° joystick, U8 on PA26 / PA25, R107 / R108 4.7k,
+  NRST pin 16, ADC channels) and the joystick symbol's pin names (now A/DOWN, B/LEFT, C/RIGHT, D/UP for the 135°
+  mounting).
+
+Noted, not changed: U7's exposed pad carries full paste over its two vias (same footprint as the assembled Rev 2 HAT);
+the KiCad library 3D models of J5 and J1 are missing from this installation (cosmetic); the TLV76050 runs at
+≈ 85–100 °C junction at a full pack (thermal shutdown 150 °C; rev B could add copper under U104); SW10's common
+terminal is pad 2 per the drawing round 2 read (check PWR_EN ↔ GND continuity in the ON position on the first board);
+firmware must never enable the MSPM0 pull-ups on PA23–PA25 while they are inputs (≈ 20k against the 10k pull-downs
+would sit in the ISO7741's undefined band).
+
 ## Checks before fab
 
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
@@ -314,7 +344,7 @@ diodes in JLC's preview.
 Second schematic review (2026-10-29, no blocker / major): R107 / R108 4.7 k → 2.2 k (ISO1640 side-1 sink current
 was at the bottom of its 0.5–3.5 mA range); stale texts fixed.  Noted, not changed: the Pi's GPIO14 / 16 / 24 / 25 /
 26 drive MCU pins directly, so a Pi that pulls GPIO18 low without parking them (as `Pi/power_cycle.py` does, with
-`LASERHAT_NRST_PIN=16` on this board) back-feeds MSPM0_3V3 through the MCU's clamps; JP4 (RTS → NRST) is for
+`LASERHAT_NRST_PIN=9` on this board) back-feeds MSPM0_3V3 through the MCU's clamps; JP4 (RTS → NRST) is for
 stand-alone use only (two push-pull drivers otherwise); with SW10 on, the USB-C port back-powers the Pi through the
 ideal diode — use a ≥ 3 A supply or keep SW10 off with a Pi fitted; the electrode pins have no series / TVS
 protection beyond the op-amp's clamps (a candidate for rev B: 1 k in each lead).
@@ -387,7 +417,7 @@ EN_H, CATH_H, FAULT_H in U101's pin order (its HAT-side pins 3-6 at y 26.05-27.9
 at the bottom toward U8.
 
 Firmware: `Firmware/board.h` / `mcu.h` carry this map as an uncommitted draft; `pwm_timer.c` / `output_mux.c`
-(CCP1 ↔ CCP3 roles), `adc.c` (ADC0 ch 3 / 2) and the GPIO IRQ bit masks still need the matching edits.  Found on the
+(CCP1 ↔ CCP3 roles), `adc.c` (ADC0 ch 1 / 0: PA26 = A0_1, PA27 = A0_0) and the GPIO IRQ bit masks still need the matching edits.  Found on the
 way: PA22 is ADC0 ch 7, never ADC1.8, so the Rev 2 HAT's compliance readback channel was wrong.  Placement hints from
 the analysis (the HAT side is hand-placed): R101–R103 in RELEASE / EN / CATH order to match U101's pads, R107 / R108
 nets swapped to match U109's SCL / SDA order, R4 and the R3 / C3 / JP4 reset network north of U7.
@@ -406,7 +436,7 @@ keeps C109 / C110 and the 20 V clamps, so the pod needs no output capacitors of 
 
 - Standoffs: M2.5 as a HAT; **MH4 (south-east) nylon** — it sits in the isolated copper.
 - Fit J102 (JST) for the battery pack, or leave it off and plug the DC-DC pod into J102's holes and J103.  Never both.
-- Joystick: mounted at 45°, directions line up with the board (up = away from the BNCs).  If a direction reads wrong,
+- Joystick: mounted at 135°, directions line up with the board (up = away from the BNCs).  If a direction reads wrong,
   swap in firmware (BUTTON1/3/4/6).
 - First power-up with a Pi: check +3V3, MSPM0_3V3 (GPIO18 high), +5V_ISO ≈ 5.0 V, +V_STIM / −V_STIM ≈ ±13.5 V (DC-DC) or
   pack minus ≈ 1.2 V, −5V_ISO ≈ −4.0 to −4.2 V, FAULT_n high; then the module checks from `../EStimDaughter/README.md`.

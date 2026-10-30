@@ -15,7 +15,7 @@
 The three boards share no extended parts, so across the whole order there are about 45 unique extended parts (the HAT's USB power switch added two). Basic parts carry no per-part fee.
 
 **Before ordering**
-- Check rotations in JLC's placement preview. The CPL is KiCad's own position export; a few packages differ between KiCad and JLC orientation, typically SOT-23-5/6, SOT-223, the USB-C connector and the BL-DT wheel.
+- Check rotations in JLC's placement preview. The committed `fab/LaserHAT` / `fab/EStimDaughter` CPLs are KiCad's raw position export; the files actually uploaded (`fab/orders/*.zip`) carry the Fabrication Toolkit's per-package rotation offsets, as do the generated StimHAT / BatteryPack / DCDCPod CPLs (`tools/ref/jlc_rotations.csv`). JLC's orientation is per part, so always confirm the ICs, diodes, LEDs, transistors, switches and connectors in the placement preview.
 - **HAT Pi header J1** is hand-fitted. Its footprint is a Samtec HLE-120-02-xxx-DV-BE bottom-entry socket. The Rev 1 LCSC number (C42411761, Harwin M20-7812045) doesn't fit it: Harwin's land pattern has its SMD pad rows 7.60 mm apart plus two Ø1.8 mm pegs, while the footprint's rows are 5.82 mm apart. Buy the Samtec part.
 - **LCSC numbers** come from `tools/lcsc_parts.py` for the HAT and laser module and from `EStimDaughter/bom_EStimDaughter.csv`; `tools/stamp_lcsc.py` keeps the schematic/footprint fields equal to them and `tools/lcsc_verify.py` checks every value against LCSC. Hand-fitted and DNP parts are excluded from BOM and CPL (JLC rejects BOM lines without a placement). `orders/` holds the archives that were actually uploaded.
 
