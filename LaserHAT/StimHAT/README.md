@@ -177,13 +177,16 @@ HAT project; `${KIPRJMOD}` is this directory).  The "USB" silk moved to (9.6, 24
 errors / 0 warnings, 0 open connections; every outer-pour piece is stitched (the one GND_ISO sliver at (50.6, 25.4) hangs on
 a pad).  The user also added TP102 (GND_ISO) and routed the LED from pin 9 (PA5), both now in the generators.
 
-**Owl and labels (2026-10-29 night):** the lab's owl (`../Footprints.pretty/OwlLogo_Laser_14mm`, 17 x 14 mm with exposed-copper
-laser eyes) is too big for U101 and its copper eyes would land in the barrier, so `tools/owl_logo.py` makes a silk-only copy at
-45 % (`stimhat:OwlLogo_Silk_6mm`, 7.6 x 6.3 mm, no pads, no courtyard, eyes left dark) and places it as the board-only
-footprint G1 at (30.1, 18.4): perched above U101's west pin row and C101, looking south-west at U7 with its beams toward the
-MCU's north-east corner; nothing but tented vias and tracks lies under it.  Front-silk "TRIG IN" / "STIM OUT" stand on the
-jacks' outer sides at x 16.3 / 49.4 (the two bodies are 0.4 mm apart, so nothing fits between them); the back-silk pair
-stays centred under the jacks.
+**Owl and labels (2026-10-29/30):** the lab's owl (`../Footprints.pretty/OwlLogo_Laser_14mm`, 17 x 14 mm, exposed-copper
+laser eyes and beams) sits above U101 looking at U7.  `tools/owl_logo.py` derives `stimhat:OwlLogo_Eyes_10mm` (70 %, 11.8 x
+9.8 mm): the eye copper is kept (two pads on GND, exposed), the copper beams become silk lines, no courtyard.  It is the
+board-only footprint G1 at (29.6, 18.05) after the user cleared the pocket (U5 / C2 moved north): feet 0.2 mm above U101's
+body, eyes at (29.0, 15.0) / (31.5, 15.0) - 2 mm west of the barrier strip, 0.3 mm below the +3V3 row and well above
+the SCL_H diagonal - beams toward U7's north-east corner.  The owl is as big as the pocket allows: the eyes cannot rise above the +3V3 row at y 14 and the belly must
+stay clear of C101's pads (a 75 % owl reaches them; the two alternative C101 spots beside U101's pin 1 collide with the
+RELEASE_H / EN_H routing, so C101 and the routing stay as the user left them); the neuron at the beams' end lies partly over R3 / C3 (silk-over-pad warnings the user
+accepted).  Front-silk "TRIG IN" / "STIM OUT" stand on the jacks' outer sides at x 16.3 / 49.4 (the two bodies are 0.4 mm
+apart, so nothing fits between them); the back-silk pair stays centred under the jacks.
 
 ## Checks before fab
 
