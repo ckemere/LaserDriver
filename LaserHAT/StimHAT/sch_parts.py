@@ -118,15 +118,17 @@ PARTS = [
     R("R2", "3.9k", "+3V3_PI", "ID_SCL", lcsc=L["R3k9"]),
     # ================================================================ 2. MCU, USB-UART, reset, BSL, buttons, LEDs, display socket
     dict(ref="U7", sym="MSPM0G3507", value="MSPM0G1507SRHBR", fp="stimhat:VQFN32_RHB_TEX", lcsc=L["MCU"],
-         # pin map re-optimised for the StimHAT placement (2026-10-29): isolator lines on the east side (TIMA0 CCP3 /
-         # CCP1 / FAULT0 and ADC0 ch3 / ch2 so the laser variant gets PWM, fault and ADC there), buttons and the LED on
+         # pin map re-optimised for the StimHAT placement (2026-10-29): isolator lines on the east side in U101's pin
+         # order (top to bottom: SCL_H / SDA_H toward U109 = ADC0 ch0 / ch1, then RELEASE_H, EN_H, CATH_H (TIMA0_CCP3),
+         # FAULT_H (GPIO IRQ; the TIMA fault inputs PA26 / PA27 are now the I2C lines), STIM_IN at the bottom toward U8),
+         # buttons and the LED on
          # the west / south sides, STIM_IN on the TIMG8 capture pin; PI_TRIGGER on PA4 (pin 8) from Pi GPIO10 (J1.19), RELEASE_H
          # on PA27 (pin 31) so it leaves U7 on the isolator side (2026-10-29, user's request); PA3 (pin 7) and PA15 (pin 19, DAC0_OUT) spare
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
                "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": "BUTTON4", "11": "BUTTON6", "12": "PI_RXD", "13": "PI_TXD",
                "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON2", "17": "BUTTON1", "18": "BUTTON3", "19": None,
                "20": "BUTTON5", "21": "MCU_STIM_OUT", "22": "BSL_INVOKE", "23": "SWDIO", "24": "SWCLK", "25": "MCU_STIM_IN",
-               "26": "CATH_H", "27": "EN_H", "28": "SDA_H", "29": "SCL_H", "30": "FAULT_H", "31": "RELEASE_H", "32": "VCORE",
+               "26": "FAULT_H", "27": "CATH_H", "28": "EN_H", "29": "RELEASE_H", "30": "SDA_H", "31": "SCL_H", "32": "VCORE",
                "33": "GND"}),
     R("R4", "100k 0.1%", "ROSC", "GND", lcsc=L["R100k01"]),
     C("C4", "470nF", "VCORE", "GND", lcsc=L["C470n"]),

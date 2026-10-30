@@ -254,11 +254,15 @@ positions: PWM, fault and ADC functions sit on the isolator-facing pins.
 | 21 | PA17 | MCU_STIM_OUT | GPIO (TIMA1_C0 / TIMG7_C0 available) |
 | 22 / 23 / 24 | PA18 / PA19 / PA20 | BSL_INVOKE / SWDIO / SWCLK | fixed |
 | 25 | PA21 | MCU_STIM_IN | TIMG8_CCP0 capture, faces U8 |
-| 26 | PA22 | CATH_H (PWM_B) | TIMA0_CCP1, faces U101.5 |
-| 27 | PA23 | EN_H (PWM_A) | TIMA0_CCP3, faces U101.4 |
-| 28, 29 | PA24, PA25 | SDA_H, SCL_H (DB_ADC_A/B) | ADC0 ch 3 / ch 2 (ADC1 has no east-side inputs), face U109 |
-| 30 | PA26 | FAULT_H | TIMA0 FAULT0 + GPIO IRQ, faces U101.6 |
-| 31 | PA27 | RELEASE_H | GPIO, faces U101.3 (was PI_TRIGGER; moved so the e-stim lines all leave on the isolator side) |
+| 26 | PA22 | FAULT_H | GPIO IRQ (the firmware's fault path; TIMA0's hardware fault inputs are only on PA26 / PA27, now the I2C lines), faces U101.6 |
+| 27 | PA23 | CATH_H (PWM_B) | TIMA0_CCP3, faces U101.5 |
+| 28 | PA24 | EN_H (PWM_A) | TIMA0_CCP3N (hardware complement of PWM_B with dead time) or TIMA1_CCP1 for a laser variant; a GPIO in e-stim mode, faces U101.4 |
+| 29 | PA25 | RELEASE_H | GPIO, faces U101.3 |
+| 30, 31 | PA26, PA27 | SDA_H, SCL_H (DB_ADC_A/B) | ADC0 ch 1 / ch 0, face U109 |
+
+The east column was re-ordered on 2026-10-29 (user's request, routing): top to bottom SCL_H, SDA_H toward U109, then RELEASE_H,
+EN_H, CATH_H, FAULT_H in U101's pin order (its HAT-side pins 3-6 at y 26.05-27.95 against U7's 29-26 at y 25.75-27.25), STIM_IN
+at the bottom toward U8.
 
 Firmware: `Firmware/board.h` / `mcu.h` carry this map as an uncommitted draft; `pwm_timer.c` / `output_mux.c`
 (CCP1 ↔ CCP3 roles), `adc.c` (ADC0 ch 3 / 2) and the GPIO IRQ bit masks still need the matching edits.  Found on the
