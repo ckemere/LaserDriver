@@ -178,10 +178,11 @@ errors / 0 warnings, 0 open connections; every outer-pour piece is stitched (the
 a pad).  The user also added TP102 (GND_ISO) and routed the LED from pin 9 (PA5), both now in the generators.
 
 **Owl and labels (2026-10-29/30):** the lab's owl (`../Footprints.pretty/OwlLogo_Laser_14mm`, 17 x 14 mm, exposed-copper
-laser eyes and beams) sits on U101 looking at U7.  `tools/owl_logo.py` derives `stimhat:OwlLogo_Eyes_14mm` at full size: the
-eye copper is kept (two pads on GND, exposed), the copper beams become silk lines, no courtyard; the script keeps G1 where it
+laser eyes and beams) sits on U101 looking at U7.  `tools/owl_logo.py` derives `stimhat:OwlLogo_Eyes_14mm_R` at full size, mirrored so the
+owl looks right (MIRROR = True negates every x): the eye copper is kept (two pads on GND, exposed), the copper beams become
+silk lines, no courtyard; the script keeps G1 where it
 finds it on the board (the user places the owl by hand) and only uses its POS for a first placement.  Rules for that hand
-placement: the eyes are at (-0.8, -4.3) and (+2.7, -4.3) from the centre, 1.64 mm square, so both must end west of x 33.7 (the
+placement: the eyes are at (+0.8, -4.3) and (-2.7, -4.3) from the centre (mirrored), 1.64 mm square, so both must end west of x 33.7 (the
 barrier strip starts at x 34 and the strip keep-outs deliberately do not forbid pads, because the isolators' own pads straddle
 them - DRC will not catch an eye in the strip, and a custom-shaped pad's outline reaching into the isolated region is only
 caught by its 0.5 mm anchor), and they must clear the +3V3 row at y 14 and the SCL_H / SDA_H diagonals by 0.2 mm; the neuron

@@ -3,7 +3,7 @@
 every coordinate scaled by SCALE, the exposed-copper EYES kept (pads 1 / 2, pruned to the eye polygons), the copper
 BEAM primitives and the beam anchor pads dropped (the beams stay as silk lines), no courtyard.  Writes
 stimhat.pretty/<NAME>.kicad_mod and places / refreshes it on the board as the board-only footprint G1 with its eyes on GND.
-The eyes sit at (-0.8, -4.3) and (+2.7, -4.3) x SCALE from the centre, so the centre must stay west of the barrier by
+The eyes sit at (-0.8, -4.3) and (+2.7, -4.3) x SCALE from the centre (x negated when MIRROR), so the centre must stay west of the barrier by
 3.6 x SCALE + clearance (the owl looks west, toward U7)."""
 import os
 import re
@@ -13,7 +13,8 @@ import pcbnew
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")) + "/"
 SRC = ROOT + "Footprints.pretty/OwlLogo_Laser_14mm.kicad_mod"
 SCALE = 1.0
-NAME = "OwlLogo_Eyes_14mm"
+MIRROR = True               # the library owl looks left (west); mirrored it looks right, toward the isolated side
+NAME = "OwlLogo_Eyes_14mm_R" if MIRROR else "OwlLogo_Eyes_14mm"
 POS = (29.6, 18.05)         # only used when G1 is not on the board yet: an existing G1 keeps its position and rotation (the user places it by hand)
 EYE_R = 1.4                 # primitives whose bbox lies within this radius of the pad anchor are eye copper, the rest are beams
 
@@ -63,14 +64,15 @@ s = "".join(out)
 
 def sc(m):
     vals = m.group(2).split()
-    return "(%s %s)" % (m.group(1), " ".join(["%.4f" % (float(v) * SCALE) for v in vals[:2]] + vals[2:]))
+    fx = -SCALE if (MIRROR and m.group(1) != "size") else SCALE          # mirror = negate x of every point (not of sizes)
+    return "(%s %s)" % (m.group(1), " ".join(["%.4f" % (float(vals[0]) * fx), "%.4f" % (float(vals[1]) * SCALE)] + vals[2:]))
 
 
 s = re.sub(r"\((xy|at|start|end|mid|center|size) ((?:-?[\d.]+ ?){2,3})\)", sc, s)
 s = re.sub(r"\(width ([\d.]+)\)", lambda m: "(width %.3f)" % (max(0.12, float(m.group(1)) * SCALE) if float(m.group(1)) > 0 else 0), s)
 s = re.sub(r'\n  \(fp_line[^\n]*\n[^\n]*\(layer "F\.CrtYd"\)\)', "", s)              # no courtyard for a logo
 s = s.replace('"OwlLogo_Laser_14mm"', '"%s"' % NAME)
-s = re.sub(r'\(descr "[^"]*"\)', '(descr "Owl logo with exposed-copper eyes (tie to GND), beams in silk, %.1f mm tall: OwlLogo_Laser_14mm x %.2f")' % (13.96 * SCALE, SCALE), s)
+s = re.sub(r'\(descr "[^"]*"\)', '(descr "Owl logo with exposed-copper eyes (tie to GND), beams in silk, %.1f mm tall: OwlLogo_Laser_14mm x %.2f%s")' % (13.96 * SCALE, SCALE, ", mirrored (looks right)" if MIRROR else ""), s)
 open(ROOT + "StimHAT/stimhat.pretty/%s.kicad_mod" % NAME, "w").write(s)
 print("wrote %s: %d eye polygons kept, %d beam polygons dropped" % (NAME, kept, dropped))
 
