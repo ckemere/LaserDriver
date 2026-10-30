@@ -52,10 +52,10 @@ none of which the HAT touches.
 
 ## Board
 
-65 × 57 mm with the HAT outline (3 mm radii, the Pi 4 PoE / Pi 5 fan notch at x 59–65, y 8–16.5) and a tab x 46–56,
-y 57–64.5 (HAT coordinates minus (100, 43)).  Top strip (y < 17.5) and west half: the core, all under the bonnet (9 mm
+65 × 57 mm with the HAT outline (3 mm radii, the Pi 4 PoE / Pi 5 fan notch at x 59–65, y 8–16.5; the earlier tab is
+gone, the pod took its place).  Top strip (y < 17.5) and west half: the core, all under the bonnet (9 mm
 up, parts under 7 mm); the OLED socket J10 (vertical 1 × 4, unpopulated) right under the header at the strip's west
-end, pins GND / 3V3 / SCL / SDA at x 22.8 / 20.3 / 17.7 / 15.2, y 10 — the 0.91" module comes with bare holes, so the header soldered to it decides how it
+end, pins GND / 3V3 / SCL / SDA at x 11.75, y 11.88 / 14.42 / 16.96 / 19.5 — the 0.91" module comes with bare holes, so the header soldered to it decides how it
 sits: straight pins stand it along the header, long edge horizontal; right-angle pins lay it flat over the strip with
 its pin edge north (both outlines on User.Drawings; lying flat it covers SW6, the BSL button); JP1 moved to the strip's east end.  West edge, top
 to bottom: SW10, J5, the three LEDs, FIRE, the joystick in the south-west corner.  Two right-angle BNCs mid-south
@@ -286,7 +286,8 @@ the schematic or the parts; everything of rounds 1–2 verified live.  Fixed:
 
 * **Vias tangent to paste-covered pads** (the via-in-pad class of round 2, three more): C127.1's +5V_ISO via
   (hole 23 % inside the pad opening – a starved 0402 joint) moved to (45.14, 30.90); C112.1's via to (49.70, 38.56)
-  and U108.4's to (60.65, 38.98), each with a 0.25 mm stub into the pad.  Hole-to-opening ≥ 0.15 mm now.
+  and U108.4's to (60.63, 38.98), each with a 0.25 mm stub into the pad.  Hole-to-opening now 0.24 (C127.1),
+  0.19 (C112.1) and 0.15 mm (U108.4 / C125.1, the via sits in the 0.6 mm gap between two same-net pads).
 * **CPL rotation table** (`tools/ref/jlc_rotations.csv`, a copy of the Fabrication Toolkit's
   `transformations.csv`): the two `^VSSOP-10_-` rows were a typo that never matched, so U105 got no offset, and
   `^VSSOP-8_` had contradictory 180 / 270 rows with the first winning while the specific 3 × 3 mm row used a name
@@ -294,9 +295,10 @@ the schematic or the parts; everything of rounds 1–2 verified live.  Fixed:
   2026-10-01 e-stim upload (VSSOP-8 +180, VSSOP-10 +0) inherited the accident – and that board's isolated side
   never ran (ISO1640 symbol swap), so no VSSOP placement was ever confirmed.  The table now gives every SO-family
   body (SOIC / SSOP / TSSOP / MSOP / VSSOP) the same +270: U105 90, U106 0, U110 270 in the CPL.  **JLC's
-  orientation is per part, so the placement preview is a hard gate: check U105, U106, U110 first, then U101, U107,
+  orientation is per part, so the placement preview is a hard gate: check U105, U106, U110 first, then U101, U104, U107,
   U108, U109 vs U6 (JEITA SOIC gets 0), SW7, Q3 / Q5, D101–D104, D5 / D7 / D9, J5, SW10, and rotate in the preview as
-  needed.**  `fab/README.md` corrected (the committed HAT / e-stim CPLs are raw KiCad exports; the uploads carried
+  needed.**  (The EasyEDA / LCSC footprint drawings are not JLC's placement zero: the HAT-confirmed packages would
+  need other offsets relative to them, so they cannot be used to pre-validate the table.)  `fab/README.md` corrected (the committed HAT / e-stim CPLs are raw KiCad exports; the uploads carried
   the Toolkit's offsets).
 * Stale texts: README (2-layer, GPIO18 for MCU_PWR_EN, R3 10k, 45° joystick, U8 on PA26 / PA25, R107 / R108 4.7k,
   NRST pin 16, ADC channels) and the joystick symbol's pin names (now A/DOWN, B/LEFT, C/RIGHT, D/UP for the 135°
@@ -308,6 +310,16 @@ the KiCad library 3D models of J5 and J1 are missing from this installation (cos
 terminal is pad 2 per the drawing round 2 read (check PWR_EN ↔ GND continuity in the ON position on the first board);
 firmware must never enable the MSPM0 pull-ups on PA23–PA25 while they are inputs (≈ 20k against the 10k pull-downs
 would sit in the ISO7741's undefined band).
+
+## Pre-order audit round 4 (2026-10-30, confirmation)
+
+Two fresh agents (layout / fab, parts / sync / stock) re-checked 7da5960.  No blocker, no major, nothing new of
+substance: the round-3 vias and stubs are in the gerbers (the shipped zip is byte-identical to a fresh export), the
+barrier is 2.50 mm on all layers, 0 errors / 0 unconnected, CPL 95 = BOM 95.  Done in this round: U108.4's via
+centred in the gap to C125.1 (x 60.63), README board paragraph brought up to date (no tab, J10 pin positions, the
+pod stands).  Cosmetic track hygiene left for rev B: seven collinear overlapping same-net segments (+3V3 at
+(24.95, 13.0), +5V_ISO at (37.85, 24.78) / (40.34, 23.75), +V_STIM at (56.56, 31.7), MSPM0_3V3 at (43.9, 17.0)) and a
+dozen same-net 45° hairpins.
 
 ## Checks before fab
 
@@ -427,7 +439,7 @@ nets swapped to match U109's SCL / SDA order, R4 and the R3 / C3 / JP4 reset net
 The isolated supply that used to be on the HAT: A0515S-1WR3 (5 V → ±15 V, 1 W, SIP-7, Mornsun, min. load 10 %),
 C104 4.7 µF at its input, L101 / L102 10 µH + C105 / C106 10 µF per rail, then an NPN / PNP capacitance multiplier per
 rail (Q101 MMBT3904 / Q102 MMBT3906, base 4.7 k / 10 µF: ≈ 0.6 V drop per rail, 60 dB ripple rejection above 100 Hz).
-On a ≈ 30 × 6.5 mm board that lies over the band 8–10 mm above the HAT: 2 × 2.54 mm pins at its west end into J103
+On a ≈ 31 × 19.5 mm board that stands in the band (see `DCDCPod/README.md`): 2 × 2.54 mm pins at its west end into J103
 (5 V, GND), 4 × 2.0 mm pins at its east end into J102's holes (+V, 0V, −V, CAB = 0V) — J102's JST socket is not
 fitted when the pod is used — and a 2.5 mm copper-free gap in the middle, over the HAT's strip at x 34–36.5.  The HAT
 keeps C109 / C110 and the 20 V clamps, so the pod needs no output capacitors of its own.
