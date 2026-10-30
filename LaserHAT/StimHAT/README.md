@@ -38,7 +38,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 100k pull-downs, R107 / R108 and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
 | Isolated supply | J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V) or the DC-DC pod's 2.0 mm pins in its holes; J103 1 × 2 header (5 V, GND, unpopulated) feeds the pod; C109 / C110 10 µF, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V) | the A0515S, L101 / L102 + C105 / C106 and the Q101 / Q102 capacitance multipliers moved to the pod (see below) |
 | Set-point | U105 DAC60501 (I2C 0x48), C114 / C115, U106B OPA2192 inverter (R105 / R106 10.0k 0.1 %), U107 CD74HC4053 on +5 / −4.3 V | switch 1 (CATH) picks ±VSET, switch 2 (EN) gates it, switch 3 inverts RELEASE for the SHORT switch |
-| Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2) | 502 µA full scale, 0.123 µA / LSB |
+| Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2), TP101 (ISENSE) / TP102 (GND_ISO) test points | 502 µA full scale, 0.123 µA / LSB |
 | SHORT | U108 DG418 (normally open, on while SHORT_IN is high = RELEASE low) | electrode shorted whenever RELEASE is low, including HAT-side power-down |
 | Fault detector | U110 TLV1702 window on E1 (R117 10k / R118 215k / R119 10k taps), R120 10k, R121 4.7k, D101 BAT54WS, C122 | FAULT_n low past the trip point, with +5V_ISO down, or with a rail missing |
 | Mechanical | MH1–MH4 M2.5 (HAT pattern), Pi 4 PoE / Pi 5 fan notch | MH4 lies in isolated copper: use a nylon standoff there |
@@ -165,6 +165,18 @@ JP4 (19.3, 31.3) moved east of U6 so the corridor from U7.14/15 (17.55, 26.75 / 
 30.0) is free for the UART lines; R19 / R20 are north of J10, R4 / C1 north of U7.  Result: DRC 0 errors / 0 warnings,
 96 open connections (none of the USB / switch / ideal-diode nets; U7's thermal pad still needs its ground via).
 
+**Semi-final routing clean-up (2026-10-29 night, after the user's commit e4dab1b closed every connection):** the joystick fan
+was re-laid as six 45° diagonals on a 1.0 mm x+y pitch (0.71 mm centre spacing, 0.5 mm copper gap against the 0.15 mm rule):
+BUTTON4 one straight line from a back-side via at (17.5, 28.82) to pad 6, BUTTON1 next with a 1 mm jog at x 12 to clear pad 5,
+then BUTTON6 / 2 / 3 / 5 from U7's south pins through rows 0.6 mm apart (y 29.25 / 29.85 / 30.45 / 31.05) and verticals 0.7 mm
+apart (x 13.0 / 13.7 / 14.4, 15.4 for FIRE) into the pads the user had chosen.  MCU_STIM_OUT's via moved out of pin 20's
+column to (23.0, 31.8) and BSL_INVOKE runs straight down x 24 into SW6; the GND stitch via that clashed with it was replaced
+by one at (26.8, 32.5) feeding U8.2.  3D models: `stimhat.3dshapes/SW_ALPS_SKRHADE010.wrl` (generated) on the joystick, TI's
+RHB VQFN-32 from the KiCad library on U7, and Q3 / Q5 / SW10 point at `../Footprints.3dshapes` (the shared models next to the
+HAT project; `${KIPRJMOD}` is this directory).  The "USB" silk moved to (9.6, 24.6), out of U6's outline.  Result: DRC 0
+errors / 0 warnings, 0 open connections; every outer-pour piece is stitched (the one GND_ISO sliver at (50.6, 25.4) hangs on
+a pad).  The user also added TP102 (GND_ISO) and routed the LED from pin 9 (PA5), both now in the generators.
+
 ## Checks before fab
 
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
@@ -244,8 +256,8 @@ positions: PWM, fault and ADC functions sit on the isolator-facing pins.
 | 3 / 6 / 32 | NRST / PA2 / VCORE | NRST / ROSC / VCORE | fixed |
 | 7 | PA3 | spare | I2C1, TIMG8 |
 | 8 | PA4 | PI_TRIGGER | GPIO IRQ, ← Pi GPIO18 (header pin 12, directly above U7; was GPIO26 / pin 37 and PA27 until 2026-10-29) |
-| 9 | PA5 | spare | leaves room beside pins 12 / 13 for the PI_RXD / PI_TXD vias |
-| 10 | PA6 | LED_MCU | GPIO, faces D7 |
+| 9 | PA5 | LED_MCU | GPIO, to D7 on the back (user's choice after routing) |
+| 10 | PA6 | spare | |
 | 11 | PA7 | BUTTON4 (up) | GPIO, runs on the back from a via beside pin 11 (swapped with BUTTON1 on the user's routing, 2026-10-29) |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | UART1 (only PA8/9 or PA17/18), fixed |
 | 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 (BSL), fixed |

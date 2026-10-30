@@ -12,7 +12,7 @@ Core (refs as on the Rev 2 HAT, nets as in its netlist, see ../CLAUDE.md "Rev 2 
     stay unconnected.  (Pi side: LASERHAT_NRST_PIN=9 LASERHAT_POWER_PIN=10 LASERHAT_TRIGGER_PIN=18 for Pi/power_cycle.py etc.)
   * SW7 is a five-way joystick (ALPS SKRHADE010) instead of the thumbwheel + the BACK button SW8:
       up = BUTTON4 (PA7), down = BUTTON3 (PA15), centre push = BUTTON2 (PA14), left = BUTTON1 (PA12, BACK), right =
-      BUTTON6 (PA13, new); FIRE stays SW9 = BUTTON5 (PA16); LED PA6.  All active low, common to GND (pins chosen for a
+      BUTTON6 (PA13, new); FIRE stays SW9 = BUTTON5 (PA16); LED PA5.  All active low, common to GND (pins chosen for a
       plain diagonal fan-out from U7's south-west corner to the joystick, 2026-10-29).
   * J10: unpopulated 4-pin vertical socket for a 0.91" 128 x 32 I2C OLED module (standing up along the header) (LCSC C5248081, GND VCC SCL SDA) as
     the alternative to the bonnet; same Pi I2C bus, same 3.3 V.
@@ -127,7 +127,7 @@ PARTS = [
          # the west / south sides, STIM_IN on the TIMG8 capture pin; PI_TRIGGER on PA4 (pin 8) from Pi GPIO10 (J1.19), RELEASE_H
          # on PA27 (pin 31) so it leaves U7 on the isolator side (2026-10-29, user's request); PA3 (pin 7) and PA15 (pin 19, DAC0_OUT) spare
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
-               "7": None, "8": "PI_TRIGGER", "9": None, "10": "LED_MCU", "11": "BUTTON4", "12": "PI_RXD", "13": "PI_TXD",
+               "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": None, "11": "BUTTON4", "12": "PI_RXD", "13": "PI_TXD",
                "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON1", "17": "BUTTON6", "18": "BUTTON2", "19": "BUTTON3",
                "20": "BUTTON5", "21": "MCU_STIM_OUT", "22": "BSL_INVOKE", "23": "SWDIO", "24": "SWCLK", "25": "MCU_STIM_IN",
                "26": "FAULT_H", "27": "CATH_H", "28": "EN_H", "29": "RELEASE_H", "30": "SDA_H", "31": "SCL_H", "32": "VCORE",

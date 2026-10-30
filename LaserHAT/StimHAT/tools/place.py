@@ -52,19 +52,19 @@ at("SW7", 8.16, 43.22, 135)
 at("J6", 24.92, 44.42, 180); at("J7", 40.92, 44.42, 180)
 # ---- core, west half under the bonnet: USB power path by the USB-C, LDOs above, MCU in the middle, UART bridge below
 at("Q5", 16.5, 19.9, 0); at("R26", 14.2, 20.8, 90); at("Q3", 16.5, 15.5, 180); at("Q4", 16.8, 10.5, 0)
-at("R21", 15.66, 7.4, 90); at("R22", 14.1, 12.9, 90)
+at("R21", 13.5, 9.55, 180); at("R22", 14.1, 12.9, 90)
 at("U4", 23.0, 14.5, 180); at("C12", 20.6, 11.3, 0); at("C6", 23.1, 11.5, 180); at("C13", 23.08, 10.4, 180)
-at("U5", 31.24, 12.7, 180); at("R7", 27.3, 12.9, 0); at("C2", 34.8, 12.8, 90); at("JP1", 53.15, 15.6, 0)
+at("U5", 31.24, 12.7, 180); at("R7", 27.3, 12.9, 0); at("C2", 34.8, 12.8, 90); at("JP1", 53.5, 15.6, 180)
 at("U7", 23.25, 26, -90)
-at("C1", 23, 20.75, 180); at("C16", 29.9, 32.1, 90); at("C4", 27, 23.4, 90); at("R4", 21.2, 22, 180)
+at("C1", 23, 20.75, 180); at("C16", 32.25, 32, 90); at("C4", 27, 23.4, 90); at("R4", 21.2, 22, 180)
 at("R3", 24.75, 20, -90); at("C3", 25.75, 20, 90); at("JP4", 14.28, 29.75, 180, True)
 at("R107", 42.6, 14.3, -90); at("R108", 41.4, 14.3, -90)
 at("U6", 14.5, 25.91, 0); at("C17", 23, 19.75, 180)
-at("U8", 27.41, 32.65, 0); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
+at("U8", 28.75, 32.5, 0); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
 # ---- top strip: the EEPROM by pins 27 / 28, JP5, BSL; the OLED socket J10 (Q5 / R21 east of it, Q3 / R8 / R19 / R20 south of it)
 # at the west end as a north-south column (SDA north, GND south), JP1 moved to the strip's east end
-at("R19", 8.9, 11.88, 0); at("R20", 8.8, 14.42, 0); at("C15", 7.92, 10.2, 180); at("JP5", 27.2, 10.6, 0)
-at("SW6", 22.5, 33.9, -90); at("C103", 45.7, 16.5, 90); at("C18", 50.54, 15, -90); at("R2", 46.69, 12.2, 0)
+at("R19", 8.9, 11.88, 0); at("R20", 8.9, 14.42, 0); at("C15", 7.92, 10.2, 180); at("JP5", 27.2, 10.6, 0)
+at("SW6", 21.27, 34.25, 180); at("C103", 45.7, 16.5, 90); at("C18", 50.54, 15, -90); at("R2", 46.69, 12.2, 0)
 at("U1", 53.4, 12.2, 180); at("R1", 48.29, 11.2, 0)
 at("J10", 11.75, 19.5, 180)                 # pins x 22.81 (GND) 20.27 (VCC) 17.73 (SCL) 15.19 (SDA)
 # ---- isolation: ISO7741F across the vertical barrier (x 35.25; pins 1-8 west), ISO1640 across the horizontal one
@@ -82,14 +82,14 @@ at("U108", 56.88, 41.01, 180); at("C126", 51.85, 42.45, 90); at("U110", 56.94, 3
 at("R117", 56.05, 31.7, 180); at("R118", 53.75, 31.7, 180); at("R119", 53.15, 34.3, -90); at("R120", 41.6, 30.8, 180)
 at("R121", 39.59, 30.8, 0); at("D101", 40.85, 29.15, 0); at("C122", 56.91, 36.55, 180); at("TP102", 63.75, 21.75, 0)
 # ---- isolated strip B (x 50-65, y 36.5-54.5): LDO and -4.3 V rail, LC filter, capacitance multipliers, clamps
-at("U104", 48, 39.5, -90); at("C112", 50.5, 39, -90); at("C111", 48, 35.5, 90); at("R113", 42, 35.5, -90)
-at("D102", 44, 35.5, 90); at("C113", 41, 33, 0); at("D103", 50.55, 36.25, 0)
-at("D104", 40, 35.5, -90)
-at("C109", 46, 35.55, 90); at("C110", 38, 35.55, -90)
+at("U104", 48, 39.5, -90); at("C112", 50.5, 39, -90); at("C111", 48, 34, 90); at("R113", 42, 34, -90)
+at("D102", 44, 34, 90); at("C113", 41, 31.75, 0); at("D103", 50.25, 34, 90)
+at("D104", 40, 34, -90)
+at("C109", 46, 34, 90); at("C110", 38, 34, -90)
 # ---- the battery socket / pod end in the band north of the BNC bodies, the pod's 5 V end, J101 in strip B
 # with the battery socket (vertical, cable from above) and the electrode header (pins out of the south edge)
-at("J102", 44.0, 40.1, 180)                 # pin 1 east: +V 44.0, 0V 42.0, -V 40.0, CAB 38.0 (= GND_ISO); housing north
-at("J103", 19.0, 40.1, 90)                  # 2-pin 5 V (west, square) / GND for the DC-DC pod, HAT side of the band
+at("J102", 44, 39, 180)                 # pin 1 east: +V 44.0, 0V 42.0, -V 40.0, CAB 38.0 (= GND_ISO); housing north
+at("J103", 19, 39, 90)                  # 2-pin 5 V (west, square) / GND for the DC-DC pod, HAT side of the band
 at("J101", 53.16, 54.15, 90)                  # vertical 1x2 on the tab; pin 1 (square) = E1 west
 
 board = pcbnew.LoadBoard(BOARD)
@@ -220,7 +220,7 @@ def silk(txt, x, y, size=1.0, rot=0, layer=pcbnew.F_SilkS):
 
 
 silk("StimHAT rev A", 32.5, 30.0, 1.0, 0, pcbnew.B_SilkS)
-silk("FIRE", 6.2, 37.5, 1.0, 90); silk("USB", 11.8, 24.0, 1.0, 90); silk("PWR", 6.1, 13.0, 1.0, 90)
+silk("FIRE", 6.2, 37.5, 1.0, 90); silk("USB", 9.6, 24.6, 1.0, 90); silk("PWR", 6.1, 13.0, 1.0, 90)
 silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)   # 0.8: no room for 1.0 between R13-R18 and the LEDs
 silk("BSL", 35.0, 10.4)
 silk("ISOLATED", 49.5, 18.75); silk("5V", 19.0, 37.6, 0.9); silk("E1", 51.0, 63.4, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("NYLON", 61.5, 50.0, 1.0)

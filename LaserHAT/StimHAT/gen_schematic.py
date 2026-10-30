@@ -125,7 +125,7 @@ box(102, 8, 200, 62, "2. MSPM0G1507 (Rev 2 pin map; the G3507 minus CAN-FD, same
 put("U7", 152, 32, ref_at=(0, -24.13), val_at=(0, 24.13))
 PWR("U7.4"); PWR("U7.5"); PWR("U7.33", length=5.08)
 put("C4", 160, 10, rot=90); W("U7.32", (154, 10), "C4.1"); PWR("C4.2")      # VCORE cap at the top
-for n in ("1", "2", "3", "6", "8", "10", "11", "12", "13", "14", "15", "16"):   # 7 / 9 (PA3 / PA5) are spare
+for n in ("1", "2", "3", "6", "8", "9", "11", "12", "13", "14", "15", "16"):   # 7 / 10 (PA3 / PA6) are spare
     LBL(f"U7.{n}", length=2.54)
 for n in ("17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"):
     LBL(f"U7.{n}", length=2.54)
@@ -147,7 +147,7 @@ put("SW9", 182, 42, ref_at=(0, -4.45), val_at=(0, 3.81)); LBL("SW9.1", length=5.
 put("J10", 184, 54, mirror=True, ref_at=(0, -8.89), val_at=(0, 8.89))
 PWR("J10.1", length=5.08); PWR("J10.2", length=5.08); LBL("J10.3", length=5.08); LBL("J10.4", length=5.08)
 text("Module lines from the Rev 2 J8 / J9 pins: PA6 FAULT_H, PA7 EN_H, PA12 CATH_H, PA15 RELEASE_H, PA17 SDA_H, PA22 SCL_H (StimHAT: see the README's pin map).  Joystick SW7 (SKRHADE010, mounted at 135 deg): up PA7,", 103, 57)
-text("down PA15, centre PA14, left PA12 (BACK), right PA13 (BUTTON6); FIRE SW9 PA16; LED PA6; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
+text("down PA15, centre PA14, left PA12 (BACK), right PA13 (BUTTON6); FIRE SW9 PA16; LED PA5; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
 
 # =========================================================================== 3. BNC I/O
 box(202, 8, 252, 40, "3. BNC TRIGGER IN / STIM OUT (74LVC2G17 buffers)")

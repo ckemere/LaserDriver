@@ -202,4 +202,5 @@
 		(uuid "24e30364-c42a-4670-965c-0a3abd0232a2")
 	)
 	(embedded_fonts no)
+  (model "${KIPRJMOD}/stimhat.3dshapes/SW_ALPS_SKRHADE010.wrl" (offset (xyz 0 0 0)) (scale (xyz 1 1 1)) (rotate (xyz 0 0 0)))
 )
