@@ -26,7 +26,7 @@ ds.m_MinThroughDrill = pcbnew.FromMM(0.3)
 ds.m_MinClearance = pcbnew.FromMM(0.15)
 ds.m_HoleClearance = pcbnew.FromMM(0.25)
 ds.m_CopperEdgeClearance = pcbnew.FromMM(0.3)
-ds.SetBoardThickness(pcbnew.FromMM(1.2))            # 1.2 mm: keeps the pod's back 0.6 mm clear of the HAT's BNC bodies
+ds.SetBoardThickness(pcbnew.FromMM(1.6))            # 1.6 mm (tools/place.py sets it too; was 1.2 until the pod was turned around, 2026-10-30)
 ns = ds.m_NetSettings
 dc = ns.GetDefaultNetclass()
 dc.SetClearance(pcbnew.FromMM(0.15)); dc.SetTrackWidth(pcbnew.FromMM(0.3))

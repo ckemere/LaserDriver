@@ -2,11 +2,13 @@
 """Headless "Update PCB from Schematic" (run with KiCad's bundled Python: it needs pcbnew).
 
     $KICAD_PY tools/pcb_sync.py <board.kicad_pcb> <netlist.net> [--src other.kicad_pcb ...]
-                                [--keep-tracks]
+                                [--keep-tracks] [--reload REF ...]
 
 * footprints are matched by reference; the symbol path (KIID path) is rewritten from
   the netlist so schematic<->PCB links stay valid (CLAUDE.md UUID invariant)
 * a footprint whose library ID changed is swapped in place (same position/side)
+* --reload REF: re-load that footprint from its library even though its library ID is unchanged
+  (after tools/make_footprints.py changed it; same position / side / rotation; DC-DC pod 2026-10-30)
 * new footprints are loaded from the KiCad libraries, or copied from a --src board
   that already contains the same reference+FPID, and parked to the right of the board
 * footprints with no schematic symbol are deleted (board-only items with an empty
@@ -59,9 +61,9 @@ def parse_netlist(path):
     return comps, nets
 
 
-def load_fp(fpid, library):
-    """Copy of a footprint already present on a source board, else load from the KiCad libs."""
-    if fpid in library:
+def load_fp(fpid, library, fresh=False):
+    """Copy of a footprint already present on a source board, else (or with fresh) load from the KiCad libs."""
+    if fpid in library and not fresh:
         return pcbnew.FOOTPRINT(library[fpid])      # copy constructor
     nick, name = fpid.split(":")
     lib = PROJECT_FP_LIBS.get(nick) or os.path.join(STD_FP_DIR, nick + ".pretty")
@@ -75,7 +77,7 @@ def load_fp(fpid, library):
     return fp
 
 
-def sync(board_path, net_path, src_paths=(), keep_tracks=False, out=None):
+def sync(board_path, net_path, src_paths=(), keep_tracks=False, out=None, reload=()):
     comps, pinnets = parse_netlist(net_path)
     board = pcbnew.LoadBoard(board_path)
     # pcbnew's SWIG wrappers degrade once a board starts being mutated, so do every
@@ -94,8 +96,8 @@ def sync(board_path, net_path, src_paths=(), keep_tracks=False, out=None):
     new_fps = {}
     for ref, c in sorted(comps.items()):
         f = existing.get(ref)
-        if f is None or f.GetFPIDAsString() != c["fpid"]:
-            new_fps[ref] = load_fp(c["fpid"], library)
+        if f is None or f.GetFPIDAsString() != c["fpid"] or ref in reload:
+            new_fps[ref] = load_fp(c["fpid"], library, fresh=ref in reload)
     names = sorted(set(pinnets.values()))
     nets = {n: board.FindNet(n) for n in names}
     for n in names:
@@ -162,5 +164,6 @@ if __name__ == "__main__":
     ap.add_argument("--src", action="append", default=[])
     ap.add_argument("--keep-tracks", action="store_true")
     ap.add_argument("--out")
+    ap.add_argument("--reload", nargs="+", default=[])
     a = ap.parse_args()
-    sync(a.board, a.netlist, a.src, a.keep_tracks, a.out)
+    sync(a.board, a.netlist, a.src, a.keep_tracks, a.out, set(a.reload))

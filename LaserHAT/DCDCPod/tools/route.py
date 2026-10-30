@@ -1,9 +1,15 @@
 #!/usr/bin/env python3
 """Scripted routing of DCDCPod.kicad_pcb: rips every track and via, then lays the tracks below (0.3 mm, F.Cu unless
-noted; no vias).  Points are pad names "REF.PAD" (resolved to the pad centre on the current board) or (x, y) in mm;
-consecutive points are joined by straight segments.  Channels: x 1.2 (+V_OUT) west of C105 / PS1 pin 6; x 6.1 (0V)
-between L101 and C106; x 8.85 (-V_OUT) between C106 / L102 and between PS1 pins 5 and 4; the +V_F / -V_F buses at
-y 4.6 through the top pads of the bottom row.  Re-run tools/place.py first if the placement changed.
+noted; no vias: the THT pads of PS1 and J2 are the only layer changes).  Points are pad names "REF.PAD" (resolved to the
+pad centre on the current board) or (x, y) in mm; consecutive points are joined by straight segments.
+Layout since 2026-10-30 (pod facing south, PS1 at the top): +5V / GND straight down x 3.6 / 6.14 from PS1's pins
+to J1 with C104 between them; +V_RAW east along y 1.3 under PS1's body to L101; -V_RAW straight down x 11.22 to L102;
+front 0V from PS1.5 straight down x 13.76 to C106 and east along y 4.0 under the body to the positive block (C105,
+C107), which drops it to J2.3 down x 27; the -V_F bus along y 10.6 under L102 / C106; C108's 0V goes along y 17.0 to
+J2.1; -V_OUT from Q102 down x 17.65, east along y 15.8 and down x 25 to J2.2; +V_OUT down the east edge (x 30.3) to
+J2.4.  Back: PS1.5 -> TP2 -> J2.1 (0V: joins the two front 0V pieces), the CAB strap J2.1 -> J2.3 below J2.2, and the
+TP1 / TP3 links.  Both filter ripple loops (PS1.4 / 6 -> L -> C -> PS1.5) are on the front and short.  Re-run tools/place.py first if the placement
+changed.
     $KICAD_PY tools/route.py"""
 import os
 
@@ -16,32 +22,39 @@ WIDTH = 0.3
 F, B = "F", "B"
 
 ROUTES = [
-    # ---- isolated side, front
-    (F, "L101.1", (4.9, 12.8), "PS1.6"),                                  # +V_RAW
-    (F, "L102.1", (10.1, 12.8), "PS1.4"),                                 # -V_RAW
-    (F, "C105.1", (4.9, 4.6)),                                            # +V_F bus into L101.2
-    (F, "Q101.3", (3.1375, 4.6)),
-    (F, "R111.1", (4.75, 4.6)),
-    (F, "C106.2", (12.9, 4.6), "Q102.3"),                                 # -V_F bus through L102.2, up between Q102's B / E
-    (F, "R112.2", (10.15, 4.6)),
-    (F, "Q101.1", "C107.1"),                                              # QB_P bus through R111.2
-    (F, "C108.2", (11.0, 1.0), (11.0, 2.9875), "Q102.1"),                 # QB_N bus through R112.1
-    (F, "C107.2", "C108.1"),                                              # 0V, top row
-    (F, "C107.2", (6.1, 3.2), (6.1, 7.25), (7.58, 7.25), "PS1.5"),        # 0V down the 6.1 channel to PS1's COM
-    (F, (7.3, 7.25), "C106.1"),
-    (F, "PS1.5", (7.58, 14.2), (2.4, 14.2), "C105.2"),                    # 0V to C105 and J2.3
-    (F, (4.0, 14.2), "J2.3"),
-    (F, "Q101.2", (1.2, 2.9), (1.2, 15.9), "J2.4"),                       # +V_OUT down the west edge
-    (F, "Q102.2", (13.85, 5.55), (8.85, 5.55), (8.85, 14.75), (6.0, 14.75), "J2.2"),   # -V_OUT down the 8.85 channel
     # ---- 5 V side, front
-    (F, "J1.1", (27.0, 10.025), "C104.1", (20.9, 10.025), (20.9, 12.8), "PS1.1"),
-    (F, "J1.2", (24.46, 11.575), "C104.2"),
-    (F, (24.46, 14.4), (15.2, 14.4), "PS1.2"),
-    # ---- back: CAB strap and the test points
-    (B, "J2.3", (4.0, 17.6), (8.0, 17.6), "J2.1"),
-    (B, (6.0, 17.6), "TP2.1"),
+    (F, "PS1.1", (3.6, 17.4), "J1.1"),                                    # +5V
+    (F, (3.6, 7.6), "C104.1"),
+    (F, "PS1.2", (6.14, 17.4), "J1.2"),                                   # GND
+    (F, (6.14, 7.6), "C104.2"),
+    # ---- isolated side, front: raw rails and filters
+    (F, "PS1.6", "L101.1"),                                               # +V_RAW, y 1.3 under PS1's body
+    (F, "PS1.4", "L102.1"),                                               # -V_RAW, x 11.22
+    (F, "L101.2", (25.0, 1.3), "C105.1"),                                 # +V_F down x 25
+    (F, "Q101.3", (25.0, 2.25)),
+    (F, "R111.1", (26.34, 4.85), "C105.1"),
+    (F, "L102.2", (11.22, 10.6), (16.7, 10.6), "Q102.3"),                 # -V_F bus y 10.6
+    (F, "C106.2", (13.76, 10.6)),
+    (F, "R112.2", (13.9, 10.6)),
+    # ---- multiplier bases
+    (F, "Q101.1", (28.337, 5.5), "R111.2"),                               # QB_P
+    (F, (28.337, 5.5), (29.0, 5.5), "C107.1"),
+    (F, "R112.1", "C108.2"),                                              # QB_N
+    (F, "Q102.1", (15.75, 13.2), (13.9, 13.2)),
+    # ---- 0V, front
+    (F, "PS1.5", (13.76, 4.0), "C106.1"),                                 # converter COM to C106
+    (F, (13.76, 4.0), (23.6, 4.0), (23.6, 6.75), "C105.2"),               # ... and to the positive block
+    (F, "C105.2", (25.0, 9.65), (27.0, 9.65), "J2.3"),
+    (F, "C107.2", (29.0, 9.65), (27.0, 9.65)),
+    (F, "C108.1", (13.9, 17.0), (23.0, 17.0), "J2.1"),                    # C108 to J2.1
+    # ---- outputs
+    (F, "Q102.2", (17.65, 15.8), (25.0, 15.8), "J2.2"),                   # -V_OUT
+    (F, "Q101.2", (30.3, 1.3), (30.3, 17.6), "J2.4"),                     # +V_OUT down the east edge
+    # ---- back: converter 0V to J2.1 via TP2, the CAB strap, the test points
+    (B, "PS1.5", (13.76, 15.5), "TP2.1", (23.0, 17.5), "J2.1"),
+    (B, "J2.1", (23.0, 20.6), (27.0, 20.6), "J2.3"),
+    (B, "J2.2", "TP3.1"),
     (B, "J2.4", "TP1.1"),
-    (B, "J2.2", (6.0, 14.6), (10.5, 14.6), "TP3.1"),
 ]
 
 board = pcbnew.LoadBoard(BOARD)

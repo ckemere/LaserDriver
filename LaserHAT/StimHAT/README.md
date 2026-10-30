@@ -65,7 +65,7 @@ connectors: J102 (`stimhat:JST_PH_B4B-PH-K_NoCrtYd`, the library footprint witho
 rot 180 in an isolated pocket, pads +V / 0V / −V / CAB at x 44 / 42 / 40 / 38 (label on the back), and J103 (1 × 2
 2.54 mm, pin 1 = 5 V west) at (19 / 21.54, 39.0) on the HAT side (the user moved both rows from y 40.1 to 39.0 on 2026-10-29;
 see "Pre-order audit round 2" for what that means for the pod).  The DC-DC pod stands in the band between them
-(outline on User.Drawings, x 16.5–46), its own isolation gap over the HAT's barrier strip at x 34–36.5.  Isolated stimulator: block A (x 36.5–65, y 20–35, under the bonnet's
+(board outline and PS1 overhang on User.Drawings; parts face south since 2026-10-30, PS1 above the BNC bodies; the pod's own isolation gap runs vertically at HAT x 22.4–24.9 and its copper within 3.5 mm of the HAT keeps to the HAT's barrier strip at x 34–36.5).  Isolated stimulator: block A (x 36.5–65, y 20–35, under the bonnet's
 east end: isolators, DAC, inverter, 4053, output stage, SHORT, fault detector), the pocket (y 35–41.2, J102), strip B
 (x 47.7–65, y 41.2–57: LDO, −4.3 V rail, decoupling, clamps) and the tab (J101 vertical electrode header,
 pin 1 = E1 west).  Nothing hangs below the HAT.  Barrier (reworked 2026-10-29 night so the router draws no 2.5 mm halos): the 2.5 mm copper-free rule areas on all
@@ -258,6 +258,9 @@ was only 0.1–0.4 mm (the pod README's 0.2–0.4 is optimistic for a SIP body w
 back to 40.1; rows at 40.5 with J6 / J7 0.5 mm further south (BNC bodies 0.5 mm further over the edge, pod back
 0.5 mm from J7's body); or a shorter module on the pod.  `DCDCPod/README.md` and `DCDCPod/tools/place.py` must then
 state the same row y.  Nothing on the StimHAT itself depends on the choice except the two rows and their routing.
+**Resolved 2026-10-30 without moving the rows:** the pod was turned around (parts face south, PS1 along its top edge
+over the BNC bodies, 1.0 mm above them; the back faces the bonnet 5 mm away) — see "The DC-DC pod" below and
+`DCDCPod/README.md`.
 
 Reviewed and deliberately not changed (round 2):
 
@@ -439,10 +442,15 @@ nets swapped to match U109's SCL / SDA order, R4 and the R3 / C3 / JP4 reset net
 The isolated supply that used to be on the HAT: A0515S-1WR3 (5 V → ±15 V, 1 W, SIP-7, Mornsun, min. load 10 %),
 C104 4.7 µF at its input, L101 / L102 10 µH + C105 / C106 10 µF per rail, then an NPN / PNP capacitance multiplier per
 rail (Q101 MMBT3904 / Q102 MMBT3906, base 4.7 k / 10 µF: ≈ 0.6 V drop per rail, 60 dB ripple rejection above 100 Hz).
-On a ≈ 31 × 19.5 mm board that stands in the band (see `DCDCPod/README.md`): 2 × 2.54 mm pins at its west end into J103
-(5 V, GND), 4 × 2.0 mm pins at its east end into J102's holes (+V, 0V, −V, CAB = 0V) — J102's JST socket is not
-fitted when the pod is used — and a 2.5 mm copper-free gap in the middle, over the HAT's strip at x 34–36.5.  The HAT
-keeps C109 / C110 and the 20 V clamps, so the pod needs no output capacitors of its own.
+On a 31 × 22.5 mm, 1.6 mm board that stands in the band (see `DCDCPod/README.md`, "Mechanical"): 2 × 2.54 mm pins at
+its west end into J103 (5 V, GND), 4 × 2.0 mm pins at its east end into J102's holes (+V, 0V, −V, CAB = 0V) — J102's
+JST socket is not fitted when the pod is used — same nets on the same holes as before.  Since 2026-10-30 the pod faces
+**south**: its parts face looks at the BNC bodies, its bare back at the bonnet (5.1–5.4 mm from the bonnet's edge with
+the rows at y 39.0), and PS1 sits along its top edge, body at z 16.6–22.6, hanging ≈ 10 mm south over J6 / J7's bodies
+with 1.0 mm to their tops (15.6 mm); the pod's front face is at y ≈ 37.9, its back at ≈ 36.3.  Its own 2.5 mm
+isolation gap runs vertically at HAT x 22.4–24.9 (between PS1's pins 2 / 4 and east of J1.2); within 3.5 mm of the HAT
+its isolated copper is at x ≥ 37.3 and its 5 V copper at x ≤ 22.4, i.e. over the HAT's own sides of the barrier strip
+at x 34–36.5.  The HAT keeps C109 / C110 and the 20 V clamps, so the pod needs no output capacitors of its own.
 
 ## Assembly notes and first-article checks
 

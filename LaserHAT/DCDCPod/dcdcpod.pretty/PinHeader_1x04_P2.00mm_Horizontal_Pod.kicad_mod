@@ -2,10 +2,10 @@
 	(version 20241229)
 	(generator "kicad-footprint-generator")
 	(layer "F.Cu")
-	(descr "DC-DC pod copy, pin drawing beyond the body removed; Through hole angled pin header, 1x04, 2.00mm pitch, 4.2mm pin length, single row")
+	(descr "DC-DC pod copy, pin drawing beyond the body removed, pin numbering mirrored (pad 1 at the far end of the row); Through hole angled pin header, 1x04, 2.00mm pitch, 4.2mm pin length, single row")
 	(tags "Through hole angled pin header THT 1x04 2.00mm single row")
 	(property "Reference" "REF**"
-		(at 3.1 -2 0)
+		(at 3.1 8 0)
 		(layer "F.SilkS")
 		(effects
 			(font
@@ -15,7 +15,7 @@
 		)
 	)
 	(property "Value" "PinHeader_1x04_P2.00mm_Horizontal_Pod"
-		(at 3.1 8 0)
+		(at 3.1 -2 0)
 		(layer "F.Fab")
 		(effects
 			(font
@@ -26,17 +26,8 @@
 	)
 	(attr through_hole)
 	(fp_line
-		(start 0.916856 1.64)
-		(end 1.39 1.64)
-		(stroke
-			(width 0.12)
-			(type solid)
-		)
-		(layer "F.SilkS")
-	)
-	(fp_line
-		(start 0.916856 2.36)
-		(end 1.39 2.36)
+		(start 0.916856 4.36)
+		(end 1.39 4.36)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -53,8 +44,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 0.916856 4.36)
-		(end 1.39 4.36)
+		(start 0.916856 2.36)
+		(end 1.39 2.36)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -62,8 +53,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 0.916856 5.64)
-		(end 1.39 5.64)
+		(start 0.916856 1.64)
+		(end 1.39 1.64)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -71,25 +62,7 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 0.916856 6.36)
-		(end 1.39 6.36)
-		(stroke
-			(width 0.12)
-			(type solid)
-		)
-		(layer "F.SilkS")
-	)
-	(fp_line
-		(start 0.985 -0.36)
-		(end 1.39 -0.36)
-		(stroke
-			(width 0.12)
-			(type solid)
-		)
-		(layer "F.SilkS")
-	)
-	(fp_line
-		(start 0.985 0.36)
+		(start 0.916856 0.36)
 		(end 1.39 0.36)
 		(stroke
 			(width 0.12)
@@ -98,8 +71,35 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 1.39 1)
-		(end 3.11 1)
+		(start 0.916856 -0.36)
+		(end 1.39 -0.36)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start 0.985 6.36)
+		(end 1.39 6.36)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start 0.985 5.64)
+		(end 1.39 5.64)
+		(stroke
+			(width 0.12)
+			(type solid)
+		)
+		(layer "F.SilkS")
+	)
+	(fp_line
+		(start 1.39 5)
+		(end 3.11 5)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -116,8 +116,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_line
-		(start 1.39 5)
-		(end 3.11 5)
+		(start 1.39 1)
+		(end 3.11 1)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -125,8 +125,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_rect
-		(start 1.39 -1.11)
-		(end 3.11 7.11)
+		(start 1.39 7.11)
+		(end 3.11 -1.11)
 		(stroke
 			(width 0.12)
 			(type solid)
@@ -135,8 +135,8 @@
 		(layer "F.SilkS")
 	)
 	(fp_rect
-		(start -1.5 -1.5)
-		(end 7.7 7.5)
+		(start -1.5 7.5)
+		(end 7.7 -1.5)
 		(stroke
 			(width 0.05)
 			(type solid)
@@ -145,98 +145,8 @@
 		(layer "F.CrtYd")
 	)
 	(fp_line
-		(start -0.25 -0.25)
-		(end -0.25 0.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 -0.25)
-		(end 1.5 -0.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 0.25)
-		(end 1.5 0.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 1.75)
-		(end -0.25 2.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 1.75)
-		(end 1.5 1.75)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 2.25)
-		(end 1.5 2.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 3.75)
-		(end -0.25 4.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 3.75)
-		(end 1.5 3.75)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 4.25)
-		(end 1.5 4.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 5.75)
-		(end -0.25 6.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start -0.25 5.75)
-		(end 1.5 5.75)
+		(start -0.25 6.25)
+		(end -0.25 5.75)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -253,8 +163,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 1.5 -0.625)
-		(end 1.875 -1)
+		(start -0.25 5.75)
+		(end 1.5 5.75)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -262,8 +172,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 1.5 7)
-		(end 1.5 -0.625)
+		(start -0.25 4.25)
+		(end -0.25 3.75)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -271,8 +181,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 1.875 -1)
-		(end 3 -1)
+		(start -0.25 4.25)
+		(end 1.5 4.25)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -280,7 +190,88 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 3 -1)
+		(start -0.25 3.75)
+		(end 1.5 3.75)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -0.25 2.25)
+		(end -0.25 1.75)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -0.25 2.25)
+		(end 1.5 2.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -0.25 1.75)
+		(end 1.5 1.75)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -0.25 0.25)
+		(end -0.25 -0.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -0.25 0.25)
+		(end 1.5 0.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start -0.25 -0.25)
+		(end 1.5 -0.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 1.5 6.625)
+		(end 1.875 7)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 1.5 -1)
+		(end 1.5 6.625)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 1.875 7)
 		(end 3 7)
 		(stroke
 			(width 0.1)
@@ -289,62 +280,8 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 3 -0.25)
-		(end 7.2 -0.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start 3 0.25)
-		(end 7.2 0.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start 3 1.75)
-		(end 7.2 1.75)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start 3 2.25)
-		(end 7.2 2.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start 3 3.75)
-		(end 7.2 3.75)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start 3 4.25)
-		(end 7.2 4.25)
-		(stroke
-			(width 0.1)
-			(type solid)
-		)
-		(layer "F.Fab")
-	)
-	(fp_line
-		(start 3 5.75)
-		(end 7.2 5.75)
+		(start 3 7)
+		(end 3 -1)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -361,8 +298,71 @@
 		(layer "F.Fab")
 	)
 	(fp_line
-		(start 3 7)
-		(end 1.5 7)
+		(start 3 5.75)
+		(end 7.2 5.75)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 3 4.25)
+		(end 7.2 4.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 3 3.75)
+		(end 7.2 3.75)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 3 2.25)
+		(end 7.2 2.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 3 1.75)
+		(end 7.2 1.75)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 3 0.25)
+		(end 7.2 0.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 3 -0.25)
+		(end 7.2 -0.25)
+		(stroke
+			(width 0.1)
+			(type solid)
+		)
+		(layer "F.Fab")
+	)
+	(fp_line
+		(start 3 -1)
+		(end 1.5 -1)
 		(stroke
 			(width 0.1)
 			(type solid)
@@ -380,28 +380,28 @@
 		)
 	)
 	(pad "1" thru_hole rect
-		(at 0 0)
+		(at 0 6)
 		(size 1.35 1.35)
 		(drill 0.8)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 	)
 	(pad "2" thru_hole circle
-		(at 0 2)
-		(size 1.35 1.35)
-		(drill 0.8)
-		(layers "*.Cu" "*.Mask")
-		(remove_unused_layers no)
-	)
-	(pad "3" thru_hole circle
 		(at 0 4)
 		(size 1.35 1.35)
 		(drill 0.8)
 		(layers "*.Cu" "*.Mask")
 		(remove_unused_layers no)
 	)
+	(pad "3" thru_hole circle
+		(at 0 2)
+		(size 1.35 1.35)
+		(drill 0.8)
+		(layers "*.Cu" "*.Mask")
+		(remove_unused_layers no)
+	)
 	(pad "4" thru_hole circle
-		(at 0 6)
+		(at 0 0)
 		(size 1.35 1.35)
 		(drill 0.8)
 		(layers "*.Cu" "*.Mask")

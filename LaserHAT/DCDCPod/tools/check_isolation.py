@@ -7,7 +7,9 @@
   3. negative DRC test: a copy of the project with an isolated-net track dropped into the 5 V region must fail DRC
      (shows DCDCPod.kicad_dru is really being applied)
   4. footprint paths: each footprint's path is "/<root uuid>/<symbol uuid>" of its symbol in tools/ref/DCDCPod.net
-  5. connector geometry: the header pins' x positions mapped to HAT coordinates (HAT x = 46 - pod x)
+  5. connector geometry: the header pins mapped to HAT coordinates (HAT x = pod x + 15: the pod faces south since
+     2026-10-30), each pin on its HAT hole with its net (J103: 5V 19.00, GND 21.54; J102: CAB 38, -V 40, 0V 42, +V 44),
+     the rows collinear
     $KICAD_PY tools/check_isolation.py"""
 import json
 import os
@@ -69,7 +71,7 @@ best = (99.0, None, None)
 for a in iso:
     for b in hat:
         if a[2] != b[2]:
-            pass                                           # different layers: the 1.2 mm board is between, but count it anyway
+            pass                                           # different layers: the 1.6 mm board is between, but count it anyway
         d = distance(a[3], b[3])
         if d < best[0]:
             best = (d, a, b)
@@ -110,7 +112,7 @@ for ext in (".kicad_pcb", ".kicad_pro", ".kicad_dru"):
     shutil.copy(os.path.join(ROOT, "DCDCPod" + ext), tmp)
 tb = pcbnew.LoadBoard(os.path.join(tmp, "DCDCPod.kicad_pcb"))
 tr = pcbnew.PCB_TRACK(tb)
-tr.SetStart(pcbnew.VECTOR2I(pcbnew.FromMM(25.0), pcbnew.FromMM(2.0))); tr.SetEnd(pcbnew.VECTOR2I(pcbnew.FromMM(26.0), pcbnew.FromMM(2.0)))
+tr.SetStart(pcbnew.VECTOR2I(pcbnew.FromMM(1.0), pcbnew.FromMM(12.0))); tr.SetEnd(pcbnew.VECTOR2I(pcbnew.FromMM(2.0), pcbnew.FromMM(12.0)))
 tr.SetWidth(pcbnew.FromMM(0.3)); tr.SetLayer(pcbnew.F_Cu); tr.SetNet(tb.FindNet("0V"))
 tb.Add(tr)
 pcbnew.SaveBoard(os.path.join(tmp, "DCDCPod.kicad_pcb"), tb)
@@ -118,7 +120,7 @@ out = os.path.join(tmp, "drc.json")
 subprocess.run([KICAD_CLI, "pcb", "drc", "--severity-all", "--format", "json", "-o", out, os.path.join(tmp, "DCDCPod.kicad_pcb")], capture_output=True)
 v = [x for x in json.load(open(out))["violations"] if x["severity"] == "error"]
 rules = sorted({re.search(r"rule '([^']+)'", x["description"]).group(1) for x in v if "rule '" in x["description"]})
-print(f"3. a 0V track dropped at (25, 2) in the 5 V region: {len(v)} DRC errors, rules {rules}")
+print(f"3. a 0V track dropped at (1, 12) in the 5 V region: {len(v)} DRC errors, rules {rules}")
 if not any(r in rules for r in ("iso_copper_in_hat_region", "isolation_gap")):
     ok = False; print("   FAIL: the isolation rules did not fire")
 shutil.rmtree(tmp)
@@ -139,12 +141,19 @@ for f in board.GetFootprints():
     if f.GetReference() in ("J1", "J2"):
         for p in f.Pads():
             pins[f"{f.GetReference()}.{p.GetNumber()}"] = (p.GetPosition().x / 1e6, p.GetPosition().y / 1e6, p.GetNetname())
-print("5. header pins (pod x, pod y, net -> HAT x = 46 - pod x):")
+HAT_DX = 15.0
+WANT = {"J1.1": (19.00, "+5V"), "J1.2": (21.54, "GND"),
+        "J2.1": (38.00, "0V"), "J2.2": (40.00, "-V_OUT"), "J2.3": (42.00, "0V"), "J2.4": (44.00, "+V_OUT")}
+print("5. header pins (pod x, pod y, net -> HAT x = pod x + 15; wanted HAT x / net):")
 for k in sorted(pins):
     x, y, n = pins[k]
-    print(f"   {k:5s} ({x:6.2f}, {y:5.2f}) {n:7s} -> HAT x {46 - x:5.2f}")
-d1 = pins["J1.1"][0] - pins["J2.1"][0]
-d2 = pins["J1.1"][0] - pins["J2.4"][0]
+    hx, hn = WANT[k]
+    good = abs(x + HAT_DX - hx) < 0.005 and n.lstrip("/") == hn
+    print(f"   {k:5s} ({x:6.2f}, {y:5.2f}) {n:7s} -> HAT x {x + HAT_DX:5.2f}   want {hx:5.2f} {hn:7s} {'ok' if good else 'FAIL'}")
+    if not good:
+        ok = False
+d1 = pins["J2.1"][0] - pins["J1.1"][0]
+d2 = pins["J2.4"][0] - pins["J1.1"][0]
 print(f"   J1.1 (5V) to J2.1 (CAB): {d1:.2f} mm (HAT 19.0 -> 38.0 = 19.0);  to J2.4 (+V): {d2:.2f} mm (19.0 -> 44.0 = 25.0)")
 if abs(d1 - 19.0) > 0.01 or abs(d2 - 25.0) > 0.01 or any(abs(pins[k][1] - pins["J2.1"][1]) > 0.01 for k in ("J2.2", "J2.3", "J2.4")) \
         or abs(pins["J1.2"][1] - pins["J1.1"][1]) > 0.01:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Fab outputs for JLCPCB into ../fab/DCDCPod/: gerbers +
-drill (zipped), JLC BOM (from sch_parts.py) and CPL (from kicad-cli pos), top / bottom renders, a short README.
+drill (zipped), JLC BOM (from sch_parts.py) and CPL (from kicad-cli pos), top / bottom / perspective renders, a short
+README.
 Run:  python tools/make_fab.py      (needs kicad-cli on PATH)"""
 import csv
 import io
@@ -73,18 +74,22 @@ for code, (val, fp, refs) in sorted(groups.items(), key=lambda kv: kv[1][2][0]):
     bom.append([val, ",".join(refs), fp, code])
 buf = io.StringIO(); csv.writer(buf, lineterminator="\r\n").writerows(bom)
 open(os.path.join(OUT, "DCDCPod_bom.csv"), "w", newline="").write(buf.getvalue())
-# renders
-for side in ("top", "bottom"):
-    subprocess.run([KICAD_CLI, "pcb", "render", "--side", side, "--width", "1600", "--height", "1000", "--quality", "basic",
-                    "--background", "opaque", "-o", os.path.join(OUT, f"DCDCPod_{side}.png"), BOARD], check=True, capture_output=True)
+# renders: top and bottom straight on, and a perspective view of the front (the pod's south face)
+RENDERS = {"top": ["--side", "top"], "bottom": ["--side", "bottom"],
+           "perspective": ["--side", "top", "--perspective", "--rotate", "-35,0,-25", "--zoom", "0.9"]}
+for name, args in RENDERS.items():
+    subprocess.run([KICAD_CLI, "pcb", "render", *args, "--width", "1600", "--height", "1000", "--quality", "basic",
+                    "--background", "opaque", "-o", os.path.join(OUT, f"DCDCPod_{name}.png"), BOARD], check=True, capture_output=True)
 not_fitted = sorted(r for r in by_ref if r not in fitted)
-open(os.path.join(OUT, "README.md"), "w").write(f"""# fab/DCDCPod - rev A (2026-10-29)
+open(os.path.join(OUT, "README.md"), "w").write(f"""# fab/DCDCPod - rev A (2026-10-29, layout turned around 2026-10-30)
 
 `DCDCPod_gerbers.zip` (F/B Cu, paste, silk, mask, edge; Excellon PTH + NPTH, map), `DCDCPod_bom.csv` and
-`DCDCPod_cpl.csv` (JLC columns) from `tools/make_fab.py`; renders `DCDCPod_top.png` (the side facing north on the HAT)
-and `DCDCPod_bottom.png`.  Board 31 x 19.5 mm, 2-layer, **1.2 mm** (keeps the back 0.7 mm clear of the HAT's BNC bodies;
-1.6 mm also fits, with 0.3 mm), all SMD parts on the top.  Hand-fitted / not in BOM-CPL: {', '.join(sorted(HAND_FIT))}
-(right-angle headers and the A0515S), test points {', '.join(r for r in not_fitted if r.startswith('TP'))} (bare pads on the back).
+`DCDCPod_cpl.csv` (JLC columns) from `tools/make_fab.py`; renders `DCDCPod_top.png` (the parts face, which faces south
+toward the HAT's BNC bodies when plugged in: PS1 along the top edge, J1 / J2 on the bottom edge),
+`DCDCPod_bottom.png` (the bare back, which faces the OLED bonnet: title and test points TP1-TP3) and
+`DCDCPod_perspective.png`.  Board 31 x 22.5 mm, 2-layer, **1.6 mm**, all SMD parts on the top.  Hand-fitted / not in
+BOM-CPL: {', '.join(sorted(HAND_FIT))} (right-angle headers and the A0515S), test points
+{', '.join(r for r in not_fitted if r.startswith('TP'))} (bare pads on the back).
 Check the DFM preview for the SOT-23 and 0805 rotations (the CPL uses the Fabrication Toolkit's rotation table).
 """)
 print(f"{OUT}: {len(cpl) - 1} placements, {len(bom) - 1} BOM lines, not in BOM/CPL: {not_fitted}")

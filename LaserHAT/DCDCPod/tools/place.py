@@ -1,17 +1,26 @@
 #!/usr/bin/env python3
-"""Placement of DCDCPod.kicad_pcb (2026-10-29).  Pod coordinates: x 0-31 along the HAT's band (pod x = 46 - HAT x,
-because the pod faces north and is seen from the north), y 0-19.5 down the pod (y 19.5 = bottom edge, 0.5 mm above the
-HAT).  Headers J1 / J2 on the front, bottom edge, pins pointing down (rot 270): their horizontal pins run 1.27 / 1.0 mm
-in front of the pod and land in the HAT's holes at HAT y 40.1, so the pod's front face is at HAT y ~41.2 and its back
-(1.2 mm board) at ~42.4, 0.7 mm north of the BNC bodies.  PS1 stands on the front with its pins 1 / 2 (5 V) east of
-the barrier, body toward the pod's top edge (marked face up).  Everything else on the front, above PS1:
-  bottom row (y 5.55): C105 L101 | C106 L102 (0805, vertical);  top row (y 1.95): Q101 R111 C107 | C108 R112 Q102
-  (courtyards 0.05-0.1 mm apart: the 6.4 mm between the top edge and PS1's courtyard hold exactly two rows).
-  5 V side: C104 right of PS1's body, J1 below it.  Test points on the back (B.Cu), reachable with the pod unplugged.
+"""Placement of DCDCPod.kicad_pcb (2026-10-29; turned around 2026-10-30).  Pod coordinates: x 0-31 along the HAT's band,
+y 0-22.5 down the pod (y 22.5 = bottom edge, 0.5 mm above the HAT; height above the HAT z = 23.0 - y).  The front
+(F.Cu, every part) faces SOUTH, toward the BNC bodies, and is seen from the south, so HAT east is on the right:
+HAT x = pod x + 15.  Headers J1 / J2 on the front, bottom edge, pins pointing down (rot 270; their footprints are
+mirrored along the row by tools/make_footprints.py so the pin numbers increase eastward): their horizontal pins run
+1.27 / 1.0 mm in front of the pod and land in the HAT's holes at HAT y 39.0, so the pod's front face is at HAT y
+~37.9 and its back (1.6 mm board) at ~36.3, 5.3 mm south of the OLED bonnet's edge (y 31.0).
+PS1 stands on the front at the TOP (pin row y 1.3, rot 0: pins 1 / 2 (5 V) west, 4 / 5 / 6 east, body y 0.4-6.4
+below the pins), i.e. 16.6-22.6 mm above the HAT: its 10.16 mm body hangs south over the BNC bodies (15.6 mm tall).
+Everything else below PS1, on the front (nothing below PS1 stands more than 1.3 mm out of the face; the BNC bodies
+are 5.2 mm away):
+  5 V side (x < 7.43): C104 between the +5V / GND tracks that run from PS1's pins 1 / 2 down to J1.
+  negative block (x 10.3-18.4, y 6.7-16.4): L102 under PS1.4 and C106 under PS1.5 (the filter's ripple loop
+  PS1.4 -> L102 -> C106 -> PS1.5 stays short), the -V_F bus below them, Q102 / R112 / C108 below the bus
+  positive block (x 21.8-30.7, y 0.4-9.4, beside PS1's body): L101, Q101, C105, R111, C107
+  test points on the back (B.Cu) over J2, reachable with the pod unplugged.
 Barrier: 2.5 mm copper-free rule area on both layers = the gap between the named regions iso_region / hat_region
 (DCDCPod.kicad_dru disallows copper of the other side in each region and asks 2.5 mm between the two net classes):
-vertical strip x 11.4-13.9 between PS1's pins 2 and 4 from y 6.65 down to the bottom edge, then across PS1's body at
-y 6.65-9.15 to x 22.5 and up to the top edge at x 20-22.5, so the isolated parts may use the top strip over PS1.
+the vertical strip x 7.43-9.93 from the top edge to the bottom edge (between PS1's pins 2 and 4, 3.48 mm apart, and
+east of J1.2), plus a strip x 9.93-21.5 along the bottom edge (y > 19.5, i.e. less than 3.5 mm above the HAT) where the
+pod's face is over the HAT's own 5 V copper, so isolated copper near the HAT stays at x >= 21.5 (HAT x >= 36.5,
+the HAT's isolated side).
 Idempotent: re-running moves every footprint back and redraws the outline, rule areas and silk; copper is left alone.
     $KICAD_PY tools/place.py"""
 import math
@@ -21,7 +30,8 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BOARD = os.path.join(ROOT, "DCDCPod.kicad_pcb")
-W, H, R = 31.0, 19.5, 1.5
+W, H, R = 31.0, 22.5, 1.0                  # R 1.0 (was 1.5): keeps PS1's pin-1 silk mark (x 0.79, y 0.1-2.1) inside the corner
+HAT_DX = 15.0                              # HAT x = pod x + HAT_DX (seen from the south)
 mm = pcbnew.FromMM
 P = {}                                     # ref -> (x, y, rot, flip)
 
@@ -30,27 +40,35 @@ def at(ref, x, y, rot=0, flip=False):
     P[ref] = (x, y, rot, flip)
 
 
-# ---- headers on the bottom edge (rot 270: pins toward +y, pin numbers increase toward -x)
-at("J2", 8.0, 15.9, 270)                  # pins: 1 CAB x 8, 2 -V 6, 3 0V 4, 4 +V 2  (HAT J102: CAB 38, -V 40, 0V 42, +V 44)
-at("J1", 27.0, 15.1, 270)                 # pins: 1 5V x 27, 2 GND 24.46            (HAT J103: 5V 19, GND 21.54)
-# ---- the DC-DC module, pin 1 east (rot 180), body toward the top edge
-at("PS1", 17.74, 12.8, 180)               # pins: 1 +Vin 17.74, 2 GND 15.2 | 4 -Vo 10.12, 5 0V 7.58, 6 +Vo 5.04; body y 7.7-13.7
-# ---- isolated side, bottom row (0805 vertical; rot 90 = pad 1 at the bottom, rot 270 = pad 1 at the top)
-at("C105", 2.4, 5.55, 270); at("L101", 4.9, 5.55, 90); at("C106", 7.3, 5.55, 90); at("L102", 10.1, 5.55, 90)
-# ---- isolated side, top row
-at("Q101", 2.2, 1.95, 0); at("R111", 4.75, 1.6, 90); at("C107", 6.4, 1.95, 270)
-at("C108", 8.55, 1.95, 90); at("R112", 10.15, 1.6, 270); at("Q102", 12.9, 2.05, 90)   # Q102: C top, B left, E right
+# ---- headers on the bottom edge (rot 270, mirrored footprints: pins toward +y, pin numbers increase toward +x,
+#      the footprint origin is the last pin).  Pads 3.6 mm (J2) / 4.4 mm (J1) above the bottom edge, as in rev A.
+at("J2", 44.0 - HAT_DX, H - 3.6, 270)      # pins: 1 CAB x 23, 2 -V 25, 3 0V 27, 4 +V 29  (HAT J102: CAB 38, -V 40, 0V 42, +V 44)
+at("J1", 21.54 - HAT_DX, H - 4.4, 270)     # pins: 1 5V x 4.0, 2 GND 6.54                (HAT J103: 5V 19, GND 21.54)
+# ---- the DC-DC module at the top, pin 1 west (rot 0), body below the pin row
+at("PS1", 3.6, 1.3, 0)                     # pins: 1 +Vin 3.6, 2 GND 6.14 | 4 -Vo 11.22, 5 0V 13.76, 6 +Vo 16.3; body y 0.4-6.4
 # ---- 5 V side
-at("C104", 22.5, 10.8, 270)               # pad 1 (+5V) top
-# ---- test points on the back
-at("TP1", 2.0, 18.3, 0, True); at("TP2", 6.0, 18.5, 0, True); at("TP3", 10.5, 15.0, 0, True)
+at("C104", 4.87, 7.6, 0)                   # pad 1 (+5V) west on the +5V track, pad 2 (GND) east on the GND track
+# ---- negative block (0805 vertical: rot 90 = pad 1 at the bottom, rot 270 = pad 1 at the top)
+at("L102", 11.22, 8.6, 270)                # pad 1 (-V_RAW) top, under PS1.4
+at("C106", 13.76, 8.6, 270)                # pad 1 (0V) top, under PS1.5; pad 2 (-V_F) bottom
+at("Q102", 16.7, 11.54, 90)                # C top on the -V_F bus (y 10.6), B south-west, E south-east
+at("R112", 13.9, 12.0, 90)                 # pad 2 (-V_F) top, pad 1 (QB_N) bottom
+at("C108", 13.9, 14.7, 90)                 # pad 2 (QB_N) top, pad 1 (0V) bottom
+# ---- positive block, east of PS1's body
+at("L101", 23.6, 1.3, 0)                   # pad 1 (+V_RAW) west
+at("Q101", 27.4, 2.25, 180)                # C west, E north-east, B south-east
+at("C105", 25.0, 5.8, 270)                 # pad 1 (+V_F) top, pad 2 (0V) bottom
+at("R111", 27.5, 5.5, 0)                   # pad 1 (+V_F) west, pad 2 (QB_P) east
+at("C107", 29.0, 7.7, 270)                 # pad 1 (QB_P) top, pad 2 (0V) bottom
+# ---- test points on the back, over J2
+at("TP2", 21.0, 15.5, 0, True); at("TP3", 25.0, 15.5, 0, True); at("TP1", 29.0, 15.5, 0, True)
 
 board = pcbnew.LoadBoard(BOARD)
 stale = [d for d in board.GetDrawings() if d.GetLayer() in (pcbnew.Edge_Cuts, pcbnew.Cmts_User, pcbnew.Dwgs_User)
          or (d.GetLayer() in (pcbnew.F_SilkS, pcbnew.B_SilkS) and d.GetClass() in ("PCB_TEXT", "PCB_SHAPE"))]
 stale += [z for z in board.Zones() if z.GetIsRuleArea()]
 board.SetCopperLayerCount(2)
-board.GetDesignSettings().SetBoardThickness(mm(1.2))
+board.GetDesignSettings().SetBoardThickness(mm(1.6))   # 1.6 mm since 2026-10-30 (the back faces the bonnet, 5.3 mm away)
 fps = {f.GetReference(): f for f in board.GetFootprints()}
 missing = [r for r in fps if r not in P]
 assert not missing, f"unplaced: {missing}"
@@ -107,9 +125,11 @@ def rule_area(name, pts, keepout):
 
 
 # the 2.5 mm barrier (copper-free on both layers) and the two named regions whose gap it is
-BARRIER = [(11.4, 6.65), (20.0, 6.65), (20.0, 0.0), (22.5, 0.0), (22.5, 9.15), (13.9, 9.15), (13.9, H), (11.4, H)]
-ISO = [(0.0, 0.0), (20.0, 0.0), (20.0, 6.65), (11.4, 6.65), (11.4, H), (0.0, H)]
-HAT = [(22.5, 0.0), (W, 0.0), (W, H), (13.9, H), (13.9, 9.15), (22.5, 9.15)]
+BX0, BX1 = 7.43, 9.93                      # vertical strip: PS1.2 pad edge 6.94 / PS1.4 10.42, J1.2 pad edge 7.39
+BY, BX2 = 19.5, 21.5                       # bottom strip y > 19.5 (< 3.5 mm above the HAT: 2.5 mm over the band's 1 mm parts) up to HAT x 36.5
+BARRIER = [(BX0, 0.0), (BX1, 0.0), (BX1, BY), (BX2, BY), (BX2, H), (BX0, H)]
+ISO = [(BX1, 0.0), (W, 0.0), (W, H), (BX2, H), (BX2, BY), (BX1, BY)]
+HAT = [(0.0, 0.0), (BX0, 0.0), (BX0, H), (0.0, H)]
 rule_area("barrier", BARRIER, True)
 rule_area("iso_region", ISO, False)
 rule_area("hat_region", HAT, False)
@@ -128,15 +148,18 @@ def silk(txt, x, y, size=0.8, rot=0, layer=pcbnew.F_SilkS):
     board.Add(t)
 
 
-silk("DC-DC POD", 26.6, 3.2, 0.85); silk("5V -> \u00b115V", 26.5, 5.0, 0.8); silk("rev A", 26.6, 6.6, 0.8)
-for txt, x in (("+V", 2.0), ("0V", 4.0), ("-V", 5.9), ("CAB", 8.3)):
-    silk(txt, x, 14.6, 0.8)                  # between PS1's silk outline (y 13.82) and J2's pads (y 15.225)
-for txt, x in (("5V", 27.0), ("GND", 24.46)):
-    silk(txt, x, 13.5, 0.8)
-silk("ISOLATED", 17.6, 1.2, 0.8); silk("5V SIDE", 26.0, 8.6, 0.8)
-silk("DC-DC POD rev A", 15.5, 8.0, 0.9, 0, pcbnew.B_SilkS)
-for txt, x, y in (("+V", 3.9, 18.3), ("0V", 7.9, 18.5), ("-V", 12.4, 15.0)):
-    silk(txt, x, y, 0.8, 0, pcbnew.B_SilkS)
+# front: pin names over the headers (between their courtyards' top and the pads), the two sides
+for txt, x in (("CAB", 23.0), ("-V", 25.0), ("0V", 27.0), ("+V", 29.0)):
+    silk(txt, x, 17.3, 0.8)
+for txt, x in (("5V", 4.0), ("GND", 6.54)):
+    silk(txt, x, 16.3, 0.8)
+silk("ISOLATED", 22.4, 11.5, 0.8, 90)
+silk("5V SIDE", 1.7, 11.5, 0.8, 90)
+# back (mirrored): title and the test-point names
+silk("DC-DC POD", 15.5, 4.0, 0.9, 0, pcbnew.B_SilkS)
+silk("5V -> \u00b115V  rev A", 15.5, 6.0, 0.8, 0, pcbnew.B_SilkS)
+for txt, x in (("0V", 21.0), ("-V", 25.0), ("+V", 29.0)):
+    silk(txt, x, 13.9, 0.8, 0, pcbnew.B_SilkS)
 for d in stale:
     board.Remove(d)
 pcbnew.SaveBoard(BOARD, board)

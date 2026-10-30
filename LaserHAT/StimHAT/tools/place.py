@@ -251,7 +251,7 @@ rect(3.13, 12.54, 13.13, 22.54, BON, 0.15); circle(8.13, 17.54, 2.9, BON)       
 rect(58.09, 11.95, 64.09, 18.55, BON, 0.15); circle(61.09, 15.25, 1.5, BON)            # button #6
 rect(50.85, 18.43, 56.85, 25.03, BON, 0.15); circle(53.85, 21.73, 1.5, BON)            # button #5
 silk("Adafruit 4567 bonnet, 9 mm up (outline, holes, header, OLED, joystick, buttons)", 32.5, 33.0, 1.0, 0, BON)
-rect(16.5, 36.8, 46.0, 43.0, pcbnew.Dwgs_User, 0.15); silk("DC-DC pod: J103 (5 V) to J102 (+/-V), lies over the band", 31.0, 35.0, 0.8, 0, pcbnew.Dwgs_User)
+rect(15.0, 36.1, 46.0, 38.0, pcbnew.Dwgs_User, 0.15); rect(16.4, 37.9, 36.0, 48.0, pcbnew.Dwgs_User, 0.1); silk("DC-DC pod: J103 (5 V) to J102 (+/-V), stands here parts south, PS1 16.6-22.6 mm up over the BNCs", 31.0, 35.0, 0.8, 0, pcbnew.Dwgs_User)
 rect(11.75, 9.9, 49.75, 21.5, pcbnew.Dwgs_User, 0.1)
 silk("0.91in OLED module on J10: pins on its west (short) edge, right-angle pins into the vertical socket, lying flat eastward 8.5 mm up", 30.0, 23.0, 0.8, 0, pcbnew.Dwgs_User)
 silk("Pi 4 PoE / Pi 5 fan", 56.0, 7.0, 0.8, 0, pcbnew.Dwgs_User)

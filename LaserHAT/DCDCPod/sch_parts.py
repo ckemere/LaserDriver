@@ -9,7 +9,7 @@ tools/netcheck.py proves the drawn schematic matches it.
              R111 4.7k, C107 10 uF base to 0V; emitter = +V_OUT.  Mirror image on the negative rail: pin 4 (-Vo) -> L102 ->
              -V_F (C106) -> Q102 MMBT3906, R112 / C108, emitter = -V_OUT.  Pin 5 = 0V.
              J2 (into HAT J102's holes): pin 1 = CAB (= 0V, the HAT's cable-detect return), 2 = -V_OUT, 3 = 0V, 4 = +V_OUT.
-             J2's numbering is the mirror of the HAT's J102 (1 = +V ... 4 = CAB) because the pod faces north: see README.
+             J2 is numbered like the HAT's J102 holes seen from the south (1 = CAB at HAT x 38 ... 4 = +V at x 44; the pod faces south since 2026-10-30): see README.
   The capacitance multipliers drop about 0.6 V per rail (13.5-14.4 V out at 1-10 mA) and give ~60 dB ripple rejection
   above 100 Hz; the HAT keeps C109 / C110 and the 20 V clamps, so the pod has no output capacitors.
 """
