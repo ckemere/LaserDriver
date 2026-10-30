@@ -220,11 +220,11 @@ def silk(txt, x, y, size=1.0, rot=0, layer=pcbnew.F_SilkS):
 
 
 silk("StimHAT rev A", 32.5, 30.0, 1.0, 0, pcbnew.B_SilkS)
-silk("FIRE", 6.2, 37.5, 1.0, 90); silk("USB", 9.6, 24.6, 1.0, 90); silk("PWR", 6.1, 13.0, 1.0, 90)
+silk("FIRE", 14.0, 53.75, 1.0, 0); silk("USB", 9.6, 24.6, 1.0, 90); silk("PWR", 6.1, 13.0, 1.0, 90)
 silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)   # 0.8: no room for 1.0 between R13-R18 and the LEDs
-silk("BSL", 35.0, 10.4)
-silk("ISOLATED", 49.5, 18.75); silk("5V", 19.0, 37.6, 0.9); silk("E1", 51.0, 63.4, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("NYLON", 61.5, 50.0, 1.0)
-silk("STIM OUT", 38.4, 53.5, 1.0, 0, pcbnew.B_SilkS); silk("TRIG IN", 22.8, 53.5, 1.0, 0, pcbnew.B_SilkS)
+silk("BSL", 16.9, 34.25, 1.0, 90)
+silk("ISOLATED", 49.5, 18.75); silk("5V", 19.0, 37.6, 0.9); silk("E1", 50.4, 54.15, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("NYLON", 61.5, 50.0, 1.0)
+silk("STIM OUT", 40.92, 53.5, 1.0, 0, pcbnew.B_SilkS); silk("TRIG IN", 24.92, 53.5, 1.0, 0, pcbnew.B_SilkS)   # centred on J7 / J6
 # drawings: the 0.91" OLED module when fitted, the Pi 5 notch note; the bonnet on its own layer User.1 "Bonnet"
 def circle(cx, cy, r, layer, w=0.15):
     d = pcbnew.PCB_SHAPE(board)

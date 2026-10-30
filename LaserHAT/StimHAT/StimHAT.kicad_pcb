@@ -1880,7 +1880,7 @@
 			(uuid "d2759e04-a801-41f1-aeca-355e143b5fe9")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/Footprints.3dshapes/PDFN3333-8_AP30P30Q.step"
+		(model "${KIPRJMOD}/../Footprints.3dshapes/PDFN3333-8_AP30P30Q.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -4769,15 +4769,15 @@
 			(uuid "44f9f2ca-b315-4cd0-ba46-4a27b9faad69")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/Footprints.3dshapes/SW_SPDT_Shouhan_MSK12C02.step"
+		(model "${KIPRJMOD}/../Footprints.3dshapes/SW_SPDT_Shouhan_MSK12C02.step"
 			(offset
-				(xyz 0 0.55 0)
+				(xyz 0 0 0)
 			)
 			(scale
 				(xyz 1 1 1)
 			)
 			(rotate
-				(xyz 0 0 180)
+				(xyz 0 0 0)
 			)
 		)
 	)
@@ -16166,7 +16166,7 @@
 			(uuid "72fa11f0-73c2-4381-8f0a-47832708067d")
 		)
 		(embedded_fonts no)
-		(model "${KIPRJMOD}/Footprints.3dshapes/PDFN3333-8_AP30P30Q.step"
+		(model "${KIPRJMOD}/../Footprints.3dshapes/PDFN3333-8_AP30P30Q.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -21637,7 +21637,7 @@
 			(uuid "6372fa72-72c1-4f07-8611-02dd94e9a8aa")
 		)
 		(embedded_fonts no)
-		(model "${KICAD9_3DMODEL_DIR}/Package_SO.3dshapes/VSSOP-10_3x3mm_P0.5mm.step"
+		(model "${KIPRJMOD}/stimhat.3dshapes/VSSOP-10_3x3mm_P0.5mm.step"
 			(offset
 				(xyz 0 0 0)
 			)
@@ -26581,17 +26581,6 @@
 			)
 		)
 	)
-	(gr_text "BSL"
-		(at 35 10.4 0)
-		(layer "F.SilkS")
-		(uuid "7bf1ad56-e61d-490c-9474-1fba10e16aa9")
-		(effects
-			(font
-				(size 1 1)
-				(thickness 0.15)
-			)
-		)
-	)
 	(gr_text "ISOLATED"
 		(at 49.5 18.75 0)
 		(layer "F.SilkS")
@@ -26604,7 +26593,7 @@
 		)
 	)
 	(gr_text "E1"
-		(at 51 63.4 0)
+		(at 50.4 54.15 0)
 		(layer "F.SilkS")
 		(uuid "53ef7934-9349-4774-a741-e0b2963f18eb")
 		(effects
@@ -26647,6 +26636,17 @@
 			)
 		)
 	)
+	(gr_text "BSL"
+		(at 16.9 34.25 90)
+		(layer "F.SilkS")
+		(uuid "7bf1ad56-e61d-490c-9474-1fba10e16aa9")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.15)
+			)
+		)
+	)
 	(gr_text "+V 0V -V CAB"
 		(at 41 42.4 0)
 		(layer "B.SilkS")
@@ -26660,7 +26660,7 @@
 		)
 	)
 	(gr_text "TRIG IN"
-		(at 22.8 53.5 0)
+		(at 24.92 53.5 0)
 		(layer "B.SilkS")
 		(uuid "23b30fe7-5fba-4aac-8a4e-498f1dab7357")
 		(effects
@@ -26684,7 +26684,7 @@
 		)
 	)
 	(gr_text "STIM OUT"
-		(at 38.4 53.5 0)
+		(at 40.92 53.5 0)
 		(layer "B.SilkS")
 		(uuid "095e4068-817b-42ca-9876-26546382f0f0")
 		(effects
