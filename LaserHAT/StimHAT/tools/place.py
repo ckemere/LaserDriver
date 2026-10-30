@@ -74,13 +74,14 @@ at("R101", 30.25, 27, 180); at("R102", 29.25, 28.4, 180); at("R103", 30.2, 24.8,
 at("U109", 42.0, 19.5, 270)
 # ---- isolated block A (x 36.5-65, y 20-34): set-point, switches, output stage, SHORT, fault detector
 at("C102", 38, 23, 90); at("C124", 45.5, 21.5, 90); at("C115", 51.8, 20.45, 180); at("C125", 61.4, 38.2, 90); at("TP101", 62.25, 45.0, 0)
+at("G1", 30.1, 18.4, 0)   # owl logo: board-only silk footprint stimhat:OwlLogo_Silk_6mm (tools/owl_logo.py), perched above U101 looking at U7
 at("U105", 49.95, 22.75, 180); at("C114", 47.25, 24.7, 180); at("R110", 40.85, 23.75, 0); at("R109", 43.15, 23.75, 180)
 at("U106", 58.65, 25.25, 90); at("C117", 61.15, 26.6, -90); at("R105", 54.2, 21.85, 90); at("R106", 55.75, 21.82, -90); at("C116", 56, 24.88, -90)
 at("R114", 55.24, 27.05, 0); at("C120", 55.8, 28.48, -90); at("R115", 57, 29.5, -90); at("R116", 59.15, 29.55, 0); at("C121", 53.15, 50, -90)
 at("U107", 48, 28, 180); at("C118", 53.5, 28.2, 270); at("C119", 52.6, 25.9, -90)
 at("U108", 56.88, 41.01, 180); at("C126", 51.85, 42.45, 90); at("U110", 56.94, 34.05, 0)
 at("R117", 56.05, 31.7, 180); at("R118", 53.75, 31.7, 180); at("R119", 53.15, 34.3, -90); at("R120", 41.6, 30.8, 180)
-at("R121", 39.59, 30.8, 0); at("D101", 40.85, 29.15, 0); at("C122", 56.91, 36.55, 180); at("TP102", 63.75, 21.75, 0)
+at("R121", 39.59, 30.8, 0); at("D101", 40.85, 29.15, 0); at("C122", 56.91, 36.55, 180); at("TP102", 62.25, 48.25, 0)
 # ---- isolated strip B (x 50-65, y 36.5-54.5): LDO and -4.3 V rail, LC filter, capacitance multipliers, clamps
 at("U104", 48, 39.5, -90); at("C112", 50.5, 39, -90); at("C111", 48, 34, 90); at("R113", 42, 34, -90)
 at("D102", 44, 34, 90); at("C113", 41, 31.75, 0); at("D103", 50.25, 34, 90)
@@ -225,6 +226,7 @@ silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7
 silk("BSL", 16.9, 34.25, 1.0, 90)
 silk("ISOLATED", 49.5, 18.75); silk("5V", 19.0, 37.6, 0.9); silk("E1", 50.4, 54.15, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("NYLON", 61.5, 50.0, 1.0)
 silk("STIM OUT", 40.92, 53.5, 1.0, 0, pcbnew.B_SilkS); silk("TRIG IN", 24.92, 53.5, 1.0, 0, pcbnew.B_SilkS)   # centred on J7 / J6
+silk("TRIG IN", 16.3, 50.0, 1.0, 90); silk("STIM OUT", 49.4, 50.0, 1.0, 90)   # front, on the jacks' outer sides (0.4 mm between the bodies)
 # drawings: the 0.91" OLED module when fitted, the Pi 5 notch note; the bonnet on its own layer User.1 "Bonnet"
 def circle(cx, cy, r, layer, w=0.15):
     d = pcbnew.PCB_SHAPE(board)

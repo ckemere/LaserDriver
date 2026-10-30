@@ -177,6 +177,14 @@ HAT project; `${KIPRJMOD}` is this directory).  The "USB" silk moved to (9.6, 24
 errors / 0 warnings, 0 open connections; every outer-pour piece is stitched (the one GND_ISO sliver at (50.6, 25.4) hangs on
 a pad).  The user also added TP102 (GND_ISO) and routed the LED from pin 9 (PA5), both now in the generators.
 
+**Owl and labels (2026-10-29 night):** the lab's owl (`../Footprints.pretty/OwlLogo_Laser_14mm`, 17 x 14 mm with exposed-copper
+laser eyes) is too big for U101 and its copper eyes would land in the barrier, so `tools/owl_logo.py` makes a silk-only copy at
+45 % (`stimhat:OwlLogo_Silk_6mm`, 7.6 x 6.3 mm, no pads, no courtyard, eyes left dark) and places it as the board-only
+footprint G1 at (30.1, 18.4): perched above U101's west pin row and C101, looking south-west at U7 with its beams toward the
+MCU's north-east corner; nothing but tented vias and tracks lies under it.  Front-silk "TRIG IN" / "STIM OUT" stand on the
+jacks' outer sides at x 16.3 / 49.4 (the two bodies are 0.4 mm apart, so nothing fits between them); the back-silk pair
+stays centred under the jacks.
+
 ## Checks before fab
 
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
