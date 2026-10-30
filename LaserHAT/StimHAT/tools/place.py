@@ -169,7 +169,7 @@ def plane(name, net, layer, pts, clearance=0.2):
 # In1 ground planes: HAT GND everywhere west / north of the barrier (the BNC J7 area included, stopping 2.6 mm north
 # of J7's tails = 2.5 mm from J102's pads), GND_ISO under block A, the pocket, strip B and the tab; the rule areas
 # (all copper layers) keep the 2.5 mm barrier and the standoff circles copper-free
-plane("GND plane", "GND", pcbnew.In1_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)])
+plane("GND plane", "GND", pcbnew.In1_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (46.5, 43.6), (46.5, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
 
 # (the isolated polygons are notched under U109, whose HAT-side pads end at y 18.0: isolated copper from y 20.6 there)
 # named regions for the isolation DRC rules (StimHAT.kicad_dru): rule areas that keep nothing out by themselves, so the
@@ -188,10 +188,10 @@ def region(name, pts):
 
 
 # F / B ground pours (same shapes, 0.25 mm clearance so hand routing keeps room)
-plane("GND pour F", "GND", pcbnew.F_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)], 0.25); plane("GND pour B", "GND", pcbnew.B_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)], 0.25)
+plane("GND pour F", "GND", pcbnew.F_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (46.5, 43.6), (46.5, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25); plane("GND pour B", "GND", pcbnew.B_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (46.5, 43.6), (46.5, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25)
 plane("GND_ISO pour F", "GND_ISO", pcbnew.F_Cu, [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)], 0.25); plane("GND_ISO pour B", "GND_ISO", pcbnew.B_Cu, [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)], 0.25)
 # In2 is a routing layer for the power nets (tracks, no islands - user's call 2026-10-29)
-region("hat_region", [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)])
+region("hat_region", [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (46.5, 43.6), (46.5, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
 region("isolated_region", [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)])
 plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu, [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)])
 

@@ -35,7 +35,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | Controls | SW7 ALPS SKRHADE010 five-way joystick (mounted at 45°), SW9 TS-1088 FIRE | replaces the thumbwheel and the BACK button |
 | BNC | J6 TRIGGER IN → R23 1k / R24 100k → U8A (74LVC2G17) → PA26; PA25 → U8B → R25 33 → J7 STIM OUT, D9 + R18 STIM LED | as the Rev 2 HAT |
 | Display | J10 PinSocket 1 × 4 vertical, unpopulated (GND, 3.3 V, SCL, SDA) | for a 0.91" 128 × 32 SSD1306 module (LCSC C5248081) standing up along the header at the strip's west end, facing south, instead of the bonnet |
-| Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 100k pull-downs, R107 / R108 and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
+| Isolation | U101 ISO7741F (EN, CATH, RELEASE in; FAULT_n back; fail-safe low), U109 ISO1640 (I2C), R101–R103 10k pull-downs, R107 / R108 and R109 / R110 4.7k I2C pull-ups, C101–C103, C124 | the only parts whose pads lie on both sides of the barrier, with PS1 |
 | Isolated supply | J102 B4B-PH-K-S from the battery pack (+V, 0V, −V, CAB = 0V) or the DC-DC pod's 2.0 mm pins in its holes; J103 1 × 2 header (5 V, GND, unpopulated) feeds the pod; C109 / C110 10 µF, D103 / D104 BZT52C20S clamps, U104 TLV76050 (+5V_ISO), R113 4.7k + D102 BZT52C4V3S (−4.3 V) | the A0515S, L101 / L102 + C105 / C106 and the Q101 / Q102 capacitance multipliers moved to the pod (see below) |
 | Set-point | U105 DAC60501 (I2C 0x48), C114 / C115, U106B OPA2192 inverter (R105 / R106 10.0k 0.1 %), U107 CD74HC4053 on +5 / −4.3 V | switch 1 (CATH) picks ±VSET, switch 2 (EN) gates it, switch 3 inverts RELEASE for the SHORT switch |
 | Output stage | U106A OPA2192, R114 1k, C120 100p, R115 47, R116 2.49k 0.1 %, C121 1 µF, J101 electrode header (E1, E2), TP101 (ISENSE) / TP102 (GND_ISO) test points | 502 µA full scale, 0.123 µA / LSB |
@@ -61,9 +61,10 @@ its pin edge north (both outlines on User.Drawings; lying flat it covers SW6, th
 to bottom: SW10, J5, the three LEDs, FIRE, the joystick in the south-west corner.  Two right-angle BNCs mid-south
 (bodies y 43–57, barrels past the edge; `stimhat:BNC_Amphenol_031-5540_RA`, right-angle only — the Rev 2 HAT's dual
 footprint with the vertical 031-5539's diagonal post pad and body removed).  The band the vertical BNC bodies would have taken (y 36.5–43, outside the bonnet) carries the supply
-connectors: J102 (`stimhat:JST_PH_B4B-PH-K_NoCrtYd`, the library footprint without courtyard and silk) at (44, 40.1)
+connectors: J102 (`stimhat:JST_PH_B4B-PH-K_NoCrtYd`, the library footprint without courtyard and silk, 0.8 mm holes) at (44, 39.0)
 rot 180 in an isolated pocket, pads +V / 0V / −V / CAB at x 44 / 42 / 40 / 38 (label on the back), and J103 (1 × 2
-2.54 mm, pin 1 = 5 V west) at (19 / 21.54, 40.1) on the HAT side.  The DC-DC pod lies flat over the band between them
+2.54 mm, pin 1 = 5 V west) at (19 / 21.54, 39.0) on the HAT side (the user moved both rows from y 40.1 to 39.0 on 2026-10-29;
+see "Pre-order audit round 2" for what that means for the pod).  The DC-DC pod stands in the band between them
 (outline on User.Drawings, x 16.5–46), its own isolation gap over the HAT's barrier strip at x 34–36.5.  Isolated stimulator: block A (x 36.5–65, y 20–35, under the bonnet's
 east end: isolators, DAC, inverter, 4053, output stage, SHORT, fault detector), the pocket (y 35–41.2, J102), strip B
 (x 47.7–65, y 41.2–57: LDO, −4.3 V rail, decoupling, clamps) and the tab (J101 vertical electrode header,
@@ -226,6 +227,58 @@ spots collide with MCU_STIM_IN); U104's courtyard 0.15 mm under J102's plastic h
 0.3 mm from the SOT-23 leads); R118 215 k (the fault window is a design value); 0.8 mm silk labels; the Pi-side scripts'
 defaults (Rev 2 HAT), which this board overrides through the LASERHAT_*_PIN variables.
 
+## Pre-order audit round 2 (2026-10-30)
+
+Four fresh agents (schematic, parts / footprints / pinouts, layout / fab, LCSC stock / sync) re-audited the design at
+2422f0f.  No blocker; the reports are in the session's scratch directory (`audit2_*.md`).  Fixed:
+
+* **Isolation barrier at U104** – its GND_ISO pad protruded 0.075 mm into the south keep-out strip (pads are allowed
+  there), 2.44 mm from the HAT pours' corner at (47.7, 43.6).  The HAT polygons' corner east of x 46.5 now steps to
+  y 43.7 (`tools/place.py`); the barrier measures ≥ 2.50 mm on every layer again (2.537 at U104.3).
+* **U109.8 via** was inside the +5V_ISO pad (via-in-pad under paste): moved to (44.3, 23.3) with a short stub.
+* **Via hole-to-hole** below JLC's 0.5 mm for different nets (the project rule is 0.25 mm, so DRC was silent): the
+  I2C_SCL / I2C_SDA, BUTTON4 / LED_MCU, LED_MCU / PI_RXD and PI_RXD / PI_TRIGGER pairs beside U7 were spread to
+  ≥ 0.55 mm.  Only J1's library NPTH pairs (0.395 mm, the Samtec footprint) remain.
+* **Owl eye pads** had lost their GND net in round 1 (a netlist sync clears the nets of symbol-less footprints);
+  `tools/stamp_fields.py` now re-assigns GND to G1's pads and the pipeline fills the zones after stamping.
+* **R101–R103 100k → 10k**: the ISO7741's input leakage is 10 µA max, and 10 µA × 100k = 1.0 V is right at VIL
+  (0.3 × 3.3 V).  These resistors are what hold EN / CATH / RELEASE low while the MCU is Hi-Z (NRST held low by the
+  Pi, before gpio init, crashed firmware); 10k gives 0.1 V worst case for 0.33 mA per line when driven high.
+* **C111 / C112** → C15849 (1 µF 50 V X5R 0603, Basic; C5199872 was Extended, not fee-free as round 1 claimed).
+  Extended count 23.  Round 1's claim about D101 / D103 / D104 / R115 being fee-free holds (Preferred).
+* `tools/make_footprints.py` attaches the 3D models of U7 and SW7 (regenerating in round 1 had dropped them);
+  R113's code goes through the `L` table; stale U7 comment and six unused codes removed from `sch_parts.py`; README
+  facts corrected (J102 / J103 rows at y 39.0, USB D+/D− lengths, U101.7 is EN1, the pod stands).
+
+**Needs the user's decision before ordering – the DC-DC pod vs the OLED bonnet.**  The J102 / J103 rows were moved
+from y 40.1 (the value the pod was designed for) to y 39.0 on 2026-10-29.  With the pins 1.0–1.3 mm in front of the
+pod's board the pod's front face is at HAT y ≈ 40.0–40.3, and PS1's 10.16 mm body then reaches y ≈ 29.8–30.1 at
+z 6.3–12.3 mm, i.e. ≈ 1 mm inside the bonnet's footprint (bonnet PCB edge y 31.0 at z 9–10.6).  At 40.1 the margin
+was only 0.1–0.4 mm (the pod README's 0.2–0.4 is optimistic for a SIP body with ± 0.5 mm tolerance).  Options: rows
+back to 40.1; rows at 40.5 with J6 / J7 0.5 mm further south (BNC bodies 0.5 mm further over the edge, pod back
+0.5 mm from J7's body); or a shorter module on the pod.  `DCDCPod/README.md` and `DCDCPod/tools/place.py` must then
+state the same row y.  Nothing on the StimHAT itself depends on the choice except the two rows and their routing.
+
+Reviewed and deliberately not changed (round 2):
+
+* **U8 input while the MCU is in reset** – PA21 is Hi-Z during NRST low, so the LVC Schmitt input floats for the
+  ≈ 50 ms of a power cycle and chatter could reach the STIM OUT BNC.  A 100k pull-down on MCU_STIM_OUT would need a
+  part there is no room for at U8; stim-out pulses during a reset are meaningless to a recording system anyway.
+  Rev B item.
+* **VSET_N vs the HC4053's VEE** stays a firmware guarantee (GAIN register written at init and after every fault).
+  The hole: a +5V_ISO sag to 1.8–2.2 V leaves the DAC60501's registers undefined without a POR while the isolator
+  still passes FAULT_n high.  Firmware: write GAIN before every code write, or read it back over the ISO1640.  Rev B:
+  1–2.2k in series with VSET_N into U107.13.
+* SW6 shorts PA18 to MSPM0_3V3 without a series resistor (as the Rev 2 HAT); Q4's Q1 sees 4.4–4.6 V emitter-base
+  reverse bias in the normal Pi-powered state vs 5 V abs max (fine – do not lower R21); R118 215k (Extended, single
+  use) kept over 220k Preferred (thresholds 2.2 % closer to the rails); J102's 1.2 × 1.75 pads with 0.8 mm holes
+  leave a 0.2 mm ring (JLC minimum 0.13; optional 1.4 × 1.9); paste stays on the DNP R19 / R20 pads (hand fit later,
+  JLC skips DNP parts); the owl's north beam crosses U109.1's mask opening (JLC clips silk on pads).
+* Joystick direction mapping (a → A etc.) is a convention ALPS does not state: verify on the first board, remap in
+  firmware if needed.  CPL rotations use the per-package offsets of the two assembled 2026-10-01 orders; confirm
+  SW7, U105, U107 and U108 / U109 vs U6 in JLC's placement preview.
+* U108 DG418 stock is 205 pcs at JLC and no other DG418 code has stock: order promptly or buy 20 at LCSC as spares.
+
 ## Checks before fab
 
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
@@ -245,10 +298,10 @@ BNCs freed the 6.7 mm band north of their bodies, which takes PS1 standing up wi
 (body south of the pin row, 0.9 / 5.1 mm from it per the Mornsun drawing, 1.6 mm pads so a track passes between pins
 1 and 2), the tab shrank to 7.5 mm with J101 beside J102, and nothing hangs below the HAT.  "STIM OUT" / "TRIG IN" are
 printed on both sides: the top labels sit between PS1's body and the BNCs and are hidden when PS1 is fitted.  Minors
-from the fourth review that still apply: U101.7 (ISO7741 VCC1, second pin) has no cap of its own (C101 is at pin
+from the fourth review that still apply: U101.7 is EN1 (tied high, no cap needed; C101 is at pin
 1, 4.4 mm away), C116 sits at U110 rather than U106.8 — both are 100 nF-at-5 V class devices on short, quiet rails;
 the +3V3 / MSPM0_3V3 / VBUS / ±V_STIM tracks run at 0.2–0.25 mm where their class says 0.3 (≤ 250 mA, fine); USB
-D+/D− are 19 vs 34 mm long (full speed, irrelevant); run `tools/lcsc_verify.py --refresh` before ordering (10 codes
+D+/D− are 9.8 vs 8.0 mm long (full speed, irrelevant); re-check LCSC stock before ordering (10 codes
 are not in the local catalog yet).  Noted, not changed: C114 (VREFIO)
 is 6 mm from U105.10 with two vias (no room next to the pin; 1 µF on a buffered reference, fine); J10's and the BNC
 ground legs' pads have tracks at the 0.15 mm class distance (J10 is unpopulated, the BNC legs are big pads — solder

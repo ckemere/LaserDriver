@@ -48,17 +48,17 @@ JUMPER_T = "Jumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm"
 L0805 = "Inductor_SMD:L_0805_2012Metric"
 
 # LCSC codes (0402 resistors and 0402 / 0603 capacitors are JLC basic parts)
-L = dict(R100k="C25741", R10k="C25744", R1k="C11702", R47="C25118", R4k7="C25900", R2k2="C25879", R215k="C185443",
+L = dict(R100k="C25741", R10k="C25744", R1k="C11702", R47="C25118", R4k7="C25900", R4k7_0603="C23162", R2k2="C25879", R215k="C185443",
          R47k="C25792", R5k1="C25905", R2k="C4109", R3k9="C51721", R33="C25105", R100k01="C852472",
          R10k01="C95204", R2k49="C861299",
-         C100n="C307331", C1u="C52923", C10n="C15195", C470n="C47339", C100p="C1546", C4u7="C69335",
-         C1u50="C5199872", C100n50="C14663", C1u50_0805="C28323", C10u="C15850", C22u="C12891",
+         C100n="C307331", C1u="C52923", C10n="C15195", C470n="C47339", C100p="C1546", 
+         C1u50="C15849", C100n50="C14663", C1u50_0805="C28323", C10u="C15850", 
          BAT54WS="C7502694", Z4V3="C22399888", Z20="C19077451", LEDW="C2290", LEDR="C2286",
-         NPN="C20526", PNP="C53444", L10u="C139245",
+         
          USBC="C2988369", JOY="C202415", TS1088="C720477", MSK="C431540", EEPROM="C283445", LDO="C632000",
          LOADSW="C110466", CH340="C2977777", MCU="C22406180", BUF="C50714", PFET="C471913", DUALPNP="C154733",
          ISO7741="C2872241", ISO1640="C5122339", TLV760="C2867465", DAC="C1852027", OPA="C2876419",
-         HC4053="C6546", DG418="C2673514", TLV1702="C2870937", PH4="C131334")
+         HC4053="C6546", DG418="C2673514", TLV1702="C2870937")
 
 
 def R(ref, val, a, b, fp=R0402, lcsc=""):
@@ -124,8 +124,8 @@ PARTS = [
          # order (top to bottom: SCL_H / SDA_H toward U109 = ADC0 ch0 / ch1, then RELEASE_H, EN_H, CATH_H (TIMA0_CCP3),
          # FAULT_H (GPIO IRQ; the TIMA fault inputs PA26 / PA27 are now the I2C lines), STIM_IN at the bottom toward U8),
          # buttons and the LED on
-         # the west / south sides, STIM_IN on the TIMG8 capture pin; PI_TRIGGER on PA4 (pin 8) from Pi GPIO10 (J1.19), RELEASE_H
-         # on PA27 (pin 31) so it leaves U7 on the isolator side (2026-10-29, user's request); PA3 (pin 7) and PA15 (pin 19, DAC0_OUT) spare
+         # the west / south sides, STIM_IN on the TIMG8 capture pin; PI_TRIGGER on PA4 (pin 8) from Pi GPIO18 (J1.12); RELEASE_H
+         # on PA25 (pin 29) in U101's pin order; PA3 (pin 7) and PA6 (pin 10) spare (2026-10-30)
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
                "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": None, "11": "BUTTON4", "12": "PI_RXD", "13": "PI_TXD",
                "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON1", "17": "BUTTON6", "18": "BUTTON2", "19": "BUTTON3",
@@ -164,9 +164,9 @@ PARTS = [
     dict(ref="D9", sym="LED", value="KT-0603R", fp=LED0603, lcsc=L["LEDR"], nets={"1": "STIM_LED_K", "2": "BUF_OUT"}),
     R("R18", "2k", "STIM_LED_K", "GND", lcsc=L["R2k"]),
     # ================================================================ 4. isolation (HAT side pulls, ISO7741F, ISO1640)
-    R("R101", "100k", "EN_H", "GND", lcsc=L["R100k"]),
-    R("R102", "100k", "CATH_H", "GND", lcsc=L["R100k"]),
-    R("R103", "100k", "RELEASE_H", "GND", lcsc=L["R100k"]),
+    R("R101", "10k", "EN_H", "GND", lcsc=L["R10k"]),
+    R("R102", "10k", "CATH_H", "GND", lcsc=L["R10k"]),
+    R("R103", "10k", "RELEASE_H", "GND", lcsc=L["R10k"]),
     R("R107", "2.2k", "MSPM0_3V3", "SDA_H", lcsc=L["R2k2"]),
     R("R108", "2.2k", "MSPM0_3V3", "SCL_H", lcsc=L["R2k2"]),
     dict(ref="U101", sym="ISO7741", value="ISO7741FDBQR", fp=SSOP16, lcsc=L["ISO7741"],
@@ -194,7 +194,7 @@ PARTS = [
     dict(ref="U104", sym="TLV760", value="TLV76050DBZR", fp=SOT23, lcsc=L["TLV760"], nets={"2": "+V_STIM", "1": "+5V_ISO", "3": "GND_ISO"}),
     C("C111", "1uF 50V", "+V_STIM", "GND_ISO", fp=C0603, lcsc=L["C1u50"]),
     C("C112", "1uF 50V", "+5V_ISO", "GND_ISO", fp=C0603, lcsc=L["C1u50"]),
-    R("R113", "4.7k", "-5V_ISO", "-V_STIM", fp=R0603, lcsc="C23162"),
+    R("R113", "4.7k", "-5V_ISO", "-V_STIM", fp=R0603, lcsc=L["R4k7_0603"]),
     dict(ref="D102", sym="D_Zener", value="BZT52C4V3S", fp=SOD323, lcsc=L["Z4V3"], nets={"1": "GND_ISO", "2": "-5V_ISO"}),
     C("C113", "100nF", "GND_ISO", "-5V_ISO", lcsc=L["C100n"]),
     # ================================================================ 6. set-point: DAC60501 (I2C), inverter, 74HC4053

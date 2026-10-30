@@ -21,6 +21,11 @@ for fp in board.GetFootprints():
     if p is None:                           # board-only graphics (the owl logo G1): no part, nothing to stamp
         if not (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()):
             fp.SetExcludedFromBOM(True); fp.SetExcludedFromPosFiles(True); changed.append(ref)
+        if ref == "G1":                     # the owl's exposed-copper eyes are GND (a netlist sync clears nets of symbol-less footprints)
+            gnd = board.FindNet("GND")
+            for pad in fp.Pads():
+                if pad.GetNetname() != "GND":
+                    pad.SetNet(gnd); changed.append(ref)
         continue
     if fp.GetValue() != p["value"]:
         fp.SetValue(p["value"]); changed.append(ref)
