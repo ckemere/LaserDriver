@@ -28,6 +28,7 @@ fp.SetReference("REF**"); fp.SetValue("MSPM0G1507SRHBR")
 fp.SetFPID(pcbnew.LIB_ID("stimhat", "VQFN32_RHB_TEX"))
 for pad in fp.Pads():
     pad.SetNet(None)
+m = pcbnew.FP_3DMODEL(); m.m_Filename = "${KICAD9_3DMODEL_DIR}/Package_DFN_QFN.3dshapes/Texas_RHB0032E_VQFN-32-1EP_5x5mm_P0.5mm_EP3.45x3.45mm.wrl"; fp.Models().push_back(m)
 io.FootprintSave(LIB, fp)
 print("saved VQFN32_RHB_TEX:", len(list(fp.Pads())), "pads")
 
@@ -72,6 +73,7 @@ for (x1, y1, x2, y2) in ((-3.75, -3.75, 3.75, -3.75), (3.75, -3.75, 3.75, 3.75),
 for (x1, y1, x2, y2) in ((-5.0, -5.0, 5.0, -5.0), (5.0, -5.0, 5.0, 5.0), (5.0, 5.0, -5.0, 5.0), (-5.0, 5.0, -5.0, -5.0)):
     s = pcbnew.PCB_SHAPE(j); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetLayer(pcbnew.F_CrtYd); s.SetWidth(mm(0.05))
     s.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); s.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2))); j.Add(s)
+m = pcbnew.FP_3DMODEL(); m.m_Filename = "${KIPRJMOD}/stimhat.3dshapes/SW_ALPS_SKRHADE010.wrl"; j.Models().push_back(m)   # VRML body in stimhat.3dshapes
 io.FootprintSave(LIB, j)
 print("saved SW_ALPS_SKRHADE010:", len(list(j.Pads())), "pads")
 

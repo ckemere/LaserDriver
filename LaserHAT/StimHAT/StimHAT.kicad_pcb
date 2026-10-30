@@ -15223,6 +15223,17 @@
 			(uuid "037bd004-e1f4-49bf-8ad2-30cee5a398aa")
 		)
 		(embedded_fonts no)
+		(model "${KIPRJMOD}/stimhat.3dshapes/SW_ALPS_SKRHADE010.wrl"
+			(offset
+				(xyz 0 0 0)
+			)
+			(scale
+				(xyz 1 1 1)
+			)
+			(rotate
+				(xyz 0 0 0)
+			)
+		)
 	)
 	(footprint "Capacitor_SMD:C_0402_1005Metric"
 		(layer "F.Cu")
