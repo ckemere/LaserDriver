@@ -73,9 +73,9 @@ PARTS = [
     dict(ref="J1", sym="GPIO_2x20", value="GPIO", fp="Footprints:Samtec_HLE-120-02-xxx-DV-BE-LC_2x20_P2.54mm_Horizontal", lcsc="",
          nets={"1": "+3V3_PI", "2": "+5V", "3": "I2C_SDA", "4": "+5V", "5": "I2C_SCL", "6": "GND", "7": None, "8": "PI_TXD",
                "9": "GND", "10": "PI_RXD", "11": None, "12": "MCU_PWR_EN", "13": None, "14": "GND", "15": None, "16": None,
-               "17": "+3V3_PI", "18": "SWCLK", "19": None, "20": "GND", "21": None, "22": "SWDIO", "23": None, "24": None,
+               "17": "+3V3_PI", "18": "SWCLK", "19": "PI_TRIGGER", "20": "GND", "21": None, "22": "SWDIO", "23": None, "24": None,
                "25": "GND", "26": None, "27": "ID_SDA", "28": "ID_SCL", "29": None, "30": "GND", "31": None, "32": None,
-               "33": None, "34": "GND", "35": None, "36": "NRST", "37": "PI_TRIGGER", "38": None, "39": "GND", "40": None}),
+               "33": None, "34": "GND", "35": None, "36": "NRST", "37": None, "38": None, "39": "GND", "40": None}),
     dict(ref="J5", sym="USB_C_16P", value="GT-USB-7010ASV", fp="Connector_USB:USB_C_Receptacle_G-Switch_GT-USB-7010ASV", lcsc=L["USBC"],
          nets={"A1": "GND", "B1": "GND", "A12": "GND", "B12": "GND", "S1": "GND", "A4": "VBUS", "B4": "VBUS", "A9": "VBUS", "B9": "VBUS",
                "A5": "CC1", "B5": "CC2", "A6": "USB_DP", "B6": "USB_DP", "A7": "USB_DM", "B7": "USB_DM", "A8": None, "B8": None}),
@@ -120,12 +120,13 @@ PARTS = [
     dict(ref="U7", sym="MSPM0G3507", value="MSPM0G1507SRHBR", fp="stimhat:VQFN32_RHB_TEX", lcsc=L["MCU"],
          # pin map re-optimised for the StimHAT placement (2026-10-29): isolator lines on the east side (TIMA0 CCP3 /
          # CCP1 / FAULT0 and ADC0 ch3 / ch2 so the laser variant gets PWM, fault and ADC there), buttons and the LED on
-         # the west / south sides, STIM_IN on the TIMG8 capture pin; PA3 / PA4 (pins 7 / 8) spare (I2C1, TIMG7/8)
+         # the west / south sides, STIM_IN on the TIMG8 capture pin; PI_TRIGGER on PA4 (pin 8) from Pi GPIO10 (J1.19), RELEASE_H
+         # on PA27 (pin 31) so it leaves U7 on the isolator side (2026-10-29, user's request); PA3 (pin 7) and PA15 (pin 19, DAC0_OUT) spare
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
-               "7": None, "8": None, "9": "LED_MCU", "10": "BUTTON4", "11": "BUTTON6", "12": "PI_RXD", "13": "PI_TXD",
-               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON2", "17": "BUTTON1", "18": "BUTTON3", "19": "RELEASE_H",
+               "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": "BUTTON4", "11": "BUTTON6", "12": "PI_RXD", "13": "PI_TXD",
+               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON2", "17": "BUTTON1", "18": "BUTTON3", "19": None,
                "20": "BUTTON5", "21": "MCU_STIM_OUT", "22": "BSL_INVOKE", "23": "SWDIO", "24": "SWCLK", "25": "MCU_STIM_IN",
-               "26": "CATH_H", "27": "EN_H", "28": "SDA_H", "29": "SCL_H", "30": "FAULT_H", "31": "PI_TRIGGER", "32": "VCORE",
+               "26": "CATH_H", "27": "EN_H", "28": "SDA_H", "29": "SCL_H", "30": "FAULT_H", "31": "RELEASE_H", "32": "VCORE",
                "33": "GND"}),
     R("R4", "100k 0.1%", "ROSC", "GND", lcsc=L["R100k01"]),
     C("C4", "470nF", "VCORE", "GND", lcsc=L["C470n"]),

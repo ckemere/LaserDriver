@@ -242,13 +242,14 @@ positions: PWM, fault and ADC functions sit on the isolator-facing pins.
 |---|---|---|---|
 | 1, 2 | PA0, PA1 | I2C_SDA, I2C_SCL | I2C0 (fail-safe pins), fixed |
 | 3 / 6 / 32 | NRST / PA2 / VCORE | NRST / ROSC / VCORE | fixed |
-| 7, 8 | PA3, PA4 | spare | I2C1, TIMG7 / TIMG8 |
+| 7 | PA3 | spare | I2C1, TIMG8 |
+| 8 | PA4 | PI_TRIGGER | GPIO IRQ, ← Pi GPIO10 (header pin 19; moved from GPIO26 / pin 37 and PA27 on 2026-10-29 so the line comes straight down from the header's west half) |
 | 9 | PA5 | LED_MCU | GPIO, faces D7 |
 | 10, 11 | PA6, PA7 | BUTTON4 (up), BUTTON6 (right) | GPIO, west side toward the joystick |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | UART1 (only PA8/9 or PA17/18), fixed |
 | 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 (BSL), fixed |
 | 16, 17, 18 | PA12, PA13, PA14 | BUTTON2 (centre), BUTTON1 (left / BACK), BUTTON3 (down) | GPIO |
-| 19 | PA15 | RELEASE_H | DAC0_OUT (only pin), fixed |
+| 19 | PA15 | spare | DAC0_OUT (only pin) - free for a laser variant's setpoint DAC |
 | 20 | PA16 | BUTTON5 (FIRE) | GPIO |
 | 21 | PA17 | MCU_STIM_OUT | GPIO (TIMA1_C0 / TIMG7_C0 available) |
 | 22 / 23 / 24 | PA18 / PA19 / PA20 | BSL_INVOKE / SWDIO / SWCLK | fixed |
@@ -257,7 +258,7 @@ positions: PWM, fault and ADC functions sit on the isolator-facing pins.
 | 27 | PA23 | EN_H (PWM_A) | TIMA0_CCP3, faces U101.4 |
 | 28, 29 | PA24, PA25 | SDA_H, SCL_H (DB_ADC_A/B) | ADC0 ch 3 / ch 2 (ADC1 has no east-side inputs), face U109 |
 | 30 | PA26 | FAULT_H | TIMA0 FAULT0 + GPIO IRQ, faces U101.6 |
-| 31 | PA27 | PI_TRIGGER | TIMG7_CCP1, unchanged |
+| 31 | PA27 | RELEASE_H | GPIO, faces U101.3 (was PI_TRIGGER; moved so the e-stim lines all leave on the isolator side) |
 
 Firmware: `Firmware/board.h` / `mcu.h` carry this map as an uncommitted draft; `pwm_timer.c` / `output_mux.c`
 (CCP1 ↔ CCP3 roles), `adc.c` (ADC0 ch 3 / 2) and the GPIO IRQ bit masks still need the matching edits.  Found on the
