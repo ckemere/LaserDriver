@@ -10113,7 +10113,7 @@
 	(footprint "stimhat:OwlLogo_Eyes_14mm_R"
 		(layer "F.Cu")
 		(uuid "5427d026-7815-4cd9-af7b-93e735380a94")
-		(at 34.75 8.75)
+		(at 37.9508 12.5695)
 		(descr "Owl logo with exposed-copper eyes (tie to GND), beams in silk, 14.0 mm tall: OwlLogo_Laser_14mm x 1.00, mirrored (looks right)")
 		(tags "logo owl laser")
 		(property "Reference" "G1"
