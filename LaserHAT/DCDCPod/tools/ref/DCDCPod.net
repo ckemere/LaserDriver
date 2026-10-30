@@ -1,7 +1,7 @@
 (export (version "E")
   (design
     (source "/home/claude-agent/Code/LaserDriver/.claude/worktrees/stim-hat/LaserHAT/DCDCPod/DCDCPod.kicad_sch")
-    (date "2026-10-29T13:28:32-0500")
+    (date "2026-10-30T13:26:21-0500")
     (tool "Eeschema 9.0.8+dfsg-1")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
@@ -145,10 +145,10 @@
       (sheetpath (names "/") (tstamps "/"))
       (tstamps "e02d42a1-144a-5a52-b7bb-0d1fefe2b365"))
     (comp (ref "PS1")
-      (value "A0515S-1WR3")
-      (footprint "dcdcpod:DCDC_SIP6_A0515S_BodyN")
+      (value "RB-0515D/HP")
+      (footprint "dcdcpod:DCDC_SIP6_RB0515D")
       (fields
-        (field (name "Footprint") "dcdcpod:DCDC_SIP6_A0515S_BodyN")
+        (field (name "Footprint") "dcdcpod:DCDC_SIP6_RB0515D")
         (field (name "Datasheet"))
         (field (name "Description")))
       (libsource (lib "dcdcpod") (part "A0515S") (description ""))

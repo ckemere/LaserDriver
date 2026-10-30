@@ -6,7 +6,7 @@ HAT x = pod x + 15.  Headers J1 / J2 on the front, bottom edge, pins pointing do
 mirrored along the row by tools/make_footprints.py so the pin numbers increase eastward): their horizontal pins run
 1.27 / 1.0 mm in front of the pod and land in the HAT's holes at HAT y 39.0, so the pod's front face is at HAT y
 ~37.9 and its back (1.6 mm board) at ~36.3, 5.3 mm south of the OLED bonnet's edge (y 31.0).
-PS1 stands on the front at the TOP (pin row y 1.3, rot 0: pins 1 / 2 (5 V) west, 4 / 5 / 6 east, body y 0.4-6.4
+PS1 stands on the front at the TOP (pin row y 1.7, rot 0: pins 1 / 2 (5 V) west, 4 / 5 / 6 east, body y 0.43-6.43
 below the pins), i.e. 16.6-22.6 mm above the HAT: its 10.16 mm body hangs south over the BNC bodies (15.6 mm tall).
 Everything else below PS1, on the front (nothing below PS1 stands more than 1.3 mm out of the face; the BNC bodies
 are 5.2 mm away):
@@ -30,7 +30,7 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 BOARD = os.path.join(ROOT, "DCDCPod.kicad_pcb")
-W, H, R = 31.0, 22.5, 1.0                  # R 1.0 (was 1.5): keeps PS1's pin-1 silk mark (x 0.79, y 0.1-2.1) inside the corner
+W, H, R = 31.0, 22.5, 1.0                  # R 1.0 (was 1.5): keeps PS1's pin-1 silk mark (x 1.0, y 0.7-2.7) inside the corner
 HAT_DX = 15.0                              # HAT x = pod x + HAT_DX (seen from the south)
 mm = pcbnew.FromMM
 P = {}                                     # ref -> (x, y, rot, flip)
@@ -45,7 +45,7 @@ def at(ref, x, y, rot=0, flip=False):
 at("J2", 44.0 - HAT_DX, H - 3.6, 270)      # pins: 1 CAB x 23, 2 -V 25, 3 0V 27, 4 +V 29  (HAT J102: CAB 38, -V 40, 0V 42, +V 44)
 at("J1", 21.54 - HAT_DX, H - 4.4, 270)     # pins: 1 5V x 4.0, 2 GND 6.54                (HAT J103: 5V 19, GND 21.54)
 # ---- the DC-DC module at the top, pin 1 west (rot 0), body below the pin row
-at("PS1", 3.6, 1.3, 0)                     # pins: 1 +Vin 3.6, 2 GND 6.14 | 4 -Vo 11.22, 5 0V 13.76, 6 +Vo 16.3; body y 0.4-6.4
+at("PS1", 3.6, 1.7, 0)                     # pins: 1 +Vin 3.6, 2 GND 6.14 | 4 -Vo 11.22, 5 0V 13.76, 6 +Vo 16.3; body y 0.43-6.43 (RECOM: 1.27 behind / 4.73 in front)
 # ---- 5 V side
 at("C104", 4.87, 7.6, 0)                   # pad 1 (+5V) west on the +5V track, pad 2 (GND) east on the GND track
 # ---- negative block (0805 vertical: rot 90 = pad 1 at the bottom, rot 270 = pad 1 at the top)

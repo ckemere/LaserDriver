@@ -3,7 +3,7 @@
 One 65 × 57 mm HAT (plus a 10 × 7.5 mm tab on the south-east) carries the Rev 2 HAT core — MSPM0G1507 (the G3507 minus CAN-FD, same pinout), CH340N USB-UART,
 USB-C power path, HAT ID EEPROM, BNC trigger in / stim out, buttons and LEDs — and the kbest constant-current
 stimulator that was the plug-in e-stim module, isolated from the Pi side by an ISO7741F and an ISO1640 and powered
-by the battery pack (J102, JST-PH) or by a plug-in DC-DC pod (A0515S + LC filter + capacitance multipliers on its own
+by the battery pack (J102, JST-PH) or by a plug-in DC-DC pod (RB-0515D/HP + LC filter + capacitance multipliers on its own
 board, 2026-10-29) that plugs into J102's holes and takes 5 V from J103.  The
 Adafruit 4567 OLED bonnet stacks on the Pi header above it as before; a 0.91" 128 × 32 I2C OLED module can be fitted
 in an unpopulated right-angle socket instead.  4-layer, JLC economic assembly (top side only).

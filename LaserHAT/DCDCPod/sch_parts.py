@@ -4,7 +4,7 @@ top side and plugs into J103 (5 V, GND; 1 x 2, 2.54 mm) and J102's holes (+V, 0V
 right-angle pin headers.  Single source of truth for symbol, value, footprint, LCSC code and pin -> net;
 tools/netcheck.py proves the drawn schematic matches it.
 
-  5 V side   J1 (pin 1 = 5 V, pin 2 = GND, into HAT J103) -> C104 4.7 uF -> PS1 A0515S-1WR3 pins 1 / 2
+  5 V side   J1 (pin 1 = 5 V, pin 2 = GND, into HAT J103) -> C104 4.7 uF -> PS1 RB-0515D/HP (RECOM; A0515S-1WR3 pin-compatible) pins 1 / 2
   isolated   PS1 pin 6 (+Vo) -> L101 10 uH -> +V_F (C105 10 uF to 0V) -> Q101 MMBT3904 collector; base from +V_F through
              R111 4.7k, C107 10 uF base to 0V; emitter = +V_OUT.  Mirror image on the negative rail: pin 4 (-Vo) -> L102 ->
              -V_F (C106) -> Q102 MMBT3906, R112 / C108, emitter = -V_OUT.  Pin 5 = 0V.
@@ -21,7 +21,7 @@ SOT23 = "Package_TO_SOT_SMD:SOT-23"
 TP = "TestPoint:TestPoint_Pad_D1.0mm"
 HDR2RA = "dcdcpod:PinHeader_1x02_P2.54mm_Horizontal_Pod"
 HDR4RA = "dcdcpod:PinHeader_1x04_P2.00mm_Horizontal_Pod"
-DCDC = "dcdcpod:DCDC_SIP6_A0515S_BodyN"
+DCDC = "dcdcpod:DCDC_SIP6_RB0515D"
 
 # LCSC codes (the StimHAT's table, StimHAT/sch_parts.py)
 L = dict(C4u7="C69335", C10u="C15850", L10u="C139245", R4k7="C25900", NPN="C20526", PNP="C53444")
@@ -39,7 +39,7 @@ PARTS = [
     # ---- 5 V side
     dict(ref="J1", sym="Conn_01x02", value="5V IN (HAT J103)", fp=HDR2RA, lcsc="", nets={"1": "+5V", "2": "GND"}),
     C("C104", "4.7uF", "+5V", "GND", fp=C0603, lcsc=L["C4u7"]),
-    dict(ref="PS1", sym="A0515S", value="A0515S-1WR3", fp=DCDC, lcsc="",
+    dict(ref="PS1", sym="A0515S", value="RB-0515D/HP", fp=DCDC, lcsc="",
          nets={"1": "+5V", "2": "GND", "4": "-V_RAW", "5": "0V", "6": "+V_RAW"}),
     # ---- isolated side: LC filter
     dict(ref="L101", sym="L", value="10uH", fp=L0805, lcsc=L["L10u"], nets={"1": "+V_RAW", "2": "+V_F"}),
