@@ -181,7 +181,10 @@ a pad).  The user also added TP102 (GND_ISO) and routed the LED from pin 9 (PA5)
 laser eyes and beams) sits on U101 looking at U7.  `tools/owl_logo.py` derives `stimhat:OwlLogo_Eyes_14mm_R` at full size, mirrored so the
 owl looks right (MIRROR = True negates every x): the eye copper is kept (two pads on GND, exposed), the copper beams become
 silk lines, no courtyard; the script keeps G1 where it
-finds it on the board (the user places the owl by hand) and only uses its POS for a first placement.  Rules for that hand
+finds it on the board (the user places the owl by hand) and only uses its POS for a first placement.  `--neuron X Y` (default
+48.0 16.2, the centre of the empty pour square above the "ISOLATED" label) moves the neuron drawing to that board position, replaces
+the four library beams by two converging silk lines per eye (from the socket edge to the soma) and turns each eye's copper square
+to its beam angle (the sockets are round, 2.5 mm across, so the 1.64 mm square fits at any angle).  Re-run it after moving G1.  Rules for that hand
 placement: the eyes are at (+0.8, -4.3) and (-2.7, -4.3) from the centre (mirrored), 1.64 mm square, so both must end west of x 33.7 (the
 barrier strip starts at x 34 and the strip keep-outs deliberately do not forbid pads, because the isolators' own pads straddle
 them - DRC will not catch an eye in the strip, and a custom-shaped pad's outline reaching into the isolated region is only
