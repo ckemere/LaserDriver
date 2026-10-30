@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """$KICAD_PY tools/owl_logo.py -- the lab's owl for the StimHAT, derived from ../Footprints.pretty/OwlLogo_Laser_14mm:
-every coordinate scaled by SCALE, the exposed-copper EYES kept (pads 1 / 2, pruned to the eye polygons), the copper
-BEAM primitives and the beam anchor pads dropped (the beams stay as silk lines), no courtyard.  Writes
-stimhat.pretty/<NAME>.kicad_mod and places / refreshes it on the board as the board-only footprint G1 with its eyes on GND.
+every coordinate scaled by SCALE, the exposed-copper EYES kept (pruned to the eye polygons, pupils aimed at the neuron), the
+source's beams dropped and redrawn toward the neuron: an exposed-copper line from each eye to the soma (one pad each, on F.Cu
+across whatever is routed there, so check DRC), between an outer and an inner silk triangle; no courtyard.  Writes
+stimhat.pretty/<NAME>.kicad_mod and places / refreshes it on the board as the board-only footprint G1 with all its pads on GND.
 The eyes sit at (-0.8, -4.3) and (+2.7, -4.3) x SCALE from the centre (x negated when MIRROR), so the centre must stay west of the barrier by
 3.6 x SCALE + clearance (the owl looks west, toward U7)."""
 import math
@@ -20,6 +21,7 @@ POS = (29.6, 18.05)         # only used when G1 is not on the board yet: an exis
 EYE_R = 1.4                 # primitives whose bbox lies within this radius of the pad anchor are eye copper, the rest are beams
 NEURON = (48.0, 16.2)       # board position of the neuron the owl looks at (--neuron X Y): the centre of the empty pour square above "ISOLATED";
                             # the neuron drawing is moved there, the beams re-aimed from both eyes and the eye squares turned to the beam angle
+BEAM_GAP = 0.2              # the beams start outside the owl: this far past the last place a beam's stroke touches the body silk
 if "--neuron" in sys.argv:
     i = sys.argv.index("--neuron"); NEURON = (float(sys.argv[i + 1]), float(sys.argv[i + 2]))
 
@@ -94,9 +96,106 @@ tx, ty = NEURON[0] - POS[0], NEURON[1] - POS[1]                     # neuron tar
 LINE = re.compile(r'\n  \(fp_line \(start (-?[\d.]+) (-?[\d.]+)\) \(end (-?[\d.]+) (-?[\d.]+)\)\n\s*\(stroke \(width ([\d.]+)\) \(type solid\)\) \(layer "F\.SilkS"\)\)')
 segs = [tuple(map(float, m.groups()[:4])) for m in LINE.finditer(s)]
 neuron = [g for g in segs if math.hypot(g[2] - g[0], g[3] - g[1]) <= 2.0 * SCALE]
-nx = (min(min(g[0], g[2]) for g in neuron) + max(max(g[0], g[2]) for g in neuron)) / 2
-ny = (min(min(g[1], g[3]) for g in neuron) + max(max(g[1], g[3]) for g in neuron)) / 2
+lx0, lx1 = min(min(g[0], g[2]) for g in neuron), max(max(g[0], g[2]) for g in neuron)
+ly0, ly1 = min(min(g[1], g[3]) for g in neuron), max(max(g[1], g[3]) for g in neuron)
+# the soma (triangle) and the first stretch of the apical dendrite are small filled silk polygons next to the lines: they move too
+POLY = re.compile(r'\n  \(fp_poly \(pts ((?:\(xy -?[\d.]+ -?[\d.]+\) ?)+)\)\n\s*\(stroke \(width [\d.]+\) \(type solid\)\) \(fill solid\) \(layer "F\.SilkS"\)\)')
+
+
+def soma_pts(m):
+    """the points of a silk polygon that belongs to the neuron (<= 2 mm across, touching the line cluster's box + 0.5 mm), else None"""
+    pts = [tuple(map(float, p)) for p in re.findall(r"\(xy (-?[\d.]+) (-?[\d.]+)\)", m.group(1))]
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    small = max(max(xs) - min(xs), max(ys) - min(ys)) <= 2.0 * SCALE
+    near = min(xs) <= lx1 + 0.5 * SCALE and max(xs) >= lx0 - 0.5 * SCALE and min(ys) <= ly1 + 0.5 * SCALE and max(ys) >= ly0 - 0.5 * SCALE
+    return pts if small and near else None
+
+
+soma = [p for m in POLY.finditer(s) for p in (soma_pts(m) or [])]
+nx = (min([lx0] + [p[0] for p in soma]) + max([lx1] + [p[0] for p in soma])) / 2
+ny = (min([ly0] + [p[1] for p in soma]) + max([ly1] + [p[1] for p in soma])) / 2
 dx, dy = tx - nx, ty - ny
+
+
+# ---- eyes: each is one copper disc with the pupil as a notch in it, anchored at the disc's edge.  Re-anchor every eye pad on its
+# disc centre and spin the copper about that centre so the notch faces the neuron (the notch side is opposite the area centroid).
+def aim_eye(m):
+    pad = m.group(0)
+    ax, ay = map(float, re.search(r"\(at (-?[\d.]+) (-?[\d.]+)", pad).groups())
+    pts = [tuple(map(float, p)) for p in re.findall(r"\(xy (-?[\d.]+) (-?[\d.]+)\)", pad)]
+    cx, cy = (min(p[0] for p in pts) + max(p[0] for p in pts)) / 2, (min(p[1] for p in pts) + max(p[1] for p in pts)) / 2
+    a2 = gx = gy = 0.0
+    for (x1, y1), (x2, y2) in zip(pts, pts[1:] + pts[:1]):
+        c = x1 * y2 - x2 * y1; a2 += c; gx += (x1 + x2) * c; gy += (y1 + y2) * c
+    gx, gy = gx / (3 * a2), gy / (3 * a2)
+    ex, ey = ax + cx, ay + cy
+    rot = math.atan2(ty - ey, tx - ex) - math.atan2(cy - gy, cx - gx)
+    cr, sr = math.cos(rot), math.sin(rot)
+    pad = re.sub(r"\(xy (-?[\d.]+) (-?[\d.]+)\)", lambda q: "(xy %.4f %.4f)" % (cr * (float(q.group(1)) - cx) - sr * (float(q.group(2)) - cy),
+                                                                               sr * (float(q.group(1)) - cx) + cr * (float(q.group(2)) - cy)), pad)
+    eyes.append((ex, ey)); radii.append(max(math.hypot(x - cx, y - cy) for x, y in pts))
+    return re.sub(r"\(at -?[\d.]+ -?[\d.]+\)", "(at %.4f %.4f)" % (ex, ey), pad, count=1)
+
+
+eyes, radii = [], []
+s = re.sub(r'\(pad "1" smd custom \(at [^)]*\).*?\n    \)\)', aim_eye, s, flags=re.S)
+BEAM_W = max(0.12, 0.15 * SCALE)
+INNER = 0.7                 # the inner triangle's apex, as a fraction of the way from the eyes' midpoint to the outer apex
+COPPER_W = 0.267 * SCALE    # the exposed-copper laser lines (as in the source art), eye edge -> outer apex, between the two triangles
+SILK_OFF = 0.6 * SCALE      # each silk line starts this far off its copper line (outer triangle outside it, inner triangle inside)
+APEX_OFF = 0.35 * SCALE     # the outer silk lines end this far off the copper lines' common end
+
+
+def beams_from(eyes):
+    """(copper lines, silk lines): a copper line from each eye's edge to the outer apex just short of the soma; an outer silk
+    triangle outside the copper (SILK_OFF at the start, APEX_OFF at the apex) and an inner one inside it closing at INNER of the
+    way from the eyes' midpoint to the outer apex; every silk line starts just outside the owl"""
+    mx, my = sum(e[0] for e in eyes) / len(eyes), sum(e[1] for e in eyes) / len(eyes)
+    L = math.hypot(tx - mx, ty - my)
+    ox, oy = mx + (L - 0.9 * SCALE) * (tx - mx) / L, my + (L - 0.9 * SCALE) * (ty - my) / L
+    ix, iy = mx + INNER * (ox - mx), my + INNER * (oy - my)
+    copper, silk = [], []
+    for (ex, ey), r in zip(eyes, radii):
+        d = math.hypot(ox - ex, oy - ey); ux, uy = (ox - ex) / d, (oy - ey) / d
+        px, py = -uy, ux
+        if px * (mx - ex) + py * (my - ey) > 0:                         # make (px, py) point away from the other eye (outward)
+            px, py = -px, -py
+        copper.append((ex + r * ux, ey + r * uy, ox, oy))
+        sx, sy = ex + 1.3 * SCALE * ux, ey + 1.3 * SCALE * uy
+        silk.append(outside_start(sx + SILK_OFF * px, sy + SILK_OFF * py, ox + APEX_OFF * px, oy + APEX_OFF * py))
+        silk.append(outside_start(sx - SILK_OFF * px, sy - SILK_OFF * py, ix, iy))
+    return copper, silk
+
+
+BODY = [[tuple(map(float, p)) for p in re.findall(r"\(xy (-?[\d.]+) (-?[\d.]+)\)", m.group(1))] for m in POLY.finditer(s) if soma_pts(m) is None]
+
+
+def inside(x, y, poly):
+    """even-odd point-in-polygon"""
+    c = False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            c = not c
+    return c
+
+
+def outside_start(x1, y1, x2, y2):
+    """the beam (x1, y1) -> (x2, y2) shortened so it starts BEAM_GAP past the last place its stroke touches the body silk"""
+    L = math.hypot(x2 - x1, y2 - y1); ux, uy = (x2 - x1) / L, (y2 - y1) / L; h = BEAM_W / 2
+    last, n = None, int(L / 0.01)
+    for i in range(n + 1):
+        t = L * i / n
+        x, y = x1 + t * ux, y1 + t * uy
+        if any(inside(x + a * -uy, y + a * ux, p) for a in (-h, 0, h) for p in BODY):
+            last = t
+    t = 0 if last is None else min(L, last + h + BEAM_GAP)
+    return x1 + t * ux, y1 + t * uy, x2, y2
+
+
+def move_poly(m):
+    if soma_pts(m) is None:
+        return m.group(0)
+    return re.sub(r"\(xy (-?[\d.]+) (-?[\d.]+)\)", lambda q: "(xy %.4f %.4f)" % (float(q.group(1)) + dx, float(q.group(2)) + dy), m.group(0))
 
 
 def move_line(m):
@@ -107,23 +206,20 @@ def move_line(m):
 
 
 s = LINE.sub(move_line, s)
+s = POLY.sub(move_poly, s)
 
-# ---- eyes: turn each copper square to its beam, draw two beam lines per eye from the socket edge to the neuron
-PAD = re.compile(r'\(pad "1" smd custom \(at (-?[\d.]+) (-?[\d.]+)\)')
-eyes = [tuple(map(float, m.groups())) for m in PAD.finditer(s)]
+# ---- beams: the copper laser lines (pads, GND like the eyes) and the nested silk triangles
+copper, silk = beams_from(eyes)
 beams = ""
-for ex, ey in eyes:
-    ang = math.atan2(ty - ey, tx - ex)
-    s = s.replace('(pad "1" smd custom (at %.4f %.4f)' % (ex, ey), '(pad "1" smd custom (at %.4f %.4f %.1f)' % (ex, ey, -math.degrees(ang)), 1)
-    ux, uy = math.cos(ang), math.sin(ang); px, py = -uy, ux
-    L = math.hypot(tx - ex, ty - ey)
-    for side in (-0.28 * SCALE, 0.28 * SCALE):                          # a narrow cone, converging on the soma
-        x1, y1 = ex + 1.3 * SCALE * ux + side * px, ey + 1.3 * SCALE * uy + side * py
-        x2, y2 = ex + (L - 0.9 * SCALE) * ux, ey + (L - 0.9 * SCALE) * uy
-        beams += '\n  (fp_line (start %.4f %.4f) (end %.4f %.4f)\n    (stroke (width %.3f) (type solid)) (layer "F.SilkS"))' % (x1, y1, x2, y2, max(0.12, 0.15 * SCALE))
+for x1, y1, x2, y2 in copper:
+    cx, cy = (x1 + x2) / 2, (y1 + y2) / 2
+    beams += ('\n  (pad "1" smd custom (at %.4f %.4f) (size %.3f %.3f) (layers "F.Cu" "F.Mask") (zone_connect 2)\n    (options (clearance outline) (anchor circle))'
+              '\n    (primitives\n      (gr_line (start %.4f %.4f) (end %.4f %.4f) (width %.3f))\n    ))') % (cx, cy, COPPER_W, COPPER_W, x1 - cx, y1 - cy, x2 - cx, y2 - cy, COPPER_W)
+for x1, y1, x2, y2 in silk:
+    beams += '\n  (fp_line (start %.4f %.4f) (end %.4f %.4f)\n    (stroke (width %.3f) (type solid)) (layer "F.SilkS"))' % (x1, y1, x2, y2, BEAM_W)
 k = s.rfind("\n)")
 s = s[:k] + beams + s[k:]
-print("neuron moved by (%.2f, %.2f) to (%.2f, %.2f) local = board (%.2f, %.2f); eyes turned to %s deg" % (dx, dy, tx, ty, NEURON[0], NEURON[1], ", ".join("%.0f" % math.degrees(math.atan2(ty - ey, tx - ex)) for ex, ey in eyes)))
+print("neuron moved by (%.2f, %.2f) to (%.2f, %.2f) local = board (%.2f, %.2f); pupils aimed at %s deg" % (dx, dy, tx, ty, NEURON[0], NEURON[1], ", ".join("%.0f" % math.degrees(math.atan2(ty - ey, tx - ex)) for ex, ey in eyes)))
 open(ROOT + "StimHAT/stimhat.pretty/%s.kicad_mod" % NAME, "w").write(s)
 print("wrote %s: %d eye polygons kept, %d beam polygons dropped" % (NAME, kept, dropped))
 
