@@ -57,10 +57,10 @@ pins("J1", ("1", "17"), "PWR", (5.08, 2.54))                    # +3V3_PI (left,
 pins("J1", ("2", "4"), "PWR", (5.08, 2.54))                     # +5V (right)
 pins("J1", ("9", "25", "39"), "PWR", (2.54,))                   # GND, left side (odd)
 pins("J1", ("6", "14", "20", "30", "34"), "PWR", (5.08, 2.54))  # GND, right side (even)
-for n in ("3", "5", "19", "27"):
-    LBL(f"J1.{n}", length=5.08)                                  # I2C_SDA, I2C_SCL, PI_TRIGGER, ID_SDA (left)
-for n in ("8", "10", "12", "18", "22", "28", "36"):
-    LBL(f"J1.{n}", length=5.08)                                  # PI_TXD, PI_RXD, MCU_PWR_EN, SWCLK, SWDIO, ID_SCL, NRST (right)
+for n in ("3", "5", "19", "21", "27"):
+    LBL(f"J1.{n}", length=5.08)                                  # I2C_SDA, I2C_SCL, MCU_PWR_EN, NRST, ID_SDA (left)
+for n in ("8", "10", "12", "18", "22", "28"):
+    LBL(f"J1.{n}", length=5.08)                                  # PI_TXD, PI_RXD, PI_TRIGGER, SWCLK, SWDIO, ID_SCL (right)
 e = PWR("J1.2", length=7.62); FLAG(e, up=(1, 0))                 # the Pi drives +5V ...
 e = PWR("J1.1", length=7.62); FLAG(e, up=(-1, 0))                # ... and +3V3_PI
 e = PWR("J1.9", length=5.08); FLAG(e, up=(-1, 0))                # GND
@@ -125,9 +125,9 @@ box(102, 8, 200, 62, "2. MSPM0G1507 (Rev 2 pin map; the G3507 minus CAN-FD, same
 put("U7", 152, 32, ref_at=(0, -24.13), val_at=(0, 24.13))
 PWR("U7.4"); PWR("U7.5"); PWR("U7.33", length=5.08)
 put("C4", 160, 10, rot=90); W("U7.32", (154, 10), "C4.1"); PWR("C4.2")      # VCORE cap at the top
-for n in ("1", "2", "3", "6", "8", "9", "10", "11", "12", "13", "14", "15", "16"):   # 7 (PA3) is spare
+for n in ("1", "2", "3", "6", "8", "10", "11", "12", "13", "14", "15", "16"):   # 7 / 9 (PA3 / PA5) are spare
     LBL(f"U7.{n}", length=2.54)
-for n in ("17", "18", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"):   # 19 (PA15, DAC0_OUT) is spare
+for n in ("17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"):
     LBL(f"U7.{n}", length=2.54)
 put("R4", 108, 40, rot=0); LBL("R4.1"); PWR("R4.2")
 put("R3", 108, 24, rot=0); PWR("R3.1"); LBL("R3.2")                           # NRST pull-up
@@ -146,8 +146,8 @@ PWR("SW7.5", length=5.08)
 put("SW9", 182, 42, ref_at=(0, -4.45), val_at=(0, 3.81)); LBL("SW9.1", length=5.08); PWR("SW9.2", length=5.08)
 put("J10", 184, 54, mirror=True, ref_at=(0, -8.89), val_at=(0, 8.89))
 PWR("J10.1", length=5.08); PWR("J10.2", length=5.08); LBL("J10.3", length=5.08); LBL("J10.4", length=5.08)
-text("Module lines from the Rev 2 J8 / J9 pins: PA6 FAULT_H, PA7 EN_H, PA12 CATH_H, PA15 RELEASE_H, PA17 SDA_H, PA22 SCL_H (StimHAT: see the README's pin map).  Joystick SW7 (SKRHADE010): up PA13,", 103, 57)
-text("down PA16, centre PA14, left PA21 (BACK), right PA3 (BUTTON6, new); FIRE SW9 PA23; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
+text("Module lines from the Rev 2 J8 / J9 pins: PA6 FAULT_H, PA7 EN_H, PA12 CATH_H, PA15 RELEASE_H, PA17 SDA_H, PA22 SCL_H (StimHAT: see the README's pin map).  Joystick SW7 (SKRHADE010, mounted at 135 deg): up PA12,", 103, 57)
+text("down PA15, centre PA14, left PA7 (BACK), right PA13 (BUTTON6); FIRE SW9 PA16; LED PA6; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
 
 # =========================================================================== 3. BNC I/O
 box(202, 8, 252, 40, "3. BNC TRIGGER IN / STIM OUT (74LVC2G17 buffers)")

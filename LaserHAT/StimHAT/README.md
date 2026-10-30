@@ -47,7 +47,7 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 
 | Pin | Port | Net | Function |
 |---|---|---|---|
-| 3 | NRST | NRST | **← Pi GPIO16 (header pin 36)**, not GPIO23: the bonnet's joystick-right grounds GPIO23 |
+| 3 | NRST | NRST | **← Pi GPIO9 (header pin 21)** since 2026-10-29 (was GPIO16 / pin 36); not GPIO23: the bonnet's joystick-right grounds GPIO23 |
 | 7 | PA3 | BUTTON6 | joystick right (new) |
 | 10 | PA6 | FAULT_H | ISO7741F channel D (was J8.3) |
 | 11 | PA7 | EN_H | ISO7741F channel B (was J8.5) |
@@ -243,14 +243,14 @@ positions: PWM, fault and ADC functions sit on the isolator-facing pins.
 | 1, 2 | PA0, PA1 | I2C_SDA, I2C_SCL | I2C0 (fail-safe pins), fixed |
 | 3 / 6 / 32 | NRST / PA2 / VCORE | NRST / ROSC / VCORE | fixed |
 | 7 | PA3 | spare | I2C1, TIMG8 |
-| 8 | PA4 | PI_TRIGGER | GPIO IRQ, ← Pi GPIO10 (header pin 19; moved from GPIO26 / pin 37 and PA27 on 2026-10-29 so the line comes straight down from the header's west half) |
-| 9 | PA5 | LED_MCU | GPIO, faces D7 |
-| 10, 11 | PA6, PA7 | BUTTON4 (up), BUTTON6 (right) | GPIO, west side toward the joystick |
+| 8 | PA4 | PI_TRIGGER | GPIO IRQ, ← Pi GPIO18 (header pin 12, directly above U7; was GPIO26 / pin 37 and PA27 until 2026-10-29) |
+| 9 | PA5 | spare | leaves room beside pins 12 / 13 for the PI_RXD / PI_TXD vias |
+| 10 | PA6 | LED_MCU | GPIO, faces D7 |
+| 11 | PA7 | BUTTON1 (left / BACK) | GPIO, outermost track of the joystick fan |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | UART1 (only PA8/9 or PA17/18), fixed |
 | 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 (BSL), fixed |
-| 16, 17, 18 | PA12, PA13, PA14 | BUTTON2 (centre), BUTTON1 (left / BACK), BUTTON3 (down) | GPIO |
-| 19 | PA15 | spare | DAC0_OUT (only pin) - free for a laser variant's setpoint DAC |
-| 20 | PA16 | BUTTON5 (FIRE) | GPIO |
+| 16, 17, 18, 19 | PA12, PA13, PA14, PA15 | BUTTON4 (up), BUTTON6 (right), BUTTON2 (centre), BUTTON3 (down) | GPIO; with pin 11 a five-track 45° fan from U7's south-west corner to SW7, in the order of its pads (4, 6 on the north-west column, 3, 2, 1 on the south-east one).  PA15 is DAC0_OUT: a laser variant that needs the DAC gives up one joystick direction |
+| 20 | PA16 | BUTTON5 (FIRE) | GPIO, faces SW9 |
 | 21 | PA17 | MCU_STIM_OUT | GPIO (TIMA1_C0 / TIMG7_C0 available) |
 | 22 / 23 / 24 | PA18 / PA19 / PA20 | BSL_INVOKE / SWDIO / SWCLK | fixed |
 | 25 | PA21 | MCU_STIM_IN | TIMG8_CCP0 capture, faces U8 |
@@ -259,6 +259,14 @@ positions: PWM, fault and ADC functions sit on the isolator-facing pins.
 | 28 | PA24 | EN_H (PWM_A) | TIMA0_CCP3N (hardware complement of PWM_B with dead time) or TIMA1_CCP1 for a laser variant; a GPIO in e-stim mode, faces U101.4 |
 | 29 | PA25 | RELEASE_H | GPIO, faces U101.3 |
 | 30, 31 | PA26, PA27 | SDA_H, SCL_H (DB_ADC_A/B) | ADC0 ch 1 / ch 0, face U109 |
+
+Header (2026-10-29, user's request): PI_TRIGGER = GPIO18 (pin 12), MCU_PWR_EN = GPIO10 (pin 19), NRST = GPIO9 (pin 21) - all
+in the header's west half above U7; pins 11 / 13 / 15 (GPIO17 / 27 / 22) were ruled out because the bonnet's joystick grounds
+them, pins 24 / 26 (GPIO8 / 7) because they pull up at boot.  Pi side: `LASERHAT_NRST_PIN=9 LASERHAT_POWER_PIN=10
+LASERHAT_TRIGGER_PIN=18`, `laserhat-brokerd --gpio-pin 18`; SPI0 must stay disabled (GPIO9 / 10 are its MISO / MOSI).
+SW7 is mounted at 135° (user's rotation): the ALPS drawing's directions a / b / c / d (contacts A = 1, B = 4, C = 3, D = 6)
+then point south / west / east / north, so pad 1 = down, 4 = left, 3 = right, 6 = up - the nets follow that; verify on the
+first board by pushing the stem toward each edge and checking which contact closes to the common.
 
 The east column was re-ordered on 2026-10-29 (user's request, routing): top to bottom SCL_H, SDA_H toward U109, then RELEASE_H,
 EN_H, CATH_H, FAULT_H in U101's pin order (its HAT-side pins 3-6 at y 26.05-27.95 against U7's 29-26 at y 25.75-27.25), STIM_IN
