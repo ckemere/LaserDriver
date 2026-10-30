@@ -1,0 +1,216 @@
+(footprint "SW_ALPS_SKRHADE010"
+	(version 20241229)
+	(generator "pcbnew")
+	(generator_version "9.0")
+	(layer "F.Cu")
+	(descr "ALPS SKRHADE010 4-direction + centre-push switch, 7.5 x 7.5 mm, SMD; mount at 45 deg")
+	(property "Reference" "REF**"
+		(at 0 0 0)
+		(layer "F.SilkS")
+		(uuid "bbfcfdb2-92ea-4857-9e90-6fac1306d296")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Value" "SKRHADE010"
+		(at 0 0 0)
+		(layer "F.Fab")
+		(uuid "e925b22c-d998-4c99-93bd-151cb1c66626")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Datasheet" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "16e967ff-1ba6-4ffc-acc1-5016ab3f8e77")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(property "Description" ""
+		(at 0 0 0)
+		(layer "F.Fab")
+		(hide yes)
+		(uuid "af8c66b7-bcad-4ea7-919d-99bb8a26d59f")
+		(effects
+			(font
+				(size 1.27 1.27)
+				(thickness 0.15)
+			)
+		)
+	)
+	(attr smd)
+	(fp_line
+		(start -5 -5)
+		(end 5 -5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "4793f65f-57fa-4cef-a13b-11b8b5dbc4dd")
+	)
+	(fp_line
+		(start -5 5)
+		(end -5 -5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "59be5bd4-cbef-46c9-80f9-dd567cd55559")
+	)
+	(fp_line
+		(start 5 -5)
+		(end 5 5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "dbfbe3d5-fc4f-489b-8870-de7bbe39d43d")
+	)
+	(fp_line
+		(start 5 5)
+		(end -5 5)
+		(stroke
+			(width 0.05)
+			(type default)
+		)
+		(layer "F.CrtYd")
+		(uuid "50d51035-73ae-4641-b0ff-9162767b59f9")
+	)
+	(fp_line
+		(start -3.75 -3.75)
+		(end 3.75 -3.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "6b811cf6-8d4d-4577-846a-f0963d714f14")
+	)
+	(fp_line
+		(start -3.75 3.75)
+		(end -3.75 -3.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "34792221-8239-45d7-b2a1-311b12ea3f62")
+	)
+	(fp_line
+		(start 3.75 -3.75)
+		(end 3.75 3.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "8d3797ea-7c89-4a93-bdf7-9d0c066c8e26")
+	)
+	(fp_line
+		(start 3.75 3.75)
+		(end -3.75 3.75)
+		(stroke
+			(width 0.1)
+			(type default)
+		)
+		(layer "F.Fab")
+		(uuid "75f33cee-f7d9-416b-bdca-e8f3d9bcf976")
+	)
+	(pad "" np_thru_hole circle
+		(at 0 -1.9)
+		(size 0.75 0.75)
+		(drill 0.75)
+		(layers "*.Cu" "*.Mask")
+		(uuid "00b5c767-a938-46e5-83cd-dadc0d6be539")
+	)
+	(pad "" np_thru_hole circle
+		(at 0 1.9)
+		(size 1.05 1.05)
+		(drill 1.05)
+		(layers "*.Cu" "*.Mask")
+		(uuid "267c6755-9331-43a0-acfd-51745f041060")
+	)
+	(pad "1" smd rect
+		(at -3.575 -1.425)
+		(size 1.35 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "707a7578-4214-4d56-bcdf-ffd12c0e50b5")
+	)
+	(pad "2" smd rect
+		(at -3.575 0)
+		(size 1.35 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "2f083334-d986-4b0c-aec2-9cfd1fa5d1c6")
+	)
+	(pad "3" smd rect
+		(at -3.575 1.425)
+		(size 1.35 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "0761eeee-4e4c-4be1-9916-96ae684b4e07")
+	)
+	(pad "4" smd rect
+		(at 3.575 -1.425)
+		(size 1.35 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "e606ecd5-9538-4f4d-a683-3d51c51f0845")
+	)
+	(pad "5" smd rect
+		(at 3.575 0)
+		(size 1.35 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "a6da3b8e-f09f-467c-b46f-92040d6a3386")
+	)
+	(pad "6" smd rect
+		(at 3.575 1.425)
+		(size 1.35 1)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "76b59ba7-9b39-4956-9711-9724260ce9f9")
+	)
+	(pad "MP1" smd rect
+		(at 0 -4.05)
+		(size 2 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "1f6e3c12-428f-402c-9b31-6c23a10a41d6")
+	)
+	(pad "MP2" smd rect
+		(at 0 4.05)
+		(size 2 1.8)
+		(layers "F.Cu" "F.Mask" "F.Paste")
+		(thermal_bridge_angle 45)
+		(uuid "a2dc0308-5b55-4384-a4d4-8a58cd1ee2a6")
+	)
+	(embedded_fonts no)
+	(model "${KIPRJMOD}/laserdriverhat.3dshapes/SW_ALPS_SKRHADE010.wrl"
+		(offset
+			(xyz 0 0 0)
+		)
+		(scale
+			(xyz 1 1 1)
+		)
+		(rotate
+			(xyz 0 0 0)
+		)
+	)
+)

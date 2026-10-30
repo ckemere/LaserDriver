@@ -6,6 +6,7 @@
 - [Next tasks](laserhat-next-tasks.md) — hand-route M4; HAT keep-out; battery connector decision; fab after routing
 - [StimHAT board](stim-hat-board.md) — 2026-10-29: stimulator + HAT core on one HAT (StimHAT/), generated; decisions in stim-hat-plan.md
 - [StimHAT plan](stim-hat-plan.md) — the 2026-10-28 brainstorm: dedicated HATs, cheaper switches, bonnet kept, joystick, floorplan 1g, rejected options
+- [LaserDriverHAT board](laser-driver-hat.md) — 2026-10-30: StimHAT core + LaserDaughter block on one HAT (LaserDriverHAT/), generated; block at (-62.5, -57.25); 7 connections for hand routing
 - [No local testing](no-local-testing.md) — Pi software: build/test via GitHub CI only; never locally or with Docker
 - [KiCad Python footprint loader quirk](kicad-python-footprint-loader.md) — load footprints before LoadBoard on 9.0.8 macOS; F8 link details
 - [Fab / BOM scheme](fab-bom-scheme.md) — LCSC codes only in tools/lcsc_parts.py, stamped into 'LCSC Part #'; DNP = not populated, HAND_FIT = no number + exclude-from-pos

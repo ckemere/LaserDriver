@@ -1,0 +1,4 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "laserdriverhat")(type "KiCad")(uri "${KIPRJMOD}/laserdriverhat.kicad_sym")(options "")(descr "LaserDriverHAT project symbols"))
+)

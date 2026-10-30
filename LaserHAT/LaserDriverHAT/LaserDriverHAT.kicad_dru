@@ -1,0 +1,7 @@
+(version 1)
+(rule outer_pours_one_spoke
+  (condition "A.Layer == 'F.Cu' || A.Layer == 'B.Cu'")
+  (constraint min_resolved_spokes 1))
+(rule laser_r202_one_spoke
+  (condition "A.memberOfFootprint('R202')")
+  (constraint min_resolved_spokes 1))
