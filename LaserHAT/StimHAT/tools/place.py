@@ -74,7 +74,7 @@ at("R101", 30.25, 27, 180); at("R102", 29.25, 28.4, 180); at("R103", 30.2, 24.8,
 at("U109", 42.0, 19.5, 270)
 # ---- isolated block A (x 36.5-65, y 20-34): set-point, switches, output stage, SHORT, fault detector
 at("C102", 38, 23, 90); at("C124", 45.5, 21.5, 90); at("C115", 51.8, 20.45, 180); at("C125", 61.4, 38.2, 90); at("TP101", 62.25, 45.0, 0)
-at("G1", 29.6, 18.05, 0)   # owl logo: board-only silk footprint stimhat:OwlLogo_Silk_6mm (tools/owl_logo.py), perched above U101 looking at U7
+at("G1", 33.5, 18.05, 0)   # owl logo: board-only silk footprint stimhat:OwlLogo_Silk_6mm (tools/owl_logo.py), perched above U101 looking at U7
 at("U105", 49.95, 22.75, 180); at("C114", 47.25, 24.7, 180); at("R110", 40.85, 23.75, 0); at("R109", 43.15, 23.75, 180)
 at("U106", 58.65, 25.25, 90); at("C117", 61.15, 26.6, -90); at("R105", 54.2, 21.85, 90); at("R106", 55.75, 21.82, -90); at("C116", 56, 24.88, -90)
 at("R114", 55.24, 27.05, 0); at("C120", 55.8, 28.48, -90); at("R115", 57, 29.5, -90); at("R116", 59.15, 29.55, 0); at("C121", 53.15, 50, -90)

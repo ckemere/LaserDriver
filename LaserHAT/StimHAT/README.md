@@ -178,15 +178,18 @@ errors / 0 warnings, 0 open connections; every outer-pour piece is stitched (the
 a pad).  The user also added TP102 (GND_ISO) and routed the LED from pin 9 (PA5), both now in the generators.
 
 **Owl and labels (2026-10-29/30):** the lab's owl (`../Footprints.pretty/OwlLogo_Laser_14mm`, 17 x 14 mm, exposed-copper
-laser eyes and beams) sits above U101 looking at U7.  `tools/owl_logo.py` derives `stimhat:OwlLogo_Eyes_10mm` (70 %, 11.8 x
-9.8 mm): the eye copper is kept (two pads on GND, exposed), the copper beams become silk lines, no courtyard.  It is the
-board-only footprint G1 at (29.6, 18.05) after the user cleared the pocket (U5 / C2 moved north): feet 0.2 mm above U101's
-body, eyes at (29.0, 15.0) / (31.5, 15.0) - 2 mm west of the barrier strip, 0.3 mm below the +3V3 row and well above
-the SCL_H diagonal - beams toward U7's north-east corner.  The owl is as big as the pocket allows: the eyes cannot rise above the +3V3 row at y 14 and the belly must
-stay clear of C101's pads (a 75 % owl reaches them; the two alternative C101 spots beside U101's pin 1 collide with the
-RELEASE_H / EN_H routing, so C101 and the routing stay as the user left them); the neuron at the beams' end lies partly over R3 / C3 (silk-over-pad warnings the user
-accepted).  Front-silk "TRIG IN" / "STIM OUT" stand on the jacks' outer sides at x 16.3 / 49.4 (the two bodies are 0.4 mm
-apart, so nothing fits between them); the back-silk pair stays centred under the jacks.
+laser eyes and beams) sits on U101 looking at U7.  `tools/owl_logo.py` derives `stimhat:OwlLogo_Eyes_14mm` at full size: the
+eye copper is kept (two pads on GND, exposed), the copper beams become silk lines, no courtyard; the script keeps G1 where it
+finds it on the board (the user places the owl by hand) and only uses its POS for a first placement.  Rules for that hand
+placement: the eyes are at (-0.8, -4.3) and (+2.7, -4.3) from the centre, 1.64 mm square, so both must end west of x 33.7 (the
+barrier strip starts at x 34 and the strip keep-outs deliberately do not forbid pads, because the isolators' own pads straddle
+them - DRC will not catch an eye in the strip, and a custom-shaped pad's outline reaching into the isolated region is only
+caught by its 0.5 mm anchor), and they must clear the +3V3 row at y 14 and the SCL_H / SDA_H diagonals by 0.2 mm; the neuron
+at the beams' end may lie on passives (silk-over-pad warnings the user accepts).  At 70 % the owl fits the pocket north of
+U101 without touching C101 (centre (29.6, 18.05)); at 75 % its belly reaches C101's pads, and C101 cannot move beside U101's
+pin 1 without colliding with the RELEASE_H / EN_H routing.  Front-silk "TRIG IN" / "STIM OUT" stand on the jacks' outer sides
+at x 16.3 / 49.4 (the two bodies are 0.4 mm apart, so nothing fits between them); the back-silk pair stays centred under
+the jacks.
 
 ## Checks before fab
 

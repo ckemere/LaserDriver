@@ -12,9 +12,9 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..")) + "/"
 SRC = ROOT + "Footprints.pretty/OwlLogo_Laser_14mm.kicad_mod"
-SCALE = 0.7
-NAME = "OwlLogo_Eyes_10mm"
-POS = (29.6, 18.05)         # eyes at (29.0, 15.0) / (31.5, 15.0): 0.3 mm below the +3V3 row; the right foot ends 0.25 mm west of C101, the belly 0.5 mm above it
+SCALE = 1.0
+NAME = "OwlLogo_Eyes_14mm"
+POS = (29.6, 18.05)         # only used when G1 is not on the board yet: an existing G1 keeps its position and rotation (the user places it by hand)
 EYE_R = 1.4                 # primitives whose bbox lies within this radius of the pad anchor are eye copper, the rest are beams
 
 
@@ -86,14 +86,17 @@ if "--no-board" in sys.argv:
     sys.exit()
 b = pcbnew.LoadBoard(ROOT + "StimHAT/StimHAT.kicad_pcb")
 gnd = b.FindNet("GND")
+pos, rot = pcbnew.VECTOR2I(pcbnew.FromMM(POS[0]), pcbnew.FromMM(POS[1])), 0.0
 for f in list(b.GetFootprints()):
     if f.GetReference() == "G1":
+        pos, rot = pcbnew.VECTOR2I(f.GetPosition()), f.GetOrientationDegrees()
         b.Remove(f)
 fp.SetFPID(pcbnew.LIB_ID("stimhat", NAME))
 fp.SetReference("G1"); fp.Reference().SetVisible(False); fp.Value().SetVisible(False)
-fp.SetPosition(pcbnew.VECTOR2I(pcbnew.FromMM(POS[0]), pcbnew.FromMM(POS[1]))); fp.SetOrientationDegrees(0)
+fp.SetPosition(pos); fp.SetOrientationDegrees(rot)
+POS = (pos.x / M, pos.y / M)
 for p in fp.Pads():
     p.SetNet(gnd)
 b.Add(fp)
 pcbnew.SaveBoard(ROOT + "StimHAT/StimHAT.kicad_pcb", b)
-print("G1 placed at", POS, "eyes on GND")
+print("G1 at (%.2f, %.2f) rot %g, eyes on GND" % (POS[0], POS[1], rot))
