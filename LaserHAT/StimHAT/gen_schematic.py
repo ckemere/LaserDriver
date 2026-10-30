@@ -146,8 +146,8 @@ PWR("SW7.5", length=5.08)
 put("SW9", 182, 42, ref_at=(0, -4.45), val_at=(0, 3.81)); LBL("SW9.1", length=5.08); PWR("SW9.2", length=5.08)
 put("J10", 184, 54, mirror=True, ref_at=(0, -8.89), val_at=(0, 8.89))
 PWR("J10.1", length=5.08); PWR("J10.2", length=5.08); LBL("J10.3", length=5.08); LBL("J10.4", length=5.08)
-text("Module lines from the Rev 2 J8 / J9 pins: PA6 FAULT_H, PA7 EN_H, PA12 CATH_H, PA15 RELEASE_H, PA17 SDA_H, PA22 SCL_H (StimHAT: see the README's pin map).  Joystick SW7 (SKRHADE010, mounted at 135 deg): up PA12,", 103, 57)
-text("down PA15, centre PA14, left PA7 (BACK), right PA13 (BUTTON6); FIRE SW9 PA16; LED PA6; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
+text("Module lines from the Rev 2 J8 / J9 pins: PA6 FAULT_H, PA7 EN_H, PA12 CATH_H, PA15 RELEASE_H, PA17 SDA_H, PA22 SCL_H (StimHAT: see the README's pin map).  Joystick SW7 (SKRHADE010, mounted at 135 deg): up PA7,", 103, 57)
+text("down PA15, centre PA14, left PA12 (BACK), right PA13 (BUTTON6); FIRE SW9 PA16; LED PA6; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
 
 # =========================================================================== 3. BNC I/O
 box(202, 8, 252, 40, "3. BNC TRIGGER IN / STIM OUT (74LVC2G17 buffers)")
