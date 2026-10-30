@@ -17,7 +17,11 @@ board = pcbnew.LoadBoard(BOARD)
 changed = []
 for fp in board.GetFootprints():
     ref = fp.GetReference()
-    p = BY_REF[ref]
+    p = BY_REF.get(ref)
+    if p is None:                           # board-only graphics (the owl logo G1): no part, nothing to stamp
+        if not (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()):
+            fp.SetExcludedFromBOM(True); fp.SetExcludedFromPosFiles(True); changed.append(ref)
+        continue
     if fp.GetValue() != p["value"]:
         fp.SetValue(p["value"]); changed.append(ref)
     if p["lcsc"]:
@@ -27,13 +31,21 @@ for fp in board.GetFootprints():
             f = fp.GetFieldByName(FIELD)
             f.SetVisible(False); f.SetLayer(pcbnew.F_Fab)
             changed.append(ref)
-        if fp.IsExcludedFromBOM() or fp.IsExcludedFromPosFiles():
-            fp.SetExcludedFromBOM(False); fp.SetExcludedFromPosFiles(False); changed.append(ref)
-        if fp.IsDNP() != bool(p.get("dnp")):
-            fp.SetDNP(bool(p.get("dnp"))); changed.append(ref)
-    else:                                   # mounting holes: no part
+        dnp = bool(p.get("dnp"))
+        if fp.IsExcludedFromBOM() or fp.IsExcludedFromPosFiles() != dnp:      # DNP parts stay out of the CPL whatever exports it
+            fp.SetExcludedFromBOM(False); fp.SetExcludedFromPosFiles(dnp); changed.append(ref)
+        if fp.IsDNP() != dnp:
+            fp.SetDNP(dnp); changed.append(ref)
+    else:                                   # hand-fitted / mounting holes: no part, and no stale code left behind
         if not (fp.IsExcludedFromBOM() and fp.IsExcludedFromPosFiles()):
             fp.SetExcludedFromBOM(True); fp.SetExcludedFromPosFiles(True); changed.append(ref)
+        f = fp.GetFieldByName(FIELD)
+        if f is not None and f.GetText():
+            try:
+                fp.RemoveField(FIELD)
+            except Exception:
+                f.SetText("")
+            changed.append(ref)
 if changed:
     pcbnew.SaveBoard(BOARD, board)
 print(f"stamped {len(set(changed))} footprints: {sorted(set(changed))}")

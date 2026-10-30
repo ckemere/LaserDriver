@@ -56,14 +56,16 @@ def npth(x, y, d):
 
 
 X = 5.8 / 2 + 1.35 / 2           # signal pad centre, 3.575
-for num, y in ((1, -1.85), (2, 0.0), (3, 1.85)):
+# ALPS land drawing (viewed from the mounting face): the three 1.0 mm pads of a column span 3.85 mm -> centres 0 / +-1.425,
+# the guide bosses 3.8 mm apart (0.75 above, 1.05 below the centre line).  (Rev A audit 2026-10-30: was +-1.85 and 2.15.)
+for num, y in ((1, -1.425), (2, 0.0), (3, 1.425)):
     smd(num, -X, y, 1.35, 1.0)
-for num, y in ((4, -1.85), (5, 0.0), (6, 1.85)):
+for num, y in ((4, -1.425), (5, 0.0), (6, 1.425)):
     smd(num, X, y, 1.35, 1.0)
 smd("MP1", 0, -(6.3 / 2 + 0.9), 2.0, 1.8)      # anchors (no net)
 smd("MP2", 0, (6.3 / 2 + 0.9), 2.0, 1.8)
-npth(0, -1.05, 0.75)
-npth(0, 1.10, 1.05)
+npth(0, -1.9, 0.75)
+npth(0, 1.9, 1.05)
 for (x1, y1, x2, y2) in ((-3.75, -3.75, 3.75, -3.75), (3.75, -3.75, 3.75, 3.75), (3.75, 3.75, -3.75, 3.75), (-3.75, 3.75, -3.75, -3.75)):
     s = pcbnew.PCB_SHAPE(j); s.SetShape(pcbnew.SHAPE_T_SEGMENT); s.SetLayer(pcbnew.F_Fab); s.SetWidth(mm(0.1))
     s.SetStart(pcbnew.VECTOR2I(mm(x1), mm(y1))); s.SetEnd(pcbnew.VECTOR2I(mm(x2), mm(y2))); j.Add(s)
@@ -179,5 +181,6 @@ while '(layer "F.SilkS")' in src:                  # its silk would cross PS1's 
 src = src.replace('(footprint "JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"', '(footprint "JST_PH_B4B-PH-K_NoCrtYd"')
 src = src.replace('(property "Value" "JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"', '(property "Value" "JST_PH_B4B-PH-K_NoCrtYd"')
 src = _re.sub(r'\(descr "[^"]*"', '(descr "JST PH B4B-PH-K-S top entry, 4 pins, 2.0 mm pitch; KiCad library footprint without its courtyard and silk (shares the DC-DC PS1 space, one of the two fitted)"', src)
+src = src.replace("(drill 0.75)", "(drill 0.8)")            # the DC-DC pod's 0.5 mm square pins (0.71 diagonal) need 0.8 mm holes
 open(os.path.join(LIB, "JST_PH_B4B-PH-K_NoCrtYd.kicad_mod"), "w").write(src)
 print("saved JST_PH_B4B-PH-K_NoCrtYd")

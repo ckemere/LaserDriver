@@ -64,8 +64,8 @@ for n in ("8", "10", "12", "18", "22", "28"):
 e = PWR("J1.2", length=7.62); FLAG(e, up=(1, 0))                 # the Pi drives +5V ...
 e = PWR("J1.1", length=7.62); FLAG(e, up=(-1, 0))                # ... and +3V3_PI
 e = PWR("J1.9", length=5.08); FLAG(e, up=(-1, 0))                # GND
-text("Pi header: 3.3 V (pins 1/17) feeds the ID EEPROM and the I2C pull-ups; 5 V (2/4) the LDO U4.  GPIO16 (pin 36) = NRST (was GPIO23:", 7, 57)
-text("the Adafruit 4567 bonnet's joystick-right grounds GPIO23).  GPIO18 = MCU power enable, GPIO24/25 = SWD, GPIO26 = trigger, GPIO14/15 = UART.", 7, 59)
+text("Pi header: 3.3 V (pins 1/17) feeds the ID EEPROM and the I2C pull-ups; 5 V (2/4) the LDO U4.  GPIO9 (pin 21) = NRST, GPIO10 (pin 19) = MCU power", 7, 57)
+text("enable, GPIO18 (pin 12) = trigger, GPIO24/25 = SWD, GPIO14/15 = UART; GPIO 4/5/6/17/22/23/27 (the bonnet's buttons) stay free.  No SPI0 / I2S / PWM-on-18 overlays.", 7, 59)
 # USB-C
 put("J5", 48, 20, ref_at=(0, -16.51), val_at=(0, 16.51), hide_val=True)
 W("J5.A4", (41, 16), (41, 19), "J5.B9"); W("J5.B4", (41, 17)); W("J5.A9", (41, 18))
@@ -146,7 +146,7 @@ PWR("SW7.5", length=5.08)
 put("SW9", 182, 42, ref_at=(0, -4.45), val_at=(0, 3.81)); LBL("SW9.1", length=5.08); PWR("SW9.2", length=5.08)
 put("J10", 184, 54, mirror=True, ref_at=(0, -8.89), val_at=(0, 8.89))
 PWR("J10.1", length=5.08); PWR("J10.2", length=5.08); LBL("J10.3", length=5.08); LBL("J10.4", length=5.08)
-text("Module lines from the Rev 2 J8 / J9 pins: PA6 FAULT_H, PA7 EN_H, PA12 CATH_H, PA15 RELEASE_H, PA17 SDA_H, PA22 SCL_H (StimHAT: see the README's pin map).  Joystick SW7 (SKRHADE010, mounted at 135 deg): up PA7,", 103, 57)
+text("Module lines (U7 pins 26-31, U101's order): PA22 FAULT_H, PA23 CATH_H, PA24 EN_H, PA25 RELEASE_H, PA26 SDA_H, PA27 SCL_H.  Joystick SW7 (SKRHADE010, mounted at 135 deg): up PA7,", 103, 57)
 text("down PA15, centre PA14, left PA12 (BACK), right PA13 (BUTTON6); FIRE SW9 PA16; LED PA5; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
 
 # =========================================================================== 3. BNC I/O
@@ -165,7 +165,7 @@ W("U8.4", (244, 15), "R25.2"); W("R25.1", (251, 15), "J7.1")
 W("J7.1", (251, 31), (251, 15)); PWR("J7.2", length=2.54)
 W("D9.2", (238, 30), (238, 22), (244, 22), (244, 15))
 W("D9.1", "R18.1"); PWR("R18.2", length=2.54)
-text("J6 -> R23 1k / R24 100k -> U8A -> PA26 (TIMG8 capture).  PA25 (TIMG12) -> U8B -> R25 33 -> J7, D9 mirrors the pulses.", 203, 37)
+text("J6 -> R23 1k / R24 100k -> U8A -> PA21 (TIMG8 capture).  PA17 -> U8B -> R25 33 -> J7, D9 mirrors the pulses.  C16 (2.6 mm away) bypasses U8.", 203, 37)
 
 # =========================================================================== 4. isolation
 box(6, 64, 60, 112, "4. ISOLATION: ISO7741F (EN, CATH, RELEASE in; FAULT_n back, fail-safe low) + ISO1640 (I2C)")
@@ -247,8 +247,8 @@ LBL("U107.4", length=2.54)                                        # SHORT_IN
 PWR("U107.16"); PWR("U107.8"); PWR("U107.7", length=5.08)
 W("U107.6", (76, 148), (76, 150)); pwr_at("GND_ISO", 76, 150, (0, 1))          # ~E low = enabled
 LBL("U107.11", length=5.08); LBL("U107.10", length=7.62); LBL("U107.9", length=10.16)
-put("C118", 86, 118); put("C119", 91, 118, rot=180)
-PWR("C118.1"); PWR("C118.2"); PWR("C119.1"); PWR("C119.2")
+put("C118", 86, 118); put("C119", 91, 118, rot=180); put("C127", 96, 118)
+PWR("C118.1"); PWR("C118.2"); PWR("C119.1"); PWR("C119.2"); PWR("C127.1"); PWR("C127.2")
 text("Switch 1: CATH picks VSET_P (0) / VSET_N (1) -> SW_P.  Switch 2: EN picks 0 V (0) / SW_P (1) -> V_IN.  Switch 3: RELEASE low -> SHORT_IN high", 7, 159)
 text("(DG418 on, electrode shorted), high -> low.  Signals stay within +/-1.25 V; the 4053 runs on +5 / -4.3 V (<= 9.7 V worst case of its 10 V recommended maximum).", 7, 161)
 text("DAC60501Z: write GAIN (0x04) = 0x0100 first, then DAC (0x08) = code << 4; readback over the same bus.  C115 at U105 VDD, C118 / C119 at U107.", 7, 163)

@@ -59,7 +59,7 @@ at("U7", 23.25, 26, -90)
 at("C1", 23, 20.75, 180); at("C16", 32.25, 32, 90); at("C4", 27, 23.4, 90); at("R4", 21.2, 22, 180)
 at("R3", 24.75, 20, -90); at("C3", 25.75, 20, 90); at("JP4", 14.28, 29.75, 180, True)
 at("R107", 42.6, 14.3, -90); at("R108", 41.4, 14.3, -90)
-at("U6", 14.5, 25.91, 0); at("C17", 23, 19.75, 180)
+at("U6", 14.5, 25.91, 0); at("C17", 14.9, 29.2, 180)   # C17 back at U6 (its 3V3 via at (15.5, 27.81)); audit 2026-10-30
 at("U8", 28.75, 32.5, 0); at("R23", 26.5, 35.3); at("R24", 28.5, 35.3); at("R25", 30.5, 35.3)
 # ---- top strip: the EEPROM by pins 27 / 28, JP5, BSL; the OLED socket J10 (Q5 / R21 east of it, Q3 / R8 / R19 / R20 south of it)
 # at the west end as a north-south column (SDA north, GND south), JP1 moved to the strip's east end
@@ -73,7 +73,7 @@ at("U101", 35.25, 27.0, 0)
 at("R101", 30.25, 27, 180); at("R102", 29.25, 28.4, 180); at("R103", 30.2, 24.8, 90); at("C101", 32.65, 23, 90)
 at("U109", 42.0, 19.5, 270)
 # ---- isolated block A (x 36.5-65, y 20-34): set-point, switches, output stage, SHORT, fault detector
-at("C102", 38, 23, 90); at("C124", 45.5, 21.5, 90); at("C115", 51.8, 20.45, 180); at("C125", 61.4, 38.2, 90); at("TP101", 62.25, 45.0, 0)
+at("C102", 38, 23, 90); at("C124", 45.5, 21.8, 90); at("C127", 45.6, 31.6, 0); at("C115", 51.8, 20.45, 180); at("C125", 61.4, 38.2, 90); at("TP101", 62.25, 45.0, 0)
 at("G1", 37.95, 12.57, 0)   # owl logo: board-only silk footprint stimhat:OwlLogo_Silk_6mm (tools/owl_logo.py), perched above U101 looking at U7
 at("U105", 49.95, 22.75, 180); at("C114", 47.25, 24.7, 180); at("R110", 40.85, 23.75, 0); at("R109", 43.15, 23.75, 180)
 at("U106", 58.65, 25.25, 90); at("C117", 61.15, 26.6, -90); at("R105", 54.2, 21.85, 90); at("R106", 55.75, 21.82, -90); at("C116", 56, 24.88, -90)
@@ -169,7 +169,7 @@ def plane(name, net, layer, pts, clearance=0.2):
 # In1 ground planes: HAT GND everywhere west / north of the barrier (the BNC J7 area included, stopping 2.6 mm north
 # of J7's tails = 2.5 mm from J102's pads), GND_ISO under block A, the pocket, strip B and the tab; the rule areas
 # (all copper layers) keep the 2.5 mm barrier and the standoff circles copper-free
-plane("GND plane", "GND", pcbnew.In1_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
+plane("GND plane", "GND", pcbnew.In1_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)])
 
 # (the isolated polygons are notched under U109, whose HAT-side pads end at y 18.0: isolated copper from y 20.6 there)
 # named regions for the isolation DRC rules (StimHAT.kicad_dru): rule areas that keep nothing out by themselves, so the
@@ -188,19 +188,20 @@ def region(name, pts):
 
 
 # F / B ground pours (same shapes, 0.25 mm clearance so hand routing keeps room)
-plane("GND pour F", "GND", pcbnew.F_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25); plane("GND pour B", "GND", pcbnew.B_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)], 0.25)
-plane("GND_ISO pour F", "GND_ISO", pcbnew.F_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)], 0.25); plane("GND_ISO pour B", "GND_ISO", pcbnew.B_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)], 0.25)
+plane("GND pour F", "GND", pcbnew.F_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)], 0.25); plane("GND pour B", "GND", pcbnew.B_Cu, [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)], 0.25)
+plane("GND_ISO pour F", "GND_ISO", pcbnew.F_Cu, [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)], 0.25); plane("GND_ISO pour B", "GND_ISO", pcbnew.B_Cu, [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)], 0.25)
 # In2 is a routing layer for the power nets (tracks, no islands - user's call 2026-10-29)
-region("hat_region", [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.7), (47.7, 43.7), (47.7, 57), (0, 57)])
-region("isolated_region", [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)])
-plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu, [(36.5, 20), (38.5, 20), (38.5, 20.6), (45.5, 20.6), (45.5, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.2), (36.5, 41.2)])
+region("hat_region", [(0, 0), (65, 0), (65, 17.4), (34, 17.4), (34, 43.6), (47.7, 43.6), (47.7, 57), (0, 57)])
+region("isolated_region", [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)])
+plane("GND_ISO plane", "GND_ISO", pcbnew.In1_Cu, [(36.5, 20), (38.2, 20), (38.2, 20.55), (45.8, 20.55), (45.8, 20), (65, 20), (65, 57), (50.2, 57), (50.2, 41.1), (36.5, 41.1)])
 
 
 # isolation barrier (2.5 mm, copper-free on both layers), see the docstring
 BAR = ((34.0, 17.4, 65.0, 20.0),      # north of block A (U109 straddles it); 17.4: C115's pad is 2.56 mm from the HAT plane
        (34.0, 17.5, 36.5, 43.7),      # west of block A and of J102's pocket (U101 straddles it)
-       (36.5, 41.2, 50.2, 43.7),      # south of the pocket: J102's pads (to y 41.0) vs the BNC J7 tails (from y 43.6)
-       (47.7, 43.7, 50.2, 57.0))      # east of the BNC J7 (its east post reaches x 47.7) / west of strip B
+       (36.5, 41.1, 50.2, 43.6),      # south of the pocket: J102's pads (to y 39.9) vs the BNC J7 tails (from y 43.62): 2.5 mm needs 41.1 (audit 2026-10-30)
+       (47.7, 43.6, 50.2, 57.0),      # east of the BNC J7 (its east post reaches x 47.7) / west of strip B
+       (38.2, 20.0, 45.8, 20.55))     # the notch under U109: its HAT-side pads end at y 18.0, so isolated copper starts at y 20.55 there
 for x1, y1, x2, y2 in BAR:
     keepout(((x1, y1), (x2, y1), (x2, y2), (x1, y2)))
     rect(x1, y1, x2, y2, pcbnew.Cmts_User, 0.1)
@@ -224,7 +225,7 @@ silk("StimHAT rev A", 32.5, 30.0, 1.0, 0, pcbnew.B_SilkS)
 silk("FIRE", 14.0, 53.75, 1.0, 0); silk("USB", 9.6, 24.6, 1.0, 90); silk("PWR", 6.1, 13.0, 1.0, 90)
 silk("5V", 8.0, 31.5, 0.8); silk("MCU", 8.0, 33.1, 0.8); silk("STIM", 8.05, 34.7, 0.8)   # 0.8: no room for 1.0 between R13-R18 and the LEDs
 silk("BSL", 16.9, 34.25, 1.0, 90)
-silk("ISOLATED", 49.5, 18.75); silk("5V", 19.0, 37.6, 0.9); silk("E1", 50.4, 54.15, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("NYLON", 61.5, 50.0, 1.0)
+silk("ISOLATED", 49.5, 18.75); silk("5V", 19.0, 37.6, 0.9); silk("E1", 50.4, 54.15, 1.0); silk("+V 0V -V CAB", 41.0, 42.4, 0.9, 0, pcbnew.B_SilkS); silk("+V", 44.0, 41.9, 0.8); silk("-V", 40.0, 41.9, 0.8); silk("NYLON", 61.5, 50.0, 1.0)
 silk("STIM OUT", 40.92, 53.5, 1.0, 0, pcbnew.B_SilkS); silk("TRIG IN", 24.92, 53.5, 1.0, 0, pcbnew.B_SilkS)   # centred on J7 / J6
 silk("TRIG IN", 16.3, 50.0, 1.0, 90); silk("STIM OUT", 49.4, 50.0, 1.0, 90)   # front, on the jacks' outer sides (0.4 mm between the bodies)
 # drawings: the 0.91" OLED module when fitted, the Pi 5 notch note; the bonnet on its own layer User.1 "Bonnet"

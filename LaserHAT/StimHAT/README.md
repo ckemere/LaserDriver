@@ -43,25 +43,12 @@ onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad
 | Fault detector | U110 TLV1702 window on E1 (R117 10k / R118 215k / R119 10k taps), R120 10k, R121 4.7k, D101 BAT54WS, C122 | FAULT_n low past the trip point, with +5V_ISO down, or with a rail missing |
 | Mechanical | MH1–MH4 M2.5 (HAT pattern), Pi 4 PoE / Pi 5 fan notch | MH4 lies in isolated copper: use a nylon standoff there |
 
-## Rev 2 MCU pin map (changes against the HAT)
+## MCU pin map
 
-| Pin | Port | Net | Function |
-|---|---|---|---|
-| 3 | NRST | NRST | **← Pi GPIO9 (header pin 21)** since 2026-10-29 (was GPIO16 / pin 36); not GPIO23: the bonnet's joystick-right grounds GPIO23 |
-| 7 | PA3 | BUTTON6 | joystick right (new) |
-| 10 | PA6 | FAULT_H | ISO7741F channel D (was J8.3) |
-| 11 | PA7 | EN_H | ISO7741F channel B (was J8.5) |
-| 16 | PA12 | CATH_H | ISO7741F channel C (was J8.4) |
-| 17 / 18 / 20 | PA13 / PA14 / PA16 | BUTTON4 / 2 / 3 | joystick up / centre push / down (were the wheel) |
-| 19 | PA15 | RELEASE_H | ISO7741F channel A (was J9.3) |
-| 21 / 26 | PA17 / PA22 | SDA_H / SCL_H | bit-banged I2C to the ISO1640 (were J9.4 / J9.5) |
-| 25 | PA21 | BUTTON1 | joystick left = BACK (was SW8) |
-| 27 | PA23 | BUTTON5 | SW9 FIRE |
-
-Everything else is as in `../CLAUDE.md`.  Firmware: the e-stim mode works unchanged (same lines, same DAC, same I2C);
-add BUTTON6 to the button mask; on the Pi, `LASERHAT_NRST_PIN=16` (`Pi/power_cycle.py` defaults to 23, the bonnet's
-joystick-right pin on this board).  The bonnet's buttons use GPIO 4, 5, 6, 17, 22,
-23, 27, none of which the HAT now touches.
+See "MCU pin map (StimHAT, 2026-10-29)" below: it is the table the netlist follows (the Rev 2 HAT's map in `../CLAUDE.md`
+no longer applies to this board).  Pi side for this board: `LASERHAT_NRST_PIN=9 LASERHAT_POWER_PIN=10 LASERHAT_TRIGGER_PIN=18`,
+`laserhat-brokerd --gpio-pin 18`; no SPI0 / I2S / PWM-on-GPIO18 overlays.  The bonnet's buttons use GPIO 4, 5, 6, 17, 22, 23, 27,
+none of which the HAT touches.
 
 ## Board
 
@@ -195,12 +182,56 @@ pin 1 without colliding with the RELEASE_H / EN_H routing.  Front-silk "TRIG IN"
 at x 16.3 / 49.4 (the two bodies are 0.4 mm apart, so nothing fits between them); the back-silk pair stays centred under
 the jacks.
 
+## Pre-order audit round 1 (2026-10-30)
+
+Four independent read-only reviews (schematic logic, part / footprint / pinout vs datasheets, layout and fabrication, LCSC
+stock / JLC class / part-number sync) ran against commit 4f280fb.  Verified correct: every IC / transistor / diode pinout and
+every supply pin against its datasheet (ISO7741F and ISO1640 orientation included), the pin map vs the MSPM0 table, the
+USB-C ideal-diode polarity, all 50 LCSC codes vs the stated value / package / tolerance / voltage, the part-number and DNP
+sync between `sch_parts.py`, the schematic and the board, the 2.5 mm barrier everywhere except the two places below, the pod
+mating geometry, the HAT mechanical pattern (identical to the fabricated Rev 2 HAT).  Fixed:
+
+* **SW7 footprint (blocker):** the ALPS land drawing puts the three pads of a column at 0 / ±1.425 mm (the 3.85 mm span of
+  three 1.0 mm pads) and the guide bosses 3.8 mm apart; `make_footprints.py` had ±1.85 and 2.15 - the bosses would have sat
+  on copper and the switch off its paste.  Regenerated and swapped on the board; the fan's last segments follow the pads;
+  pad 5 (common) got a via at (4.9, 39.95).
+* **U8 (blocker, stock):** 74LVC2G17GW,125 (C80500) is out of stock at LCSC and JLC -> TI SN74LVC2G17DCKR (C50714), same SC-70-6
+  pads and pinout.  `../tools/lcsc_parts.py` (the HAT's table) carries the same change.
+* **Barrier (major):** an isolated SCL track ran at y 20.4 under U109, 2.30 mm from U109's HAT-side pads -> now a row at y 20.68
+  into pin 6 from above, and the notch under U109 is structural: keep-out strip (38.2, 20.0)-(45.8, 20.55) and the isolated
+  region / pours / plane start at y 20.55 there (C124 moved to (45.5, 21.8) to make room).  J7's tail pads were 2.42 mm from the
+  isolated pours' south edge -> the south strip is now y 41.1-43.6 (pours, plane, both regions moved 0.1 mm).
+* **C17** (the CH340N's bypass) had drifted to U7's north side -> back at U6 (14.9, 29.2), 3V3 pad on the via that feeds U6.5,
+  GND pad on a new via.  **C127** 100 nF added at U107's VCC pin 16 (45.6, 31.6); C118 stays at pin 5 (the +5V_ISO analog input).
+* **R3** 10 k -> 4.7 k (NRST ≈ 3.0 V against the Pi's boot-time pull-down on GPIO9, VIH 2.31 V), **C12** 100 nF -> 1 µF (the MCP1700's
+  input capacitor); the net `U5B_IN` (the e-stim module's numbering) is `U106B_IN`.
+* **J102** has front-silk "+V" / "-V" marks under its pins 1 / 3 (a reversed battery cable would put +V on CAB) and 0.8 mm holes
+  for the pod's 0.5 mm square pins (JST PH allows 0.7-0.8).
+* **LCSC:** fee-free equivalents for D101 (C7502694), D103 / D104 (C19077451), R115 (C25118), C121 (C28323 1 µF 50 V X7R 0805),
+  C111 / C112 (C5199872 1 µF 50 V X7R 0603), R4 (C852472, same 0.1 % 25 ppm spec, a fraction of the price).  `stamp_fields.py`
+  now clears a stale code on no-code parts (J1 carried a Harwin header code), keeps DNP parts out of the position files and
+  skips board-only graphics (the owl G1 had stopped it).  BOM and fab outputs regenerated (the old ones still listed the G3507
+  and the pod parts).  28 -> 23 Extended parts; U108 DG418 has 205 pcs at its only source - order soon.
+* **+5V from the header:** the 0.3 mm In2 run between the header's hole rows is now 0.9 mm; the outer-layer segments stay 0.3 mm
+  (widening them closed two ground-pour corridors).  The path is rated for the HAT and the pod (~0.3 A), not for back-powering a
+  Pi from the USB-C port: keep SW10 off with a Pi fitted (unchanged policy).
+* Stale texts (sheet notes, `sch_parts.py` docstring, this README's first pin table, `Firmware/board.h` spare-pin mask) follow the
+  current pin map.
+
+Reviewed and deliberately not changed: series resistors between U106B / VSET_P and the 74HC4053 inputs (the DAC60501**Z** powers
+up at zero scale and the firmware writes GAIN before any code, spec §7, so VSET cannot exceed the HC4053's −4.3 V rail; the
+pocket around U105 / U107 has no room for two more 0402s - a rev B item); a bulk capacitor on +5V (the Pi and the pod carry
+the bulk; C12 1 µF meets the MCP1700 spec); a bypass of U8's own (C16 sits 2.6 mm from U8.5 on its VCC trace; the only free
+spots collide with MCU_STIM_IN); U104's courtyard 0.15 mm under J102's plastic housing (J102 is fitted after SMT, its body is
+0.3 mm from the SOT-23 leads); R118 215 k (the fault window is a design value); 0.8 mm silk labels; the Pi-side scripts'
+defaults (Rev 2 HAT), which this board overrides through the LASERHAT_*_PIN variables.
+
 ## Checks before fab
 
 `python gen_schematic.py && python tools/netcheck.py && kicad-cli sch erc StimHAT.kicad_sch` (ERC 0 / 0),
 `python tools/drc_summary.py` (0 errors, 0 unconnected), `../tools/path_check.py StimHAT.kicad_pcb StimHAT.kicad_sch`,
-`../tools/sync_check.py StimHAT.kicad_pcb StimHAT.kicad_sch`, then `tools/stamp_fields.py` and `tools/make_fab.py`.
-Hand-fitted: J1, J6, J7, J101, J102, PS1 (DNP in the BOM; fit it or feed J102), J10 (optional).  Not fitted: R19, R20
+`../tools/sync_check.py StimHAT.kicad_pcb StimHAT.kicad_sch`, then `tools/stamp_fields.py`, `tools/make_bom.py` and `tools/make_fab.py`.
+Hand-fitted: J1, J6, J7, J101, J102 (battery cable or the DC-DC pod), J103 (pod only), J10 (optional).  Not fitted: R19, R20
 (the Pi has 1.8 k on GPIO 2/3; fit them only for stand-alone use with a J10 module that lacks its own pull-ups).
 R1 / R2 (3.9 k on ID_SD / ID_SC) are fitted: the HAT design guide puts them on the HAT.
 

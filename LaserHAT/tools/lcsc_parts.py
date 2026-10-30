@@ -43,7 +43,7 @@ HAT = {
     "U5": "C110466",     # AP2171WG-7, SOT-25 (= SOT-23-5); the DWG-7 C2680322 has ~250 in stock
     "U6": "C2977777",    # CH340N
     "U7": "C20618748",   # MSPM0G3507SRHBR
-    "U8": "C80500",      # 74LVC2G17GW,125 (Nexperia)
+    "U8": "C50714",      # SN74LVC2G17DCKR (TI, SC-70-6; the Nexperia 74LVC2G17GW C80500 is out of stock, 2026-10-30)
     "J5": "C2988369",    # G-Switch GT-USB-7010ASV (matches the footprint; Rev 1 field pointed elsewhere)
     "SW6": "C720477",    # TS-1088 (BSL)
     "SW8": "C79167",     # Panasonic EVQP7A01P: side-actuated SMD light-touch switch 3.6 x 3.5 mm, 2.2 N
@@ -98,7 +98,7 @@ HAND_FIT = {
 }
 # For ordering the hand-fitted parts ourselves (not used by the fab outputs)
 HAND_FIT_LCSC = {
-    "J1": "C42411761",   # Samtec HLE-120-02-G-DV-BE-LC (Pi header), if the SMT header is used
+    "J1": "C42411761",   # Harwin M20-7812045 2x20 SMD (NOT the Samtec HLE the footprint is drawn for; hand-fitted, excluded from the BOM)
 }
 
 LASER = {

@@ -769,11 +769,11 @@
       },
       {
         "netclass": "Isolated",
-        "pattern": "U5B_IN"
+        "pattern": "U106B_IN"
       },
       {
         "netclass": "Isolated",
-        "pattern": "/U5B_IN"
+        "pattern": "/U106B_IN"
       },
       {
         "netclass": "Isolated",

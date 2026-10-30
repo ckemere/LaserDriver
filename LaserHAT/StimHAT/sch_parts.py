@@ -5,8 +5,8 @@ schematic matches it.
 
 Core (refs as on the Rev 2 HAT, nets as in its netlist, see ../CLAUDE.md "Rev 2 MCU pin map"), with these changes:
   * no J8 / J9 module sockets: the six module lines go straight to the stimulator block
-      PA6  FAULT_H (TIMA0_FAULT0-capable, used as a falling-edge IRQ)   PA7  EN_H      PA12 CATH_H
-      PA15 RELEASE_H                                                     PA17 SDA_H     PA22 SCL_H   (bit-banged I2C, as today)
+      PA22 FAULT_H (falling-edge GPIO IRQ)   PA24 EN_H   PA23 CATH_H (TIMA0_CCP3)   PA25 RELEASE_H   PA26 SDA_H   PA27 SCL_H
+      (U7 pins 26-31 in U101's pin order; the bit-banged I2C as today)
   * NRST comes from Pi GPIO9 (header pin 21), MCU_PWR_EN from GPIO10 (pin 19), PI_TRIGGER from GPIO18 (pin 12) (2026-10-29,
     all in the header's west half next to U7); GPIO23 / 17 / 27 / 22 / 4 / 5 / 6 are the Adafruit 4567 bonnet's buttons and
     stay unconnected.  (Pi side: LASERHAT_NRST_PIN=9 LASERHAT_POWER_PIN=10 LASERHAT_TRIGGER_PIN=18 for Pi/power_cycle.py etc.)
@@ -48,15 +48,15 @@ JUMPER_T = "Jumper:SolderJumper-2_P1.3mm_Open_TrianglePad1.0x1.5mm"
 L0805 = "Inductor_SMD:L_0805_2012Metric"
 
 # LCSC codes (0402 resistors and 0402 / 0603 capacitors are JLC basic parts)
-L = dict(R100k="C25741", R10k="C25744", R1k="C11702", R47="C137973", R4k7="C25900", R2k2="C25879", R215k="C185443",
-         R47k="C25792", R5k1="C25905", R2k="C4109", R3k9="C51721", R33="C25105", R100k01="C844674",
+L = dict(R100k="C25741", R10k="C25744", R1k="C11702", R47="C25118", R4k7="C25900", R2k2="C25879", R215k="C185443",
+         R47k="C25792", R5k1="C25905", R2k="C4109", R3k9="C51721", R33="C25105", R100k01="C852472",
          R10k01="C95204", R2k49="C861299",
          C100n="C307331", C1u="C52923", C10n="C15195", C470n="C47339", C100p="C1546", C4u7="C69335",
-         C1u50="C559769", C100n50="C14663", C1u50_0805="C726584", C10u="C15850", C22u="C12891",
-         BAT54WS="C124205", Z4V3="C22399888", Z20="C173445", LEDW="C2290", LEDR="C2286",
+         C1u50="C5199872", C100n50="C14663", C1u50_0805="C28323", C10u="C15850", C22u="C12891",
+         BAT54WS="C7502694", Z4V3="C22399888", Z20="C19077451", LEDW="C2290", LEDR="C2286",
          NPN="C20526", PNP="C53444", L10u="C139245",
          USBC="C2988369", JOY="C202415", TS1088="C720477", MSK="C431540", EEPROM="C283445", LDO="C632000",
-         LOADSW="C110466", CH340="C2977777", MCU="C22406180", BUF="C80500", PFET="C471913", DUALPNP="C154733",
+         LOADSW="C110466", CH340="C2977777", MCU="C22406180", BUF="C50714", PFET="C471913", DUALPNP="C154733",
          ISO7741="C2872241", ISO1640="C5122339", TLV760="C2867465", DAC="C1852027", OPA="C2876419",
          HC4053="C6546", DG418="C2673514", TLV1702="C2870937", PH4="C131334")
 
@@ -97,7 +97,7 @@ PARTS = [
     R("R22", "10k", "IDEAL_G", "GND", lcsc=L["R10k"]),
     dict(ref="D5", sym="LED", value="KT-0603W", fp=LED0603, lcsc=L["LEDW"], nets={"1": "D5_K", "2": "+5V"}),
     R("R13", "2k", "D5_K", "GND", lcsc=L["R2k"]),
-    C("C12", "100nF", "+5V", "GND", lcsc=L["C100n"]),
+    C("C12", "1uF", "+5V", "GND", lcsc=L["C1u"]),             # MCP1700 input: >= 1 uF per its datasheet (audit 2026-10-30)
     dict(ref="U4", sym="MCP1700", value="MCP1700T-3302E/MB", fp=SOT89, lcsc=L["LDO"], nets={"1": "GND", "2": "+5V", "3": "+3V3"}),
     C("C6", "100nF", "+3V3", "GND", lcsc=L["C100n"]),
     C("C13", "1uF", "+3V3", "GND", lcsc=L["C1u"]),
@@ -134,12 +134,12 @@ PARTS = [
                "33": "GND"}),
     R("R4", "100k 0.1%", "ROSC", "GND", lcsc=L["R100k01"]),
     C("C4", "470nF", "VCORE", "GND", lcsc=L["C470n"]),
-    R("R3", "10k", "MSPM0_3V3", "NRST", lcsc=L["R10k"]),
+    R("R3", "4.7k", "MSPM0_3V3", "NRST", lcsc=L["R4k7"]),      # 4.7k: NRST ~3.0 V against the Pi's boot-time pull-down on GPIO9 (audit 2026-10-30)
     C("C3", "10nF", "NRST", "GND", lcsc=L["C10n"]),
     dict(ref="JP4", sym="Jumper2", value="RTS_NRST", fp=JUMPER_T, lcsc="", nets={"1": "NRST", "2": "CH340_RTS"}),
     dict(ref="U6", sym="CH340N", value="CH340N", fp=JEITA8, lcsc=L["CH340"],
          nets={"1": "USB_DP", "2": "USB_DM", "3": "GND", "4": "CH340_RTS", "5": "MSPM0_3V3", "6": "MCU_UART_RX", "7": "MCU_UART_TX", "8": "MSPM0_3V3"}),
-    C("C17", "100nF", "MSPM0_3V3", "GND", lcsc=L["C100n"]),
+    C("C17", "100nF", "MSPM0_3V3", "GND", lcsc=L["C100n"]),   # at U6 (U8 is bypassed by C16, 2.6 mm from its VCC pin on the same trace)
     dict(ref="SW6", sym="SW_Push", value="TS-1088-AR02016", fp="Button_Switch_SMD:SW_SPST_TS-1088-xR020", lcsc=L["TS1088"],
          nets={"1": "BSL_INVOKE", "2": "MSPM0_3V3"}),
     dict(ref="D7", sym="LED", value="KT-0603R", fp=LED0603, lcsc=L["LEDR"], nets={"1": "D7_K", "2": "LED_MCU"}),
@@ -158,7 +158,7 @@ PARTS = [
          nets={"1": "BNC_OUT", "2": "GND"}),
     R("R23", "1k", "BUF_IN", "BNC_IN", lcsc=L["R1k"]),
     R("R24", "100k", "BUF_IN", "GND", lcsc=L["R100k"]),
-    dict(ref="U8", sym="74LVC2G17", value="74LVC2G17GW", fp=SOT363, lcsc=L["BUF"],
+    dict(ref="U8", sym="74LVC2G17", value="SN74LVC2G17DCKR", fp=SOT363, lcsc=L["BUF"],
          nets={"1": "BUF_IN", "2": "GND", "3": "MCU_STIM_OUT", "4": "BUF_OUT", "5": "MSPM0_3V3", "6": "MCU_STIM_IN"}),
     R("R25", "33", "BNC_OUT", "BUF_OUT", lcsc=L["R33"]),
     dict(ref="D9", sym="LED", value="KT-0603R", fp=LED0603, lcsc=L["LEDR"], nets={"1": "STIM_LED_K", "2": "BUF_OUT"}),
@@ -204,9 +204,9 @@ PARTS = [
     C("C114", "1uF", "VREFIO", "GND_ISO", lcsc=L["C1u"]),
     C("C115", "100nF", "+5V_ISO", "GND_ISO", lcsc=L["C100n"]),
     dict(ref="U106", sym="OPA2192", value="OPA2192IDGKR", fp=VSSOP8, lcsc=L["OPA"],
-         nets={"3": "OA_IN", "2": "ISENSE", "1": "OA_OUT", "5": "GND_ISO", "6": "U5B_IN", "7": "VSET_N", "8": "+V_STIM", "4": "-V_STIM"}),
-    R("R105", "10.0k 0.1%", "VSET_P", "U5B_IN", fp=R0603, lcsc=L["R10k01"]),
-    R("R106", "10.0k 0.1%", "U5B_IN", "VSET_N", fp=R0603, lcsc=L["R10k01"]),
+         nets={"3": "OA_IN", "2": "ISENSE", "1": "OA_OUT", "5": "GND_ISO", "6": "U106B_IN", "7": "VSET_N", "8": "+V_STIM", "4": "-V_STIM"}),
+    R("R105", "10.0k 0.1%", "VSET_P", "U106B_IN", fp=R0603, lcsc=L["R10k01"]),
+    R("R106", "10.0k 0.1%", "U106B_IN", "VSET_N", fp=R0603, lcsc=L["R10k01"]),
     C("C116", "100nF 50V", "+V_STIM", "GND_ISO", fp=C0603, lcsc=L["C100n50"]),
     C("C117", "100nF 50V", "GND_ISO", "-V_STIM", fp=C0603, lcsc=L["C100n50"]),
     # 74HC4053: switch 1 (S1 = CATH) picks VSET_P (0) / VSET_N (1) -> SW_P; switch 2 (S2 = EN) picks 0 V (0) / SW_P (1) -> V_IN;
@@ -218,6 +218,7 @@ PARTS = [
                "9": "RELEASE", "5": "+5V_ISO", "3": "GND_ISO", "4": "SHORT_IN"}),
     C("C118", "100nF", "+5V_ISO", "GND_ISO", lcsc=L["C100n"]),
     C("C119", "100nF", "GND_ISO", "-5V_ISO", lcsc=L["C100n"]),
+    C("C127", "100nF", "+5V_ISO", "GND_ISO", lcsc=L["C100n"]),   # at U107's VCC pin 16 (C118 sits at its pin 5; audit 2026-10-30)
     # ================================================================ 7. output stage, SHORT switch, fault detector
     R("R114", "1k", "V_IN", "OA_IN", lcsc=L["R1k"]),
     C("C120", "100pF", "OA_IN", "GND_ISO", lcsc=L["C100p"]),
@@ -254,5 +255,5 @@ assert len(BY_REF) == len(PARTS), "duplicate reference"
 HAND_FIT = {"J1", "J6", "J7", "J101", "J102", "J103"}
 # nets on the isolated side of the barrier (for the board's isolation rule): everything the stimulator references to GND_ISO
 ISOLATED_NETS = {"+V_STIM", "-V_STIM", "GND_ISO", "+5V_ISO", "-5V_ISO",
-                 "EN", "CATH", "RELEASE", "FAULT_n", "SDA", "SCL", "VSET_P", "VSET_N", "U5B_IN", "SW_P", "V_IN", "OA_IN",
+                 "EN", "CATH", "RELEASE", "FAULT_n", "SDA", "SCL", "VSET_P", "VSET_N", "U106B_IN", "SW_P", "V_IN", "OA_IN",
                  "OA_OUT", "ISENSE", "E1", "E1_OUT", "TH_P", "TH_N", "FAULT_OC", "VREFIO", "SHORT_IN"}
