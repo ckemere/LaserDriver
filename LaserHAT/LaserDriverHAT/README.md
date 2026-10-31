@@ -14,8 +14,11 @@ Generated like the StimHAT: `sch_parts.py` (single source of truth: parts, value
 (deterministic UUIDs: the HAT-core symbols keep the StimHAT's UUIDs).  `tools/netcheck.py` (drawing = `sch_parts`),
 `tools/pcb_sync.py --keep-tracks` (headless F8, matches by reference), `tools/fresh_uuids.py`, `tools/stamp_fields.py`,
 `tools/place.py` (placement table, outline, GND plane / pours, standoff keep-outs, silk, bonnet drawing; idempotent and
-in sync with the board), `tools/project_settings.py` (net classes in the `.kicad_pro`), `tools/make_footprints.py`
-(`laserdriverhat.pretty`: MSPM0 VQFN-32, ALPS joystick, right-angle BNC; the owl from `tools/owl_logo.py`),
+in sync with the board), `tools/project_settings.py` (net classes in the `.kicad_pro`; **Power1A** = the HAT core's +5V, VBUS,
+VBUS_SW, +3V3, MSPM0_3V3, +3V3_PI (as on the StimHAT), +12V, /SW, LASER_V and the drive path /LD_CATHODE, /DUMMY_TOP / _MID / _BOT,
+/LaserDrive, /IDrive, sized for 1 A: 0.5 mm, vias 0.8 / 0.4; `LaserDriverHAT.kicad_dru` enforces >= 0.5 mm outer / >= 1.0 mm
+inner, 0.25 mm allowed on an outer layer inside an IC's courtyard for the neck-down to fine-pitch pins - the same rules as the StimHAT), `tools/make_footprints.py`
+(`laserdriverhat.pretty`: MSPM0 VQFN-32, ALPS joystick, right-angle BNC; the owl G1 is `Footprints:OwlLogo_Eyes_14mm_R` from `../tools/owl_logo.py`),
 `tools/make_bom.py` → `bom_LaserDriverHAT.csv`, `tools/make_fab.py` → `../fab/LaserDriverHAT/` (gerbers zip, JLC BOM / CPL,
 3D renders `LaserDriverHAT_top.png` / `_bottom.png`), `tools/drc_summary.py`, `tools/fixups.py` / `maze_nets.py` / `stitch.py`
 (hand-routing helpers).  The library nickname is `laserdriverhat` (was `stimhat`).  `LaserDriverHAT.kicad_dru`: one thermal
@@ -77,39 +80,43 @@ the MSPM0G1507 datasheet table 6-2 (SLASEW9E).  Pi-header nets unchanged.
 | 7 | PA3 | — | spare |
 | 8 | PA4 | PI_TRIGGER | GPIO IRQ ← Pi GPIO18 (J1.12) |
 | 9 | PA5 | LED_MCU | D7 |
-| **10** | **PA6** | **BUTTON3** (joystick down) | GPIO; **moved from PA15** to free DAC0 |
+| **10** | **PA6** | **BUTTON1** (left / BACK) | GPIO; the buttons follow the StimHAT's map (2026-10-31), off PA15 to free DAC0 |
 | 11 | PA7 | BUTTON4 (up) | GPIO |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | UART1 ↔ Pi |
 | 14, 15 | PA10, PA11 | MCU_UART_TX / RX | UART0 ↔ CH340N (BSL) |
-| 16, 17, 18 | PA12, PA13, PA14 | BUTTON1 (left / BACK), BUTTON6 (right), BUTTON2 (centre) | GPIO |
+| 16, 17, 18 | PA12, PA13, PA14 | BUTTON6 (right), BUTTON2 (centre), BUTTON3 (down) | GPIO (as on the StimHAT) |
 | **19** | **PA15** | **DB_DAC** | **DAC0_OUT** (the only DAC0 pin): laser current set-point, ≈ 102 mA / V |
 | 20 | PA16 | BUTTON5 (FIRE) | GPIO |
 | 21 | PA17 | MCU_STIM_OUT | GPIO → U8B → J7 SYNC OUT |
 | 22 / 23 / 24 | PA18 / PA19 / PA20 | BSL_INVOKE / SWDIO / SWCLK | fixed |
 | 25 | PA21 | MCU_STIM_IN | TIMG8_C0 capture ← U8A ← J6 TRIG IN |
-| **26** | **PA22** | **DB_PWM_A** | **TIMA0_C1** (PF 5) — the firmware's CCP1 = laser switch (Q1 G1) |
-| **27** | **PA23** | **DB_PWM_B** | **TIMA0_C3** (PF 4) — the firmware's CCP3 = dummy switch (Q1 G2) |
-| 28, 29 | PA24, PA25 | — | spare (PA24 = TIMA0_C3N / TIMA1_C1, PA25 = TIMA0_C3 / C1N) |
-| **30** | **PA26** | **DB_ADC_A** | **ADC0 ch 1** (A0_1): photodiode |
-| **31** | **PA27** | **DB_ADC_B** | **ADC0 ch 0** (A0_0): LASER_V × 33k / 133k (12 V → 2.98 V) |
+| 26, 27 | PA22, PA23 | — | spare (PA22 = TIMA0_C1 / ADC0 ch 7, PA23 = TIMA0_C3) |
+| **28** | **PA24** | **DB_ADC_B** | **ADC0 ch 3** (A0_3): LASER_V × 33k / 133k (12 V → 2.98 V) |
+| **29** | **PA25** | **DB_ADC_A** | **ADC0 ch 2** (A0_2): photodiode |
+| **30** | **PA26** | **DB_PWM_A** | **TIMG7_C0** (PF 7) — laser switch (Q1 G2) |
+| **31** | **PA27** | **DB_PWM_B** | **TIMG7_C1** (PF 7) — dummy switch (Q1 G1) |
 
-Why PA22 for PWM_A rather than PA24: LASER mode drives TIMA0 CCP1 (laser switch, high at zero / low at compare) and CCP3
-(dummy switch, the complement on the same compare), `pwm_timer.c`; PA22 carries TIMA0_C1 and PA23 TIMA0_C3, so the timer
-code is unchanged and only the IOMUX entries move.  PA24's C3N would have made the laser line a hardware complement of
-the dummy line (a timer rewrite).  PA22 / PA23 are pins 26 / 27, next to each other and facing the laser block.
+Why TIMG7 (2026-10-31): the block's four links reach U7 as a parallel 45-degree bus whose order, top to bottom, is fixed by
+the block (Q1.2 PWM_B, Q1.4 PWM_A, R211 ADC_A, R201 / R202 ADC_B), so both PWM pins must sit above both ADC pins on U7's east
+column.  TIMA0's only independent output there, CCP1, is on PA22 (pin 26), the lowest free pin; TIMG7 has both channels on
+the top two pins (PA26 / PA27, one timebase) with ADC0 ch 2 / 3 right below (PA25 / PA24).  (Per TI's SysConfig data for
+the RHB package.)  TIMG7 is otherwise unused (the firmware's ticks are TIMG0 / TIMG6; trigger and stim lines are GPIOs here;
+TIMG8 and TIMA1 stay free for them).
 
 ### Draft firmware note (not applied to `Firmware/`)
 
 `Firmware/board.h` / `mcu.h` hold the StimHAT draft (uncommitted).  A LaserDriverHAT build needs:
 
-* `BOARD_PWM_A_PIN (1u << 22)`, `IOMUX_PINCM47`, function TIMA0_CCP1 = PF 5 on PA22 (`IOMUX_PINCM47_PF_TIMA0_CCP1`, add to
-  `mcu.h`); `BOARD_PWM_B_PIN (1u << 23)`, `IOMUX_PINCM53`, `IOMUX_PINCM53_PF_TIMA0_CCP3` (PF 4, as in the StimHAT draft).
-  `pwm_timer.c` unchanged (CC1 / CC3); `output_mux.c` comments still name PA7 / PA12.
+* PWM on **TIMG7** instead of TIMA0: `BOARD_PWM_A_PIN (1u << 26)`, `IOMUX_PINCM59`, `IOMUX_PINCM59_PF_TIMG7_CCP0` (PF 7, laser
+  switch); `BOARD_PWM_B_PIN (1u << 27)`, `IOMUX_PINCM60`, `IOMUX_PINCM60_PF_TIMG7_CCP1` (PF 7, dummy switch).  `pwm_timer.c`
+  moves its CC1 / CC3 setup to TIMG7's CC0 / CC1 (same GPTIMER register layout; TIMG7 is 16-bit, no fault input, which
+  this board does not need); `output_mux.c` comments still name PA7 / PA12.
 * `BOARD_DAC_PIN (1u << 15)` / `IOMUX_PINCM37` stays the DAC0 output (analog, PINCM left at reset default).
-* ADC: `adc.c` must read **ADC0** channel 1 (PA26, photodiode) and channel 0 (PA27, LASER_V) instead of ADC1 ch 2 / 8.
-* `BOARD_BUTTON3_PIN (1u << 6)`, `IOMUX_PINCM11` (PA6); drop PA6 from `BOARD_SPARE_PINS`, which becomes PA3 | PA24 | PA25.
+* ADC: `adc.c` must read **ADC0** channel 2 (PA25, photodiode) and channel 3 (PA24, LASER_V) instead of ADC1 ch 2 / 8.
+* Buttons as on the StimHAT: BUTTON1 PA6 (`IOMUX_PINCM11`), BUTTON6 PA12, BUTTON2 PA13, BUTTON3 PA14; drop PA6 from
+  `BOARD_SPARE_PINS`, which becomes PA3 | PA22 | PA23.
 * FAULT_n: no fault source on this board.  Keep the GPIO-IRQ code with `BOARD_FAULT_N_PIN` on a spare pin with its
-  internal pull-up (e.g. PA24, `IOMUX_PINCM54`), which then never fires — or compile the fault path out for this board.
+  internal pull-up (e.g. PA22, `IOMUX_PINCM47`), which then never fires — or compile the fault path out for this board.
 * E-stim mode does not exist on this board (no module): `CMD_SET_MODE ESTIM` should be refused.
 * Pi side as for the StimHAT: `LASERHAT_NRST_PIN=9 LASERHAT_POWER_PIN=10 LASERHAT_TRIGGER_PIN=18`, brokerd `--gpio-pin 18`.
 
@@ -135,14 +142,21 @@ are the starting points for the hand routing): DB_PWM_A B.Cu at (56.66, 21.25), 
 1. **+5V** to the block (U4.2 / the +5V network → L1.1 / the stub at (48.8, 21.49)).  The boost draws up to ≈ 0.85 A at
    5 V (12 V × 0.3 A / 0.85): route it wide (≥ 0.8 mm, In2 or a pour), and note the StimHAT's +5V path from the header has
    0.3 mm outer segments (rated ~0.3 A there) — widen that path or feed the block straight from J1.2 / J1.4.
-2. **DB_PWM_A** U7.26 (PA22) → stub (56.66, 21.25) / Q1.2.
-3. **DB_PWM_B** U7.27 (PA23) → stub (54.12, 21.25) / Q1.4.
+2. **DB_PWM_A** U7.30 (PA26) → Q1.4.
+3. **DB_PWM_B** U7.31 (PA27) → Q1.2.
 4. **DB_DAC** U7.19 (PA15, south side) → R203.1 / stub (63.0, 29.83).
-5. **DB_ADC_A** U7.30 (PA26) → stub (64.3, 33.67) / R211.1.
-6. **DB_ADC_B** U7.31 (PA27) → stub (63.0, 34.91) / R201.2–R202.1.
-7. **BUTTON3** U7.10 (PA6, west side) → SW7 pad 1 (its old route to pin 19 was removed).
+5. **DB_ADC_A** U7.29 (PA25) → R211.1.
+6. **DB_ADC_B** U7.28 (PA24) → R201.2–R202.1.
+7. ~~BUTTON3~~ done: the joystick routing came over with the StimHAT core (2026-10-31).
 
 GND is complete (pours, In1 plane, the module's GND vias reach In1).
+
+**2026-10-31: the HAT core now comes from the reworked StimHAT.**  The 58 core parts sit where they are on the StimHAT,
+with its core tracks and vias and its core silk (minus the stimulator-only labels); the laser block (everything in the
+StimHAT's isolated region and barrier strips), the zones and the outline are this board's own.  The StimHAT routes to the
+isolators were left behind (their nets and the MSPM0_3V3 supply branches to U101 / U109).  The U7 control links above
+(DB_PWM_A / B, DB_DAC, DB_ADC_A / B) and the +5V feed U4.2 -> L1.1 are open for hand routing; the old DB_DAC route on B.Cu
+(18.9 mm from (35.0, 31.5)) still ends where U7 used to be.
 
 ## Checks (2026-10-30)
 

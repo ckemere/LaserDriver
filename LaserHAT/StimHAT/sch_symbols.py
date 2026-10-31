@@ -5,6 +5,7 @@ All symbols are embedded (no external libraries needed); the engine writes them 
 stimhat.kicad_sym.  Copied from EStimDaughter/sch_symbols.py and BatteryPack/sch_symbols.py, plus the HAT core parts.
 """
 import math
+import os
 import uuid
 
 U = lambda: str(uuid.uuid4())  # noqa: E731
@@ -138,8 +139,21 @@ box_symbol("Jumper2", "JP", [("1", "A", "passive"), ("2", "B", "passive")], [], 
 add_symbol("TestPoint", "TP", circ(0, 1.27, 0.762), [("1", "~", 0, 0, 90, "passive")], ref_pos=(0, 3.81), val_pos=(0, -2.54),
            hide_pin_numbers=True, hide_pin_names=True)
 add_symbol("MountingHole", "H", circ(0, 0, 1.27) + "\n    " + circ(0, 0, 0.6), [], ref_pos=(0, 3.81), val_pos=(0, -3.81))
-add_symbol("Logo", "G", rect(-2.54, 2.54, 2.54, -2.54) + "\n    " + circ(0, 0, 1.5), [("1", "GND", 0, -5.08, 90, "passive")],
-           ref_pos=(0, 3.81), val_pos=(0, -7.62), hide_pin_numbers=True, hide_pin_names=True)
+# the lab's owl (G1), drawn with the art of the LaserHAT library's OwlLogo symbol (../LaserHAT.kicad_sym); pin 1 = every pad of the
+# footprint (exposed-copper eyes and laser lines), tied to the board's ground.  Footprints: ../Footprints.pretty/OwlLogo_Eyes_*
+# (tools/owl_logo.py at the repo root): 14 mm looking right / left, 6 mm looking right.
+def owl_gfx():
+    s = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "LaserHAT.kicad_sym")).read()
+    i = s.index('(symbol "OwlLogo_0_1"'); j = s.index('(symbol "OwlLogo_1_1"', i)
+    body = s[s.index("\n", i) + 1:j].rstrip()
+    return "\n    ".join(l.strip() for l in body[:-1].strip().split("\n"))       # drop the unit's closing paren, re-indent
+
+
+add_symbol("Logo", "G", owl_gfx(), [("1", "GND", 0, -10.16, 90, "passive")],
+           ref_pos=(0, 8.89), val_pos=(0, -12.7), hide_pin_numbers=True, hide_pin_names=True)
+_t, _p = symbols["Logo"]
+symbols["Logo"] = (_t.replace('  (property "Datasheet"', '  (property "Description" "Owl logo with laser eyes and a neuron; pin 1 = the exposed copper, tie to ground" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))\n'
+                              '  (property "ki_fp_filters" "OwlLogo_*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))\n  (property "Datasheet"', 1), _p)
 # momentary push button, horizontal: pin 1 left, 2 right
 add_symbol("SW_Push", "SW", poly([(-2.54, 0), (-1.27, 0)]) + "\n    " + poly([(1.27, 0), (2.54, 0)]) + "\n    " +
            poly([(-1.6, 1.6), (1.6, 1.6)], w=0.381) + "\n    " + poly([(0, 1.6), (0, 2.8)], w=0.381) + "\n    " +

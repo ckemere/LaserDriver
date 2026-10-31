@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Write the net classes, class patterns and board constraints into StimHAT.kicad_pro (kicad-cli's DRC reads them from
-the project file, not from the board).  Idempotent.      python tools/project_settings.py"""
+the project file, not from the board).  Idempotent.      python tools/project_settings.py
+Power1A = the HAT core's supplies, sized for 1 A: 0.5 mm, vias 0.8 / 0.4; StimHAT.kicad_dru enforces >= 0.5 mm on outer and
+>= 1.0 mm on inner layers (the same class and rules as the LaserDriverHAT).  Close KiCad first: it rewrites the .kicad_pro
+from memory when it saves."""
 import json
 import os
 import sys
@@ -10,7 +13,8 @@ sys.path.insert(0, ROOT)
 from sch_parts import ISOLATED_NETS  # noqa: E402
 
 PRO = os.path.join(ROOT, "StimHAT.kicad_pro")
-POWER = ["+5V", "+3V3", "+3V3_PI", "MSPM0_3V3", "VBUS", "VBUS_SW", "GND", "+5V_ISO", "GND_ISO"]
+POWER = ["GND", "+5V_ISO", "GND_ISO"]
+POWER_1A = ["+5V", "VBUS", "VBUS_SW", "+3V3", "MSPM0_3V3", "+3V3_PI"]   # the HAT core's supplies, sized for 1 A (as on the LaserDriverHAT)
 RAILS = ["+V_STIM", "-V_STIM"]       # up to 33.6 V between + and -: 0.2 mm
 FINE = ["USB_DP", "USB_DM", "CC1", "CC2"]
 
@@ -25,12 +29,15 @@ def cls(name, clearance, width, via, drill):
 d = json.load(open(PRO))
 d["meta"]["filename"] = "StimHAT.kicad_pro"
 ns = d["net_settings"]
-ns["classes"] = [cls("Default", 0.15, 0.2, 0.6, 0.3), cls("Power", 0.15, 0.3, 0.6, 0.3), cls("Fine", 0.15, 0.2, 0.6, 0.3),
+ns["classes"] = [cls("Default", 0.15, 0.2, 0.6, 0.3), cls("Power", 0.15, 0.3, 0.6, 0.3), cls("Power1A", 0.15, 0.5, 0.8, 0.4),
+                 cls("Fine", 0.15, 0.2, 0.6, 0.3),
                  cls("Isolated", 0.15, 0.2, 0.6, 0.3), cls("IsolatedPower", 0.15, 0.3, 0.6, 0.3),
                  cls("Rails", 0.15, 0.3, 0.6, 0.3)]
 pats = []
 for n in POWER:
     pats.append({"netclass": "IsolatedPower" if n in ISOLATED_NETS else "Power", "pattern": n})
+for n in POWER_1A:
+    pats.append({"netclass": "Power1A", "pattern": n})
 for n in FINE:
     pats.append({"netclass": "Fine", "pattern": n})
 for n in RAILS:

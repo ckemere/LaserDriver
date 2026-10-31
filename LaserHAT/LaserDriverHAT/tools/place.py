@@ -60,7 +60,7 @@ at("R19", 8.9, 11.88, 0); at("R20", 8.9, 14.42, 0); at("C15", 7.92, 10.2, 180); 
 at("SW6", 21.27, 34.25, 180); at("C18", 50.54, 15, -90); at("R2", 46.69, 12.2, 0)
 at("U1", 53.4, 12.2, 180); at("R1", 48.29, 11.2, 0)
 at("J10", 11.75, 19.5, 180)                 # pins x 22.81 (GND) 20.27 (VCC) 17.73 (SCL) 15.19 (SDA)
-at("G1", 37.95, 12.57, 0)   # owl logo: board-only footprint laserdriverhat:OwlLogo_Eyes_14mm_R (tools/owl_logo.py), placed by the user
+at("G1", 37.95, 12.57, 0)   # owl logo: symbol G1 (Logo), Footprints:OwlLogo_Eyes_14mm_R (../tools/owl_logo.py), placed by the user
 # ---- laser driver block (the LaserDaughter layout at module position + (LASER_DX, LASER_DY); J4 is on the back)
 at("C208", 39.9, 26.75, -90); at("C209", 41.5, 31.25, 180); at("C211", 55.47, 39.26, -90); at("C212", 58.73, 34, 0)
 at("D1", 43, 26.75, 90); at("D2", 46.9, 29.45, 0); at("D3", 45.5, 33.15, -90); at("D4", 48, 33.15, -90)

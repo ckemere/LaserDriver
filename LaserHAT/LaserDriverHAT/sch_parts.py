@@ -109,15 +109,17 @@ PARTS = [
     R("R2", "3.9k", "+3V3_PI", "ID_SCL", lcsc=L["R3k9"]),
     # ================================================================ 2. MCU, USB-UART, reset, BSL, buttons, LEDs, display socket
     dict(ref="U7", sym="MSPM0G3507", value="MSPM0G1507SRHBR", fp="laserdriverhat:VQFN32_RHB_TEX", lcsc=L["MCU"],
-         # LaserDriverHAT (2026-10-30): the StimHAT's HAT-core pins unchanged; the e-stim east column (pins 26-31) carries the
-         # laser lines: PA22 DB_PWM_A (TIMA0_C1 = the firmware's CCP1 laser switch), PA23 DB_PWM_B (TIMA0_C3 = CCP3 dummy
-         # switch), PA26 / PA27 DB_ADC_A / DB_ADC_B (ADC0 ch 1 / ch 0); DB_DAC needs DAC0_OUT, which exists only on PA15
-         # (pin 19), so BUTTON3 (joystick down) moved from PA15 to PA6 (pin 10); PA3 (7), PA24 (28), PA25 (29) spare
+         # LaserDriverHAT: the StimHAT's HAT-core pins unchanged; the e-stim east column carries the laser lines in the order the
+         # block's bus arrives (2026-10-31, top to bottom, no crossings): PA27 (31) DB_PWM_B = TIMG7_CCP1 (dummy switch),
+         # PA26 (30) DB_PWM_A = TIMG7_CCP0 (laser switch), PA25 (29) DB_ADC_A = ADC0 ch 2, PA24 (28) DB_ADC_B = ADC0 ch 3;
+         # PA22 / PA23 (26 / 27) spare.  (TIMA0 has no independent pair above two ADC pins.)  DB_DAC needs DAC0_OUT, only on PA15
+         # (pin 19), so the buttons moved off PA15; since 2026-10-31 they follow the StimHAT's hand-edited map: BUTTON1 (left) PA6 (pin 10),
+         # BUTTON6 (right) PA12 (16), BUTTON2 (centre) PA13 (17), BUTTON3 (down) PA14 (18); PA3 (7), PA22 (26), PA23 (27) spare
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
-               "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": "BUTTON3", "11": "BUTTON4", "12": "PI_RXD", "13": "PI_TXD",
-               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON1", "17": "BUTTON6", "18": "BUTTON2", "19": "DB_DAC",
+               "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": "BUTTON1", "11": "BUTTON4", "12": "PI_RXD", "13": "PI_TXD",
+               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON6", "17": "BUTTON2", "18": "BUTTON3", "19": "DB_DAC",
                "20": "BUTTON5", "21": "MCU_STIM_OUT", "22": "BSL_INVOKE", "23": "SWDIO", "24": "SWCLK", "25": "MCU_STIM_IN",
-               "26": "DB_PWM_A", "27": "DB_PWM_B", "28": None, "29": None, "30": "DB_ADC_A", "31": "DB_ADC_B", "32": "VCORE",
+               "26": None, "27": None, "28": "DB_ADC_B", "29": "DB_ADC_A", "30": "DB_PWM_A", "31": "DB_PWM_B", "32": "VCORE",
                "33": "GND"}),
     R("R4", "100k 0.1%", "ROSC", "GND", lcsc=L["R100k01"]),
     C("C4", "470nF", "VCORE", "GND", lcsc=L["C470n"]),
@@ -171,8 +173,9 @@ PARTS = [
          nets={"1": "PD_CATHODE", "2": "LASER_V"}),
     # Q1 AO9926B (cascode steering pair): laser switch S1 / G1 = DB_PWM_A / D1 = LD cathode, dummy switch S2 / G2 = DB_PWM_B / D2
     dict(ref="Q1", sym="AO9926B", value="AO9926B", fp=SOIC8, lcsc=LL["Q1"],
-         nets={"1": "LaserDrive", "2": "DB_PWM_A", "3": "LaserDrive", "4": "DB_PWM_B", "5": "DUMMY_BOT", "6": "DUMMY_BOT",
-               "7": "LD_CATHODE", "8": "LD_CATHODE"}),
+         # halves swapped by the user in the schematic (2026-10-30): laser switch = G2 (pin 4) / D2 (5, 6), dummy = G1 (2) / D1 (7, 8)
+         nets={"1": "LaserDrive", "2": "DB_PWM_B", "3": "LaserDrive", "4": "DB_PWM_A", "5": "LD_CATHODE", "6": "LD_CATHODE",
+               "7": "DUMMY_BOT", "8": "DUMMY_BOT"}),
     # dummy load: LASER_V -> D3 -> D2 (2.7 V, shorted by the RED shunt J205) -> D4 (2.4 V) -> Q1's dummy switch
     dict(ref="D3", sym="D", value="DSK14", fp="Diode_SMD:D_SOD-123F", lcsc=LL["D3"], nets={"1": "DUMMY_TOP", "2": "LASER_V"}),
     dict(ref="D2", sym="D_Zener", value="2.7V 1W (KDZVTR2.7B)", fp="Diode_SMD:D_SOD-123F", lcsc=LL["D2"],
@@ -201,6 +204,8 @@ PARTS = [
     dict(ref="MH2", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),
     dict(ref="MH3", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),
     dict(ref="MH4", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),
+    # the owl (board art, not in BOM / CPL): footprint variants OwlLogo_Eyes_14mm_R / _14mm_L / _6mm_R, its copper on GND
+    dict(ref="G1", sym="Logo", value="OwlLogo", fp="Footprints:OwlLogo_Eyes_14mm_R", lcsc="", nets={"1": "GND"}),
 ]
 
 BY_REF = {p["ref"]: p for p in PARTS}

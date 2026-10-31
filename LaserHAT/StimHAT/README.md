@@ -17,7 +17,9 @@ board follows.
 deterministic UUIDs; `tools/netcheck.py` proves the drawing's connectivity equals `sch_parts.PARTS`; `tools/make_bom.py`
 writes `bom_StimHAT.csv`; `tools/make_footprints.py` writes `stimhat.pretty/` (the MSPM0's VQFN-32 copied from the HAT
 board and the ALPS SKRHADE010 joystick).  Board: `tools/board_init.py` (once), `tools/project_settings.py` (net classes
-and constraints in the `.kicad_pro`), `tools/place.py` (outline, barrier rule areas, placement, silk; idempotent),
+and constraints in the `.kicad_pro`; **Power1A** = +5V, VBUS, VBUS_SW, +3V3, MSPM0_3V3, +3V3_PI, sized for 1 A: 0.5 mm, vias 0.8 / 0.4,
+and `StimHAT.kicad_dru` enforces >= 0.5 mm outer / >= 1.0 mm inner, 0.25 mm allowed on an outer layer inside an IC's courtyard for the neck-down
+to fine-pitch pins - the same rules as the LaserDriverHAT), `tools/place.py` (outline, barrier rule areas, placement, silk; idempotent),
 `tools/autoroute.py` (Freerouting headless), `tools/fresh_uuids.py` (after any `pcb_sync.py`: copied footprints share
 their library UUIDs and KiCad's DRC then confuses them), `tools/drc_summary.py`, `tools/stamp_fields.py` (LCSC codes
 onto the footprints), `tools/make_fab.py` → `../fab/StimHAT/`.  `StimHAT.kicad_dru` holds the isolation-barrier rule.
@@ -166,13 +168,12 @@ errors / 0 warnings, 0 open connections; every outer-pour piece is stitched (the
 a pad).  The user also added TP102 (GND_ISO) and routed the LED from pin 9 (PA5), both now in the generators.
 
 **Owl and labels (2026-10-29/30):** the lab's owl (`../Footprints.pretty/OwlLogo_Laser_14mm`, 17 x 14 mm, exposed-copper
-laser eyes and beams) sits on U101 looking at U7.  `tools/owl_logo.py` derives `stimhat:OwlLogo_Eyes_14mm_R` at full size, mirrored so the
-owl looks right (MIRROR = True negates every x): the eye copper is kept (two pads on GND, exposed), the copper beams become
-silk lines, no courtyard; the script keeps G1 where it
-finds it on the board (the user places the owl by hand) and only uses its POS for a first placement.  `--neuron X Y` (default
-48.0 16.2, the centre of the empty pour square above the "ISOLATED" label) moves the neuron drawing to that board position, replaces
-the four library beams by two converging silk lines per eye (from the socket edge to the soma) and turns each eye's copper square
-to its beam angle (the sockets are round, 2.5 mm across, so the 1.64 mm square fits at any angle).  Re-run it after moving G1.  Rules for that hand
+laser eyes and beams) is a real part again (2026-10-30): symbol G1 = `stimhat:Logo` (the Rev 2 library's owl art, pin 1 on
+GND, not in BOM / CPL) in `sch_parts.py` / `gen_schematic.py`, footprint `Footprints:OwlLogo_Eyes_14mm_R`.  The art is `../art/OwlLogo.svg` (edit it in any vector editor: white = silk,
+gold #c8862a = exposed copper, board green = knock-out; 1 unit = 1 mm, (0, 0) = footprint origin); `../tools/owl_logo.py` runs
+`../tools/svg2footprint.py` on it for the three variants (14 mm looking right / left, 6 mm looking right for the pod's back).  The
+neuron sits where the user placed it here (G1 at (37.95, 12.57), neuron in the pour square above ISOLATED).  Before
+2026-10-30 the owl was a board-only footprint made by a per-board script (it had been dropped from the generator in d7c196f).  Rules for that hand
 placement: the eyes are at (+0.8, -4.3) and (-2.7, -4.3) from the centre (mirrored), 1.64 mm square, so both must end west of x 33.7 (the
 barrier strip starts at x 34 and the strip keep-outs deliberately do not forbid pads, because the isolators' own pads straddle
 them - DRC will not catch an eye in the strip, and a custom-shaped pad's outline reaching into the isolated region is only

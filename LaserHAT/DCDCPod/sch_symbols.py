@@ -4,6 +4,7 @@ Symbol library for the DC-DC pod (2026-10-29): the subset of StimHAT/sch_symbols
 embedded; the engine writes them into the schematic and into dcdcpod.kicad_sym.
 """
 import math
+import os
 import uuid
 
 U = lambda: str(uuid.uuid4())  # noqa: E731
@@ -118,6 +119,22 @@ def power_symbol(name, gnd=False):
         add_symbol(name, "#PWR", gfx, [("1", name, 0, 0, 270, "power_in")], power=True, ref_pos=(0, -3.81), val_pos=(0, 3.175),
                    hide_pin_numbers=True, hide_pin_names=True)
 
+
+# the lab's owl (G1), drawn with the art of the LaserHAT library's OwlLogo symbol (../LaserHAT.kicad_sym); pin 1 = every pad of the
+# footprint (exposed-copper eyes and laser lines), tied to the board's ground.  Footprints: ../Footprints.pretty/OwlLogo_Eyes_*
+# (tools/owl_logo.py at the repo root): 14 mm looking right / left, 6 mm looking right.
+def owl_gfx():
+    s = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "LaserHAT.kicad_sym")).read()
+    i = s.index('(symbol "OwlLogo_0_1"'); j = s.index('(symbol "OwlLogo_1_1"', i)
+    body = s[s.index("\n", i) + 1:j].rstrip()
+    return "\n    ".join(l.strip() for l in body[:-1].strip().split("\n"))       # drop the unit's closing paren, re-indent
+
+
+add_symbol("Logo", "G", owl_gfx(), [("1", "GND", 0, -10.16, 90, "passive")],
+           ref_pos=(0, 8.89), val_pos=(0, -12.7), hide_pin_numbers=True, hide_pin_names=True)
+_t, _p = symbols["Logo"]
+symbols["Logo"] = (_t.replace('  (property "Datasheet"', '  (property "Description" "Owl logo with laser eyes and a neuron; pin 1 = the exposed copper, tie to ground" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))\n'
+                              '  (property "ki_fp_filters" "OwlLogo_*" (at 0 0 0) (effects (font (size 1.27 1.27)) (hide yes)))\n  (property "Datasheet"', 1), _p)
 
 # True = drawn as a ground-style symbol (points down); 0V is the isolated output reference
 POWER_NETS = {"+5V": False, "GND": True, "0V": True}

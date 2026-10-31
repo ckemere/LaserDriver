@@ -246,6 +246,8 @@ PARTS = [
     dict(ref="MH2", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),
     dict(ref="MH3", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),
     dict(ref="MH4", sym="MountingHole", value="M2.5", fp=HOLE, lcsc="", nets={}),
+    # the owl (board art, not in BOM / CPL): footprint variants OwlLogo_Eyes_14mm_R / _14mm_L / _6mm_R, its copper on GND
+    dict(ref="G1", sym="Logo", value="OwlLogo", fp="Footprints:OwlLogo_Eyes_14mm_R", lcsc="", nets={"1": "GND"}),
 ]
 
 BY_REF = {p["ref"]: p for p in PARTS}

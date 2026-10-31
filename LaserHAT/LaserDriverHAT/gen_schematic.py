@@ -157,7 +157,7 @@ put("SW9", 182, 42, ref_at=(0, -4.45), val_at=(0, 3.81)); LBL("SW9.1", length=5.
 put("J10", 184, 54, mirror=True, ref_at=(0, -8.89), val_at=(0, 8.89))
 PWR("J10.1", length=5.08); PWR("J10.2", length=5.08); LBL("J10.3", length=5.08); LBL("J10.4", length=5.08)
 text("Laser lines: PA22 DB_PWM_A (TIMA0_C1), PA23 DB_PWM_B (TIMA0_C3), PA15 DB_DAC (DAC0), PA26 / PA27 DB_ADC_A / B (ADC0 ch 1 / 0).  Joystick SW7 (SKRHADE010, at 135 deg): up PA7,", 103, 57)
-text("down PA6, centre PA14, left PA12 (BACK), right PA13 (BUTTON6); FIRE SW9 PA16; LED PA5; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
+text("left PA6 (BACK), right PA12 (BUTTON6), centre PA13, down PA14 (as on the StimHAT); FIRE SW9 PA16; LED PA5; all active low.  J10: unpopulated socket for a 0.91 in I2C OLED instead of the bonnet.", 103, 59)
 
 # =========================================================================== 3. BNC I/O
 box(202, 8, 252, 40, "3. BNC TRIGGER IN / SYNC OUT (74LVC2G17 buffers)")
@@ -226,9 +226,10 @@ text("I_LD = DB_DAC x 10k / 49k / 2 ohm = 102 mA / V (DAC0 on PA15, zero between
 text("DB_ADC_B = LASER_V x 33k / 133k (12 V -> 2.98 V).  The module's header lines are nets to U7: PWM_A PA22, PWM_B PA23, DAC PA15, ADC_A PA26, ADC_B PA27.", 7, 116)
 
 # =========================================================================== 10. mounting
-box(200, 64, 240, 84, "10. MOUNTING (M2.5, Pi HAT pattern)")
+box(200, 64, 240, 84, "10. MOUNTING (M2.5, Pi HAT pattern), LOGO")
 for i, h in enumerate(("MH1", "MH2", "MH3", "MH4")):
     put(h, 206 + 6 * i, 72, ref_at=(0, -3.81), val_at=(0, 3.81))
+put("G1", 233, 71, ref_at=(0, -8.89), val_at=(0, 12.7), hide_val=True); PWR("G1.1")
 
 missing, unplaced, overlaps = sh.finish()
 print("missing pins:", missing)

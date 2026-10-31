@@ -87,6 +87,9 @@ text("J2.2 = -V, J2.1 = CAB = 0V (the HAT's cable-detect return).  Both are righ
 text("stands on the HAT with its parts facing north.  A0515S: 1 W, min. load 10 %; L / C and the Q101 / Q102 multipliers (about 0.6 V", 7, 47)
 text("drop per rail, 60 dB ripple rejection above 100 Hz) came off the StimHAT, which keeps C109 / C110 and the 20 V clamps.", 7, 49)
 
+# ---- the owl on the pod's back (board art, its exposed copper on 0V)
+put("G1", 102, 22, ref_at=(0, -8.89), val_at=(0, 12.7), hide_val=True); PWR("G1.1")
+
 missing, unplaced, overlaps = sh.finish()
 print("missing pins:", missing)
 print("unplaced:", unplaced)

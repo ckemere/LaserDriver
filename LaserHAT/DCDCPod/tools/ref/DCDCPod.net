@@ -1,8 +1,8 @@
 (export (version "E")
   (design
-    (source "/home/claude-agent/Code/LaserDriver/.claude/worktrees/stim-hat/LaserHAT/DCDCPod/DCDCPod.kicad_sch")
-    (date "2026-10-30T13:26:21-0500")
-    (tool "Eeschema 9.0.8+dfsg-1")
+    (source "/Users/ckemere/Code/LabTools/SmallProjects/LaserDriver/LaserHAT/DCDCPod/DCDCPod.kicad_sch")
+    (date "2026-10-30T13:59:32-0500")
+    (tool "Eeschema 9.0.8")
     (sheet (number "1") (name "/") (tstamps "/")
       (title_block
         (title "DC-DC pod: isolated +/-15 V for the StimHAT")
@@ -90,6 +90,20 @@
       (property (name "Sheetfile") (value "DCDCPod.kicad_sch"))
       (sheetpath (names "/") (tstamps "/"))
       (tstamps "c6bb6707-6aff-59e8-bcb1-078a57ff41c3"))
+    (comp (ref "G1")
+      (value "OwlLogo")
+      (footprint "Footprints:OwlLogo_Eyes_6mm_R")
+      (fields
+        (field (name "Footprint") "Footprints:OwlLogo_Eyes_6mm_R")
+        (field (name "Datasheet"))
+        (field (name "Description")))
+      (libsource (lib "dcdcpod") (part "Logo") (description "Owl logo with laser eyes and a neuron; pin 1 = the exposed copper, tie to ground"))
+      (property (name "Sheetname") (value ""))
+      (property (name "Sheetfile") (value "DCDCPod.kicad_sch"))
+      (property (name "exclude_from_bom"))
+      (property (name "ki_fp_filters") (value "OwlLogo_*"))
+      (sheetpath (names "/") (tstamps "/"))
+      (tstamps "0cd4a841-a454-5e95-85c6-2a3f8dd3f6f5"))
     (comp (ref "J1")
       (value "5V IN (HAT J103)")
       (footprint "dcdcpod:PinHeader_1x02_P2.54mm_Horizontal_Pod")
@@ -308,6 +322,18 @@
       (pins
         (pin (num "1") (name "") (type "passive"))
         (pin (num "2") (name "") (type "passive"))))
+    (libpart (lib "dcdcpod") (part "Logo")
+      (description "Owl logo with laser eyes and a neuron; pin 1 = the exposed copper, tie to ground")
+      (footprints
+        (fp "OwlLogo_*"))
+      (fields
+        (field (name "Reference") "G")
+        (field (name "Value") "Logo")
+        (field (name "Footprint"))
+        (field (name "Datasheet"))
+        (field (name "Description") "Owl logo with laser eyes and a neuron; pin 1 = the exposed copper, tie to ground"))
+      (pins
+        (pin (num "1") (name "GND") (type "passive"))))
     (libpart (lib "dcdcpod") (part "Q_NPN_BEC")
       (fields
         (field (name "Reference") "Q")
@@ -351,7 +377,7 @@
         (pin (num "1") (name "") (type "passive")))))
   (libraries
     (library (logical "dcdcpod")
-      (uri "/home/claude-agent/Code/LaserDriver/.claude/worktrees/stim-hat/LaserHAT/DCDCPod/dcdcpod.kicad_sym")))
+      (uri "/Users/ckemere/Code/LabTools/SmallProjects/LaserDriver/LaserHAT/DCDCPod/dcdcpod.kicad_sym")))
   (nets
     (net (code "1") (name "+5V") (class "Default")
       (node (ref "C104") (pin "1") (pintype "passive"))
@@ -394,6 +420,7 @@
       (node (ref "C106") (pin "1") (pintype "passive"))
       (node (ref "C107") (pin "2") (pintype "passive"))
       (node (ref "C108") (pin "1") (pintype "passive"))
+      (node (ref "G1") (pin "1") (pinfunction "GND") (pintype "passive"))
       (node (ref "J2") (pin "1") (pinfunction "Pin_1") (pintype "passive"))
       (node (ref "J2") (pin "3") (pinfunction "Pin_3") (pintype "passive"))
       (node (ref "PS1") (pin "5") (pinfunction "COM") (pintype "power_out"))

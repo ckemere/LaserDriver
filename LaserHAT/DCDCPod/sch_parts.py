@@ -59,6 +59,8 @@ PARTS = [
     dict(ref="TP1", sym="TestPoint", value="+V_OUT", fp=TP, lcsc="", nets={"1": "+V_OUT"}),
     dict(ref="TP2", sym="TestPoint", value="0V", fp=TP, lcsc="", nets={"1": "0V"}),
     dict(ref="TP3", sym="TestPoint", value="-V_OUT", fp=TP, lcsc="", nets={"1": "-V_OUT"}),
+    # the owl (board art, not in BOM / CPL): footprint variants OwlLogo_Eyes_14mm_R / _14mm_L / _6mm_R, its copper on 0V
+    dict(ref="G1", sym="Logo", value="OwlLogo", fp="Footprints:OwlLogo_Eyes_6mm_R", lcsc="", nets={"1": "0V"}),
 ]
 
 BY_REF = {p["ref"]: p for p in PARTS}

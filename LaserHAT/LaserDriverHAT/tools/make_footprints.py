@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Project footprints into laserdriverhat.pretty (LaserDriverHAT copy of the StimHAT's script, 2026-10-30; the A0515S
-SIP and the JST PH socket of the e-stim half are gone, the owl comes from tools/owl_logo.py, the laser driver uses KiCad
+SIP and the JST PH socket of the e-stim half are gone, the owl comes from ../tools/owl_logo.py (Footprints.pretty), the laser driver uses KiCad
 library footprints only):
   * VQFN32_RHB_TEX: the MSPM0G3507 footprint copied out of the Rev 2 HAT board (its library, ELEC327-Kicad, is not in
     this repository)

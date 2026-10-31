@@ -5,3 +5,23 @@
 (rule laser_r202_one_spoke
   (condition "A.memberOfFootprint('R202')")
   (constraint min_resolved_spokes 1))
+
+# Power1A (tools/project_settings.py; the same rule on the StimHAT and the LaserDriverHAT): the HAT core's supplies +5V, VBUS,
+# VBUS_SW, +3V3, MSPM0_3V3, +3V3_PI (and on the LaserDriverHAT the laser current's path), sized for 1 A.  IPC-2221: 0.30 mm on 1 oz outer
+# copper (10 C rise), 0.5 mm kept for margin; inner layers are 0.5 oz at JLC's default 4-layer stack: 1.0 mm (~20 C rise at 1 A).
+# Neck-down: a segment on an outer layer inside the courtyard of an IC on that side may be 0.25 mm (fine-pitch pins, e.g. U7's 0.5 mm QFN); split the track at
+# the courtyard edge so only the neck is thin (the last matching rule wins, so this one comes last).
+(rule power_1a_outer
+  (condition "A.NetClass == 'Power1A'")
+  (layer outer)
+  (constraint track_width (min 0.5mm)))
+(rule power_1a_inner
+  (condition "A.NetClass == 'Power1A'")
+  (layer inner)
+  (constraint track_width (min 1.0mm)))
+(rule power_1a_neckdown_front
+  (condition "A.NetClass == 'Power1A' && A.Layer == 'F.Cu' && A.intersectsFrontCourtyard('U*')")
+  (constraint track_width (min 0.25mm)))
+(rule power_1a_neckdown_back
+  (condition "A.NetClass == 'Power1A' && A.Layer == 'B.Cu' && A.intersectsBackCourtyard('U*')")
+  (constraint track_width (min 0.25mm)))
