@@ -30,3 +30,9 @@ LaserHAT/EStimDaughter/route/
 # battery pack autorouter intermediates (dsn/ses, logs, DRC json)
 LaserHAT/BatteryPack/route/
 LaserHAT/BatteryPack/parts/ds/
+
+# simple battery pack autorouter intermediates and board snapshots
+LaserHAT/SimpleBatteryPack/route/
+
+# Fabrication Toolkit's automatic backups of earlier outputs
+LaserHAT/**/production/backups/

@@ -1,0 +1,409 @@
+{
+ "C98732": {
+  "mpn": "XT60PW-M",
+  "brand": "Changzhou Amass Elec",
+  "package": "-",
+  "lcsc_stock": 0,
+  "desc": "PCB Connector  XT60PW-M  2-Pin Right Angle Male Plug for LiPo Battery",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/e258adf1ce44622bb05a5787d35fc0fa.pdf?productCode=C98732",
+  "price": 0.6104,
+  "jlc_stock": 18977,
+  "jlc_type": "expand",
+  "refs": [
+   "J7",
+   "J8"
+  ],
+  "value": "XT60PW-M"
+ },
+ "C55159891": {
+  "mpn": "CAX-MTS202B2-BB-20.5JL",
+  "brand": "CAX",
+  "package": "Through Hole-6P,12.8x11.5mm",
+  "lcsc_stock": 194,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/f4269fdf91eee36068a2800bccc79e3e.pdf?productCode=C55159891",
+  "price": 1.5258,
+  "jlc_stock": 194,
+  "jlc_type": "expand",
+  "refs": [
+   "SW1"
+  ],
+  "value": "CAX-MTS202B2-BB-20.5JL"
+ },
+ "C22935": {
+  "mpn": "0603WAF1004T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 1954200,
+  "desc": "1M\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C22935",
+  "price": 0.0018,
+  "jlc_stock": 4958699,
+  "jlc_type": "base",
+  "refs": [
+   "R82",
+   "R81",
+   "R53"
+  ],
+  "value": "1M"
+ },
+ "C12430": {
+  "mpn": "MF-MSMF010-2",
+  "brand": "BOURNS",
+  "package": "1812",
+  "lcsc_stock": 29490,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/1beb8a12f610402ea17125f503d7912e.pdf?productCode=C12430",
+  "price": 0.0678,
+  "jlc_stock": 30721,
+  "jlc_type": "expand",
+  "refs": [
+   "F1",
+   "F2"
+  ],
+  "value": "MF-MSMF010-2"
+ },
+ "C15127": {
+  "mpn": "AO3401A",
+  "brand": "AOS",
+  "package": "SOT-23",
+  "lcsc_stock": 1319850,
+  "desc": "30V 4A Surface Mount SOT-23",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/fee353dd1e9e0bc90b295f14f381aa4c.pdf?productCode=C15127",
+  "price": 0.0969,
+  "jlc_stock": 1813028,
+  "jlc_type": "base",
+  "refs": [
+   "Q1",
+   "Q26",
+   "Q20",
+   "Q23"
+  ],
+  "value": "AO3401A"
+ },
+ "C25803": {
+  "mpn": "0603WAF1003T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 8563900,
+  "desc": "100k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25803",
+  "price": 0.003,
+  "jlc_stock": 17660775,
+  "jlc_type": "base",
+  "refs": [
+   "R1",
+   "R2",
+   "R39",
+   "R40",
+   "R77",
+   "R78",
+   "R79",
+   "R80",
+   "R83",
+   "R84"
+  ],
+  "value": "100k"
+ },
+ "C8545": {
+  "mpn": "2N7002",
+  "brand": "JSCJ",
+  "package": "SOT-23",
+  "lcsc_stock": 2743950,
+  "desc": "N-Channel 60V 115mA 0.225W Surface Mount SOT-23",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/a141b8bd86b14475955ac8c4d3eea0a8.pdf?productCode=C8545",
+  "price": 0.0167,
+  "jlc_stock": 3347384,
+  "jlc_type": "base",
+  "refs": [
+   "Q22",
+   "Q21",
+   "Q24"
+  ],
+  "value": "2N7002"
+ },
+ "C7955": {
+  "mpn": "LM393DR2G",
+  "brand": "onsemi",
+  "package": "SOIC-8",
+  "lcsc_stock": 317900,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a7f69005bd54ef2bf3e8b1a5a2f8965.pdf?productCode=C7955",
+  "price": 0.0607,
+  "jlc_stock": 362710,
+  "jlc_type": "base",
+  "refs": [
+   "U15",
+   "U2",
+   "U1",
+   "U14"
+  ],
+  "value": "LM393DR2G"
+ },
+ "C2286": {
+  "mpn": "KT-0603R",
+  "brand": "Hubei KENTO Elec",
+  "package": "0603",
+  "lcsc_stock": 4605600,
+  "desc": "Red 645nm LED Indication - Discrete 2.4V 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/011ec3e8cb1e825f6961d29bc4db4c7a.pdf?productCode=C2286",
+  "price": 0.0077,
+  "jlc_stock": 7176769,
+  "jlc_type": "base",
+  "refs": [
+   "D11",
+   "D1"
+  ],
+  "value": "KT-0603R"
+ },
+ "C22797": {
+  "mpn": "0603WAF1302T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 194100,
+  "desc": "13k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C22797",
+  "price": 0.0021,
+  "jlc_stock": 437285,
+  "jlc_type": "base",
+  "refs": [
+   "R54",
+   "R12",
+   "R13",
+   "R55"
+  ],
+  "value": "13k"
+ },
+ "C20917": {
+  "mpn": "AO3400A",
+  "brand": "AOS",
+  "package": "SOT-23",
+  "lcsc_stock": 567335,
+  "desc": "N-Channel 30V Surface Mount SOT-23-3L",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/130876b936da464599428c58fd8de8f6.pdf?productCode=C20917",
+  "price": 0.0897,
+  "jlc_stock": 1145199,
+  "jlc_type": "base",
+  "refs": [
+   "Q11",
+   "Q14"
+  ],
+  "value": "AO3400A"
+ },
+ "C157926": {
+  "mpn": "S4B-PH-K-S(LF)(SN)",
+  "brand": "JST",
+  "package": "Through Hole,Right Angle,P=2mm",
+  "lcsc_stock": 33270,
+  "desc": "Connector Header 4 position 2mm Pitch 2A Right Angle -25\u2103~+85\u2103",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/6c6fce4367275d84ec6a99bf09f1250f.pdf?productCode=C157926",
+  "price": 0.0709,
+  "jlc_stock": 33275,
+  "jlc_type": "expand",
+  "refs": [
+   "J3"
+  ],
+  "value": "S4B-PH-K-S(LF)(SN)"
+ },
+ "C3113": {
+  "mpn": "CJ431",
+  "brand": "JSCJ",
+  "package": "SOT-23",
+  "lcsc_stock": 451400,
+  "desc": null,
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/dca1b312f3e4467c9202db2f691d7926.pdf?productCode=C3113",
+  "price": 0.0389,
+  "jlc_stock": 593321,
+  "jlc_type": "base",
+  "refs": [
+   "U3",
+   "U16"
+  ],
+  "value": "CJ431"
+ },
+ "C23212": {
+  "mpn": "0603WAF6801T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 481900,
+  "desc": "6.8k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C23212",
+  "price": 0.0024,
+  "jlc_stock": 1193490,
+  "jlc_type": "base",
+  "refs": [
+   "R3",
+   "R45"
+  ],
+  "value": "6.8k"
+ },
+ "C4260": {
+  "mpn": "0603WAF6201T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 434300,
+  "desc": "6.2k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C4260",
+  "price": 0.0023,
+  "jlc_stock": 711399,
+  "jlc_type": "base",
+  "refs": [
+   "R4",
+   "R7",
+   "R46",
+   "R49"
+  ],
+  "value": "6.2k"
+ },
+ "C22975": {
+  "mpn": "0603WAF2001T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 3999700,
+  "desc": "2k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C22975",
+  "price": 0.0024,
+  "jlc_stock": 9714075,
+  "jlc_type": "base",
+  "refs": [
+   "R5",
+   "R6",
+   "R47",
+   "R48"
+  ],
+  "value": "2k"
+ },
+ "C22984": {
+  "mpn": "0603WAF3002T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 1033100,
+  "desc": "30k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C22984",
+  "price": 0.0047,
+  "jlc_stock": 2116703,
+  "jlc_type": "base",
+  "refs": [
+   "R8",
+   "R50"
+  ],
+  "value": "30k"
+ },
+ "C23231": {
+  "mpn": "0603WAF6802T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 563800,
+  "desc": "68k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C23231",
+  "price": 0.0016,
+  "jlc_stock": 951072,
+  "jlc_type": "base",
+  "refs": [
+   "R9",
+   "R51"
+  ],
+  "value": "68k"
+ },
+ "C25804": {
+  "mpn": "0603WAF1002T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 2860300,
+  "desc": "10k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C25804",
+  "price": 0.0022,
+  "jlc_stock": 42737445,
+  "jlc_type": "base",
+  "refs": [
+   "R10",
+   "R52"
+  ],
+  "value": "10k"
+ },
+ "C23178": {
+  "mpn": "0603WAF4703T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 443300,
+  "desc": "470k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C23178",
+  "price": 0.003,
+  "jlc_stock": 1037414,
+  "jlc_type": "base",
+  "refs": [
+   "R11"
+  ],
+  "value": "470k"
+ },
+ "C14663": {
+  "mpn": "CC0603KRX7R9BB104",
+  "brand": "YAGEO",
+  "package": "0603",
+  "lcsc_stock": 4000,
+  "desc": "100nF \u00b110% 50V Ceramic Capacitor X7R 0603",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/23ccee80ee542e7cf156a772bb589942.pdf?productCode=C14663",
+  "price": 0.0068,
+  "jlc_stock": 41534569,
+  "jlc_type": "base",
+  "refs": [
+   "C1",
+   "C2",
+   "C20",
+   "C21"
+  ],
+  "value": "100n"
+ },
+ "C2296": {
+  "mpn": "KT-0805Y",
+  "brand": "Hubei KENTO Elec",
+  "package": "0805",
+  "lcsc_stock": 381400,
+  "desc": "Yellow 596nm LED Indication - Discrete 1.8V~2.4V 0805",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/3f6a14f9ea2fc39f6e05d2ab0fa53e2b.pdf?productCode=C2296",
+  "price": 0.0125,
+  "jlc_stock": 633810,
+  "jlc_type": "base",
+  "refs": [
+   "D2",
+   "D12"
+  ],
+  "value": "KT-0805Y"
+ },
+ "C2297": {
+  "mpn": "KT-0805G",
+  "brand": "Hubei KENTO Elec",
+  "package": "0805",
+  "lcsc_stock": 1296750,
+  "desc": "Emerald Green 525nm LED Indication - Discrete 2.6V~3.1V 0805",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/de342fde3322df0797012cd7a04e2194.pdf?productCode=C2297",
+  "price": 0.0166,
+  "jlc_stock": 2235352,
+  "jlc_type": "base",
+  "refs": [
+   "D3",
+   "D4",
+   "D13",
+   "D14"
+  ],
+  "value": "KT-0805G"
+ },
+ "C22790": {
+  "mpn": "0603WAF1202T5E",
+  "brand": "UNI-ROYAL",
+  "package": "0603",
+  "lcsc_stock": 240800,
+  "desc": "12k\u03a9 \u00b11% 100mW 0603 Thick Film Resistor",
+  "pdf": "https://datasheet.lcsc.com/datasheet/pdf/0a975aaa49b7c97f38a963127be4a823.pdf?productCode=C22790",
+  "price": 0.0031,
+  "jlc_stock": 1007030,
+  "jlc_type": "base",
+  "refs": [
+   "R14",
+   "R15",
+   "R56",
+   "R57"
+  ],
+  "value": "12k"
+ }
+}
