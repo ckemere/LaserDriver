@@ -73,7 +73,7 @@ const BoardDef *board_from_eeprom(const char *hat_dir, bool *present)
     char *end;
     long id = strtol(pid, &end, 0);
     for (size_t i = 0; i < N_BOARDS; i++) {
-        if ((end != pid && id == g_boards[i].pid)
+        if ((end != pid && id == (long)g_boards[i].pid)
                 || strcmp(product, g_boards[i].product) == 0) {
             return &g_boards[i];
         }
