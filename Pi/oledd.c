@@ -1,6 +1,7 @@
 /*
  * oledd.c — LaserHAT OLED daemon for the Adafruit 2.23" 128x32 bonnet
- * (SSD1305, I2C address 0x3C on /dev/i2c-1, panel reset on GPIO 4).
+ * (SSD1305, I2C address 0x3C on /dev/i2c-1, panel reset on GPIO 4) or, with
+ * LASERHAT_OLED_PANEL=ssd1306, a generic 0.91" 128x32 SSD1306 module on J10.
  *
  * Modeled on pioled-ip.c: no libraries beyond libc plus the kernel's
  * i2c-dev and GPIO character-device interfaces, embedded 5x7 font,
@@ -61,7 +62,13 @@
 #define OLED_W     128
 #define OLED_H     32
 #define PAGES      (OLED_H / 8)          /* 4 pages of 8 vertical pixels */
-#define COL_OFFSET 4                     /* SSD1305: 132 drivers, 128 glass */
+/* Panel type, from LASERHAT_OLED_PANEL (default "ssd1305" = the Adafruit
+ * 2.23" bonnet; "ssd1306" = a generic 0.91" 128x32 SSD1306 module on J10).
+ * The SSD1305 has 132 column drivers for the 128-wide glass (columns are
+ * offset by 4) and takes SSD1305-only setup commands that an SSD1306
+ * misreads as other commands (hence random pixels on the wrong panel). */
+static int panel_ssd1306 = 0;
+static int col_offset = 4;               /* SSD1305 4, SSD1306 0 */
 #define CELLS      (OLED_W / 6)          /* 5px glyph + 1px gap = 21 cells */
 #define DOT_COL    120                   /* heartbeat dot cell, top right  */
 
@@ -263,6 +270,27 @@ static int oled_cmds(int fd, const uint8_t *cmds, size_t n)
  * this replaces), which is known-good on the 2.23" bonnet. */
 static int oled_init(int fd)
 {
+    static const uint8_t init1306[] = {    /* SSD1306 128x32 (Solomon app note / Adafruit SSD1306 driver) */
+        0xAE,                          /* display off                  */
+        0xD5, 0x80,                    /* clock divide ratio           */
+        0xA8, OLED_H - 1,              /* multiplex ratio: 32 rows     */
+        0xD3, 0x00,                    /* display offset 0             */
+        0x40,                          /* start line 0                 */
+        0x8D, 0x14,                    /* charge pump on               */
+        0x20, 0x00,                    /* horizontal addressing mode   */
+        0xA1,                          /* segment remap (flip X)       */
+        0xC8,                          /* COM scan reversed (flip Y)   */
+        0xDA, 0x02,                    /* COM pins: sequential (128x32)*/
+        0x81, 0x8F,                    /* contrast                     */
+        0xD9, 0xF1,                    /* precharge                    */
+        0xDB, 0x40,                    /* VCOMH deselect               */
+        0xA4,                          /* resume from RAM              */
+        0xA6,                          /* normal (not inverted)        */
+        0x2E,                          /* deactivate scroll            */
+        0xAF,                          /* display on                   */
+    };
+    if (panel_ssd1306)
+        return oled_cmds(fd, init1306, sizeof(init1306));
     static const uint8_t init[] = {
         0xAE,                          /* display off                  */
         0xD5, 0x80,                    /* clock divide ratio           */
@@ -290,9 +318,9 @@ static int oled_init(int fd)
 
 static int oled_flush(int fd)
 {
-    static const uint8_t window[] = {
-        0x21, COL_OFFSET, COL_OFFSET + OLED_W - 1,  /* column range */
-        0x22, 0x00, PAGES - 1,                      /* page range   */
+    const uint8_t window[] = {
+        0x21, (uint8_t)col_offset, (uint8_t)(col_offset + OLED_W - 1),  /* column range */
+        0x22, 0x00, PAGES - 1,                                          /* page range   */
     };
     if (oled_cmds(fd, window, sizeof(window)) < 0)
         return -1;
@@ -457,6 +485,14 @@ static const char *boot_tag(void)
 int main(void)
 {
     const char *sock_path = getenv("LASERHAT_OLED_SOCK");
+    const char *panel = getenv("LASERHAT_OLED_PANEL");
+    if (panel && strcmp(panel, "ssd1306") == 0) {
+        panel_ssd1306 = 1;
+        col_offset = 0;
+    } else if (panel && *panel && strcmp(panel, "ssd1305") != 0) {
+        fprintf(stderr, "oledd: unknown LASERHAT_OLED_PANEL '%s' (ssd1305 | ssd1306), using ssd1305\n", panel);
+    }
+    fprintf(stderr, "oledd: panel %s\n", panel_ssd1306 ? "ssd1306 128x32 (J10 module)" : "ssd1305 (Adafruit bonnet)");
     if (!sock_path || !*sock_path)
         sock_path = DEFAULT_SOCK;
 

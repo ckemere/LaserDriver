@@ -37,6 +37,11 @@ rarely `LASERHAT_*_PIN=N`), read by `laserhat-broker.service`
 (`EnvironmentFile=-`) and by `laserhat-flash`, for a board whose ID EEPROM
 is not programmed.  Programming the EEPROM (§10) is the better fix.
 
+**OLED panel:** the same file takes `LASERHAT_OLED_PANEL=ssd1306` when a generic 0.91" 128 × 32 SSD1306
+module sits on J10 instead of the Adafruit bonnet (default `ssd1305`); `laserhat-oledd.service` reads it
+(`systemctl restart laserhat-oledd` after editing).  The bonnet's SSD1305 needs a 4-column offset and
+SSD1305-only setup commands that an SSD1306 misreads, which shows as random pixels.
+
 **postinst** creates the `laserhat` system user (all four daemons share
 it so their Unix sockets in `/run/laserhat*` need no cross-user
 permissions), enables the units, and — only when a live systemd is
