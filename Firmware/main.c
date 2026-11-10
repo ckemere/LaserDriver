@@ -15,25 +15,36 @@
 #include <stdint.h>
 
 /* -----------------------------------------------------------------------
- * LaserHAT Rev 2 firmware — HAT + laser module + e-stim module
+ * LaserHAT firmware — one source, three boards (board.h, make BOARD=...):
  *
- *   - the five edge buttons (SW7 thumbwheel roll/roll/push, SW8 BACK,
- *     SW9 FIRE), debounced, reported as EVT_BUTTON; FIRE fires a pulse;
+ *   rev2   LaserHAT Rev 2 + plug-in laser module + e-stim module (both
+ *          modes, CMD_SET_MODE switches; boots in LASER)
+ *   stim   StimHAT: the e-stim stimulator on the HAT (ESTIM only)
+ *   laser  LaserDriverHAT: the laser driver on the HAT (LASER only, no
+ *          fault line)
+ *
+ * The board type goes out in RSP_VERSION.board.  A mode the board lacks is
+ * compiled out and CMD_SET_MODE to it is refused.  What runs:
+ *
+ *   - the edge buttons (Rev 2: SW7 thumbwheel roll/roll/push, SW8 BACK,
+ *     SW9 FIRE; StimHAT / LaserDriverHAT: 5-way joystick + SW9 FIRE),
+ *     debounced, reported as EVT_BUTTON; FIRE fires a pulse;
  *   - the status LED D7 (boot blink, 1 Hz heartbeat when idle, solid
  *     during a pulse, 5 Hz blink while a module fault is latched);
- *   - LASER mode: TIMA0 PWM on J8 (CCP1 = laser switch, CCP3 = dummy
- *     switch complement), DAC0 on J9.3 sets the module's current (IREF)
- *     for the duration of a pulse and is zero between pulses (the module's
- *     cascode Q1 must not carry dummy current continuously, REV2_NOTES),
- *     ADC1 reads the photodiode (J9.4) and the compliance rail (J9.5);
- *   - ESTIM mode (spec §7): EN / CATH / RELEASE driven as GPIOs from the
- *     tick ISR (10 µs grid) — RELEASE + CATH, EN pulse, CATH low in the
- *     gap, EN pulse, RELEASE held ~200 µs then dropped for 200 µs;
- *     amplitude = DAC60501 on the module over bit-banged I2C (J9.4/J9.5)
- *     between trains; FAULT_n (J8.3) falling edge kills the outputs
- *     within a few µs and latches a fault until CMD_CLEAR_FAULT;
+ *   - LASER mode (rev2, laser): TIMA0 PWM on the switch lines (CCP1 =
+ *     laser switch, CCP3 = dummy switch complement), DAC0 sets the
+ *     current (IREF) for the duration of a pulse and is zero between
+ *     pulses (the cascode Q1 must not carry dummy current continuously,
+ *     REV2_NOTES), the ADC reads the photodiode and the compliance rail;
+ *   - ESTIM mode (rev2, stim; spec §7): EN / CATH / RELEASE driven as
+ *     GPIOs from the tick ISR (10 µs grid) — RELEASE + CATH, EN pulse,
+ *     CATH low in the gap, EN pulse, RELEASE held ~200 µs then dropped for
+ *     200 µs; amplitude = DAC60501 over bit-banged I2C between trains;
+ *     FAULT_n falling edge kills the outputs within a few µs and latches a
+ *     fault until CMD_CLEAR_FAULT;
  *   - STIM OUT (J7 BNC + D9) mirrors the pulse envelope, TRIG IN (J6)
- *     and the Pi's GPIO26 fire a pulse;
+ *     and the Pi's trigger GPIO (Rev 2 GPIO26, new HATs GPIO18) fire a
+ *     pulse;
  *   - the binary protocol on *both* UARTs: UART1 to the Pi (GPIO14/15)
  *     and UART0 to the USB-C CH340N, so the smoke test also runs from a
  *     laptop with no Pi.
@@ -108,7 +119,7 @@ static volatile EstimConfig g_estim_config_live = {
 };
 static EstimConfig g_estim_config_active;   /* ISR-only */
 
-static volatile uint8_t g_mode = MODE_LASER;
+static volatile uint8_t g_mode = BOARD_DEFAULT_MODE;
 static          uint8_t g_mode_active;      /* ISR-only, latched at trigger */
 
 /* Module setpoints (main-owned; the laser one is written to DAC0 by the
@@ -142,8 +153,12 @@ static volatile uint16_t g_adc_comp = 0u;
  * before a state change is accepted (10 polls = 10 ms).
  */
 #define DEBOUNCE_TICKS            10u
+#if BOARD_HAS_BUTTON6
+#define NUM_BUTTONS                7u   /* 5 joystick contacts + FIRE + the BSL switch */
+#else
 #define NUM_BUTTONS                6u   /* 5 edge buttons + the BSL switch */
-#define BUTTON_FIRE_BIT            4u   /* BUTTON5 = SW9 FIRE */
+#endif
+#define BUTTON_FIRE_BIT            EVT_BUTTON_BIT_BUTTON5   /* SW9 FIRE */
 
 /* Idle heartbeat on D7: 50 ms on every second (in 10 us ticks); fault
  * indication: 5 Hz square wave. */
@@ -259,7 +274,9 @@ static void delay_cycles(uint32_t cycles)
 static inline void fault_kill_outputs(void)
 {
     laser_pins_to_gpio_safe();      /* EN / PWM_A low, CATH / PWM_B idle */
+#if BOARD_HAS_ESTIM
     module_release_clear();         /* RELEASE low (no effect in laser mode) */
+#endif
 }
 
 static inline void fault_latch(void)
@@ -294,9 +311,11 @@ static inline void latch_config_from_live(void)
 
 static inline void abort_to_waiting(void)
 {
+#if BOARD_HAS_LASER
     if (g_mode_active == MODE_LASER) {
         laser_dac_write12(0u);          /* no dummy current between pulses */
     }
+#endif
     g_state.laser     = LASER_IDLE;
     g_state.estim     = ESTIM_IDLE;
     g_state.ramp_step = 0u;
@@ -337,8 +356,10 @@ static inline void state_machine_tick(void)
                 } else {
                     g_state.laser     = LASER_RAMP_UP;
                     g_state.ramp_step = 0u;
+#if BOARD_HAS_LASER
                     laser_dac_write12(g_laser_dac);   /* IREF up; the first
                                                          ramp step is dummy-only */
+#endif
                 }
                 g_pulse_start_evt.tick    = g_isr_ticks;
                 g_pulse_start_evt.pending = true;
@@ -488,19 +509,34 @@ static inline void set_output_from_state(void)
     }
 
     /* Apply unconditionally every tick: plain register stores, so the
-     * safe module-pin state is self-healing within 10 us. */
+     * safe module-pin state is self-healing within 10 us.  (A mode the
+     * board lacks never gets here: its branch is compiled out.) */
+#if BOARD_HAS_ESTIM
     if (estim_drive) {
         /* Pins are in their GPIO mux in ESTIM mode (never switched to TIMA0). */
         if (release) { module_release_set(); } else { module_release_clear(); }
         if (cath)    { laser_gpio_estim_cath_set(); } else { laser_gpio_estim_cath_clear(); }
         if (en)      { laser_gpio_estim_en_set(); }   else { laser_gpio_estim_en_clear(); }
-    } else if (pwm) {
+    } else
+#endif
+#if BOARD_HAS_LASER
+    if (pwm) {
         laser_pins_to_pwm();
         laser_timera_set_duty(duty);
-    } else {
+    } else
+#endif
+    {
         laser_pins_to_gpio_safe();
+#if BOARD_HAS_ESTIM
         module_release_clear();
+#endif
     }
+#if !BOARD_HAS_ESTIM
+    (void)estim_drive; (void)en; (void)cath; (void)release;
+#endif
+#if !BOARD_HAS_LASER
+    (void)pwm; (void)duty;
+#endif
 
     if (active) {
         laser_gpio_stim_out_set();
@@ -527,6 +563,13 @@ void TIMG0_IRQHandler(void)
  * Mode switch (main loop, only while WAITING)
  * ----------------------------------------------------------------------- */
 
+/* Modes this board has (the others are compiled out). */
+static bool mode_supported(uint8_t mode)
+{
+    return (BOARD_HAS_LASER && mode == MODE_LASER) ||
+           (BOARD_HAS_ESTIM && mode == MODE_ESTIM);
+}
+
 static void enter_mode(uint8_t mode)
 {
     g_mode = mode;
@@ -538,13 +581,19 @@ static void enter_mode(uint8_t mode)
     g_adc_comp = 0u;
 
     if (mode == MODE_LASER) {
-        module_laser_pins();            /* PA15 DAC, PA17/PA22 ADC */
+#if BOARD_HAS_LASER
+        module_laser_pins();            /* DAC + ADC pins analog (Rev 2: J9) */
         laser_dac_write12(0u);          /* setpoint goes out at pulse start */
         laser_dac_enable();
+#endif
     } else {
+#if BOARD_HAS_LASER
         laser_dac_disable();
-        module_estim_pins();            /* PA15 RELEASE, PA17/PA22 I2C */
-        g_estim_dac_pending = true;     /* (re)program the module DAC when it is up */
+#endif
+#if BOARD_HAS_ESTIM
+        module_estim_pins();            /* RELEASE out, SDA/SCL open-drain */
+        g_estim_dac_pending = true;     /* (re)program the DAC60501 when it is up */
+#endif
     }
 }
 
@@ -558,9 +607,13 @@ static void enter_mode(uint8_t mode)
 static void module_housekeeping(void)
 {
     static uint8_t  fault_high_ms = 0u;
+#if BOARD_HAS_ESTIM
     static uint8_t  estim_retry_ms = 0u;
+#endif
+#if BOARD_HAS_LASER
     static uint8_t  adc_ms = 0u;
     static bool     adc_busy = false;
+#endif
 
     bool fn_high = laser_gpio_fault_n_high();
     if (fn_high) {
@@ -579,7 +632,10 @@ static void module_housekeeping(void)
     }
 
     if (g_mode == MODE_ESTIM) {
+#if BOARD_HAS_LASER
         adc_busy = false;
+#endif
+#if BOARD_HAS_ESTIM
         /* Module DAC traffic only between trains and only with the module
          * powered (FAULT_n high for >= 2 ms covers the 250 µs of spec §7). */
         if (g_state.overall == OVERALL_WAITING && fn_high && fault_high_ms >= 2u) {
@@ -608,7 +664,9 @@ static void module_housekeeping(void)
                 }
             }
         }
+#endif /* BOARD_HAS_ESTIM */
     } else {
+#if BOARD_HAS_LASER
         /* Laser readbacks every ADC_PERIOD_MS: start one tick, read the next. */
         if (adc_busy) {
             uint16_t pd, comp;
@@ -622,6 +680,7 @@ static void module_housekeeping(void)
             laser_adc_start();
             adc_busy = true;
         }
+#endif /* BOARD_HAS_LASER */
     }
 }
 
@@ -735,7 +794,7 @@ static void emit_status(UartPort *port)
 
 static void emit_version(UartPort *port)
 {
-    VersionPayload v = { .proto = (uint8_t)PROTO_VERSION, .reserved = 0u };
+    VersionPayload v = { .proto = (uint8_t)PROTO_VERSION, .board = (uint8_t)BOARD_TYPE };
     /* NUL-padded copy; a 30-character string fills the field exactly. */
     for (size_t i = 0u; i < sizeof v.version; i++) {
         v.version[i] = '\0';
@@ -795,7 +854,8 @@ static void process_frame(UartPort *port, uint8_t type,
         case CMD_SET_MODE:
             if (len == CMD_SET_MODE_LEN) {
                 uint8_t m = payload[0];
-                if ((m == MODE_LASER || m == MODE_ESTIM) && m != g_mode &&
+                /* A mode the board lacks is refused (the echo keeps g_mode). */
+                if (mode_supported(m) && m != g_mode &&
                     g_state.overall == OVERALL_WAITING) {
                     enter_mode(m);
                 }
@@ -818,12 +878,14 @@ static void process_frame(UartPort *port, uint8_t type,
                     /* Mid-pulse: take effect now.  Masked so the tick ISR
                      * cannot end the pulse (and zero DAC0) between the
                      * check and the write. */
+#if BOARD_HAS_LASER
                     __asm volatile ("cpsid i" ::: "memory");
                     if (g_mode == MODE_LASER &&
                         g_state.overall == OVERALL_TRIGGERED) {
                         laser_dac_write12(code);
                     }
                     __asm volatile ("cpsie i" ::: "memory");
+#endif
                 }
             }
             emit_status(port);
@@ -909,18 +971,24 @@ int main(void)
         delay_cycles(BOOT_BLINK_HALF_CYCLES);
     }
 
+#if BOARD_HAS_LASER
     laser_timera_init();
+#endif
     laser_timerg_init_tick();
     laser_timerg_init_housekeeping();
+#if BOARD_HAS_LASER
     laser_dac_init();
     laser_adc_init();
+#endif
     uart_init(&g_uart_pi,  UART1);
     uart_init(&g_uart_usb, UART0);
     frame_decoder_init(&g_rx_pi);
     frame_decoder_init(&g_rx_usb);
 
-    enter_mode(MODE_LASER);             /* gpio-safe pins, DAC0 at zero until a pulse */
+    enter_mode(BOARD_DEFAULT_MODE);     /* gpio-safe pins; LASER: DAC0 at zero until a pulse */
+#if BOARD_HAS_LASER
     laser_timera_start();
+#endif
 
     /* TIMG0 runs the state machine at the highest priority; TIMG6
      * housekeeping lower so it can never delay a pulse tick. */
@@ -966,22 +1034,24 @@ void TIMG6_IRQHandler(void)
 /* GPIOA shares the INT_GROUP1 vector; we're the only GROUP1 source. */
 void GROUP1_IRQHandler(void)
 {
-    uint32_t mis = GPIOA->CPU_INT.MIS;
+    uint32_t mis = BOARD_GPIO_PORT->CPU_INT.MIS;
 
+#if BOARD_HAS_FAULT_PIN
     if (mis & BOARD_FAULT_N_PIN) {
         /* FAULT_n fell: one-shot — mask the edge so a chattering line
          * cannot re-enter here; housekeeping re-arms after the latch is
          * cleared and the line has been high for 2 ms.  Outputs off first,
          * then latch and report. */
-        GPIOA->CPU_INT.ICLR = BOARD_FAULT_N_PIN;
+        BOARD_GPIO_PORT->CPU_INT.ICLR = BOARD_FAULT_N_PIN;
         laser_gpio_fault_irq_disable();
         g_fault_armed = false;
         fault_latch();
     }
+#endif
 
     uint32_t fired_mask = mis & (BOARD_STIM_IN_PIN | BOARD_PI_TRIGGER_PIN);
     if (fired_mask) {
-        GPIOA->CPU_INT.ICLR = fired_mask;
+        BOARD_GPIO_PORT->CPU_INT.ICLR = fired_mask;
         g_hw_trigger_pending = true;
     }
 }

@@ -1,6 +1,8 @@
 #include "dac.h"
 #include "mcu.h"
 
+#if BOARD_HAS_LASER   /* the whole file: DAC0 is unused on the StimHAT */
+
 static inline void update_reg(volatile uint32_t *reg, uint32_t value, uint32_t mask)
 {
     *reg = (*reg & ~mask) | (value & mask);
@@ -52,3 +54,5 @@ void laser_dac_disable(void)
 {
     DAC0->CTL0 &= ~DAC12_CTL0_ENABLE_MASK;
 }
+
+#endif /* BOARD_HAS_LASER */

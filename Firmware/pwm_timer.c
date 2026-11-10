@@ -1,6 +1,8 @@
 #include "pwm_timer.h"
 #include "mcu.h"
 
+#if BOARD_HAS_LASER   /* the whole file: no PWM on the StimHAT */
+
 #define TIMA_PERIOD_COUNTS  320u
 
 static inline void update_reg(volatile uint32_t *reg, uint32_t value, uint32_t mask)
@@ -105,3 +107,5 @@ void laser_timera_start(void)
 {
     TIMA0->COUNTERREGS.CTRCTL |= GPTIMER_CTRCTL_EN_ENABLED;
 }
+
+#endif /* BOARD_HAS_LASER */

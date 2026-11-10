@@ -44,16 +44,50 @@
 #define RSP_STATUS        0x81u   /* StatusPayload below (34 bytes) */
 #define EVT_PULSE_START   0x82u   /* tick u32 */
 #define EVT_PULSE_END     0x83u   /* tick u32 */
-#define EVT_BUTTON        0x84u   /* mask u8, edges u8 — bit 0 BACK (SW8), bit 1 SELECT
-                                     (wheel push), bits 2/3 wheel roll, bit 4 FIRE (SW9),
-                                     bit 5 BSL switch (SW6); Rev 2 HAT */
+#define EVT_BUTTON        0x84u   /* mask u8, edges u8 — bit order below (EVT_BUTTON_BIT_*) */
 #define EVT_FAULT         0x85u   /* module u8 (flags below), tick u32 — a fault latched */
-#define RSP_VERSION       0x86u   /* VersionPayload below (32 bytes), answers CMD_GET_VERSION */
+#define RSP_VERSION       0x86u   /* VersionPayload below (32 bytes), answers CMD_GET_VERSION:
+                                     proto u8, board u8, version char[30] */
+
+/* Button bits in EVT_BUTTON mask / edges and RSP_STATUS.button_mask (1 =
+ * pressed).  The mask stays one byte on every board:
+ *
+ *   bit | Rev 2 HAT                 | StimHAT / LaserDriverHAT (joystick SW7)
+ *   ----+---------------------------+-----------------------------------------
+ *    0  | BUTTON1 SW8 BACK          | BUTTON1 joystick left   = BACK
+ *    1  | BUTTON2 SW7 wheel push    | BUTTON2 joystick centre = SELECT
+ *    2  | BUTTON3 SW7 wheel roll D  | BUTTON3 joystick down
+ *    3  | BUTTON4 SW7 wheel roll B  | BUTTON4 joystick up
+ *    4  | BUTTON5 SW9 FIRE          | BUTTON5 SW9 FIRE
+ *    5  | BSL switch SW6            | BSL switch SW6
+ *    6  | (always 0)                | BUTTON6 joystick right
+ *    7  | (always 0)                | (always 0)
+ *
+ * Pins per board: board_rev2.h / board_stim.h / board_laser.h. */
+#define EVT_BUTTON_BIT_BUTTON1   0   /* BACK */
+#define EVT_BUTTON_BIT_BUTTON2   1   /* SELECT */
+#define EVT_BUTTON_BIT_BUTTON3   2
+#define EVT_BUTTON_BIT_BUTTON4   3
+#define EVT_BUTTON_BIT_BUTTON5   4   /* FIRE (also fires a pulse) */
+#define EVT_BUTTON_BIT_BSL       5
+#define EVT_BUTTON_BIT_BUTTON6   6   /* StimHAT / LaserDriverHAT only */
+
+/* Board type byte in RSP_VERSION.board: which HAT the firmware was built
+ * for (Makefile BOARD=rev2|stim|laser).  The byte was the always-zero
+ * `reserved` before, so firmware older than this field reports
+ * BOARD_TYPE_UNKNOWN; the payload layout did not change, which is why
+ * PROTO_VERSION stays 2. */
+#define BOARD_TYPE_UNKNOWN  0u   /* firmware from before the field (sent 0) */
+#define BOARD_TYPE_REV2     1u   /* LaserHAT Rev 2: plug-in laser / e-stim modules */
+#define BOARD_TYPE_STIM     2u   /* StimHAT: e-stim only */
+#define BOARD_TYPE_LASER    3u   /* LaserDriverHAT: laser only */
 
 /* Wire-protocol version, reported in RSP_VERSION.proto.  Bump it whenever a
  * payload layout or a message type changes meaning; the broker refuses to
  * trust a firmware whose number differs from its own.  1 = everything before
- * CMD_GET_VERSION existed (v0.2.0-rc1..rc5), 2 = this header. */
+ * CMD_GET_VERSION existed (v0.2.0-rc1..rc5), 2 = this header (turning
+ * RSP_VERSION's reserved byte into `board` kept it at 2: same layout, and
+ * old firmware's 0 reads as BOARD_TYPE_UNKNOWN). */
 #define PROTO_VERSION     2u
 
 /* Phase byte values in RSP_STATUS (ASCII 'W' / 'T'). */
@@ -63,6 +97,9 @@
 /* Mode byte values. */
 #define MODE_LASER        0x00u
 #define MODE_ESTIM        0x01u
+/* CMD_SET_MODE to a mode the board does not have (LASER on the StimHAT,
+ * ESTIM on the LaserDriverHAT) is refused: the RSP_STATUS echo keeps the
+ * board's only mode. */
 
 /* Module flag bits (StatusPayload.module, EVT_FAULT payload). */
 #define MODULE_FAULT_N_LOW    0x01u   /* J8.3 FAULT_n is low right now (fault, or e-stim
@@ -120,7 +157,7 @@
  *
  * The _Static_asserts lock these to the lengths above; keep them in sync
  * with Pi/protocol.py (_CONFIG = "<HII", _STATUS = "<HIIBBIBIIHHBHH",
- * _VERSION = "<BB30s").
+ * _VERSION = "<BB30s": proto, board, version).
  */
 typedef struct __attribute__((packed)) {
     uint16_t intensity;
@@ -150,8 +187,8 @@ typedef struct __attribute__((packed)) {
     uint16_t laser_dac;       /* DAC0 code (laser module current setpoint) */
     uint16_t estim_dac;       /* DAC60501 code (e-stim amplitude), as last commanded */
     uint8_t  module;          /* MODULE_* flags */
-    uint16_t adc_pd;          /* ADC1.2 (J9.4) raw 12-bit, laser mode only (else 0) */
-    uint16_t adc_comp;        /* ADC1.8 (J9.5) raw 12-bit, laser mode only (else 0) */
+    uint16_t adc_pd;          /* photodiode ADC raw 12-bit, laser mode only (else 0) */
+    uint16_t adc_comp;        /* LASER_V divider ADC raw 12-bit, laser mode only (else 0) */
 } StatusPayload;
 
 typedef struct __attribute__((packed)) {
@@ -166,7 +203,7 @@ typedef struct __attribute__((packed)) {
  * so the broker can compare the two byte for byte. */
 typedef struct __attribute__((packed)) {
     uint8_t  proto;                     /* PROTO_VERSION of this firmware */
-    uint8_t  reserved;                  /* 0 */
+    uint8_t  board;                     /* BOARD_TYPE_* (was `reserved`, always 0) */
     char     version[FW_VERSION_CHARS]; /* NUL-padded */
 } VersionPayload;
 

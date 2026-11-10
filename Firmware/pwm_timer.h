@@ -3,15 +3,19 @@
 
 #include <stdint.h>
 #include "mcu.h"
+#include "board.h"
 
 /*
- * TIMA0 register-level driver — module PWM on J8 (Rev 2).
+ * TIMA0 register-level driver — laser PWM on the switch lines A / B
+ * (BOARD_HAS_LASER boards only: Rev 2 PA7 / PA12, LaserDriverHAT PA22 /
+ * PA23; the pin mux is in board.h / output_mux.c, the channels are the
+ * same on both boards).  Not built for the StimHAT (no PWM).
  *
  * 100 kHz edge-aligned UP-counting PWM, BUSCLK = 32 MHz, period = 320:
  *
- *   CCP1 (PA7,  PWM_A): HIGH at counter zero, LOW at counter == CC1
+ *   CCP1 (PWM_A, laser switch): HIGH at counter zero, LOW at counter == CC1
  *                       -> duty = CC1 / 320 (CC1 = 320 -> 100 %)
- *   CCP3 (PA12, PWM_B): LOW at zero, HIGH at counter == CC3, with
+ *   CCP3 (PWM_B, dummy switch): LOW at zero, HIGH at counter == CC3, with
  *                       CC3 == CC1 -> the complement of CCP1 (no deadband),
  *                       i.e. the dummy switch conducts while the laser
  *                       switch is off.
@@ -20,11 +24,12 @@
  * glitches mid-period.  Pin-mux switching between GPIO-safe and PWM is in
  * output_mux.c; this module only configures the timer.
  *
- * The e-stim module uses the same two pins as independent EN / CATH
- * edges (spec §7); in ESTIM mode they stay in their GPIO mux and the tick
- * ISR drives them directly (10 µs grid), so this timer idles.
+ * On Rev 2 the e-stim module uses the same two pins as independent EN /
+ * CATH edges (spec §7); in ESTIM mode they stay in their GPIO mux and the
+ * tick ISR drives them directly (10 µs grid), so this timer idles.
  */
 
+#if BOARD_HAS_LASER
 void laser_timera_init(void);
 void laser_timera_start(void);
 
@@ -34,5 +39,6 @@ static inline void laser_timera_set_duty(uint32_t step)
     TIMA0->COUNTERREGS.CC_01[1] = step;   /* CC1: PWM_A duty */
     TIMA0->COUNTERREGS.CC_23[1] = step;   /* CC3: PWM_B complement */
 }
+#endif /* BOARD_HAS_LASER */
 
 #endif /* PWM_TIMER_H */

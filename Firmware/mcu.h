@@ -2,7 +2,10 @@
 #define MCU_H
 
 /*
- * Hand-curated MSPM0G3507 device header for the LaserHAT firmware.
+ * Hand-curated MSPM0G3507 / MSPM0G1507 device header for the LaserHAT
+ * firmware (Rev 2 HAT = G3507; StimHAT and LaserDriverHAT = G1507, the
+ * G3507 without CAN-FD: same RHB pinout, IOMUX, memory map and the
+ * peripherals used here).
  *
  * Replaces TI's <ti/devices/msp/msp.h> -> mspm0g350x.h dispatch chain.
  * Defines only the peripheral pointers, IRQ numbers, IOMUX indices and
@@ -81,6 +84,7 @@ typedef enum IRQn
 #define UART1_BASE     (0x40100000U)
 #define DAC0_BASE      (0x40018000U)
 #define VREF_BASE      (0x40030000U)
+#define ADC0_BASE      (0x40000000U)   /* LaserDriverHAT (also SLASEW9E table 8-6) */
 #define ADC1_BASE      (0x40002000U)
 
 #define SYSCTL  ((SYSCTL_Regs  *) SYSCTL_BASE)
@@ -93,51 +97,58 @@ typedef enum IRQn
 #define UART1   ((UART_Regs    *) UART1_BASE)
 #define DAC0    ((DAC12_Regs   *) DAC0_BASE)
 #define VREF    ((VREF_Regs    *) VREF_BASE)
+#define ADC0    ((ADC12_Regs   *) ADC0_BASE)
 #define ADC1    ((ADC12_Regs   *) ADC1_BASE)
 
 /* ---------------------------------------------------------------
  * IOMUX PINCM indices for every GPIOA pin of the VQFN-32 package.
- * Source: TI mspm0g350x.h (IOMUX_PINCMn = n-1).  The comment gives
- * the LaserHAT Rev 2 use (see board.h for the authoritative map).
+ * Source: TI mspm0g350x.h (IOMUX_PINCMn = n-1); PINCMx per pin checked
+ * against the MSPM0G1507 datasheet SLASEW9E table 6-2 (shared RHB pinout).
+ * Use per board (R = Rev 2, S = StimHAT, L = LaserDriverHAT; board_*.h
+ * are authoritative).
  * --------------------------------------------------------------- */
-#define IOMUX_PINCM1   (0u)    /* PA0  — I2C0_SDA (Pi bus, OLED bonnet) */
-#define IOMUX_PINCM2   (1u)    /* PA1  — I2C0_SCL */
-#define IOMUX_PINCM7   (6u)    /* PA2  — ROSC (R4 100k 0.1 %), analog */
-#define IOMUX_PINCM8   (7u)    /* PA3  — spare */
-#define IOMUX_PINCM9   (8u)    /* PA4  — spare */
-#define IOMUX_PINCM10  (9u)    /* PA5  — spare */
-#define IOMUX_PINCM11  (10u)   /* PA6  — DB_GPIO / FAULT_n (J8.3) */
-#define IOMUX_PINCM14  (13u)   /* PA7  — DB_PWM_A (J8.5), TIMA0_CCP1 */
-#define IOMUX_PINCM19  (18u)   /* PA8  — UART1_TX -> Pi GPIO15 (RXD) */
-#define IOMUX_PINCM20  (19u)   /* PA9  — UART1_RX <- Pi GPIO14 (TXD) */
-#define IOMUX_PINCM21  (20u)   /* PA10 — UART0_TX -> CH340N */
-#define IOMUX_PINCM22  (21u)   /* PA11 — UART0_RX <- CH340N */
-#define IOMUX_PINCM34  (33u)   /* PA12 — DB_PWM_B (J8.4), TIMA0_CCP3 */
-#define IOMUX_PINCM35  (34u)   /* PA13 — BUTTON4 (SW7 wheel roll) */
-#define IOMUX_PINCM36  (35u)   /* PA14 — BUTTON2 (SW7 wheel push) */
-#define IOMUX_PINCM37  (36u)   /* PA15 — DB_DAC (J9.3), DAC0_OUT / e-stim RELEASE */
-#define IOMUX_PINCM38  (37u)   /* PA16 — BUTTON3 (SW7 wheel roll) */
-#define IOMUX_PINCM39  (38u)   /* PA17 — DB_ADC_A (J9.4), ADC1.2 / e-stim I2C SDA */
-#define IOMUX_PINCM40  (39u)   /* PA18 — BSL_INVOKE (SW6, active high) */
-#define IOMUX_PINCM41  (40u)   /* PA19 — SWDIO <- Pi GPIO25 */
-#define IOMUX_PINCM42  (41u)   /* PA20 — SWCLK <- Pi GPIO24 */
-#define IOMUX_PINCM46  (45u)   /* PA21 — BUTTON1 (SW8 BACK) */
-#define IOMUX_PINCM47  (46u)   /* PA22 — DB_ADC_B (J9.5), ADC1.8 / e-stim I2C SCL */
-#define IOMUX_PINCM53  (52u)   /* PA23 — BUTTON5 (SW9 FIRE) */
-#define IOMUX_PINCM54  (53u)   /* PA24 — LED_MCU (D7) */
-#define IOMUX_PINCM55  (54u)   /* PA25 — MCU_STIM_OUT -> U8 -> J7 BNC + D9 */
-#define IOMUX_PINCM59  (58u)   /* PA26 — MCU_STIM_IN <- U8 <- J6 BNC */
-#define IOMUX_PINCM60  (59u)   /* PA27 — PI_TRIGGER <- Pi GPIO26 */
+#define IOMUX_PINCM1   (0u)    /* PA0  — I2C0_SDA, Pi bus (all: never driven) */
+#define IOMUX_PINCM2   (1u)    /* PA1  — I2C0_SCL, Pi bus (all: never driven) */
+#define IOMUX_PINCM7   (6u)    /* PA2  — ROSC, analog (all) */
+#define IOMUX_PINCM8   (7u)    /* PA3  — spare (all) */
+#define IOMUX_PINCM9   (8u)    /* PA4  — R spare; S/L PI_TRIGGER */
+#define IOMUX_PINCM10  (9u)    /* PA5  — R spare; S/L LED_MCU */
+#define IOMUX_PINCM11  (10u)   /* PA6  — R FAULT_n (J8.3); S spare; L BUTTON3 */
+#define IOMUX_PINCM14  (13u)   /* PA7  — R DB_PWM_A TIMA0_CCP1; S/L BUTTON4 */
+#define IOMUX_PINCM19  (18u)   /* PA8  — UART1_TX -> Pi (all) */
+#define IOMUX_PINCM20  (19u)   /* PA9  — UART1_RX <- Pi (all) */
+#define IOMUX_PINCM21  (20u)   /* PA10 — UART0_TX -> CH340N (all) */
+#define IOMUX_PINCM22  (21u)   /* PA11 — UART0_RX <- CH340N (all) */
+#define IOMUX_PINCM34  (33u)   /* PA12 — R DB_PWM_B TIMA0_CCP3; S/L BUTTON1 */
+#define IOMUX_PINCM35  (34u)   /* PA13 — R BUTTON4; S/L BUTTON6 */
+#define IOMUX_PINCM36  (35u)   /* PA14 — BUTTON2 (all) */
+#define IOMUX_PINCM37  (36u)   /* PA15 — R DB_DAC / RELEASE; S BUTTON3; L DB_DAC (DAC0_OUT) */
+#define IOMUX_PINCM38  (37u)   /* PA16 — R BUTTON3; S/L BUTTON5 FIRE */
+#define IOMUX_PINCM39  (38u)   /* PA17 — R DB_ADC_A (A1_2) / SDA; S/L MCU_STIM_OUT */
+#define IOMUX_PINCM40  (39u)   /* PA18 — BSL_INVOKE (all) */
+#define IOMUX_PINCM41  (40u)   /* PA19 — SWDIO (all) */
+#define IOMUX_PINCM42  (41u)   /* PA20 — SWCLK (all) */
+#define IOMUX_PINCM46  (45u)   /* PA21 — R BUTTON1; S/L MCU_STIM_IN */
+#define IOMUX_PINCM47  (46u)   /* PA22 — R DB_ADC_B / SCL; S FAULT_H; L DB_PWM_A TIMA0_CCP1 */
+#define IOMUX_PINCM53  (52u)   /* PA23 — R BUTTON5; S CATH_H; L DB_PWM_B TIMA0_CCP3 */
+#define IOMUX_PINCM54  (53u)   /* PA24 — R LED_MCU; S EN_H; L spare */
+#define IOMUX_PINCM55  (54u)   /* PA25 — R MCU_STIM_OUT; S RELEASE_H; L spare */
+#define IOMUX_PINCM59  (58u)   /* PA26 — R MCU_STIM_IN; S SDA_H; L DB_ADC_A (A0_1) */
+#define IOMUX_PINCM60  (59u)   /* PA27 — R PI_TRIGGER; S SCL_H; L DB_ADC_B (A0_0) */
 
 /* ---------------------------------------------------------------
- * PINCM peripheral-function codes used by board.h.
- * Source: TI mspm0g350x.h (per-pin PF tables).  Function code 1 is
+ * PINCM peripheral-function codes used by the board headers.
+ * Source: TI mspm0g350x.h (per-pin PF tables); the codes added for the
+ * StimHAT / LaserDriverHAT were taken from SLASEW9E table 6-2 (the
+ * "[n]" after each digital function is its PF code).  Function code 1 is
  * plain GPIO on every PINCM.
  * --------------------------------------------------------------- */
 #define IOMUX_PINCM_PF_GPIO                 ((uint32_t)0x00000001U)
 #define IOMUX_PINCM11_PF_TIMA_FAULT0        ((uint32_t)0x00000004U)
 #define IOMUX_PINCM14_PF_TIMA0_CCP1         ((uint32_t)0x00000008U)
 #define IOMUX_PINCM34_PF_TIMA0_CCP3         ((uint32_t)0x00000006U)
+#define IOMUX_PINCM47_PF_TIMA0_CCP1         ((uint32_t)0x00000005U)   /* PA22 TIMA0_C1 [5], table 6-2 (L) */
+#define IOMUX_PINCM53_PF_TIMA0_CCP3         ((uint32_t)0x00000004U)   /* PA23 TIMA0_C3 [4], table 6-2 (L) */
 #define IOMUX_PINCM19_PF_UART1_TX           ((uint32_t)0x00000002U)
 #define IOMUX_PINCM20_PF_UART1_RX           ((uint32_t)0x00000002U)
 #define IOMUX_PINCM21_PF_UART0_TX           ((uint32_t)0x00000002U)

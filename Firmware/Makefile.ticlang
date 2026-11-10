@@ -1,5 +1,5 @@
 # ============================================================
-# Laser Driver - MSPM0G3507 — TI ARM CLANG build (workstation)
+# Laser Driver - MSPM0G3507 / G1507 — TI ARM CLANG build (workstation)
 # ============================================================
 # All required SDK files are vendored in-tree:
 #   mcu.h                 -> hand-curated MSPM0G3507 device header
@@ -7,6 +7,9 @@
 #   hw/                   -> peripheral register layout headers (7 files)
 #   startup/              -> ticlang + gcc startup sources
 #   linker/               -> ticlang + gcc memory layout
+#
+# Board: make -f Makefile.ticlang BOARD=rev2|stim|laser (default rev2),
+# output build/<board>/main.out; `boards` builds all three.
 
 # Tools — TI ARM CLANG.  Default install paths per OS; override on
 # the command line (make CC=...) or via the CC environment variable
@@ -31,9 +34,21 @@ ifeq ($(origin CC),default)
   endif
 endif
 
+# Board (board.h); see Makefile.gcc.
+BOARDS          := rev2 stim laser
+BOARD           ?= rev2
+ifeq ($(filter $(BOARD),$(BOARDS)),)
+$(error BOARD must be one of: $(BOARDS) (got '$(BOARD)'))
+endif
+BOARD_DEF_rev2  := -DBOARD_REV2
+BOARD_DEF_stim  := -DBOARD_STIM
+BOARD_DEF_laser := -DBOARD_LASER
+BOARD_DEF       := $(BOARD_DEF_$(BOARD))
+
 # Paths
 PROJ_DIR        := .
-BUILD_DIR       := $(PROJ_DIR)/build
+BUILD_ROOT      := $(PROJ_DIR)/build
+BUILD_DIR       := $(BUILD_ROOT)/$(BOARD)
 
 # Source files
 STARTUP_SRC     := $(PROJ_DIR)/startup/startup_mspm0g350x_ticlang.c
@@ -64,7 +79,7 @@ endif
 CPU_FLAGS       := -mcpu=cortex-m0plus -mthumb
 OPT_FLAGS       := -O0 -g
 INCLUDES        := -I$(PROJ_DIR)
-CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(INCLUDES)
+CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(INCLUDES) $(BOARD_DEF)
 
 # Linker
 LINKER_CMD      := $(PROJ_DIR)/linker/mspm0g3507.cmd
@@ -77,10 +92,25 @@ TARGET          := $(BUILD_DIR)/main.out
 
 # ============================================================
 
-.PHONY: all clean
+.PHONY: all boards all-boards clean clean-all
 
 all: $(TARGET)
 	@echo "Build complete: $(TARGET)"
+
+boards all-boards:
+	@set -e; for b in $(BOARDS); do \
+	    echo "=== BOARD=$$b ==="; \
+	    $(MAKE) --no-print-directory -f Makefile.ticlang BOARD=$$b all; \
+	done
+
+HEADERS         := $(wildcard $(PROJ_DIR)/*.h)
+# A stamp per board, so a BUILD_DIR override shared between boards (e.g.
+# `make BOARD=stim BUILD_DIR=x` after BOARD=rev2) still rebuilds everything.
+BOARD_STAMP     := $(BUILD_DIR)/.board_$(BOARD)
+$(BOARD_STAMP): | $(BUILD_DIR)
+	rm -f $(BUILD_DIR)/.board_*
+	touch $@
+$(OBJS): $(HEADERS) $(BOARD_STAMP)
 
 $(TARGET): $(OBJS) | $(BUILD_DIR)
 	$(CC) $(CPU_FLAGS) $(OBJS) $(LFLAGS) -o $@
@@ -102,3 +132,6 @@ $(BUILD_DIR):
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+clean-all:
+	rm -rf $(BUILD_ROOT)

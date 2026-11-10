@@ -1,7 +1,8 @@
 # LaserHAT Rev 2 bring-up checklist
 
 Steps 0–9 are for the Rev 2 HAT **with no module plugged into J8/J9**; steps
-10–11 add the laser and e-stim modules.  Everything below is validated
+10–11 add the laser and e-stim modules.  Step 12 covers what differs on the
+StimHAT and the LaserDriverHAT (`BOARD=stim` / `BOARD=laser` builds).  Everything below is validated
 off-hardware (`Pi/tests/`, `host_tools/proto_crosscheck.py`); this list is the
 on-board confirmation.  Work top-down — a failure then tells you which layer
 broke.
@@ -32,9 +33,10 @@ Protocol summary (frame = `SYNC(DE AD) | TYPE | payload`, no CRC):
 
 ## 1. Build
 ```bash
-make -C Firmware -f Makefile.gcc clean all
+make -C Firmware -f Makefile.gcc clean-all boards
 ```
-- [ ] Builds to `build_gcc/main.elf` with no errors and no `-Wall -Wextra` warnings.
+- [ ] Builds `build_gcc/rev2/main.elf`, `build_gcc/stim/main.elf` and
+      `build_gcc/laser/main.elf` with no errors and no `-Wall -Wextra` warnings.
 
 ## 2. Flash (Rev 2 is the default; `HAT_REV=1` for the old board)
 ```bash
@@ -44,7 +46,7 @@ make -C Firmware -f Makefile.gcc flash          # +OPENOCD_GPIOCHIP=4 on Pi 5
 - [ ] ~2 s D7 boot blink right after the command (= flash landed), then a
       short D7 blip once a second (heartbeat).
 - [ ] `python3 ../Pi/laser_hat.py version` prints `proto 2 ... version <the
-      build's git describe>` (e.g. `0.2.0+rc6`).  "no response" = the MCU
+      build's git describe>` (e.g. `0.2.0+rc6`) and board `rev2` (1).  "no response" = the MCU
       still runs a build older than v0.2.0-rc6 (the write did not land) or is
       blank.  On the packaged stack `sudo laserhat-flash` does this check
       itself and the web page / OLED flag a mismatch (`FW!` chip).
@@ -195,6 +197,31 @@ needs the 10 kΩ and a scope.
 - [ ] Power the isolated side down: `FAULT_n low` returns, `ESTIM_READY`
       clears; power it back: ready again (GAIN re-written) and the amplitude
       re-programmed without a new command.
+
+## 12. StimHAT / LaserDriverHAT differences
+Build and flash the matching image (`make -C Firmware -f Makefile.gcc flash
+BOARD=stim` or `BOARD=laser`: NRST = Pi GPIO 9, power = GPIO 10).  Steps 0–9
+apply with these changes: power-enable is GPIO 10 (not 18), NRST GPIO 9,
+the Pi trigger is GPIO 18 → PA4 (`pi_trigger.py` / brokerd `--gpio-pin 18`).
+- [ ] `laser_hat.py version` reports board `stim` (2) / `laser` (3).
+- [ ] Joystick (SW7, mounted at 135°): left → bit 0 (BACK), centre push →
+      bit 1, down → bit 2, up → bit 3, **right → bit 6 (0x40)**; SW9 FIRE →
+      bit 4 and a pulse; SW6 → bit 5.  If a direction reads wrong, swap the
+      BUTTON pins in `board_stim.h` / `board_laser.h` (ALPS does not state
+      the mapping).
+- [ ] `mode laser` on the StimHAT / `mode estim` on the LaserDriverHAT is
+      refused: the echo keeps the board's mode (`estim` / `laser`).
+- [ ] StimHAT: boots in e-stim mode.  With the isolated side unpowered FAULT_H
+      (PA22) is low (`module` 0x01, ISO7741 fail-safe); powered: 0x00, then
+      `ESTIM_READY` (0x04) within ~100 ms (GAIN init over the ISO1640 on
+      PA26/PA27).  Scope EN_H (PA24), CATH_H (PA23), RELEASE_H (PA25) on the
+      HAT side of U101: same sequence as step 11; all three low at rest and
+      during reset/boot (10k pull-downs, no MCU pull-ups).
+- [ ] LaserDriverHAT: boots in laser mode; PWM on PA22 (laser switch, CCP1)
+      and PA23 (dummy switch, complement, HIGH at rest); DAC0 on PA15 only
+      during a pulse; `adc_pd` = PA26 (ADC0 ch 1), `adc_comp` = PA27 (ADC0
+      ch 0, ≈ 1540 at 5 V / ≈ 3700 at 12 V).  No fault line: `module` flags
+      stay 0.  SYNC OUT (J7) mirrors the pulse envelope.
 
 ---
 

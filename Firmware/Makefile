@@ -7,12 +7,19 @@
 #   x86_64 Linux                -> Makefile.ticlang  (TI ARM CLANG)
 #   macOS  (Intel or Apple Si)  -> Makefile.ticlang  (TI ARM CLANG)
 #
-# All targets (`all`, `clean`, etc.) and command-line overrides
-# (`CC=...`, `TI_TOOLCHAIN_VER=...`) are forwarded to the chosen
-# sub-Makefile.  To force a toolchain explicitly:
+# All targets (`all`, `boards`, `clean`, etc.) and command-line overrides
+# (`BOARD=...`, `CC=...`, `TI_TOOLCHAIN_VER=...`) are forwarded to the
+# chosen sub-Makefile.  `make` / `make all` builds the selected board:
 #
-#   make -f Makefile.gcc      # GCC build (any host)
-#   make -f Makefile.ticlang  # TI CLANG build (any host)
+#   make                      # BOARD=rev2 (LaserHAT Rev 2)
+#   make BOARD=stim           # StimHAT
+#   make BOARD=laser          # LaserDriverHAT
+#   make boards               # all three
+#
+# To force a toolchain explicitly:
+#
+#   make -f Makefile.gcc      # GCC build (any host)  -> build_gcc/<board>/
+#   make -f Makefile.ticlang  # TI CLANG build (any host) -> build/<board>/
 
 UNAME_S := $(shell uname -s)
 UNAME_M := $(shell uname -m)
