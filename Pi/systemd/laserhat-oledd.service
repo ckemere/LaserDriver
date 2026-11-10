@@ -31,7 +31,7 @@ SupplementaryGroups=i2c gpio
 RuntimeDirectory=laserhat-oled
 RuntimeDirectoryMode=0755
 Environment=LASERHAT_OLED_SOCK=/run/laserhat-oled/oled.sock
-# Panel: LASERHAT_OLED_PANEL=ssd1305 (Adafruit bonnet, default) or ssd1306 (0.91" 128x32
+# Panel: detected at start (GPIO4 reset probe); LASERHAT_OLED_PANEL=ssd1305 / ssd1306 overrides (0.91" 128x32
 # module on J10) in /etc/default/laserhat.
 EnvironmentFile=-/etc/default/laserhat
 ExecStart=/usr/bin/laserhat-oledd

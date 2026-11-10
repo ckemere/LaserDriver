@@ -344,7 +344,9 @@ static int oled_flush(int fd)
  * Non-fatal on failure: the panel usually comes up fine after a cold
  * power-on even without a reset pulse. ---- */
 
-static void reset_panel(void)
+/* Open GPIO4 (the bonnet's panel reset) as an output; -1 when no chip has
+ * it or the line is busy.  The caller closes the fd, which releases it. */
+static int reset_line_open(void)
 {
     char path[32];
 
@@ -371,22 +373,83 @@ static void reset_panel(void)
         strncpy(req.consumer, "oledd-reset", sizeof(req.consumer) - 1);
         if (ioctl(cfd, GPIO_V2_GET_LINE_IOCTL, &req) < 0) {
             close(cfd);
-            break;                      /* right chip, line busy — give up */
+            return -1;                  /* right chip, line busy */
         }
         close(cfd);
+        return req.fd;
+    }
+    return -1;
+}
 
-        struct gpio_v2_line_values v = { .mask = 1 };
-        struct timespec ms10 = { .tv_sec = 0, .tv_nsec = 10 * 1000 * 1000 };
-        v.bits = 1; ioctl(req.fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &v);
-        nanosleep(&ms10, NULL);
-        v.bits = 0; ioctl(req.fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &v);
-        nanosleep(&ms10, NULL);
-        v.bits = 1; ioctl(req.fd, GPIO_V2_LINE_SET_VALUES_IOCTL, &v);
-        nanosleep(&ms10, NULL);
-        close(req.fd);                  /* released; panel is out of reset */
+static void reset_line_set(int lfd, int high)
+{
+    struct gpio_v2_line_values v = { .mask = 1, .bits = high ? 1 : 0 };
+    ioctl(lfd, GPIO_V2_LINE_SET_VALUES_IOCTL, &v);
+}
+
+static void sleep_ms(int ms)
+{
+    struct timespec t = { .tv_sec = ms / 1000, .tv_nsec = (ms % 1000) * 1000000L };
+    nanosleep(&t, NULL);
+}
+
+/* Read the panel's status register (the only thing an SSD130x answers to
+ * over I2C): -1 = no acknowledge at 0x3C. */
+static int oled_status(int fd)
+{
+    uint8_t b;
+    return read(fd, &b, 1) == 1 ? b : -1;
+}
+
+/* Which panel is on the bus?  The bonnet's SSD1305 has its reset pin on
+ * GPIO4 and stops acknowledging while that line is held low; a 0.91"
+ * module on J10 has no reset line to the Pi and keeps answering.  So:
+ *   GPIO4 low  + ACK          -> SSD1306 module
+ *   GPIO4 low  + no ACK, then
+ *   GPIO4 high + ACK          -> SSD1305 bonnet
+ *   no ACK either way         -> nothing on the bus (-1)
+ * Returns 1 for the module, 0 for the bonnet.  The status byte differs
+ * too in practice (0x41 bonnet, 0x42 module, reserved bits), which is
+ * logged as a cross-check but not relied on.  Without a usable GPIO4
+ * the result is -2 (caller keeps the configured default). */
+static int detect_panel(int fd)
+{
+    int lfd = reset_line_open();
+    if (lfd < 0)
+        return -2;
+    reset_line_set(lfd, 0);
+    sleep_ms(10);
+    int st_low = oled_status(fd);
+    reset_line_set(lfd, 1);
+    sleep_ms(10);
+    int st_high = oled_status(fd);
+    close(lfd);                         /* released; panel out of reset */
+    if (st_low >= 0) {
+        fprintf(stderr, "oledd: panel answers with GPIO4 reset low (status 0x%02x): SSD1306 module on J10%s\n",
+                st_low, (st_low & 0x0F) == 0x01 ? " (status byte looks like the bonnet's, though)" : "");
+        return 1;
+    }
+    if (st_high >= 0) {
+        fprintf(stderr, "oledd: panel answers only out of reset (status 0x%02x): SSD1305 bonnet%s\n",
+                st_high, (st_high & 0x0F) == 0x02 ? " (status byte looks like the module's, though)" : "");
+        return 0;
+    }
+    return -1;
+}
+
+/* Pulse the bonnet's reset (harmless for the J10 module, which is not
+ * connected to GPIO4). */
+static void reset_panel(void)
+{
+    int lfd = reset_line_open();
+    if (lfd < 0) {
+        fprintf(stderr, "warning: could not pulse GPIO4 reset, continuing\n");
         return;
     }
-    fprintf(stderr, "warning: could not pulse GPIO4 reset, continuing\n");
+    reset_line_set(lfd, 1); sleep_ms(10);
+    reset_line_set(lfd, 0); sleep_ms(10);
+    reset_line_set(lfd, 1); sleep_ms(10);
+    close(lfd);
 }
 
 /* ---- Unix socket + line protocol ---- */
@@ -486,13 +549,15 @@ int main(void)
 {
     const char *sock_path = getenv("LASERHAT_OLED_SOCK");
     const char *panel = getenv("LASERHAT_OLED_PANEL");
+    int panel_auto = 1;                 /* LASERHAT_OLED_PANEL unset or "auto" */
     if (panel && strcmp(panel, "ssd1306") == 0) {
         panel_ssd1306 = 1;
-        col_offset = 0;
-    } else if (panel && *panel && strcmp(panel, "ssd1305") != 0) {
-        fprintf(stderr, "oledd: unknown LASERHAT_OLED_PANEL '%s' (ssd1305 | ssd1306), using ssd1305\n", panel);
+        panel_auto = 0;
+    } else if (panel && strcmp(panel, "ssd1305") == 0) {
+        panel_auto = 0;
+    } else if (panel && *panel && strcmp(panel, "auto") != 0) {
+        fprintf(stderr, "oledd: unknown LASERHAT_OLED_PANEL '%s' (auto | ssd1305 | ssd1306), detecting\n", panel);
     }
-    fprintf(stderr, "oledd: panel %s\n", panel_ssd1306 ? "ssd1306 128x32 (J10 module)" : "ssd1305 (Adafruit bonnet)");
     if (!sock_path || !*sock_path)
         sock_path = DEFAULT_SOCK;
 
@@ -519,6 +584,25 @@ int main(void)
         perror("ioctl I2C_SLAVE");
         return 1;
     }
+    if (panel_auto) {
+        int det = -1;
+        for (int tries = 0; running && tries < 25; tries++) {   /* ~5 s for a slow module */
+            det = detect_panel(i2c);
+            if (det != -1)
+                break;
+            sleep_ms(200);
+        }
+        if (det == 1)
+            panel_ssd1306 = 1;
+        else if (det == -1)
+            fprintf(stderr, "oledd: no panel answers at 0x%02x; assuming the bonnet\n", I2C_ADDR);
+        else if (det == -2)
+            fprintf(stderr, "oledd: GPIO4 unavailable, cannot detect the panel; assuming the bonnet "
+                            "(set LASERHAT_OLED_PANEL)\n");
+    }
+    col_offset = panel_ssd1306 ? 0 : 4;
+    fprintf(stderr, "oledd: panel %s%s\n", panel_ssd1306 ? "ssd1306 128x32 (J10 module)" : "ssd1305 (Adafruit bonnet)",
+            panel_auto ? " [auto]" : " [configured]");
     reset_panel();
     if (oled_init(i2c) < 0)
         return 1;

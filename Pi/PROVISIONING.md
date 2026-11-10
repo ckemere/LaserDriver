@@ -37,10 +37,11 @@ rarely `LASERHAT_*_PIN=N`), read by `laserhat-broker.service`
 (`EnvironmentFile=-`) and by `laserhat-flash`, for a board whose ID EEPROM
 is not programmed.  Programming the EEPROM (§10) is the better fix.
 
-**OLED panel:** the same file takes `LASERHAT_OLED_PANEL=ssd1306` when a generic 0.91" 128 × 32 SSD1306
-module sits on J10 instead of the Adafruit bonnet (default `ssd1305`); `laserhat-oledd.service` reads it
-(`systemctl restart laserhat-oledd` after editing).  The bonnet's SSD1305 needs a 4-column offset and
-SSD1305-only setup commands that an SSD1306 misreads, which shows as random pixels.
+**OLED panel:** `laserhat-oledd` detects the display at start: with the bonnet's reset line (GPIO 4) held
+low the SSD1305 bonnet stops answering at 0x3C while a 0.91" 128 × 32 SSD1306 module on J10 (no reset line)
+keeps answering, so either works at first boot.  `LASERHAT_OLED_PANEL=ssd1305|ssd1306` in the same file
+forces a panel (`systemctl restart laserhat-oledd` after editing).  The two need different init sequences
+(the SSD1305's 4-column offset and SSD1305-only commands show as random pixels on an SSD1306).
 
 **postinst** creates the `laserhat` system user (all four daemons share
 it so their Unix sockets in `/run/laserhat*` need no cross-user
