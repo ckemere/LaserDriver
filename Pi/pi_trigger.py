@@ -1,7 +1,9 @@
 """Pi-GPIO trigger driver.
 
-Drives Pi GPIO 26, which is wired to MSPM0 PA27 (PI_TRIGGER on the Rev 2
-HAT; Rev 1 used GPIO 24 -> PA19).  A rising edge there
+Drives the HAT's PI_TRIGGER line: Pi GPIO 26 -> MSPM0 PA27 on the Rev 2
+HAT, GPIO 18 -> PA4 on the StimHAT and LaserDriverHAT (Rev 1 used GPIO 24
+-> PA19).  The default pin follows the board (hat_id.resolve(): HAT EEPROM,
+then $LASERHAT_TRIGGER_PIN, then Rev 2).  A rising edge there
 fires a pulse directly via the MCU's GPIO edge ISR, bypassing UART
 entirely — useful when you need sub-100 µs latency from an external
 event (e.g. an openephys packet) to laser-on.
@@ -19,15 +21,20 @@ Or as a CLI smoke tool:
 
 from __future__ import annotations
 
-import os
 import time
 from typing import Optional
 
 from gpiozero import DigitalOutputDevice
 
+import hat_id
 
-# Pi GPIO 26 -> MSPM0 PA27 per LaserHAT/CLAUDE.md (Rev 2 pin map).
-DEFAULT_PIN = int(os.environ.get("LASERHAT_TRIGGER_PIN", 26))
+
+def default_pin() -> int:
+    """The trigger GPIO for the board this Pi is on (see hat_id.py)."""
+    return hat_id.resolve().pins["trigger"]
+
+
+DEFAULT_PIN = default_pin()
 
 # 500 µs is comfortably longer than the MCU's 10 µs TIMG0 tick AND
 # the worst-case Python time.sleep() jitter on Pi OS.  Setting a
@@ -36,8 +43,9 @@ DEFAULT_PULSE_S = 0.0005
 
 
 class PiTrigger:
-    def __init__(self, pin: int = DEFAULT_PIN, pulse_s: float = DEFAULT_PULSE_S):
-        self._pin = DigitalOutputDevice(pin, active_high=True, initial_value=False)
+    def __init__(self, pin: Optional[int] = None, pulse_s: float = DEFAULT_PULSE_S):
+        self.pin = DEFAULT_PIN if pin is None else pin
+        self._pin = DigitalOutputDevice(self.pin, active_high=True, initial_value=False)
         self._pulse_s = pulse_s
 
     def fire(self, pulse_s: Optional[float] = None) -> None:
@@ -71,9 +79,10 @@ def _main() -> int:
         print("usage: pi_trigger.py fire", file=sys.stderr)
         return 2
 
+    print(hat_id.resolve().describe())
     with PiTrigger() as t:
         t.fire()
-    print("fired")
+    print(f"fired GPIO {t.pin}")
     return 0
 
 

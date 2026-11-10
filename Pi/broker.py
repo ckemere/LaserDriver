@@ -15,8 +15,14 @@ MCU now holds the values it sent.  That echo is the integrity check — the
 wire protocol has no CRC.  A decoded STATUS is range-checked to reject a
 rare false sync.
 
-The broker owns the GPIO trigger pin (GPIO 26 -> PA27); it is a trigger from boot, so there
-is no arming step.
+The broker owns the GPIO trigger pin (the board's PI_TRIGGER line: GPIO 26 ->
+PA27 on the Rev 2 HAT, GPIO 18 -> PA4 on the StimHAT / LaserDriverHAT; see
+hat_id.py); it is a trigger from boot, so there is no arming step.
+
+The board comes from the HAT ID EEPROM (hat_id.resolve(): EEPROM, else
+--board, else $LASERHAT_BOARD, else Rev 2) and is published as `board`;
+the MCU's RSP_VERSION.board is published as `fw_board`, and fw_ok is false
+when the two disagree (protocol.board_matches).
 
 IPC is newline-delimited JSON.  Client -> broker:
     {"cmd": "set", "knob": "i", "value": 320}   {"cmd": "trigger"}
@@ -28,7 +34,9 @@ Broker -> client:
     {"type": "state", "ok": true, "intensity": ..., "phase": "W", ...,
      "laser_dac": .., "estim_dac": .., "module": <flags>, "adc_pd": .., "adc_comp": ..,
      "fw_version": "0.2.0+rc6"|null, "fw_proto": 2|null,
-     "fw_expected": "<VERSION file>"|null, "fw_ok": true|false|null}
+     "fw_expected": "<VERSION file>"|null, "fw_ok": true|false|null,
+     "fw_board": "rev2"|"stim"|"laser"|"unknown"|null,
+     "board": "rev2"|"stim"|"laser", "board_source": "eeprom"|"argument"|"env"|"default"}
     {"type": "event", "event": "button", "mask": .., "edges": ..}
     {"type": "event", "event": "pulse_start"|"pulse_end", "tick": ..}
     {"type": "event", "event": "fault", "module": <flags>, "tick": ..}
@@ -46,6 +54,7 @@ import threading
 import time
 from typing import Optional
 
+import hat_id
 import protocol as proto
 from laser_hat import DEFAULT_BAUD, DEFAULT_DEVICE, LaserUART
 
@@ -69,7 +78,8 @@ _KNOB_FIELD = {"i": "intensity", "r": "ramp_ticks", "h": "hold_ticks",
 
 class Broker:
     def __init__(self, uart: LaserUART, gpio_trigger=None,
-                 fw_expected: Optional[str] = None):
+                 fw_expected: Optional[str] = None,
+                 board: str = hat_id.FALLBACK_BOARD, board_source: str = "default"):
         self._uart = uart
         self._gpio = gpio_trigger
 
@@ -83,6 +93,7 @@ class Broker:
             "adc_pd": 0, "adc_comp": 0,
             "fw_version": None, "fw_proto": None,
             "fw_expected": fw_expected, "fw_ok": None,
+            "fw_board": None, "board": board, "board_source": board_source,
         }
         self._state_lock = threading.Lock()
         self._last_status_at = 0.0
@@ -204,6 +215,7 @@ class Broker:
                 self._fw_probed = False
                 self._state["fw_version"] = None
                 self._state["fw_proto"] = None
+                self._state["fw_board"] = None
                 self._state["fw_ok"] = None
                 flip = True
         if flip:
@@ -226,22 +238,30 @@ class Broker:
                 print(f"broker: send failed: {exc}", file=sys.stderr)
                 return
             try:
-                fw_proto, fw_version = self._version_q.get(timeout=REPLY_TIMEOUT)
+                fw_proto, fw_board_byte, fw_version = self._version_q.get(
+                    timeout=REPLY_TIMEOUT)
+                fw_board = proto.board_type_name(fw_board_byte)
             except queue.Empty:
-                fw_proto, fw_version = None, None
+                fw_proto, fw_board, fw_version = None, None, None
         with self._state_lock:
             self._fw_probed = True
             expected = self._state["fw_expected"]
+            board = self._state["board"]
             ok = (fw_version is not None and fw_proto == proto.PROTO_VERSION
-                  and (expected is None or expected == fw_version))
+                  and (expected is None or expected == fw_version)
+                  and proto.board_matches(board, fw_board))
             self._state["fw_version"] = fw_version
             self._state["fw_proto"] = fw_proto
+            self._state["fw_board"] = fw_board
             self._state["fw_ok"] = ok
         if not ok:
             print(f"broker: MCU firmware {fw_version or 'unknown (no reply)'} "
-                  f"proto {fw_proto} does not match the package "
-                  f"({expected or 'any'}, proto {proto.PROTO_VERSION}): "
-                  "run sudo laserhat-flash", file=sys.stderr)
+                  f"proto {fw_proto} board {fw_board} does not match the package "
+                  f"({expected or 'any'}, proto {proto.PROTO_VERSION}) on this "
+                  f"{board} HAT: run sudo laserhat-flash", file=sys.stderr)
+        else:
+            print(f"broker: MCU firmware {fw_version} proto {fw_proto} board "
+                  f"{fw_board} OK", file=sys.stderr)
         self._broadcast_state()
 
     # ----- poller -------------------------------------------------------
@@ -450,6 +470,15 @@ def main() -> int:
     p.add_argument("--socket", default=DEFAULT_SOCKET)
     p.add_argument("--no-gpio", action="store_true",
                    help="don't open the PiTrigger GPIO (off-hardware testing)")
+    p.add_argument("--gpio-pin", type=int, default=None,
+                   help="trigger GPIO (default: the board's, or $LASERHAT_TRIGGER_PIN)")
+    p.add_argument("--board", choices=list(hat_id.BOARDS),
+                   help="the HAT when its ID EEPROM does not say (else "
+                        "$LASERHAT_BOARD, else rev2); ignored when the EEPROM "
+                        "names a board")
+    p.add_argument("--hat-dir", default=None,
+                   help="HAT EEPROM node (default $LASERHAT_HAT_DIR or "
+                        "/proc/device-tree/hat)")
     p.add_argument("--fw-version-file", default=DEFAULT_FW_VERSION_FILE,
                    help="file holding the firmware version the package ships "
                         "(missing = accept any version with the right protocol)")
@@ -462,17 +491,25 @@ def main() -> int:
     except OSError:
         pass
 
+    # The EEPROM wins; a contradicting --board is reported and ignored (no
+    # --force for a daemon), like laserhat-brokerd.
+    res = hat_id.resolve(args.board, directory=args.hat_dir)
+    for note in res.notes:
+        print(f"broker: note: {note}", file=sys.stderr)
+    pin = args.gpio_pin if args.gpio_pin is not None else res.pins["trigger"]
+    print(f"broker: {res.describe()}; trigger GPIO {pin}", file=sys.stderr)
+
     print(f"broker: opening UART {args.device} @ {args.baud}", file=sys.stderr)
     uart = LaserUART(args.device, args.baud)
 
     gpio = None
     if not args.no_gpio and PiTrigger is not None:
         try:
-            gpio = PiTrigger()
+            gpio = PiTrigger(pin)
         except Exception as exc:          # noqa: BLE001
             print(f"broker: GPIO trigger unavailable: {exc}", file=sys.stderr)
 
-    broker = Broker(uart, gpio, fw_expected)
+    broker = Broker(uart, gpio, fw_expected, res.board, res.source)
     threading.Thread(target=broker.reader_loop, daemon=True).start()
     threading.Thread(target=broker.poller_loop, daemon=True).start()
 

@@ -21,6 +21,12 @@ sys.path.insert(0, PI)
 
 import hat_client  # noqa: E402
 
+# Hermetic: a real HAT EEPROM or board override on the test machine must not
+# leak into the brokers (test_boards.py sets these per scenario).
+os.environ["LASERHAT_HAT_DIR"] = "/nonexistent/laserhat-test-hat"
+for _var in ("LASERHAT_BOARD", "LASERHAT_TRIGGER_PIN"):
+    os.environ.pop(_var, None)
+
 BROKERD_DIR = os.path.join(PI, "brokerd")
 BROKERD = os.path.join(BROKERD_DIR, "laserhat-brokerd")
 

@@ -427,6 +427,33 @@ static void handle_signal(int sig)
 }
 
 #ifndef OLEDD_NO_MAIN
+/* Boot-screen tag: the board's name from the HAT ID EEPROM (the Pi firmware
+ * publishes it under /proc/device-tree/hat at boot; mirror of hat_id.py's
+ * tags), so the panel names the board before the GUI connects. */
+static const char *boot_tag(void)
+{
+    char vendor[32] = "", product[32] = "";
+    FILE *f = fopen("/proc/device-tree/hat/vendor", "rb");
+    if (f) {
+        size_t n = fread(vendor, 1, sizeof(vendor) - 1, f);
+        vendor[n] = '\0';
+        fclose(f);
+    }
+    f = fopen("/proc/device-tree/hat/product", "rb");
+    if (f) {
+        size_t n = fread(product, 1, sizeof(product) - 1, f);
+        product[n] = '\0';
+        fclose(f);
+    }
+    if (strcmp(vendor, "KemereLab") == 0) {
+        if (strcmp(product, "StimHAT") == 0)
+            return "STIMHAT";
+        if (strcmp(product, "LaserDriverHAT") == 0)
+            return "LASERDRV";
+    }
+    return "LASERHAT";
+}
+
 int main(void)
 {
     const char *sock_path = getenv("LASERHAT_OLED_SOCK");
@@ -474,7 +501,7 @@ int main(void)
 
     struct ui u;
     memset(&u, 0, sizeof(u));
-    snprintf(u.tag, sizeof(u.tag), "LASERHAT");
+    snprintf(u.tag, sizeof(u.tag), "%s", boot_tag());
 
     struct netinfo net;
     poll_net(&net);

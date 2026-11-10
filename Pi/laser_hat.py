@@ -21,6 +21,10 @@ import protocol as proto
 
 
 DEFAULT_DEVICE = "/dev/ttyS0"
+# Board name -> product name (mirror of hat_id.BOARDS[..].product, kept here
+# so the GUIs need not import hat_id).
+BOARD_LABELS = {"rev2": "LaserHAT Rev 2", "stim": "StimHAT",
+                "laser": "LaserDriverHAT", "unknown": "unknown HAT"}
 DEFAULT_BAUD = 115200
 
 
@@ -29,7 +33,7 @@ class State:
     intensity: int          # 1..320
     ramp_ticks: int         # 100 kHz ticks
     hold_ticks: int
-    button_mask: int        # 6 bits, bit n = button n+1 pressed (see protocol.py)
+    button_mask: int        # 7 bits, bit n = button n+1 pressed (see protocol.py)
     phase: str              # 'W' (waiting) or 'T' (triggered)
     tick: int               # MSPM0 isr_ticks at the time of query
     mode: int = 0           # 0 = LASER, 1 = ESTIM
@@ -44,15 +48,24 @@ class State:
     #   fw_version  the MCU's build string, None = not probed yet / no reply
     #   fw_proto    its wire-protocol number (protocol.PROTO_VERSION expected)
     #   fw_expected the package's firmware version (VERSION file), None = unknown
+    #   fw_board    the board the firmware was built for (RSP_VERSION.board:
+    #               'rev2' / 'stim' / 'laser', 'unknown' = pre-split firmware)
     #   fw_ok       None until probed; False = no reply (firmware older than
-    #               protocol 2, or blank), wrong proto, or != fw_expected
+    #               protocol 2, or blank), wrong proto, != fw_expected, or
+    #               fw_board does not suit board (protocol.board_matches)
     fw_version: Optional[str] = None
     fw_proto: Optional[int] = None
     fw_expected: Optional[str] = None
     fw_ok: Optional[bool] = None
+    fw_board: Optional[str] = None
+    # The HAT the Pi is plugged into (hat_id.py; the broker resolves it once
+    # at startup): board = 'rev2' / 'stim' / 'laser', board_source = where
+    # that came from ('eeprom', 'argument', 'env' or 'default').
+    board: str = "rev2"
+    board_source: str = "default"
 
     def button(self, n: int) -> bool:
-        """True if button n (1..6) is pressed."""
+        """True if button n (1..7) is pressed."""
         return bool(self.button_mask & (1 << (n - 1)))
 
     @property
@@ -82,6 +95,11 @@ class State:
     @classmethod
     def from_status_payload(cls, payload: bytes) -> "State":
         return cls(**proto.unpack_status(payload))
+
+    @property
+    def board_label(self) -> str:
+        """Product name of the HAT, e.g. 'StimHAT'."""
+        return BOARD_LABELS.get(self.board, self.board)
 
     @property
     def fw_label(self) -> str:
@@ -209,7 +227,8 @@ def _main() -> int:
         if reply is None:
             print("no response (firmware older than protocol 2, or no firmware)")
             return 1
-        print(f"proto {reply[0]} (host {proto.PROTO_VERSION}) version {reply[1]}")
+        print(f"proto {reply[0]} (host {proto.PROTO_VERSION}) "
+              f"board {proto.board_type_name(reply[1])} ({reply[1]}) version {reply[2]}")
     elif args.cmd == "watch":
         names = {v: k for k, v in vars(proto).items()
                  if k.isupper() and isinstance(v, int)}

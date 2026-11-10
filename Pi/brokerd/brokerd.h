@@ -10,7 +10,10 @@
  *              wire-compatible with broker.py, so hat_client.py and the
  *              GUIs are unchanged.
  *   json.c     the minimal JSON object parser ipc.c needs.
- *   gpio.c     the trigger line (Pi GPIO 26 -> MCU PA27) via /dev/gpiomem.
+ *   gpio.c     the trigger line (Pi GPIO 26 -> MCU PA27 on the Rev 2 HAT,
+ *              GPIO 18 -> PA4 on the StimHAT / LaserDriverHAT) via /dev/gpiomem.
+ *   hatid.c    which HAT this is (HAT ID EEPROM via /proc/device-tree/hat),
+ *              mirror of Pi/hat_id.py.
  *   trigger.c  the low-latency UDP trigger listener (see udp_trigger.h).
  */
 
@@ -22,8 +25,31 @@
 
 #include "protocol.h"
 
+/* ---- hatid.c ---------------------------------------------------------- */
+typedef struct {
+    const char *name;       /* "rev2" / "stim" / "laser" (protocol.py names) */
+    const char *product;    /* HAT EEPROM product string */
+    unsigned    pid;        /* HAT EEPROM product id */
+    unsigned    fw_type;    /* BOARD_TYPE_* the matching firmware reports */
+    int         trigger_pin;/* BCM GPIO wired to the MCU's PI_TRIGGER input */
+} BoardDef;
+
+#define DEFAULT_HAT_DIR "/proc/device-tree/hat"
+
+const BoardDef *board_by_name(const char *name);       /* NULL if unknown */
+const char     *board_type_name(unsigned fw_type);     /* "unknown" for 0 / other */
+/* Our board per the HAT EEPROM, or NULL; *present = a HAT node exists. */
+const BoardDef *board_from_eeprom(const char *hat_dir, bool *present);
+/* EEPROM, else arg (--board), else $LASERHAT_BOARD, else Rev 2;
+ * *source = "eeprom" / "argument" / "env" / "default". */
+const BoardDef *board_resolve(const char *hat_dir, const char *arg,
+                              const char **source);
+
 /* ---- mcu.c ------------------------------------------------------------ */
 int  mcu_open(const char *device, int baud);   /* 0 ok, -1 error (printed) */
+/* The HAT the Pi is on (published as board / board_source; the MCU's
+ * RSP_VERSION.board must suit it for fw_ok).  Call before mcu_start(). */
+void mcu_set_board(const BoardDef *board, const char *source);
 /* The firmware version the installed package ships (one line in
  * /usr/lib/laserhat/firmware/VERSION); NULL / missing file = accept any
  * version that speaks PROTO_VERSION.  Call before mcu_start(). */
@@ -38,6 +64,7 @@ bool mcu_clear_fault(void);
 void mcu_query(void);
 
 /* Current state as one JSON line (with trailing newline). */
+#define STATE_JSON_MAX 1024
 void mcu_state_json(char *buf, size_t cap);
 
 /* Lock-free reads for the trigger thread. */

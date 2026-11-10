@@ -54,15 +54,47 @@ RSP_STATUS      = 0x81  # i u16, r u32, h u32, btn u8, phase u8, tick u32,
                          # laser_dac u16, estim_dac u16, module u8, adc_pd u16, adc_comp u16
 EVT_PULSE_START = 0x82  # tick u32
 EVT_PULSE_END   = 0x83  # tick u32
-EVT_BUTTON      = 0x84  # mask u8, edges u8 (bits: 0 BACK, 1 SELECT, 2/3 wheel, 4 FIRE, 5 BSL)
+EVT_BUTTON      = 0x84  # mask u8, edges u8 (bits: 0 BACK, 1 SELECT, 2/3 wheel, 4 FIRE, 5 BSL,
+                        #   6 joystick right: StimHAT / LaserDriverHAT only)
 EVT_FAULT       = 0x85  # module u8 (flags), tick u32 — a module fault latched
-RSP_VERSION     = 0x86  # proto u8, reserved u8, version char[30] (NUL-padded)
+RSP_VERSION     = 0x86  # proto u8, board u8, version char[30] (NUL-padded)
 
 # Wire-protocol version (mirror of PROTO_VERSION in protocol.h).  The
 # broker trusts a firmware only if it reports this number; 1 = the
 # firmware builds before CMD_GET_VERSION existed (v0.2.0-rc1..rc5).
 PROTO_VERSION = 2
 FW_VERSION_CHARS = 30
+
+# RSP_VERSION.board: which HAT the firmware was built for (make BOARD=...).
+# Firmware from before the three-board split sent 0 in this (then reserved)
+# byte, so 0 reads as "unknown / old firmware".  The board the Pi is
+# actually plugged into comes from the HAT ID EEPROM (hat_id.py); this
+# byte is the cross-check.
+BOARD_TYPE_UNKNOWN = 0
+BOARD_TYPE_REV2    = 1      # LaserHAT Rev 2 (plug-in laser / e-stim modules)
+BOARD_TYPE_STIM    = 2      # StimHAT (e-stim only, stimulator on the HAT)
+BOARD_TYPE_LASER   = 3      # LaserDriverHAT (laser driver only)
+# Board names shared with hat_id.py, the broker state and the GUIs.
+BOARD_TYPE_NAMES = {BOARD_TYPE_UNKNOWN: "unknown", BOARD_TYPE_REV2: "rev2",
+                    BOARD_TYPE_STIM: "stim", BOARD_TYPE_LASER: "laser"}
+BOARD_TYPES_BY_NAME = {v: k for k, v in BOARD_TYPE_NAMES.items()}
+
+
+def board_type_name(board: int) -> str:
+    """'rev2' / 'stim' / 'laser', 'unknown' for 0 and anything unexpected."""
+    return BOARD_TYPE_NAMES.get(board, "unknown")
+
+
+def board_matches(hat_board: str, fw_board: str) -> bool:
+    """Does the MCU firmware's board (RSP_VERSION.board, as a name) suit the
+    HAT the Pi is plugged into (hat_id's board name)?  An 'unknown' firmware
+    board is old (pre-split) firmware, which only ever ran on Rev 2, so it is
+    a mismatch only on a StimHAT or LaserDriverHAT.  A known firmware board
+    must equal the HAT's (on a HAT whose own type is unknown, Rev 2 is assumed
+    -- the same fallback hat_id uses for the pins)."""
+    if fw_board == "unknown":
+        return hat_board not in ("stim", "laser")
+    return fw_board == (hat_board if hat_board in ("rev2", "stim", "laser") else "rev2")
 
 # Phase byte values in RSP_STATUS (ASCII 'W' / 'T').
 PHASE_WAITING   = ord("W")
@@ -86,7 +118,7 @@ _STATUS       = struct.Struct("<HIIBBIBIIHHBHH")
 _ESTIM_CONFIG = struct.Struct("<II")        # pulse_dur_ticks, ipi_ticks
 _DAC          = struct.Struct("<H")         # dac code
 _FAULT        = struct.Struct("<BI")        # module flags, tick
-_VERSION      = struct.Struct("<BB30s")     # proto, reserved, version (NUL-padded)
+_VERSION      = struct.Struct("<BB30s")     # proto, board, version (NUL-padded)
 _U16 = struct.Struct("<H")
 _U32 = struct.Struct("<I")
 
@@ -102,8 +134,11 @@ RSP_LEN = {RSP_STATUS: _STATUS.size, EVT_PULSE_START: 4, EVT_PULSE_END: 4,
 # Field ranges, for validating a decoded STATUS (false-sync rejection).
 INTENSITY_MIN, INTENSITY_MAX = 1, 320
 # Rev 2 HAT: bit 0 BACK (SW8), bit 1 SELECT (wheel push), bit 2 / 3 wheel roll,
-# bit 4 FIRE (SW9), bit 5 the BSL switch SW6 (bring-up only).
-BUTTON_MASK_MAX = 0x3F
+# bit 4 FIRE (SW9), bit 5 the BSL switch SW6 (bring-up only).  StimHAT /
+# LaserDriverHAT (5-way joystick SW7): bit 0 left (BACK), bit 1 centre push
+# (SELECT), bit 2 down, bit 3 up, bit 4 FIRE, bit 5 BSL, bit 6 right.
+BUTTON_RIGHT = 0x40
+BUTTON_MASK_MAX = 0x7F
 TICKS_MIN, TICKS_MAX = 1, 10_000_000
 ESTIM_TICKS_MIN, ESTIM_TICKS_MAX = 1, 1000
 
@@ -194,21 +229,27 @@ def pack_status(intensity: int, ramp: int, hold: int, button_mask: int,
         laser_dac, estim_dac, module, adc_pd, adc_comp))
 
 
-def pack_version_payload(proto: int, version: str) -> bytes:
-    """RSP_VERSION payload: proto number + the build's version string
-    (ASCII, truncated to FW_VERSION_CHARS, NUL-padded like the firmware)."""
+def pack_version_payload(proto: int, version: str,
+                         board: int = BOARD_TYPE_UNKNOWN) -> bytes:
+    """RSP_VERSION payload: proto number, board type (BOARD_TYPE_*) and the
+    build's version string (ASCII, truncated to FW_VERSION_CHARS,
+    NUL-padded like the firmware)."""
     v = version.encode("ascii", "replace")[:FW_VERSION_CHARS]
-    return _VERSION.pack(proto, 0, v)
+    return _VERSION.pack(proto, board, v)
 
 
-def pack_version(proto: int, version: str) -> bytes:
-    return encode_frame(RSP_VERSION, pack_version_payload(proto, version))
+def pack_version(proto: int, version: str, board: int = BOARD_TYPE_UNKNOWN) -> bytes:
+    return encode_frame(RSP_VERSION, pack_version_payload(proto, version, board))
 
 
-def unpack_version(payload: bytes) -> Tuple[int, str]:
-    """(proto, version string) of an RSP_VERSION."""
-    proto, _reserved, raw = _VERSION.unpack(payload)
-    return proto, raw.split(b"\0", 1)[0].decode("ascii", "replace")
+def parse_version_payload(payload: bytes) -> Tuple[int, int, str]:
+    """(proto, board, version string) of an RSP_VERSION.  board is the raw
+    BOARD_TYPE_* byte (board_type_name() turns it into a name)."""
+    proto, board, raw = _VERSION.unpack(payload)
+    return proto, board, raw.split(b"\0", 1)[0].decode("ascii", "replace")
+
+
+unpack_version = parse_version_payload      # older name, same 3-tuple
 
 
 def unpack_config(payload: bytes) -> Tuple[int, int, int]:

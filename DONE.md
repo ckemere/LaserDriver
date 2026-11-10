@@ -94,6 +94,33 @@ were bench-tested on hardware.
   (e.g. `laser_timerg_tick_ack()`) and the `LASER_*` state-machine enum
   values. Revisit separately if desired.
 
+## Three-board Pi software (2026-11-09) — DONE on the Pi side, CI to confirm
+
+The Pi stack now serves the LaserHAT Rev 2, the StimHAT and the
+LaserDriverHAT (branch `worktree-stim-hat`, not committed at the time of
+writing).
+
+- [x] **Board identity from the HAT ID EEPROM.** `Pi/hat_id.py` reads
+  `/proc/device-tree/hat` (vendor `KemereLab`; product ids 0x0002 / 0x0003 /
+  0x0004) and resolves board + Pi GPIOs: EEPROM, else `--board`, else
+  `LASERHAT_BOARD`, else Rev 2; `LASERHAT_*_PIN` override single pins.
+  `brokerd/hatid.c` is the C mirror.  `laserhat-eeprom read | make | write`
+  builds the HAT EEPROM image itself (header, vendor atom, minimal GPIO map,
+  CRC-16) and programs U1 over a temporary i2c-gpio bus on GPIO 0/1.
+- [x] **Board-aware pins.** `power_cycle.py`, `laserhat-flash` (OpenOCD
+  `adapter gpio` overrides after `pi-swd.cfg`), `pi_trigger.py`, `broker.py`
+  and `laserhat-brokerd` (`--gpio-pin` default) use the board's pins and say
+  which board they resolved.
+- [x] **Firmware per board.** The package carries
+  `laserhat-mcu-{rev2,stim,laser}.elf` (+ `laserhat-mcu.elf` → Rev 2);
+  `laserhat-flash` picks the EEPROM's and refuses a contradicting `--board`
+  without `--force`.  Both brokers publish `board` / `board_source` /
+  `fw_board` (RSP_VERSION's board byte) and fail `fw_ok` on a mismatch; the
+  web page and OLED show the board (and hide the mode switch on the
+  single-mode boards); the StimHAT's 6th button (bit 6) is accepted.
+- [ ] Not yet run in CI or on hardware: the deb build of the three images,
+  the EEPROM write on a real board, the flash on a StimHAT.
+
 ## Open design questions — STILL OPEN (scope separately)
 
 These were intentionally **not** addressed in the audit-fixes pass.

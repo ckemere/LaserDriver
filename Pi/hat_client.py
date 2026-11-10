@@ -44,6 +44,9 @@ def _state_from_msg(msg: dict) -> Optional[State]:
         fw_proto=msg.get("fw_proto"),
         fw_expected=msg.get("fw_expected"),
         fw_ok=msg.get("fw_ok"),
+        fw_board=msg.get("fw_board"),
+        board=msg.get("board") or "rev2",
+        board_source=msg.get("board_source") or "default",
     )
 
 

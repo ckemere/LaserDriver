@@ -15,7 +15,8 @@ Routes:
     POST /api/power         body { "action": "poweroff" | "reboot" } — orderly
                             halt via laserhat-power.path (see power.py)
     POST /api/trigger       fire a pulse via the UART trigger command
-    POST /api/trigger_gpio  fire a pulse via Pi GPIO 26 -> MSPM0 PA27 edge
+    POST /api/trigger_gpio  fire a pulse via the PI_TRIGGER GPIO edge (GPIO 26 on
+                            the Rev 2 HAT, 18 on the StimHAT / LaserDriverHAT)
     GET  /api/healthz       cheap liveness check
 
 The app binds 0.0.0.0:8080 by default; override via PORT env var.  The
@@ -31,6 +32,7 @@ from typing import Optional
 
 from flask import Flask, jsonify, render_template, request
 
+import hat_id
 import power
 import protocol as proto
 from hat_client import DEFAULT_SOCKET, HatClient
@@ -110,6 +112,14 @@ def _state_dict(state: Optional[State]) -> dict:
         "fw_expected":     state.fw_expected,
         "fw_ok":           state.fw_ok,
         "fw_label":        state.fw_label,
+        "fw_board":        state.fw_board,
+        "board":           state.board,
+        "board_label":     state.board_label,
+        "board_source":    state.board_source,
+        # The modes this board's firmware accepts (the page hides the rest).
+        "modes":           list(hat_id.BOARDS[state.board].modes
+                                if state.board in hat_id.BOARDS
+                                else ("laser", "estim")),
     }
 
 
@@ -170,7 +180,7 @@ def create_app(client: HatClient) -> Flask:
 
     @app.route("/api/trigger_gpio", methods=["POST"])
     def api_trigger_gpio():
-        """GPIO-path trigger (rising edge on Pi GPIO 26 -> MSPM0 PA27).
+        """GPIO-path trigger (rising edge on the board's PI_TRIGGER GPIO).
         Bypasses UART for the trigger itself; firmware fires the pulse
         from its GPIO edge ISR.  The broker owns the PiTrigger pin."""
         ok = app.config["client"].trigger_gpio()

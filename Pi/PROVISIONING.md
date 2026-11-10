@@ -17,8 +17,9 @@ Undo notes are included for every change.
 | `/usr/bin/laserhat-oledd` | Static C daemon owning the SSD1305 OLED | No Python graphics stack; works from early boot; see `oledd.c` |
 | `/usr/bin/laserhat-brokerd` | Static C broker: UART, trigger GPIO, UDP triggers | Real-time trigger path; see `brokerd/README.md` |
 | `/usr/bin/laserhat-flash` | Programs the MCU over SWD (manual, `sudo`) | Boards arrive blank; see §9 |
-| `/usr/lib/laserhat/firmware/` | `laserhat-mcu.elf`/`.hex`, `pi-swd.cfg`, `VERSION` | MCU firmware built by CI from the same commit as the broker (shared `protocol.h`) |
-| `/usr/lib/laserhat/*.py` (+`templates/`) | OLED GUI, web GUI, protocol, `broker.py` fallback | Single install location, no venv, imports via `WorkingDirectory` |
+| `/usr/bin/laserhat-eeprom` | Reads / programs the HAT ID EEPROM (board identity) | Once per new board; see §10 |
+| `/usr/lib/laserhat/firmware/` | `laserhat-mcu-{rev2,stim,laser}.elf`/`.hex` (+ `laserhat-mcu.elf`/`.hex` → the Rev 2 image), `pi-swd.cfg`, `VERSION` | MCU firmware for each of the three HATs, built by CI from the same commit as the broker (shared `protocol.h`); `laserhat-flash` picks the one the HAT EEPROM names |
+| `/usr/lib/laserhat/*.py` (+`templates/`) | OLED GUI, web GUI, protocol, `hat_id.py` (board identity + pins), `broker.py` fallback | Single install location, no venv, imports via `WorkingDirectory` |
 | `/usr/lib/laserhat/laserhat-power` + `laserhat-power.path`/`.service` | Safe shutdown / reboot from the GUIs | The GUIs run as `laserhat` and cannot halt the machine; they drop `/run/laserhat/{poweroff,reboot}.request`, the root-owned path unit runs the script, which consumes the file and calls `systemctl poweroff`/`reboot`. No sudo, no polkit rule. Cutting 5 V mid-write corrupts the card. |
 | `/usr/lib/systemd/system/laserhat-*.service`, `oled-gui.service` | Service units | `/usr/lib` (not `/lib`) because `/lib` is a merged-usr **symlink**; a package extracting a real `/lib` directory over it destroys the dynamic-loader path and bricks the OS. The injector refuses any package shipping top-level `/lib`, `/bin` or `/sbin`. |
 | `/etc/NetworkManager/system-connections/laserhat-eth0.nmconnection` | Static wired IP (see §3) | conffile, mode 0600 (NetworkManager refuses looser modes) |
@@ -27,7 +28,14 @@ Undo notes are included for every change.
 Declared dependencies (from apt, no pip): `python3`, `python3-serial`,
 `python3-flask`, `python3-gpiozero`, `python3-lgpio`, `openocd` (for
 `laserhat-flash`; the golden-image build fails if this OS release's
-openocd lacks `target/ti_mspm0.cfg`).
+openocd lacks `target/ti_mspm0.cfg`).  `laserhat-eeprom` needs nothing new:
+it talks to `/dev/i2c-N` with the standard library (`fcntl` ioctl) and uses
+`dtoverlay` / `modprobe`, which every Raspberry Pi OS image has.
+
+**Optional, not shipped:** `/etc/default/laserhat` (`LASERHAT_BOARD=rev2|stim|laser`,
+rarely `LASERHAT_*_PIN=N`), read by `laserhat-broker.service`
+(`EnvironmentFile=-`) and by `laserhat-flash`, for a board whose ID EEPROM
+is not programmed.  Programming the EEPROM (§10) is the better fix.
 
 **postinst** creates the `laserhat` system user (all four daemons share
 it so their Unix sockets in `/run/laserhat*` need no cross-user
@@ -42,7 +50,7 @@ Undo: `sudo apt purge laserhat`.
 | Unit | Starts at | Runs as | Groups | Why |
 |---|---|---|---|---|
 | `laserhat-oledd` | **sysinit.target** | laserhat | i2c, gpio | The display is the boot indicator: `DefaultDependencies=no`, ordered only after `local-fs.target` + `systemd-modules-load.service`, so hostname/IPs/heartbeat appear seconds after the kernel starts. The daemon retries `/dev/i2c-1` for ~30 s, so racing the module load/udev is harmless. |
-| `laserhat-broker` | multi-user | laserhat | dialout, gpio | `/usr/bin/laserhat-brokerd`. Sole owner of `/dev/ttyS0` (MCU link) and the GPIO trigger (`/dev/gpiomem`); serves clients on `/run/laserhat/broker.sock`; UDP triggers on `192.168.17.10:17017` (trigger thread SCHED_FIFO 80 on CPU 3 via `LimitRTPRIO`/`LimitMEMLOCK`) |
+| `laserhat-broker` | multi-user | laserhat | dialout, gpio | `/usr/bin/laserhat-brokerd`. Sole owner of `/dev/ttyS0` (MCU link) and the GPIO trigger (`/dev/gpiomem`; GPIO 26 on Rev 2, 18 on the StimHAT / LaserDriverHAT, from the HAT EEPROM at startup); serves clients on `/run/laserhat/broker.sock`; UDP triggers on `192.168.17.10:17017` (trigger thread SCHED_FIFO 80 on CPU 3 via `LimitRTPRIO`/`LimitMEMLOCK`) |
 | `oled-gui` | multi-user | laserhat | — | Broker client; sends body rows to oledd over `/run/laserhat-oled/oled.sock`; before it connects, oledd shows the boot screen (hostname + `E:`/`W:` addresses) |
 | `laserhat-web` | multi-user | laserhat | — | Flask on `0.0.0.0:8080` — reachable on both the static wired address and wifi |
 
@@ -139,20 +147,37 @@ flashed, or UART config reverted).
 ## 9. MCU firmware (manual, once per board)
 
 New boards arrive with a blank MCU, and nothing flashes automatically.
-With **no module plugged into J8/J9**:
+Program the HAT ID EEPROM first (§10) so the Pi knows the board.  Then, with
+**no module plugged into J8/J9** (Rev 2):
 
 ```bash
-sudo laserhat-flash
+sudo laserhat-flash                  # board from the HAT EEPROM
+sudo laserhat-flash --board stim     # EEPROM still blank
 ```
 
-The command stops the broker and GUIs (which frees the UART and the GPIO 26
-trigger line), power-cycles the MCU (GPIO 18 power, GPIO 23 NRST) into its
-boot window, writes `/usr/lib/laserhat/firmware/laserhat-mcu.elf` with
-OpenOCD over SWD on GPIO 24 (SWCLK) / GPIO 25 (SWDIO), and restarts the
-services. A successful flash ends with the ~2 s boot blink on the status LED
-D7, followed by a 1 Hz heartbeat blip, and the OLED/web then show the MCU as
-alive.  These are the Rev 2 HAT pins; a Rev 1 board (SWD and power/reset
-swapped) needs `make flash HAT_REV=1` from the source tree instead.
+How it chooses: the board is the HAT EEPROM's (`/proc/device-tree/hat`),
+else `--board`, else `LASERHAT_BOARD` (environment or `/etc/default/laserhat`),
+else Rev 2; the image is `/usr/lib/laserhat/firmware/laserhat-mcu-<board>.elf`;
+the GPIOs are that board's, with any `LASERHAT_*_PIN` variable overriding
+one pin:
+
+| board | SWCLK | SWDIO | NRST | POWER_EN | TRIGGER |
+|---|---|---|---|---|---|
+| rev2 (LaserHAT Rev 2) | 24 | 25 | 23 | 18 | 26 |
+| stim (StimHAT) | 24 | 25 | 9 | 10 | 18 |
+| laser (LaserDriverHAT) | 24 | 25 | 9 | 10 | 18 |
+
+It refuses when `--board` contradicts the EEPROM, or the EEPROM is another
+vendor's HAT, unless `--force`.  The command prints the board and pins it
+resolved, stops the broker and GUIs (which frees the UART and the trigger
+line), power-cycles the MCU (`power_cycle.py --board <b>`: POWER_EN low with
+NRST asserted) into its boot window, writes the image with OpenOCD over SWD
+(`pi-swd.cfg` followed by `adapter gpio swclk/swdio/srst` overrides for the
+board's pins and this Pi's header gpiochip), and restarts the services. A
+successful flash ends with the ~2 s boot blink on the status LED D7, followed
+by a 1 Hz heartbeat blip, and the OLED/web then show the MCU as alive.  A
+Rev 1 board (SWD and power/reset swapped) needs `make flash HAT_REV=1` from
+the source tree instead.
 `cat /usr/lib/laserhat/firmware/VERSION` shows which release the firmware
 came from, and the command's last line (`MCU firmware <version> ... OK`)
 confirms the MCU now reports exactly that version.  Re-run the command after
@@ -160,3 +185,53 @@ installing a new package version to keep the firmware and broker matched:
 until they match, the web page shows an "MCU firmware" banner and the OLED
 chip reads `FW!` (the broker probes `CMD_GET_VERSION` once per MCU boot;
 builds older than v0.2.0-rc6 do not answer and are flagged the same way).
+The same reply carries the board the firmware was built for; the broker
+publishes it as `fw_board` next to `board` (from the EEPROM) and flags a
+disagreement the same way (old firmware reports `unknown`, accepted only on
+a Rev 2), and `laserhat-flash` exits 3 if the flashed image does not suit
+the board.
+
+## 10. HAT ID EEPROM (once per board)
+
+Every board carries an M24C32 ID EEPROM (U1) on the Pi's ID_SD / ID_SC pins
+(GPIO 0 / 1, address 0x50) with write-protect jumper JP1 (closed = WP tied
+to 3.3 V = protected; open = writable).  The Pi firmware reads it once at
+boot and publishes `/proc/device-tree/hat/{vendor,product,product_id,product_ver,uuid}`;
+`hat_id.py` maps that to the board and its GPIOs for every tool.  New boards
+arrive blank:
+
+```bash
+laserhat-eeprom read                     # "none seen at boot", board rev2 (fallback)
+# open JP1
+sudo laserhat-eeprom write stim --yes    # rev2 | stim | laser
+# close JP1, then
+sudo reboot                              # the EEPROM is only read at boot
+laserhat-eeprom read                     # board stim (StimHAT, from the HAT EEPROM)
+```
+
+What gets written (`hat_id.build_eeprom`, the Raspberry Pi HAT EEPROM format,
+little-endian): a 12-byte header (`R-Pi`, version 1, 2 atoms, total length),
+atom 0 = vendor info (a fresh random UUID per board, product id / version,
+vendor `KemereLab`, product `LaserHAT Rev 2` 0x0002/0x0002, `StimHAT`
+0x0003/0x0001 or `LaserDriverHAT` 0x0004/0x0001), atom 1 = a minimal GPIO map
+(bank drive 0, no back-power, no pin marked used: the firmware leaves every
+GPIO at its boot default, which the boards are designed around), each atom
+with its CRC-16; 100–107 bytes.  No device-tree atom (nothing needs a
+kernel driver).  `laserhat-eeprom make <board> -o file.eep` writes the same
+image to a file; `sudo laserhat-eeprom read --chip` decodes the EEPROM
+itself.
+
+**Which I2C bus.** Linux does not normally expose GPIO 0/1.  By default
+`write` loads the bit-banged `i2c-gpio` overlay on them as bus 9
+(`dtoverlay i2c-gpio i2c_gpio_sda=0 i2c_gpio_scl=1 bus=9`, as the
+Raspberry Pi hats repo's `eepflash.sh` does), writes and verifies through
+`/dev/i2c-9`, then removes the overlay — works on a Pi 4 and a Pi 5 without
+a reboot or a config change.  Alternatively add `dtparam=i2c_vc=on` to
+`config.txt` and reboot: on a Pi 4 the BSC0 controller muxed onto GPIO 0/1
+appears as `/dev/i2c-0` (the camera/display side of that mux is
+`/dev/i2c-10`), on a Pi 5 RP1's I2C0 on GPIO 0/1 is `/dev/i2c-0`; then
+`laserhat-eeprom write <board> --yes --bus 0`.  Leave `i2c_vc` off in normal
+use (the deployment does not set it).
+
+Undo: rewrite with another board, or erase (JP1 open) by writing 0xFF;
+a blank EEPROM puts the tools back on `--board` / `LASERHAT_BOARD` / Rev 2.

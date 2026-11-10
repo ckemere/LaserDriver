@@ -53,7 +53,7 @@ jobs:
         run: make -C Pi/brokerd
       - name: Install test dependencies
         run: pip install pyserial flask pytest
-      - name: Run Pi test suite (codec, both brokers' integration + web, UDP triggers)
+      - name: Run Pi test suite (codec, HAT EEPROM + board/pin resolution, both brokers' integration + boards + web, UDP triggers)
         working-directory: Pi
         run: python -m pytest tests/ -q
       - name: C <-> Python protocol cross-check
@@ -77,10 +77,21 @@ jobs:
           fetch-depth: 0       # git describe needs tags for the version
       - name: Install cross-compilers (Pi target + MCU firmware)
         run: sudo apt-get update && sudo apt-get install -y ${{ matrix.pkg }} gcc-arm-none-eabi
+      # build-deb.sh builds the MCU firmware once per board
+      # (make -f Makefile.gcc BOARD=rev2|stim|laser) with the same toolchain.
       - name: Build package
         run: |
           Pi/packaging/build-deb.sh ${{ matrix.arch }} ${{ matrix.cc }}
           dpkg-deb -I laserhat_*_${{ matrix.arch }}.deb
+      - name: Check the package carries every board's firmware + the tools
+        run: |
+          dpkg-deb -c laserhat_*_${{ matrix.arch }}.deb > contents.txt
+          for f in firmware/laserhat-mcu-rev2.elf firmware/laserhat-mcu-stim.elf \
+                   firmware/laserhat-mcu-laser.elf firmware/laserhat-mcu.elf \
+                   firmware/VERSION usr/bin/laserhat-eeprom usr/bin/laserhat-flash \
+                   usr/lib/laserhat/hat_id.py; do
+            grep -q "$f" contents.txt || { echo "missing $f"; cat contents.txt; exit 1; }
+          done
       - uses: actions/upload-artifact@v6
         with:
           name: laserhat-deb-${{ matrix.arch }}

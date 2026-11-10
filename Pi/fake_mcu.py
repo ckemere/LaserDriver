@@ -9,12 +9,22 @@ EVT_PULSE_START then EVT_PULSE_END after a short hold.
 
     python3 fake_mcu.py            # prints e.g. /dev/pts/7
     python3 broker.py --device /dev/pts/7 --no-gpio --socket /tmp/lh.sock
+
+--board rev2|stim|laser|unknown emulates that board's firmware build: the
+RSP_VERSION board byte (unknown = 0, the firmware from before the
+three-board split), the modes it accepts (stim: e-stim only, laser: laser
+only -- CMD_SET_MODE to the other is answered with the unchanged mode,
+like the real firmware) and the mode it boots in.  SIGUSR1 simulates a
+press + release of the board's last button: bit 6 (joystick right) on a
+StimHAT / LaserDriverHAT, bit 4 (FIRE) otherwise.
 """
 
 from __future__ import annotations
 
+import argparse
 import os
 import pty
+import signal
 import struct
 import sys
 import threading
@@ -31,21 +41,32 @@ PULSE_HOLD_S = 0.15
 FAKE_VERSION = os.environ.get("FAKE_MCU_VERSION", "fake")
 FAKE_PROTO = int(os.environ.get("FAKE_MCU_PROTO", str(proto.PROTO_VERSION)))
 FAKE_NO_VERSION = os.environ.get("FAKE_MCU_NO_VERSION") == "1"
+FAKE_BOARD = os.environ.get("FAKE_MCU_BOARD", "rev2")
+
+BOARD_MODES = {"rev2": (proto.MODE_LASER, proto.MODE_ESTIM),
+               "unknown": (proto.MODE_LASER, proto.MODE_ESTIM),
+               "stim": (proto.MODE_ESTIM,),
+               "laser": (proto.MODE_LASER,)}
+BUTTON_HOLD_S = 0.4          # > the broker's 0.25 s poll: STATUS carries the bit
 
 
 class FakeMCU:
-    def __init__(self, fd: int):
+    def __init__(self, fd: int, board: str = FAKE_BOARD):
         self._fd = fd
+        self.board = board
+        self.modes = BOARD_MODES[board]
         self._cmd = proto.StreamDecoder(proto.CMD_LEN)   # decode commands
         self._lock = threading.Lock()
         self._t0 = time.monotonic()
         self.state = {"intensity": 320, "ramp_ticks": 8000, "hold_ticks": 10000,
                       "button_mask": 0, "phase": "W",
-                      "mode": proto.MODE_LASER,
+                      "mode": self.modes[0],
                       "estim_dur_ticks": 10, "estim_ipi_ticks": 10,
                       "laser_dac": proto.LASER_DAC_DEFAULT,
                       "estim_dac": proto.ESTIM_DAC_DEFAULT,
                       "module": 0, "adc_pd": 0, "adc_comp": 0}
+        if self.state["mode"] == proto.MODE_ESTIM:      # StimHAT boots in e-stim
+            self.state["module"] = proto.MODULE_ESTIM_READY
 
     def _tick(self) -> int:
         return int((time.monotonic() - self._t0) * 100_000) & 0xFFFFFFFF
@@ -77,6 +98,13 @@ class FakeMCU:
         self.state["button_mask"] = mask
         self._send(proto.EVT_BUTTON, bytes([mask, edges]))
 
+    def press_last_button(self) -> None:
+        """Test hook (SIGUSR1): press and release the board's last button."""
+        bit = proto.BUTTON_RIGHT if self.board in ("stim", "laser") else 0x10
+        self.press_button(bit, bit)
+        time.sleep(BUTTON_HOLD_S)
+        self.press_button(0, bit)
+
     def fault(self) -> None:
         """Test hook: simulate a latched module fault."""
         self.state["module"] |= proto.MODULE_FAULT_LATCHED
@@ -96,7 +124,8 @@ class FakeMCU:
         elif mtype == proto.CMD_QUERY:
             self._send_status()
         elif mtype == proto.CMD_SET_MODE and len(payload) == 1:
-            if payload[0] in (proto.MODE_LASER, proto.MODE_ESTIM) and self.state["phase"] == "W":
+            # A board refuses the mode it does not have (echo = unchanged).
+            if payload[0] in self.modes and self.state["phase"] == "W":
                 self.state["mode"] = payload[0]
                 # The real e-stim module reports ready once its DAC acks.
                 ready = proto.MODULE_ESTIM_READY if payload[0] == proto.MODE_ESTIM else 0
@@ -123,8 +152,9 @@ class FakeMCU:
             self._send_status()
         elif mtype == proto.CMD_GET_VERSION:
             if not FAKE_NO_VERSION:      # old firmware: silently ignored
-                self._send(proto.RSP_VERSION,
-                           proto.pack_version_payload(FAKE_PROTO, FAKE_VERSION))
+                self._send(proto.RSP_VERSION, proto.pack_version_payload(
+                    FAKE_PROTO, FAKE_VERSION,
+                    proto.BOARD_TYPES_BY_NAME.get(self.board, proto.BOARD_TYPE_UNKNOWN)))
 
     def run(self) -> None:
         while True:
@@ -139,14 +169,21 @@ class FakeMCU:
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser(description="fake LaserHAT MCU on a PTY")
+    ap.add_argument("--board", choices=list(BOARD_MODES), default=FAKE_BOARD,
+                    help="firmware build to emulate (default $FAKE_MCU_BOARD or rev2)")
+    args = ap.parse_args()
     master_fd, slave_fd = pty.openpty()
     tty.setraw(master_fd)
     tty.setraw(slave_fd)
     slave_name = os.ttyname(slave_fd)
     print(slave_name, flush=True)
-    print(f"fake_mcu: serving on {slave_name}", file=sys.stderr)
+    print(f"fake_mcu: serving on {slave_name} as a {args.board} board", file=sys.stderr)
 
-    mcu = FakeMCU(master_fd)
+    mcu = FakeMCU(master_fd, args.board)
+    # The handler only starts a thread: the main thread may hold _lock.
+    signal.signal(signal.SIGUSR1, lambda *_: threading.Thread(
+        target=mcu.press_last_button, daemon=True).start())
     try:
         mcu.run()
     except KeyboardInterrupt:

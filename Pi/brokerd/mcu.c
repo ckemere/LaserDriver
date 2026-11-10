@@ -6,7 +6,8 @@
  *                   waiting command (status-as-ack), broadcast events
  *   poller thread   CMD_QUERY every POLL_INTERVAL for state + liveness;
  *                   once per alive period a CMD_GET_VERSION probe, judged
- *                   against the package's VERSION file (fw_ok in the state)
+ *                   against the package's VERSION file and the HAT's board
+ *                   type (fw_ok in the state)
  *   callers         ipc.c client threads, one command in flight at a time
  */
 
@@ -53,11 +54,16 @@ typedef struct {
     bool     fw_probed;             /* the probe completed (reply or timeout) */
     bool     fw_known;              /* an RSP_VERSION arrived */
     uint8_t  fw_proto;
+    uint8_t  fw_board;              /* RSP_VERSION.board (BOARD_TYPE_*) */
     char     fw_version[FW_VERSION_CHARS + 1];
 } McuState;
 
 /* From the package's VERSION file; empty = no expectation. */
 static char g_fw_expected[64];
+
+/* The HAT (hatid.c), set once at startup. */
+static const BoardDef *g_board;
+static const char     *g_board_source = "default";
 
 static int g_fd = -1;
 
@@ -178,7 +184,25 @@ void mcu_set_expected_version_file(const char *path)
     fclose(f);
 }
 
+void mcu_set_board(const BoardDef *board, const char *source)
+{
+    g_board = board;
+    g_board_source = source;
+}
+
 /* ----- state ----------------------------------------------------------- */
+/* Does the firmware's board suit the HAT?  protocol.board_matches: an
+ * UNKNOWN fw board is pre-split firmware (Rev 2 only), so it is a mismatch
+ * only on a StimHAT / LaserDriverHAT; a known one must be the HAT's. */
+static bool board_matches(const McuState *s)
+{
+    unsigned hat = g_board ? g_board->fw_type : BOARD_TYPE_REV2;
+    if (s->fw_board == BOARD_TYPE_UNKNOWN) {
+        return hat != BOARD_TYPE_STIM && hat != BOARD_TYPE_LASER;
+    }
+    return s->fw_board == hat;
+}
+
 /* fw_ok as the GUIs see it: true / false / null (not probed yet). */
 static const char *fw_ok_literal(const McuState *s)
 {
@@ -191,6 +215,9 @@ static const char *fw_ok_literal(const McuState *s)
     if (g_fw_expected[0] && strcmp(g_fw_expected, s->fw_version) != 0) {
         return "false";
     }
+    if (!board_matches(s)) {
+        return "false";
+    }
     return "true";
 }
 
@@ -200,11 +227,12 @@ static void state_json_locked(char *buf, size_t cap)
     char i[16] = "null", r[16] = "null", h[16] = "null", ed[16] = "null",
          ei[16] = "null", ld[16] = "null", sd[16] = "null";
     char fwv[FW_VERSION_CHARS * 2 + 8] = "null", fwp[8] = "null",
-         fwe[sizeof g_fw_expected * 2 + 8] = "null";
+         fwe[sizeof g_fw_expected * 2 + 8] = "null", fwb[16] = "null";
     if (s->fw_known) {
         fwv[0] = '\0';                 /* json_put_str appends */
         json_put_str(fwv, sizeof fwv, s->fw_version);
         snprintf(fwp, sizeof fwp, "%u", s->fw_proto);
+        snprintf(fwb, sizeof fwb, "\"%s\"", board_type_name(s->fw_board));
     }
     if (g_fw_expected[0]) {
         fwe[0] = '\0';
@@ -227,10 +255,12 @@ static void state_json_locked(char *buf, size_t cap)
              "\"estim_dur_ticks\":%s,\"estim_ipi_ticks\":%s,"
              "\"laser_dac\":%s,\"estim_dac\":%s,\"module\":%u,"
              "\"adc_pd\":%u,\"adc_comp\":%u,"
-             "\"fw_version\":%s,\"fw_proto\":%s,\"fw_expected\":%s,\"fw_ok\":%s}\n",
+             "\"fw_version\":%s,\"fw_proto\":%s,\"fw_expected\":%s,\"fw_ok\":%s,"
+             "\"fw_board\":%s,\"board\":\"%s\",\"board_source\":\"%s\"}\n",
              alive, alive, i, r, h, s->button_mask, s->phase, s->tick,
              s->mode, ed, ei, ld, sd, s->module, s->adc_pd, s->adc_comp,
-             fwv, fwp, fwe, fw_ok_literal(s));
+             fwv, fwp, fwe, fw_ok_literal(s),
+             fwb, g_board ? g_board->name : "rev2", g_board_source);
 }
 
 void mcu_state_json(char *buf, size_t cap)
@@ -242,7 +272,7 @@ void mcu_state_json(char *buf, size_t cap)
 
 static void broadcast_state_locked(void)
 {
-    char line[768];
+    char line[STATE_JSON_MAX];
     state_json_locked(line, sizeof line);
     ipc_broadcast(line);
 }
@@ -255,7 +285,8 @@ static bool status_in_range(const StatusPayload *p)
     return p->intensity >= INTENSITY_MIN && p->intensity <= INTENSITY_MAX
         && p->ramp_ticks >= TICKS_MIN && p->ramp_ticks <= TICKS_MAX
         && p->hold_ticks >= TICKS_MIN && p->hold_ticks <= TICKS_MAX
-        && p->button_mask <= 0x3F   /* 5 buttons + the BSL switch */
+        && p->button_mask <= 0x7F   /* 6 buttons + the BSL switch (bit 6: StimHAT /
+                                       LaserDriverHAT joystick right) */
         && (p->phase == PHASE_WAITING || p->phase == PHASE_TRIGGERED)
         && (p->mode == MODE_LASER || p->mode == MODE_ESTIM)
         && p->estim_dur_ticks >= ESTIM_DUR_MIN && p->estim_dur_ticks <= ESTIM_DUR_MAX
@@ -309,6 +340,7 @@ static void check_liveness(void)
         g_state.fw_probed = false;
         g_state.fw_known  = false;
         g_state.fw_proto  = 0;
+        g_state.fw_board  = BOARD_TYPE_UNKNOWN;
         g_state.fw_version[0] = '\0';
         atomic_store(&g_alive_flag, false);
         broadcast_state_locked();
@@ -575,21 +607,26 @@ static void probe_version(void)
     g_state.fw_known  = got;
     if (got) {
         g_state.fw_proto = v.proto;
+        g_state.fw_board = v.board;
         memcpy(g_state.fw_version, v.version, FW_VERSION_CHARS);
         g_state.fw_version[FW_VERSION_CHARS] = '\0';
     } else {
         g_state.fw_proto = 0;
+        g_state.fw_board = BOARD_TYPE_UNKNOWN;
         g_state.fw_version[0] = '\0';
     }
     const char *ok = fw_ok_literal(&g_state);
+    const char *hat = g_board ? g_board->name : "rev2";
     if (strcmp(ok, "true") != 0) {
-        fprintf(stderr, "brokerd: MCU firmware %s (proto %u) does not match the "
-                        "package (%s, proto %u): run sudo laserhat-flash\n",
+        fprintf(stderr, "brokerd: MCU firmware %s (proto %u, board %s) does not match "
+                        "the package (%s, proto %u) on this %s HAT: run sudo "
+                        "laserhat-flash\n",
                 got ? g_state.fw_version : "unknown (no reply)", g_state.fw_proto,
-                g_fw_expected[0] ? g_fw_expected : "any", (unsigned)PROTO_VERSION);
+                board_type_name(g_state.fw_board),
+                g_fw_expected[0] ? g_fw_expected : "any", (unsigned)PROTO_VERSION, hat);
     } else {
-        fprintf(stderr, "brokerd: MCU firmware %s (proto %u) OK\n",
-                g_state.fw_version, g_state.fw_proto);
+        fprintf(stderr, "brokerd: MCU firmware %s (proto %u, board %s) OK\n",
+                g_state.fw_version, g_state.fw_proto, board_type_name(g_state.fw_board));
     }
     broadcast_state_locked();
     pthread_mutex_unlock(&g_state_mu);

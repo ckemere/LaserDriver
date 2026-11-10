@@ -177,7 +177,7 @@ static void dispatch(const char *line, char *out, size_t cap)
 static void *client_loop(void *arg)
 {
     Client *c = arg;
-    char state[768];
+    char state[STATE_JSON_MAX];
 
     pthread_mutex_lock(&g_clients_mu);
     c->next = g_clients;

@@ -92,7 +92,7 @@
     .mode-btn.active-estim { background: #1a6b8a; color: white; border-color: #1a6b8a; }
     .mode-btn:hover:not(.active-laser):not(.active-estim) { background: var(--bg); }
     [data-panel].hidden { display: none; }
-    #fw-card.hidden { display: none; }
+    #fw-card.hidden, .mode-btn.hidden, .btn-pill.hidden { display: none; }
 
     footer { color: var(--muted); font-size: 12px; margin-top: 20px; text-align: center; }
     .err { color: var(--accent); }
@@ -101,7 +101,7 @@
 </head>
 <body>
   <header>
-    <h1>LaserHAT</h1>
+    <h1 id="board-name">LaserHAT</h1>
     <span class="meta">
       {{ hostname }} · {{ ip }} ·
       <span id="phase" class="phase-pill phase-W">WAIT</span>
@@ -201,8 +201,10 @@
     <span>MCU firmware:</span>
     <span class="flag bad" id="fw-running">—</span>
     <span>package expects <span class="flag" id="fw-expected">—</span></span>
-    <span style="font-size:12px">The MCU is not running the firmware this package shipped (or none at all).
-      With no module in J8/J9, run <code>sudo laserhat-flash</code>, then wait for the ~2 s boot blink.</span>
+    <span>built for <span class="flag" id="fw-board">—</span> on a <span class="flag" id="hat-board">—</span></span>
+    <span style="font-size:12px">The MCU is not running the firmware this package shipped for this board (or none at all).
+      With no module in J8/J9, run <code>sudo laserhat-flash</code> (it picks the image for the board the HAT EEPROM names),
+      then wait for the ~2 s boot blink.</span>
   </div>
 
   <div class="card module-line" id="fault-card">
@@ -217,8 +219,9 @@
     <button id="trigger-gpio" class="trigger trigger-gpio">TRIGGER (GPIO)</button>
     <div class="trigger-note">
       UART path waits for byte send + parse + state-machine tick (~300–700 µs,
-      with scheduler jitter).  GPIO path drives Pi GPIO 26 high so the MCU's
-      PA27 edge ISR fires the pulse directly (~50–100 µs, deterministic).
+      with scheduler jitter).  GPIO path drives the PI_TRIGGER GPIO high (26 on the
+      Rev 2 HAT, 18 on the StimHAT / LaserDriverHAT) so the MCU's edge ISR fires
+      the pulse directly (~50–100 µs, deterministic).
     </div>
   </div>
 
@@ -233,6 +236,7 @@
       <span class="btn-pill" id="btn4">B4 wheel</span>
       <span class="btn-pill" id="btn5">B5 FIRE</span>
       <span class="btn-pill" id="btn6">BSL</span>
+      <span class="btn-pill hidden" id="btn7">B6 right</span>
     </div>
   </div>
 
@@ -246,6 +250,7 @@
 
   <footer>
     state polls every 500 ms · <code>tick=<span id="tick">—</span></code>
+    · board <code id="board-footer">—</code>
     · firmware <code id="fw-footer">—</code>
     <span id="err" class="err"></span>
   </footer>
@@ -342,6 +347,12 @@ async function refresh() {
     $("fw-running").textContent = s.fw_version
       ? `${s.fw_version} proto ${s.fw_proto}` : s.fw_label;
     $("fw-expected").textContent = s.fw_expected || "any (no VERSION file)";
+    $("fw-board").textContent = s.fw_board || "?";
+    $("hat-board").textContent = s.board_label || s.board || "?";
+
+    // Which HAT (from its ID EEPROM; the broker resolves it at startup).
+    $("board-name").textContent = s.board_label || "LaserHAT";
+    $("board-footer").textContent = `${s.board} (${s.board_source})`;
 
     const phaseEl = $("phase");
     const ph = s.fault_latched ? "F" : s.phase;
@@ -350,13 +361,22 @@ async function refresh() {
     $("trigger").disabled      = s.phase === "T" || s.fault_latched;
     $("trigger-gpio").disabled = s.phase === "T" || s.fault_latched;
 
-    for (let i = 0; i < 6; i++) {
+    const joystick = s.board === "stim" || s.board === "laser";
+    $("btn1").textContent = joystick ? "B1 left/BACK" : "B1 BACK";
+    $("btn2").textContent = joystick ? "B2 centre" : "B2 SELECT";
+    $("btn3").textContent = joystick ? "B3 down" : "B3 wheel";
+    $("btn4").textContent = joystick ? "B4 up" : "B4 wheel";
+    $("btn7").classList.toggle("hidden", !joystick);
+    for (let i = 0; i < 7; i++) {
       const el = $("btn" + (i + 1));
       const lit = (s.button_mask & (1 << i)) !== 0;
       el.classList.toggle("lit", lit);
     }
 
     applyMode(s.mode);
+    const modes = s.modes || ["laser", "estim"];
+    $("mode-laser").classList.toggle("hidden", !modes.includes("laser"));
+    $("mode-estim").classList.toggle("hidden", !modes.includes("estim"));
     lastState = s;
   } catch (e) {
     $("err").textContent = "fetch error: " + e;

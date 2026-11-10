@@ -20,6 +20,9 @@ Button mapping (Rev 2 HAT edge controls, reported by the MCU):
     B3  wheel roll       — decrement selected value  (on [mode] row: switch to LASER)
     B4  wheel roll       — increment selected value  (on [mode] row: switch to ESTIM)
     B1  BACK (SW8)       — jump back to the first row (also cancels an armed [off])
+    B6  joystick right   — StimHAT / LaserDriverHAT (mask bit 6): next row, like B2
+                           without the fault clear; their joystick's left / centre /
+                           down / up arrive as B1 / B2 / B3 / B4
   [off] row: one roll (either way) arms it — the row reads "[off] roll again";
   a second roll the same way within 5 s requests an orderly shutdown through
   laserhat-power.path (power.py); the other direction, BACK or 5 s cancels.
@@ -28,7 +31,8 @@ Button mapping (Rev 2 HAT edge controls, reported by the MCU):
   If the wheel turns out to roll the "wrong" way, swap B3/B4 below.
 
 Display layout (oledd cells: 21 columns × 4 rows):
-    Row 0  header, owned by oledd: alternates LASERHAT[L|E] tag /
+    Row 0  header, owned by oledd: alternates the board tag (LASERHAT[L|E],
+           STIMHAT[E] or LASERDRV[L], from the broker's `board`) /
            E:<wired IP> / W:<wifi IP or WAITING>, heartbeat dot at right
     Row 1  ┐
     Row 2  ├  3-row scrolling window over the selectable items
@@ -36,9 +40,10 @@ Display layout (oledd cells: 21 columns × 4 rows):
 
 In LASER mode the selectable items are: i, r, h, ld (current, mA), [mode], [off]
 In ESTIM mode the selectable items are: dur (ed), IPI (ei), sd (amplitude, µA), [mode], [off]
+([mode] only on the Rev 2 HAT: the StimHAT and LaserDriverHAT have one mode each.)
 The window scrolls so the selected item is always visible.  The chip shows
 FAULT (inverted) while a module fault is latched, FW! (inverted) while the
-broker reports the MCU firmware does not match the package (run
+broker reports the MCU firmware does not match the package or the board (run
 `sudo laserhat-flash`), and the e-stim rows show "!" after the amplitude
 until the module's DAC has acknowledged (ready).
 """
@@ -51,6 +56,7 @@ import sys
 import threading
 import time
 
+import hat_id
 import power
 import protocol as proto
 from hat_client import DEFAULT_SOCKET, HatClient
@@ -66,6 +72,7 @@ DEFAULT_OLED_SOCKET = "/run/laserhat-oled/oled.sock"
 
 # Button bits in State.button_mask / EVT_BUTTON edges (see Pi/protocol.py).
 B1, B2, B3, B4, B5 = 0b00001, 0b00010, 0b00100, 0b01000, 0b10000
+B7 = proto.BUTTON_RIGHT      # bit 6: joystick right (StimHAT / LaserDriverHAT)
 
 # Sentinel objects for the mode-toggle and shutdown rows in the selection cycle.
 _MODE_ITEM = object()
@@ -134,11 +141,23 @@ class OledClient:
 
 # --------------------------------------------------------------- item helpers
 
+def _single_mode(state: State) -> bool:
+    b = hat_id.BOARDS.get(state.board)
+    return b is not None and len(b.modes) == 1
+
+
 def _items_for(state: State) -> list:
-    """Ordered selectable items for the current mode (params + mode sentinel)."""
+    """Ordered selectable items for the current mode (params + mode sentinel;
+    no mode row on a board with only one mode)."""
+    tail = [_OFF_ITEM] if _single_mode(state) else [_MODE_ITEM, _OFF_ITEM]
     if state.mode == 1:     # ESTIM
-        return list(ESTIM_PARAMS) + [_MODE_ITEM, _OFF_ITEM]
-    return list(PARAMS) + [_MODE_ITEM, _OFF_ITEM]
+        return list(ESTIM_PARAMS) + tail
+    return list(PARAMS) + tail
+
+
+def board_tag(state: State) -> str:
+    b = hat_id.BOARDS.get(state.board)
+    return b.tag if b else "LASERHAT"
 
 
 def _value_for(state: State, name: str) -> int:
@@ -182,7 +201,7 @@ def compose(state: State, selected: int, off_armed: bool = False,
             shutting_down: bool = False) -> tuple[str, list[str], str, bool]:
     """Build (tag, rows, chip_label, chip_inverted) for the oledd frame."""
     mode_tag = "E" if state.mode == 1 else "L"
-    tag = f"LASERHAT[{mode_tag}]"
+    tag = f"{board_tag(state)}[{mode_tag}]"
     if shutting_down:
         return tag, ["SHUTTING DOWN", "wait for blank +", "green LED off"], "OFF", True
 
@@ -213,7 +232,7 @@ def compose(state: State, selected: int, off_armed: bool = False,
     elif state.phase == "T":
         chip, inverted = "TRIG", True
     elif state.fw_ok is False:
-        chip, inverted = "FW!", True      # MCU firmware != package: sudo laserhat-flash
+        chip, inverted = "FW!", True      # MCU firmware != package / board: sudo laserhat-flash
     else:
         chip, inverted = "WAIT", False
     return tag, rows, chip, inverted
@@ -248,11 +267,11 @@ def main() -> int:
             ui["last_press"] = time.monotonic()
             if ui["shutting_down"]:
                 return
-            if edges & (B1 | B2):
+            if edges & (B1 | B2 | B7):
                 ui["off_armed_at"] = 0.0        # leaving the row disarms it
             if edges & B1:
                 ui["selected"] = 0
-            if edges & B2:
+            if edges & (B2 | B7):
                 ui["selected"] = (ui["selected"] + 1) % len(items)
             # Clamp in case mode just switched and shrunk the item list.
             selected = min(ui["selected"], len(items) - 1)
@@ -331,7 +350,8 @@ def main() -> int:
     def paint_key(st: State, sel: int):
         return (st.intensity, st.ramp_ticks, st.hold_ticks, st.phase, sel,
                 st.mode, st.estim_dur_ticks, st.estim_ipi_ticks,
-                st.laser_dac, st.estim_dac, st.module, st.fw_ok) + ui_flags()
+                st.laser_dac, st.estim_dac, st.module, st.fw_ok,
+                st.board) + ui_flags()
 
     last_painted_key = paint_key(state, selected)
 

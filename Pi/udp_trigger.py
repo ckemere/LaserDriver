@@ -2,7 +2,8 @@
 """LaserHAT network trigger — sender side (runs on the experiment machine).
 
 Python mirror of Pi/brokerd/udp_trigger.h; keep them in sync.  The broker
-(laserhat-brokerd --udp HOST:PORT) raises Pi GPIO 26 -> MCU PA27 as soon
+(laserhat-brokerd --udp HOST:PORT) raises the HAT's trigger line (GPIO 26 on
+the Rev 2 HAT, GPIO 18 on the StimHAT / LaserDriverHAT) as soon
 as a trigger datagram arrives, then ACKs.
 
 Delivery is at-most-once: nothing is retransmitted automatically, because

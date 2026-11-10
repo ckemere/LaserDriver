@@ -15,7 +15,7 @@ else
 CFLAGS  += -D_GNU_SOURCE
 endif
 
-SRCS = main.c mcu.c ipc.c json.c gpio.c trigger.c
+SRCS = main.c mcu.c ipc.c json.c gpio.c hatid.c trigger.c
 OBJS = $(SRCS:.c=.o)
 HDRS = brokerd.h udp_trigger.h ../../Firmware/protocol.h
 
