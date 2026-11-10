@@ -103,11 +103,11 @@ already in the repo under `sdk/` — no additional downloads needed.
 | `board.h` | Board dispatcher; `board_rev2.h` / `board_stim.h` / `board_laser.h` hold each pin map (PINCMs, masks, function codes) and feature flags |
 | `sysctl.c/h` | Clock tree, MFPCLK, BOR threshold |
 | `gpio.c/h` | GPIOA power, IOMUX init from the board macros (incl. BUTTON6, interrupt polarity split at bit 16), button/LED/STIM_OUT inlines, FAULT_n (stubbed "high" without a fault pin) |
-| `output_mux.c/h` | Switch lines A/B: GPIO-safe levels, and (laser boards) runtime IOMUX flips to TIMA0 (Rev 2 PA7/PA12, LaserDriverHAT PA22/PA23) |
-| `pwm_timer.c/h` | Laser boards: TIMA0 100 kHz PWM on CCP1 (laser switch) with CCP3 (dummy switch) as its complement; not built for the StimHAT |
+| `output_mux.c/h` | Switch lines A/B: GPIO-safe levels, and (laser boards) runtime IOMUX flips to the PWM timer (Rev 2 PA7/PA12 TIMA0, LaserDriverHAT PA26/PA27 TIMG7) |
+| `pwm_timer.c/h` | Laser boards: 100 kHz PWM, laser switch (PWM_A) with the dummy switch (PWM_B) as its complement, on the board's timer and channels (`BOARD_PWM_TIMER`, `BOARD_PWM_A/B_CC`, `BOARD_PWM_A/B_CC_PAIR`; Rev 2 TIMA0 CC1 / CC3, LaserDriverHAT TIMG7 CC0 / CC1; register names token-pasted at compile time); not built for the StimHAT |
 | `tick_timers.c/h` | TIMG0 100 kHz state-machine tick, TIMG6 1 kHz housekeeping |
 | `dac.c/h` | Laser boards: DAC0 on PA15 (VDDA reference), the laser current setpoint |
-| `adc.c/h` | Laser boards: photodiode + compliance-rail readback; instance and channels from the board (Rev 2 ADC1 ch 2 / 8, LaserDriverHAT ADC0 ch 1 / 0) |
+| `adc.c/h` | Laser boards: photodiode + compliance-rail readback; instance and channels from the board (Rev 2 ADC1 ch 2 / 8, LaserDriverHAT ADC0 ch 2 / 3) |
 | `module.c/h` | Laser pins to analog; e-stim RELEASE, bit-banged I2C (Rev 2 J9, StimHAT through the ISO1640), DAC60501 writes |
 | `uart.c/h` | UART1 (Pi) + UART0 (USB-C) at 115200 8N1, one RX ring per port, blocking TX |
 | `protocol.h` | Binary wire protocol map (message types + field layout); mirror of `Pi/protocol.py` |
@@ -129,21 +129,21 @@ PA19/PA20 SWD, PA8-PA11 UARTs and PA18 BSL are the same everywhere):
 | PA3 | — | — | — |
 | PA4 | — | PI_TRIGGER ← Pi GPIO18 | PI_TRIGGER ← Pi GPIO18 |
 | PA5 | — | LED | LED |
-| PA6 | FAULT_n (J8.3, pull-up) | — | BUTTON3 (down) |
+| PA6 | FAULT_n (J8.3, pull-up) | — | BUTTON1 (left, BACK) |
 | PA7 | PWM_A TIMA0_CCP1 / EN | BUTTON4 (up) | BUTTON4 (up) |
-| PA12 | PWM_B TIMA0_CCP3 / CATH | BUTTON1 (left, BACK) | BUTTON1 (left, BACK) |
-| PA13 | BUTTON4 (wheel roll) | BUTTON6 (right) | BUTTON6 (right) |
-| PA14 | BUTTON2 (wheel push) | BUTTON2 (centre) | BUTTON2 (centre) |
+| PA12 | PWM_B TIMA0_CCP3 / CATH | BUTTON1 (left, BACK) | BUTTON6 (right) |
+| PA13 | BUTTON4 (wheel roll) | BUTTON6 (right) | BUTTON2 (centre) |
+| PA14 | BUTTON2 (wheel push) | BUTTON2 (centre) | BUTTON3 (down) |
 | PA15 | DAC0_OUT / RELEASE (J9.3) | BUTTON3 (down) | DAC0_OUT (DB_DAC) |
 | PA16 | BUTTON3 (wheel roll) | BUTTON5 FIRE | BUTTON5 FIRE |
 | PA17 | ADC1 ch 2 / SDA (J9.4) | STIM_OUT | STIM_OUT ("SYNC OUT") |
 | PA21 | BUTTON1 BACK | STIM_IN | STIM_IN |
-| PA22 | "ADC1 ch 8" / SCL (J9.5) | FAULT_H (no pull) | PWM_A TIMA0_CCP1 (laser switch) |
-| PA23 | BUTTON5 FIRE | CATH_H | PWM_B TIMA0_CCP3 (dummy switch) |
-| PA24 | LED | EN_H | — |
-| PA25 | STIM_OUT | RELEASE_H | — |
-| PA26 | STIM_IN | SDA_H (ISO1640) | ADC0 ch 1 (photodiode) |
-| PA27 | PI_TRIGGER ← Pi GPIO26 | SCL_H (ISO1640) | ADC0 ch 0 (LASER_V) |
+| PA22 | "ADC1 ch 8" / SCL (J9.5) | FAULT_H (no pull) | — |
+| PA23 | BUTTON5 FIRE | CATH_H | — |
+| PA24 | LED | EN_H | DB_ADC_B ADC0 ch 3 (A0_3, LASER_V) |
+| PA25 | STIM_OUT | RELEASE_H | DB_ADC_A ADC0 ch 2 (A0_2, photodiode) |
+| PA26 | STIM_IN | SDA_H (ISO1640) | DB_PWM_A TIMG7_CCP0, PF 7 (laser switch) |
+| PA27 | PI_TRIGGER ← Pi GPIO26 | SCL_H (ISO1640) | DB_PWM_B TIMG7_CCP1, PF 7 (dummy switch, boots HIGH) |
 | NRST / PWR_EN | Pi GPIO23 / GPIO18 | Pi GPIO9 / GPIO10 | Pi GPIO9 / GPIO10 |
 
 Known Rev 2 issue, kept so the Rev 2 build is unchanged: PA22 is A0_7
@@ -151,6 +151,17 @@ Known Rev 2 issue, kept so the Rev 2 build is unchanged: PA22 is A0_7
 J9.5 (see `board_rev2.h`).  StimHAT: never enable internal pull-ups on
 PA23-PA25 (10k pull-downs, ISO7741 thresholds).  LaserDriverHAT: no fault
 line (`BOARD_HAS_FAULT_PIN` 0).
+
+**LaserDriverHAT map changed with the production board (2026-10-31,
+commit 7cce83a, `LaserHAT/LaserDriverHAT/README.md` "MCU pin map").**  The
+first `board_laser.h` followed an earlier draft (PWM on TIMA0 CCP1 / CCP3
+at PA22 / PA23, ADC0 ch 1 / 0 on PA26 / PA27, BUTTON1 PA12 / BUTTON6
+PA13 / BUTTON2 PA14 / BUTTON3 PA6).  The board as built has the PWM on
+**TIMG7** (CC0 laser switch PA26, CC1 dummy switch PA27, both IOMUX PF 7;
+TIMG7 at 0x4086A000, SLASEW9E table 8-6: 16-bit, CC0 / CC1 only, shadow
+CC and shadow load), ADC0 ch 2 / 3 on PA25 / PA24, the buttons above and
+PA22 / PA23 spare; the header and the PWM driver were changed to match
+(the Rev 2 build's generated code is unchanged).
 
 ### Rev 2 HAT detail (since 2026-10-14)
 
@@ -187,7 +198,7 @@ GPIO25 = SWDIO, GPIO26 = trigger, GPIO14/15 = UART.
 ## CRITICAL: Laser diode safety
 
 The MCU must boot with PWM_A LOW (laser switch OFF) and PWM_B HIGH (dummy
-switch conducting): Rev 2 PA7 / PA12, LaserDriverHAT PA22 / PA23
+switch conducting): Rev 2 PA7 / PA12, LaserDriverHAT PA26 / PA27
 (`BOARD_PWM_B_BOOT_HIGH`; on the StimHAT PWM_B is CATH_H and boots LOW). `laser_gpio_init()` pre-loads DOUT bits before
 enabling outputs; `enter_mode(MODE_LASER)` calls `laser_pins_to_gpio_safe()`
 after `laser_timera_init()` so the IOMUX state at boot is unambiguous.
@@ -200,9 +211,10 @@ PA0/PA1 must never be configured as outputs: they sit on the Pi's I2C bus.
 StimHAT and LaserDriverHAT stay in their one mode.  Pin names below are
 Rev 2's; the StimHAT uses EN_H PA24 / CATH_H PA23 / RELEASE_H PA25 /
 SDA_H PA26 / SCL_H PA27 / FAULT_H PA22 with identical sequencing, the
-LaserDriverHAT PWM PA22 / PA23, DAC PA15, ADC0 PA26 / PA27:
+LaserDriverHAT PWM PA26 / PA27 (TIMG7), DAC PA15, ADC0 PA25 / PA24:
 
-- **LASER:** PA7/PA12 flip between GPIO-safe and TIMA0 PWM per tick; DAC0
+- **LASER:** PA7/PA12 flip between GPIO-safe and TIMA0 PWM per tick
+  (LaserDriverHAT: PA26/PA27 and TIMG7); DAC0
   drives J9.3 with `g_laser_dac` **for the duration of a pulse only** (written
   at trigger, zeroed at pulse end: the module's cascode Q1 must not carry the
   dummy current continuously, REV2_NOTES "Q1 is a cascode"; default 1216 ≈

@@ -80,6 +80,7 @@ typedef enum IRQn
 #define TIMA0_BASE     (0x40860000U)
 #define TIMG0_BASE     (0x40084000U)
 #define TIMG6_BASE     (0x40868000U)
+#define TIMG7_BASE     (0x4086A000U)   /* LaserDriverHAT PWM; SLASEW9E table 8-6 */
 #define UART0_BASE     (0x40108000U)
 #define UART1_BASE     (0x40100000U)
 #define DAC0_BASE      (0x40018000U)
@@ -93,6 +94,7 @@ typedef enum IRQn
 #define TIMA0   ((GPTIMER_Regs *) TIMA0_BASE)
 #define TIMG0   ((GPTIMER_Regs *) TIMG0_BASE)
 #define TIMG6   ((GPTIMER_Regs *) TIMG6_BASE)
+#define TIMG7   ((GPTIMER_Regs *) TIMG7_BASE)
 #define UART0   ((UART_Regs    *) UART0_BASE)
 #define UART1   ((UART_Regs    *) UART1_BASE)
 #define DAC0    ((DAC12_Regs   *) DAC0_BASE)
@@ -113,15 +115,15 @@ typedef enum IRQn
 #define IOMUX_PINCM8   (7u)    /* PA3  — spare (all) */
 #define IOMUX_PINCM9   (8u)    /* PA4  — R spare; S/L PI_TRIGGER */
 #define IOMUX_PINCM10  (9u)    /* PA5  — R spare; S/L LED_MCU */
-#define IOMUX_PINCM11  (10u)   /* PA6  — R FAULT_n (J8.3); S spare; L BUTTON3 */
+#define IOMUX_PINCM11  (10u)   /* PA6  — R FAULT_n (J8.3); S spare; L BUTTON1 */
 #define IOMUX_PINCM14  (13u)   /* PA7  — R DB_PWM_A TIMA0_CCP1; S/L BUTTON4 */
 #define IOMUX_PINCM19  (18u)   /* PA8  — UART1_TX -> Pi (all) */
 #define IOMUX_PINCM20  (19u)   /* PA9  — UART1_RX <- Pi (all) */
 #define IOMUX_PINCM21  (20u)   /* PA10 — UART0_TX -> CH340N (all) */
 #define IOMUX_PINCM22  (21u)   /* PA11 — UART0_RX <- CH340N (all) */
-#define IOMUX_PINCM34  (33u)   /* PA12 — R DB_PWM_B TIMA0_CCP3; S/L BUTTON1 */
-#define IOMUX_PINCM35  (34u)   /* PA13 — R BUTTON4; S/L BUTTON6 */
-#define IOMUX_PINCM36  (35u)   /* PA14 — BUTTON2 (all) */
+#define IOMUX_PINCM34  (33u)   /* PA12 — R DB_PWM_B TIMA0_CCP3; S BUTTON1; L BUTTON6 */
+#define IOMUX_PINCM35  (34u)   /* PA13 — R BUTTON4; S BUTTON6; L BUTTON2 */
+#define IOMUX_PINCM36  (35u)   /* PA14 — R/S BUTTON2; L BUTTON3 */
 #define IOMUX_PINCM37  (36u)   /* PA15 — R DB_DAC / RELEASE; S BUTTON3; L DB_DAC (DAC0_OUT) */
 #define IOMUX_PINCM38  (37u)   /* PA16 — R BUTTON3; S/L BUTTON5 FIRE */
 #define IOMUX_PINCM39  (38u)   /* PA17 — R DB_ADC_A (A1_2) / SDA; S/L MCU_STIM_OUT */
@@ -129,12 +131,12 @@ typedef enum IRQn
 #define IOMUX_PINCM41  (40u)   /* PA19 — SWDIO (all) */
 #define IOMUX_PINCM42  (41u)   /* PA20 — SWCLK (all) */
 #define IOMUX_PINCM46  (45u)   /* PA21 — R BUTTON1; S/L MCU_STIM_IN */
-#define IOMUX_PINCM47  (46u)   /* PA22 — R DB_ADC_B / SCL; S FAULT_H; L DB_PWM_A TIMA0_CCP1 */
-#define IOMUX_PINCM53  (52u)   /* PA23 — R BUTTON5; S CATH_H; L DB_PWM_B TIMA0_CCP3 */
-#define IOMUX_PINCM54  (53u)   /* PA24 — R LED_MCU; S EN_H; L spare */
-#define IOMUX_PINCM55  (54u)   /* PA25 — R MCU_STIM_OUT; S RELEASE_H; L spare */
-#define IOMUX_PINCM59  (58u)   /* PA26 — R MCU_STIM_IN; S SDA_H; L DB_ADC_A (A0_1) */
-#define IOMUX_PINCM60  (59u)   /* PA27 — R PI_TRIGGER; S SCL_H; L DB_ADC_B (A0_0) */
+#define IOMUX_PINCM47  (46u)   /* PA22 — R DB_ADC_B / SCL; S FAULT_H; L spare */
+#define IOMUX_PINCM53  (52u)   /* PA23 — R BUTTON5; S CATH_H; L spare */
+#define IOMUX_PINCM54  (53u)   /* PA24 — R LED_MCU; S EN_H; L DB_ADC_B (A0_3) */
+#define IOMUX_PINCM55  (54u)   /* PA25 — R MCU_STIM_OUT; S RELEASE_H; L DB_ADC_A (A0_2) */
+#define IOMUX_PINCM59  (58u)   /* PA26 — R MCU_STIM_IN; S SDA_H; L DB_PWM_A TIMG7_C0 */
+#define IOMUX_PINCM60  (59u)   /* PA27 — R PI_TRIGGER; S SCL_H; L DB_PWM_B TIMG7_C1 */
 
 /* ---------------------------------------------------------------
  * PINCM peripheral-function codes used by the board headers.
@@ -147,8 +149,8 @@ typedef enum IRQn
 #define IOMUX_PINCM11_PF_TIMA_FAULT0        ((uint32_t)0x00000004U)
 #define IOMUX_PINCM14_PF_TIMA0_CCP1         ((uint32_t)0x00000008U)
 #define IOMUX_PINCM34_PF_TIMA0_CCP3         ((uint32_t)0x00000006U)
-#define IOMUX_PINCM47_PF_TIMA0_CCP1         ((uint32_t)0x00000005U)   /* PA22 TIMA0_C1 [5], table 6-2 (L) */
-#define IOMUX_PINCM53_PF_TIMA0_CCP3         ((uint32_t)0x00000004U)   /* PA23 TIMA0_C3 [4], table 6-2 (L) */
+#define IOMUX_PINCM59_PF_TIMG7_CCP0         ((uint32_t)0x00000007U)   /* PA26 TIMG7_C0 [7], table 6-2 (L) */
+#define IOMUX_PINCM60_PF_TIMG7_CCP1         ((uint32_t)0x00000007U)   /* PA27 TIMG7_C1 [7], table 6-2 (L) */
 #define IOMUX_PINCM19_PF_UART1_TX           ((uint32_t)0x00000002U)
 #define IOMUX_PINCM20_PF_UART1_RX           ((uint32_t)0x00000002U)
 #define IOMUX_PINCM21_PF_UART0_TX           ((uint32_t)0x00000002U)

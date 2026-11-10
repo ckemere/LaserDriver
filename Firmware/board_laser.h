@@ -2,14 +2,27 @@
 #define BOARD_LASER_H
 
 /*
- * **LaserDriverHAT** pin map (LaserHAT/LaserDriverHAT) for the
- * MSPM0G1507SRHBR (U7, VQFN-32; same RHB pinout and peripherals used here
- * as the G3507).  Build: BOARD=laser (-DBOARD_LASER).  Include board.h,
- * not this file.
+ * **LaserDriverHAT** pin map (LaserHAT/LaserDriverHAT, production board of
+ * 2026-10-31, commit 7cce83a) for the MSPM0G1507SRHBR (U7, VQFN-32; same
+ * RHB pinout and peripherals used here as the G3507).  Build: BOARD=laser
+ * (-DBOARD_LASER).  Include board.h, not this file.
  *
  * Source of truth: LaserHAT/LaserDriverHAT/README.md, "MCU pin map".  The
  * StimHAT core with the LaserDaughter block on the HAT in place of the
- * stimulator.  Laser only: CMD_SET_MODE ESTIM is refused.
+ * stimulator.  Laser only: CMD_SET_MODE ESTIM is refused.  This map
+ * replaces an earlier draft (PWM on TIMA0 at PA22 / PA23, ADC0 ch 1 / 0 on
+ * PA26 / PA27, BUTTON1 on PA12): the board as built has
+ *
+ *   PA26 / PA27  DB_PWM_A / DB_PWM_B  TIMG7_C0 / TIMG7_C1 (PF 7 both)
+ *   PA25 / PA24  DB_ADC_A / DB_ADC_B  ADC0 ch 2 (A0_2) / ch 3 (A0_3)
+ *   PA15         DB_DAC               DAC0_OUT
+ *   PA6 / PA7 / PA12 / PA13 / PA14 / PA16   BUTTON1 / 4 / 6 / 2 / 3 / 5
+ *   PA3, PA22, PA23                   spare
+ *
+ * Why TIMG7: the laser block's four links reach U7 as a fixed-order bus,
+ * so both PWM pins had to be the top two of U7's east column (PA26 /
+ * PA27), where TIMG7 has both channels on one timebase (README, "Why
+ * TIMG7").  pwm_timer.c drives whichever timer BOARD_PWM_TIMER names.
  *
  * No fault line: the laser module never had a FAULT output (its J8.3 was
  * unconnected), so BOARD_HAS_FAULT_PIN is 0 and the FAULT_n path is
@@ -17,7 +30,7 @@
  * armed, MODULE_FAULT_N_LOW / MODULE_FAULT_LATCHED never set).
  *
  * Pins left at their reset default: PA0/PA1 (Pi I2C bus), PA2 (ROSC),
- * PA19/PA20 (SWD), PA15/PA26/PA27 (analog: DAC0_OUT, A0_1, A0_0).
+ * PA19/PA20 (SWD), PA15/PA24/PA25 (analog: DAC0_OUT, A0_3, A0_2).
  * NRST <- Pi GPIO9, MCU_PWR_EN <- Pi GPIO10.
  */
 
@@ -37,51 +50,62 @@
 /* All used pins are on GPIOA. */
 #define BOARD_GPIO_PORT             GPIOA
 
-/* ----- DB_PWM_A (PA22) = laser switch (Q1 G1), TIMA0_CCP1 (PF 5) ----- */
-#define BOARD_PWM_A_PIN             (1u << 22)
-#define BOARD_PWM_A_PINCM           IOMUX_PINCM47
-#define BOARD_PWM_A_PWM_FUNC        IOMUX_PINCM47_PF_TIMA0_CCP1
+/* ----- Laser PWM timer: TIMG7 (16-bit, CC0 / CC1 only, shadow CC + shadow
+ * load; SLASEW9E table 8-16).  CC numbers and register pairs: pwm_timer.h.
+ * Plain literals: they are token-pasted into register / bit names. ----- */
+#define BOARD_PWM_TIMER             TIMG7
+#define BOARD_PWM_TIMER_BASE        TIMG7_BASE
+#define BOARD_PWM_A_CC              0       /* CC0 -> CC_01[0], CCACT_01[0], ... */
+#define BOARD_PWM_A_CC_PAIR         01
+#define BOARD_PWM_B_CC              1       /* CC1 -> CC_01[1], CCACT_01[1], ... */
+#define BOARD_PWM_B_CC_PAIR         01
 
-/* ----- DB_PWM_B (PA23) = dummy switch (Q1 G2), TIMA0_CCP3 (PF 4) ----- */
-#define BOARD_PWM_B_PIN             (1u << 23)
-#define BOARD_PWM_B_PINCM           IOMUX_PINCM53
-#define BOARD_PWM_B_PWM_FUNC        IOMUX_PINCM53_PF_TIMA0_CCP3
+/* ----- DB_PWM_A (PA26) = laser switch (Q1 G2), TIMG7_C0 (PF 7) ----- */
+#define BOARD_PWM_A_PIN             (1u << 26)
+#define BOARD_PWM_A_PINCM           IOMUX_PINCM59
+#define BOARD_PWM_A_PWM_FUNC        IOMUX_PINCM59_PF_TIMG7_CCP0
+
+/* ----- DB_PWM_B (PA27) = dummy switch (Q1 G1), TIMG7_C1 (PF 7) ----- */
+#define BOARD_PWM_B_PIN             (1u << 27)
+#define BOARD_PWM_B_PINCM           IOMUX_PINCM60
+#define BOARD_PWM_B_PWM_FUNC        IOMUX_PINCM60_PF_TIMG7_CCP1
 #define BOARD_PWM_B_BOOT_HIGH       1   /* dummy switch conducting at boot */
 
-/* ----- Laser block: DB_DAC (PA15), DB_ADC_A (PA26), DB_ADC_B (PA27) ----- */
+/* ----- Laser block: DB_DAC (PA15), DB_ADC_A (PA25), DB_ADC_B (PA24) ----- */
 #define BOARD_DAC_PIN               (1u << 15)
 #define BOARD_DAC_PINCM             IOMUX_PINCM37    /* DAC0_OUT, IREF set-point */
-#define BOARD_ADC_A_PIN             (1u << 26)
-#define BOARD_ADC_A_PINCM           IOMUX_PINCM59    /* A0_1: photodiode */
-#define BOARD_ADC_B_PIN             (1u << 27)
-#define BOARD_ADC_B_PINCM           IOMUX_PINCM60    /* A0_0: LASER_V x 33k / 133k */
+#define BOARD_ADC_A_PIN             (1u << 25)
+#define BOARD_ADC_A_PINCM           IOMUX_PINCM55    /* A0_2: photodiode */
+#define BOARD_ADC_B_PIN             (1u << 24)
+#define BOARD_ADC_B_PINCM           IOMUX_PINCM54    /* A0_3: LASER_V x 33k / 133k */
 #define BOARD_ADC_INST              ADC0
-#define BOARD_ADC_PD_CHANNEL        1u               /* ADC0 channel 1 = PA26 */
-#define BOARD_ADC_COMP_CHANNEL      0u               /* ADC0 channel 0 = PA27 */
+#define BOARD_ADC_PD_CHANNEL        2u               /* ADC0 channel 2 = A0_2 = PA25 */
+#define BOARD_ADC_COMP_CHANNEL      3u               /* ADC0 channel 3 = A0_3 = PA24 */
 
 /* ----- Buttons: active LOW (commons on GND), internal pull-ups -----
- * As the StimHAT except BUTTON3, moved to PA6 (PA15 is DAC0_OUT).
+ * SW7 = 5-way joystick, SW9 = FIRE.  Same bit meanings as the StimHAT;
+ * pins per the production board (BUTTON1 on PA6, PA15 is DAC0_OUT).
  * Bit order in the button mask (EVT_BUTTON / RSP_STATUS, see protocol.h):
- *   bit 0  BUTTON1  PA12  joystick left   = BACK
- *   bit 1  BUTTON2  PA14  joystick centre = SELECT
- *   bit 2  BUTTON3  PA6   joystick down
+ *   bit 0  BUTTON1  PA6   joystick left   = BACK
+ *   bit 1  BUTTON2  PA13  joystick centre = SELECT
+ *   bit 2  BUTTON3  PA14  joystick down
  *   bit 3  BUTTON4  PA7   joystick up
  *   bit 4  BUTTON5  PA16  SW9 FIRE
  *   bit 5  BSL      PA18  SW6, active HIGH (read-only here)
- *   bit 6  BUTTON6  PA13  joystick right
+ *   bit 6  BUTTON6  PA12  joystick right
  */
-#define BOARD_BUTTON1_PIN           (1u << 12)
-#define BOARD_BUTTON1_PINCM         IOMUX_PINCM34
-#define BOARD_BUTTON2_PIN           (1u << 14)
-#define BOARD_BUTTON2_PINCM         IOMUX_PINCM36
-#define BOARD_BUTTON3_PIN           (1u << 6)
-#define BOARD_BUTTON3_PINCM         IOMUX_PINCM11
+#define BOARD_BUTTON1_PIN           (1u << 6)
+#define BOARD_BUTTON1_PINCM         IOMUX_PINCM11
+#define BOARD_BUTTON2_PIN           (1u << 13)
+#define BOARD_BUTTON2_PINCM         IOMUX_PINCM35
+#define BOARD_BUTTON3_PIN           (1u << 14)
+#define BOARD_BUTTON3_PINCM         IOMUX_PINCM36
 #define BOARD_BUTTON4_PIN           (1u << 7)
 #define BOARD_BUTTON4_PINCM         IOMUX_PINCM14
 #define BOARD_BUTTON5_PIN           (1u << 16)
 #define BOARD_BUTTON5_PINCM         IOMUX_PINCM38
-#define BOARD_BUTTON6_PIN           (1u << 13)
-#define BOARD_BUTTON6_PINCM         IOMUX_PINCM35
+#define BOARD_BUTTON6_PIN           (1u << 12)
+#define BOARD_BUTTON6_PINCM         IOMUX_PINCM34
 #define BOARD_BUTTON_MASK           (BOARD_BUTTON1_PIN | BOARD_BUTTON2_PIN | \
                                      BOARD_BUTTON3_PIN | BOARD_BUTTON4_PIN | \
                                      BOARD_BUTTON5_PIN | BOARD_BUTTON6_PIN)
@@ -120,7 +144,7 @@
 #define BOARD_USB_UART_RX_FUNC      IOMUX_PINCM22_PF_UART0_RX
 
 /* ----- Spare pins (no copper): driven low.  Mask and PINCM list must agree. ----- */
-#define BOARD_SPARE_PINS            ((1u << 3) | (1u << 24) | (1u << 25))
-#define BOARD_SPARE_PINCMS          IOMUX_PINCM8, IOMUX_PINCM54, IOMUX_PINCM55   /* PA3, PA24, PA25 */
+#define BOARD_SPARE_PINS            ((1u << 3) | (1u << 22) | (1u << 23))
+#define BOARD_SPARE_PINCMS          IOMUX_PINCM8, IOMUX_PINCM47, IOMUX_PINCM53   /* PA3, PA22, PA23 */
 
 #endif /* BOARD_LASER_H */

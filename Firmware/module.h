@@ -20,7 +20,7 @@
  *     RELEASE_H PA25 push-pull, SDA_H PA26 / SCL_H PA27 open-drain with
  *     2.2k pull-ups on the HAT side (no internal pull-ups).
  *
- *   LaserDriverHAT (LASER only): DAC0_OUT PA15, ADC0 ch 1 PA26, ch 0 PA27,
+ *   LaserDriverHAT (LASER only): DAC0_OUT PA15, ADC0 ch 2 PA25, ch 3 PA24,
  *     all analog (reset default).
  *
  * E-stim contract (estim_interface/ESTIM_MODULE_SPEC.md §7): the DAC60501

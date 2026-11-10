@@ -3,7 +3,13 @@
 
 #if BOARD_HAS_LASER   /* the whole file: no PWM on the StimHAT */
 
+/* Timer and channels: BOARD_PWM_TIMER, BOARD_PWM_A/B_CC(_PAIR) (pwm_timer.h;
+ * Rev 2 TIMA0 CC1 / CC3, LaserDriverHAT TIMG7 CC0 / CC1). */
+
 #define TIMA_PERIOD_COUNTS  320u
+
+/* TIMG7 (and TIMA0) count 16 bits: the LOAD value must fit. */
+_Static_assert(TIMA_PERIOD_COUNTS - 1u <= 0xFFFFu, "PWM period exceeds a 16-bit counter");
 
 static inline void update_reg(volatile uint32_t *reg, uint32_t value, uint32_t mask)
 {
@@ -12,79 +18,79 @@ static inline void update_reg(volatile uint32_t *reg, uint32_t value, uint32_t m
 
 void laser_timera_init(void)
 {
-    /* --- Reset + power-enable TIMA0 --- */
-    TIMA0->GPRCM.RSTCTL =
+    /* --- Reset + power-enable the PWM timer --- */
+    PWM_TIM->GPRCM.RSTCTL =
         (GPTIMER_RSTCTL_KEY_UNLOCK_W | GPTIMER_RSTCTL_RESETSTKYCLR_CLR |
          GPTIMER_RSTCTL_RESETASSERT_ASSERT);
-    TIMA0->GPRCM.PWREN =
+    PWM_TIM->GPRCM.PWREN =
         (GPTIMER_PWREN_KEY_UNLOCK_W | GPTIMER_PWREN_ENABLE_ENABLE);
     for (volatile int i = 0; i < 16; i++) { /* settle */ }
 
     /* --- Clock: BUSCLK, /1, prescale 0 --- */
-    TIMA0->CLKSEL          = GPTIMER_CLKSEL_BUSCLK_SEL_ENABLE;
-    TIMA0->CLKDIV          = GPTIMER_CLKDIV_RATIO_DIV_BY_1;
-    TIMA0->COMMONREGS.CPS  = 0u;
+    PWM_TIM->CLKSEL          = GPTIMER_CLKSEL_BUSCLK_SEL_ENABLE;
+    PWM_TIM->CLKDIV          = GPTIMER_CLKDIV_RATIO_DIV_BY_1;
+    PWM_TIM->COMMONREGS.CPS  = 0u;
 
-    TIMA0->COUNTERREGS.LOAD = TIMA_PERIOD_COUNTS - 1u;
+    PWM_TIM->COUNTERREGS.LOAD = TIMA_PERIOD_COUNTS - 1u;
 
-    /* CC1 (PWM_A): HIGH at zero, LOW at compare-up. */
-    const uint32_t ccact01_mask =
-        GPTIMER_CCACT_01_SWFRCACT_CMPL_MASK | GPTIMER_CCACT_01_SWFRCACT_MASK |
-        GPTIMER_CCACT_01_FEXACT_MASK        | GPTIMER_CCACT_01_FENACT_MASK   |
-        GPTIMER_CCACT_01_CC2UACT_MASK       | GPTIMER_CCACT_01_CC2DACT_MASK  |
-        GPTIMER_CCACT_01_CUACT_MASK         | GPTIMER_CCACT_01_CDACT_MASK    |
-        GPTIMER_CCACT_01_LACT_MASK          | GPTIMER_CCACT_01_ZACT_MASK;
-    update_reg(&TIMA0->COUNTERREGS.CCACT_01[1],
-        GPTIMER_CCACT_01_ZACT_CCP_HIGH | GPTIMER_CCACT_01_CUACT_CCP_LOW,
-        ccact01_mask);
+    /* PWM_A: HIGH at zero, LOW at compare-up. */
+    const uint32_t ccact_a_mask =
+        PWM_A_BITS(CCACT, SWFRCACT_CMPL_MASK) | PWM_A_BITS(CCACT, SWFRCACT_MASK) |
+        PWM_A_BITS(CCACT, FEXACT_MASK)        | PWM_A_BITS(CCACT, FENACT_MASK)   |
+        PWM_A_BITS(CCACT, CC2UACT_MASK)       | PWM_A_BITS(CCACT, CC2DACT_MASK)  |
+        PWM_A_BITS(CCACT, CUACT_MASK)         | PWM_A_BITS(CCACT, CDACT_MASK)    |
+        PWM_A_BITS(CCACT, LACT_MASK)          | PWM_A_BITS(CCACT, ZACT_MASK);
+    update_reg(&PWM_A_REG(CCACT),
+        PWM_A_BITS(CCACT, ZACT_CCP_HIGH) | PWM_A_BITS(CCACT, CUACT_CCP_LOW),
+        ccact_a_mask);
 
-    /* CC3 (PWM_B): LOW at zero, HIGH at compare-up = complement of CC1. */
-    const uint32_t ccact23_mask =
-        GPTIMER_CCACT_23_SWFRCACT_CMPL_MASK | GPTIMER_CCACT_23_SWFRCACT_MASK |
-        GPTIMER_CCACT_23_FEXACT_MASK        | GPTIMER_CCACT_23_FENACT_MASK   |
-        GPTIMER_CCACT_23_CC2UACT_MASK       | GPTIMER_CCACT_23_CC2DACT_MASK  |
-        GPTIMER_CCACT_23_CUACT_MASK         | GPTIMER_CCACT_23_CDACT_MASK    |
-        GPTIMER_CCACT_23_LACT_MASK          | GPTIMER_CCACT_23_ZACT_MASK;
-    update_reg(&TIMA0->COUNTERREGS.CCACT_23[1],
-        GPTIMER_CCACT_23_ZACT_CCP_LOW | GPTIMER_CCACT_23_CUACT_CCP_HIGH,
-        ccact23_mask);
+    /* PWM_B: LOW at zero, HIGH at compare-up = complement of PWM_A. */
+    const uint32_t ccact_b_mask =
+        PWM_B_BITS(CCACT, SWFRCACT_CMPL_MASK) | PWM_B_BITS(CCACT, SWFRCACT_MASK) |
+        PWM_B_BITS(CCACT, FEXACT_MASK)        | PWM_B_BITS(CCACT, FENACT_MASK)   |
+        PWM_B_BITS(CCACT, CC2UACT_MASK)       | PWM_B_BITS(CCACT, CC2DACT_MASK)  |
+        PWM_B_BITS(CCACT, CUACT_MASK)         | PWM_B_BITS(CCACT, CDACT_MASK)    |
+        PWM_B_BITS(CCACT, LACT_MASK)          | PWM_B_BITS(CCACT, ZACT_MASK);
+    update_reg(&PWM_B_REG(CCACT),
+        PWM_B_BITS(CCACT, ZACT_CCP_LOW) | PWM_B_BITS(CCACT, CUACT_CCP_HIGH),
+        ccact_b_mask);
 
     /* Counter set to zero when enabled (edge-aligned up). */
-    update_reg(&TIMA0->COUNTERREGS.CTRCTL,
+    update_reg(&PWM_TIM->COUNTERREGS.CTRCTL,
         GPTIMER_CTRCTL_CVAE_ZEROVAL, GPTIMER_CTRCTL_CVAE_MASK);
 
-    /* CC1 / CC3: compare mode, update at the zero event. */
-    update_reg(&TIMA0->COUNTERREGS.CCCTL_01[1],
-        GPTIMER_CCCTL_01_COC_COMPARE | GPTIMER_CCCTL_01_CCUPD_ZERO_EVT,
-        GPTIMER_CCCTL_01_COC_MASK   | GPTIMER_CCCTL_01_ZCOND_MASK |
-        GPTIMER_CCCTL_01_LCOND_MASK | GPTIMER_CCCTL_01_ACOND_MASK |
-        GPTIMER_CCCTL_01_CCOND_MASK | GPTIMER_CCCTL_01_CCUPD_MASK);
-    update_reg(&TIMA0->COUNTERREGS.CCCTL_23[1],
-        GPTIMER_CCCTL_23_COC_COMPARE | GPTIMER_CCCTL_23_CCUPD_ZERO_EVT,
-        GPTIMER_CCCTL_23_COC_MASK   | GPTIMER_CCCTL_23_ZCOND_MASK |
-        GPTIMER_CCCTL_23_LCOND_MASK | GPTIMER_CCCTL_23_ACOND_MASK |
-        GPTIMER_CCCTL_23_CCOND_MASK | GPTIMER_CCCTL_23_CCUPD_MASK);
+    /* Both channels: compare mode, update at the zero event. */
+    update_reg(&PWM_A_REG(CCCTL),
+        PWM_A_BITS(CCCTL, COC_COMPARE) | PWM_A_BITS(CCCTL, CCUPD_ZERO_EVT),
+        PWM_A_BITS(CCCTL, COC_MASK)   | PWM_A_BITS(CCCTL, ZCOND_MASK) |
+        PWM_A_BITS(CCCTL, LCOND_MASK) | PWM_A_BITS(CCCTL, ACOND_MASK) |
+        PWM_A_BITS(CCCTL, CCOND_MASK) | PWM_A_BITS(CCCTL, CCUPD_MASK));
+    update_reg(&PWM_B_REG(CCCTL),
+        PWM_B_BITS(CCCTL, COC_COMPARE) | PWM_B_BITS(CCCTL, CCUPD_ZERO_EVT),
+        PWM_B_BITS(CCCTL, COC_MASK)   | PWM_B_BITS(CCCTL, ZCOND_MASK) |
+        PWM_B_BITS(CCCTL, LCOND_MASK) | PWM_B_BITS(CCCTL, ACOND_MASK) |
+        PWM_B_BITS(CCCTL, CCOND_MASK) | PWM_B_BITS(CCCTL, CCUPD_MASK));
 
-    /* Output control: CCP1 idles HIGH, CCP3 idles LOW; functional value,
+    /* Output control: PWM_A idles HIGH, PWM_B idles LOW; functional value,
      * no inversion. */
-    TIMA0->COUNTERREGS.OCTL_01[1] =
-        GPTIMER_OCTL_01_CCPIV_HIGH | GPTIMER_OCTL_01_CCPOINV_NOINV |
-        GPTIMER_OCTL_01_CCPO_FUNCVAL;
-    TIMA0->COUNTERREGS.OCTL_23[1] =
-        GPTIMER_OCTL_23_CCPIV_LOW | GPTIMER_OCTL_23_CCPOINV_NOINV |
-        GPTIMER_OCTL_23_CCPO_FUNCVAL;
+    PWM_A_REG(OCTL) =
+        PWM_A_BITS(OCTL, CCPIV_HIGH) | PWM_A_BITS(OCTL, CCPOINV_NOINV) |
+        PWM_A_BITS(OCTL, CCPO_FUNCVAL);
+    PWM_B_REG(OCTL) =
+        PWM_B_BITS(OCTL, CCPIV_LOW) | PWM_B_BITS(OCTL, CCPOINV_NOINV) |
+        PWM_B_BITS(OCTL, CCPO_FUNCVAL);
 
     /* Input filter / source: not inverted, CCPx input (unused for outputs). */
-    update_reg(&TIMA0->COUNTERREGS.IFCTL_01[1],
-        GPTIMER_IFCTL_01_INV_NOINVERT | GPTIMER_IFCTL_01_ISEL_CCPX_INPUT,
-        GPTIMER_IFCTL_01_INV_MASK | GPTIMER_IFCTL_01_ISEL_MASK);
-    update_reg(&TIMA0->COUNTERREGS.IFCTL_23[1],
-        GPTIMER_IFCTL_23_INV_NOINVERT | GPTIMER_IFCTL_23_ISEL_CCPX_INPUT,
-        GPTIMER_IFCTL_23_INV_MASK | GPTIMER_IFCTL_23_ISEL_MASK);
+    update_reg(&PWM_A_REG(IFCTL),
+        PWM_A_BITS(IFCTL, INV_NOINVERT) | PWM_A_BITS(IFCTL, ISEL_CCPX_INPUT),
+        PWM_A_BITS(IFCTL, INV_MASK) | PWM_A_BITS(IFCTL, ISEL_MASK));
+    update_reg(&PWM_B_REG(IFCTL),
+        PWM_B_BITS(IFCTL, INV_NOINVERT) | PWM_B_BITS(IFCTL, ISEL_CCPX_INPUT),
+        PWM_B_BITS(IFCTL, INV_MASK) | PWM_B_BITS(IFCTL, ISEL_MASK));
 
     /* Counter mode UP, repeat, stopped for now; zero/advance/load
      * conditions off CCCTL0 (= none). */
-    update_reg(&TIMA0->COUNTERREGS.CTRCTL,
+    update_reg(&PWM_TIM->COUNTERREGS.CTRCTL,
         GPTIMER_CTRCTL_REPEAT_REPEAT_1 | GPTIMER_CTRCTL_CM_UP |
         GPTIMER_CTRCTL_EN_DISABLED |
         GPTIMER_CTRCTL_CZC_CCCTL0_ZCOND | GPTIMER_CTRCTL_CAC_CCCTL0_ACOND |
@@ -94,18 +100,18 @@ void laser_timera_init(void)
         GPTIMER_CTRCTL_REPEAT_MASK | GPTIMER_CTRCTL_EN_MASK);
 
     /* Duty 0 until the state machine says otherwise. */
-    TIMA0->COUNTERREGS.CC_01[1] = 0u;
-    TIMA0->COUNTERREGS.CC_23[1] = 0u;
+    PWM_A_REG(CC) = 0u;
+    PWM_B_REG(CC) = 0u;
 
-    /* Counter clock on, CCP1/CCP3 declared outputs, shadow load enabled. */
-    TIMA0->COMMONREGS.CCLKCTL = GPTIMER_CCLKCTL_CLKEN_ENABLED;
-    TIMA0->COMMONREGS.CCPD    = GPTIMER_CCPD_C0CCP1_OUTPUT | GPTIMER_CCPD_C0CCP3_OUTPUT;
-    TIMA0->COMMONREGS.GCTL   |= GPTIMER_GCTL_SHDWLDEN_ENABLE;
+    /* Counter clock on, both CCPs declared outputs, shadow load enabled. */
+    PWM_TIM->COMMONREGS.CCLKCTL = GPTIMER_CCLKCTL_CLKEN_ENABLED;
+    PWM_TIM->COMMONREGS.CCPD    = PWM_A_CCPD_OUTPUT | PWM_B_CCPD_OUTPUT;
+    PWM_TIM->COMMONREGS.GCTL   |= GPTIMER_GCTL_SHDWLDEN_ENABLE;
 }
 
 void laser_timera_start(void)
 {
-    TIMA0->COUNTERREGS.CTRCTL |= GPTIMER_CTRCTL_EN_ENABLED;
+    PWM_TIM->COUNTERREGS.CTRCTL |= GPTIMER_CTRCTL_EN_ENABLED;
 }
 
 #endif /* BOARD_HAS_LASER */

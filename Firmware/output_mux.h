@@ -7,16 +7,17 @@
 /*
  * The two switch lines A / B (board.h BOARD_PWM_A/B_*):
  *
- *   A  laser board: laser switch gate, TIMA0_CCP1 (Rev 2 PA7 = J8.5,
- *      LaserDriverHAT PA22); e-stim: EN (Rev 2 PA7, StimHAT EN_H PA24).
+ *   A  laser board: laser switch gate, Rev 2 TIMA0_CCP1 on PA7 (J8.5),
+ *      LaserDriverHAT TIMG7_CCP0 on PA26; e-stim: EN (Rev 2 PA7, StimHAT
+ *      EN_H PA24).
  *      GPIO LOW guarantees "off" at any time.
- *   B  laser board: dummy switch gate, TIMA0_CCP3 (Rev 2 PA12 = J8.4,
- *      LaserDriverHAT PA23), GPIO HIGH keeps the dummy path on; e-stim:
+ *   B  laser board: dummy switch gate, Rev 2 TIMA0_CCP3 on PA12 (J8.4),
+ *      LaserDriverHAT TIMG7_CCP1 on PA27, GPIO HIGH keeps the dummy path on; e-stim:
  *      CATH (Rev 2 PA12, StimHAT CATH_H PA23), idles LOW (spec §7).
  *
  * laser_pins_to_gpio_safe() puts both in their GPIO mux at the safe
- * levels; laser_pins_to_pwm() (laser boards only) hands them to TIMA0.
- * TIMA0 init lives in pwm_timer.c.  Both are idempotent and called on
+ * levels; laser_pins_to_pwm() (laser boards only) hands them to the PWM
+ * timer (BOARD_PWM_TIMER, init in pwm_timer.c).  Both are idempotent and called on
  * every state-machine tick.  laser_pins_set_b_idle_high() picks the idle
  * level of B for the current mode (true = laser).
  */

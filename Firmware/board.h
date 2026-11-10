@@ -21,7 +21,11 @@
  *   switch lines BOARD_PWM_A_PIN/_PINCM (laser switch / e-stim EN),
  *                BOARD_PWM_B_PIN/_PINCM (dummy switch / e-stim CATH),
  *                BOARD_PWM_B_BOOT_HIGH; with BOARD_HAS_LASER also
- *                BOARD_PWM_A/B_PWM_FUNC (TIMA0 CCP1 / CCP3)
+ *                BOARD_PWM_A/B_PWM_FUNC (IOMUX code of the timer output),
+ *                BOARD_PWM_TIMER / _TIMER_BASE (TIMA0 / TIMG7),
+ *                BOARD_PWM_A/B_CC (compare channel, plain literal) and
+ *                BOARD_PWM_A/B_CC_PAIR (01 or 23: its register group);
+ *                see pwm_timer.h
  *   fault        with BOARD_HAS_FAULT_PIN: BOARD_FAULT_N_BIT/_PIN/_PINCM,
  *                BOARD_FAULT_N_PULLUP
  *   laser        with BOARD_HAS_LASER: BOARD_DAC_PIN/_PINCM,

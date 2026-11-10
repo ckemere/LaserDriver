@@ -43,6 +43,15 @@
 /* All used pins are on GPIOA. */
 #define BOARD_GPIO_PORT             GPIOA
 
+/* ----- Laser PWM timer: TIMA0, CC1 = PWM_A, CC3 = PWM_B (pwm_timer.h).
+ * Plain literals: they are token-pasted into register / bit names. ----- */
+#define BOARD_PWM_TIMER             TIMA0
+#define BOARD_PWM_TIMER_BASE        TIMA0_BASE
+#define BOARD_PWM_A_CC              1       /* CC1 -> CC_01[1], CCACT_01[1], ... */
+#define BOARD_PWM_A_CC_PAIR         01
+#define BOARD_PWM_B_CC              3       /* CC3 -> CC_23[1], CCACT_23[1], ... */
+#define BOARD_PWM_B_CC_PAIR         23
+
 /* ----- Module header J8: PWM_A (PA7) = laser switch / e-stim EN, TIMA0_CCP1 ----- */
 #define BOARD_PWM_A_PIN             (1u << 7)
 #define BOARD_PWM_A_PINCM           IOMUX_PINCM14

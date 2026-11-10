@@ -59,7 +59,7 @@ void laser_gpio_init(void)
         BOARD_USB_UART_RX_FUNC | IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_INENA_ENABLE;
 
     /* ----- Switch lines A / B: GPIO outputs, no pulls (laser boards switch
-     * them to TIMA0 at runtime; StimHAT EN_H / CATH_H stay GPIO) ----- */
+     * them to the PWM timer at runtime; StimHAT EN_H / CATH_H stay GPIO) ----- */
     IOMUX->SECCFG.PINCM[BOARD_PWM_A_PINCM] = PINCM_GPIO_OUT;
     IOMUX->SECCFG.PINCM[BOARD_PWM_B_PINCM] = PINCM_GPIO_OUT;
 

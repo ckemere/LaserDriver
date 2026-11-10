@@ -13,7 +13,8 @@
  *   -------+----------+------------------------+-------------------------
  *   rev2   | ADC1     | ch 2 = PA17 (J9.4)     | ch 8 (PA22 = J9.5 is really
  *          |          |                        | A0_7: see board_rev2.h)
- *   laser  | ADC0     | ch 1 = PA26 (DB_ADC_A) | ch 0 = PA27 (DB_ADC_B)
+ *   laser  | ADC0     | ch 2 = PA25 (DB_ADC_A, | ch 3 = PA24 (DB_ADC_B,
+ *          |          |        A0_2)           |        A0_3)
  *
  * comp = LASER_V through 100 k / 33 k: 12 V -> 2.98 V, 5 V -> 1.24 V.
  *

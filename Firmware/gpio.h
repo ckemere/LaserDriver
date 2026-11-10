@@ -14,8 +14,8 @@
  *   - UART1 (Pi) and UART0 (USB-C) pins muxed to their peripherals
  *   - switch lines A / B (laser + dummy switch, or e-stim EN + CATH) as
  *     GPIO outputs, A low, B at BOARD_PWM_B_BOOT_HIGH (dummy switch on for
- *     a laser board, CATH low on the StimHAT); on laser boards the TIMA0
- *     mux is flipped at runtime by output_mux.c
+ *     a laser board, CATH low on the StimHAT); on laser boards the PWM
+ *     timer mux is flipped at runtime by output_mux.c
  *   - FAULT_n (BOARD_HAS_FAULT_PIN) input, falling-edge IRQ armed at
  *     runtime (laser_gpio_fault_irq_enable) once the line has been high
  *   - BUTTON1..5 (+ BUTTON6) inputs with pull-ups (active low); BSL (PA18)
@@ -85,7 +85,7 @@ static inline void laser_gpio_fault_irq_disable(void) { }
 
 #if BOARD_HAS_ESTIM
 /* E-stim EN / CATH as plain GPIO edges — valid only while the pins are in
- * their GPIO (not TIMA0) mux, which is always the case in ESTIM mode. */
+ * their GPIO (not PWM timer) mux, which is always the case in ESTIM mode. */
 static inline void laser_gpio_estim_en_set(void)    { BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_ESTIM_EN_PIN; }
 static inline void laser_gpio_estim_en_clear(void)  { BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_ESTIM_EN_PIN; }
 static inline void laser_gpio_estim_cath_set(void)  { BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_ESTIM_CATH_PIN; }

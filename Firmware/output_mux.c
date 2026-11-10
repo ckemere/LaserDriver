@@ -19,9 +19,9 @@ void laser_pins_set_b_idle_high(bool high)
  *
  *   1. Pre-load DOUT so each pin drives the right level the instant it
  *      becomes a GPIO.
- *   2. Switch A (CCP1) to GPIO first so the laser path is defined LOW
- *      while B is still the PWM complement.
- *   3. Switch B (CCP3) to GPIO (HIGH in laser mode) last.
+ *   2. Switch A (laser switch) to GPIO first so the laser path is defined
+ *      LOW while B is still the PWM complement.
+ *   3. Switch B (dummy switch) to GPIO (HIGH in laser mode) last.
  * On the StimHAT both lines are always GPIO (EN_H / CATH_H, no pulls:
  * PC_CONNECTED | GPIO only, the 10k pull-downs on the board stay in charge
  * whenever the pins are not driven).
@@ -43,8 +43,10 @@ void laser_pins_to_gpio_safe(void)
 
 #if BOARD_HAS_LASER
 /*
- * Switch the PWM pins to TIMA0: B (complement) first so a current path
- * exists while A is still GPIO-LOW, then A follows the PWM.
+ * Switch the PWM pins to the PWM timer (BOARD_PWM_A/B_PWM_FUNC: Rev 2
+ * TIMA0 CCP1 / CCP3, LaserDriverHAT TIMG7 CCP0 / CCP1): B (complement)
+ * first so a current path exists while A is still GPIO-LOW, then A follows
+ * the PWM.
  */
 void laser_pins_to_pwm(void)
 {

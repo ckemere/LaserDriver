@@ -31,8 +31,9 @@
  *     debounced, reported as EVT_BUTTON; FIRE fires a pulse;
  *   - the status LED D7 (boot blink, 1 Hz heartbeat when idle, solid
  *     during a pulse, 5 Hz blink while a module fault is latched);
- *   - LASER mode (rev2, laser): TIMA0 PWM on the switch lines (CCP1 =
- *     laser switch, CCP3 = dummy switch complement), DAC0 sets the
+ *   - LASER mode (rev2, laser): PWM on the switch lines (Rev 2 TIMA0 CC1 /
+ *     CC3, LaserDriverHAT TIMG7 CC0 / CC1: laser switch / dummy switch
+ *     complement, pwm_timer.h), DAC0 sets the
  *     current (IREF) for the duration of a pulse and is zero between
  *     pulses (the cascode Q1 must not carry dummy current continuously,
  *     REV2_NOTES), the ADC reads the photodiode and the compliance rail;
@@ -513,7 +514,7 @@ static inline void set_output_from_state(void)
      * board lacks never gets here: its branch is compiled out.) */
 #if BOARD_HAS_ESTIM
     if (estim_drive) {
-        /* Pins are in their GPIO mux in ESTIM mode (never switched to TIMA0). */
+        /* Pins are in their GPIO mux in ESTIM mode (never switched to the PWM timer). */
         if (release) { module_release_set(); } else { module_release_clear(); }
         if (cath)    { laser_gpio_estim_cath_set(); } else { laser_gpio_estim_cath_clear(); }
         if (en)      { laser_gpio_estim_en_set(); }   else { laser_gpio_estim_en_clear(); }
