@@ -126,18 +126,58 @@ def test_version_roundtrip():
     assert len(wire) == 3 + p.RSP_LEN[p.RSP_VERSION] == 3 + 32
     (mtype, payload), = p.StreamDecoder().feed(wire)
     assert mtype == p.RSP_VERSION
-    assert p.unpack_version(payload) == (p.PROTO_VERSION, "0.2.0+rc6+3+g1a2b3c4")
+    assert p.unpack_version(payload) == (p.PROTO_VERSION, p.BOARD_TYPE_UNKNOWN,
+                                         "0.2.0+rc6+3+g1a2b3c4")
+
+
+def test_version_board_byte():
+    # byte 1 of the payload is the board (was `reserved`, always 0)
+    for board in (p.BOARD_TYPE_REV2, p.BOARD_TYPE_STIM, p.BOARD_TYPE_LASER):
+        payload = p.pack_version_payload(p.PROTO_VERSION, "0.3.0", board)
+        assert len(payload) == p.RSP_LEN[p.RSP_VERSION] == 32
+        assert payload[0] == p.PROTO_VERSION and payload[1] == board
+        assert p.parse_version_payload(payload) == (p.PROTO_VERSION, board, "0.3.0")
+        wire = p.pack_version(p.PROTO_VERSION, "0.3.0", board)
+        (mtype, got), = p.StreamDecoder().feed(wire)
+        assert mtype == p.RSP_VERSION and p.parse_version_payload(got)[1] == board
+    # old firmware sent 0 there -> unknown; an unexpected value also reads unknown
+    assert p.parse_version_payload(p.pack_version_payload(2, "0.2.0+rc7"))[1] == 0
+    assert p.board_type_name(0) == "unknown" and p.board_type_name(9) == "unknown"
+    assert [p.board_type_name(b) for b in (1, 2, 3)] == ["rev2", "stim", "laser"]
+    assert (p.BOARD_TYPE_UNKNOWN, p.BOARD_TYPE_REV2, p.BOARD_TYPE_STIM,
+            p.BOARD_TYPE_LASER) == (0, 1, 2, 3)
+    assert p.PROTO_VERSION == 2                      # layout unchanged
+
+
+def test_board_matches():
+    m = p.board_matches
+    for b in ("rev2", "stim", "laser"):
+        assert m(b, b)
+    assert not m("stim", "rev2") and not m("rev2", "stim") and not m("laser", "stim")
+    # pre-split firmware (board byte 0): fine on a Rev 2, wrong elsewhere
+    assert m("rev2", "unknown")
+    assert not m("stim", "unknown") and not m("laser", "unknown")
+    # an unidentified HAT is assumed to be a Rev 2 (hat_id's fallback)
+    assert m("unknown", "rev2") and m("unknown", "unknown") and not m("unknown", "stim")
+
+
+def test_stimhat_sixth_button_bit():
+    assert p.BUTTON_RIGHT == 0x40 and p.BUTTON_MASK_MAX == 0x7F
+    f = p.unpack_status(p.pack_status(200, 8000, 10000, p.BUTTON_RIGHT | 0x01, "W", 5)[3:])
+    assert f["button_mask"] == 0x41 and p.status_in_range(f)
+    f["button_mask"] = 0x80                          # bit 7 is never used
+    assert not p.status_in_range(f)
 
 
 def test_version_truncates_to_thirty_chars():
     long = "0.2.0+rc6+123+gabcdef0123456789+dirty"      # 38 chars
     payload = p.pack_version_payload(1, long)
     assert len(payload) == 32
-    proto, version = p.unpack_version(payload)
-    assert proto == 1 and version == long[:p.FW_VERSION_CHARS]
+    proto, board, version = p.unpack_version(payload)
+    assert proto == 1 and board == 0 and version == long[:p.FW_VERSION_CHARS]
     # exactly 30 characters fill the field with no terminator — still decodes
     exact = "x" * p.FW_VERSION_CHARS
-    assert p.unpack_version(p.pack_version_payload(2, exact)) == (2, exact)
+    assert p.unpack_version(p.pack_version_payload(2, exact, 3)) == (2, 3, exact)
 
 
 def test_get_version_is_a_command_without_payload():

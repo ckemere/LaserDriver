@@ -55,12 +55,21 @@ def run(broker_cmd=python_broker) -> int:
         if not _wait(lambda: c.get("/api/state").get_json().get("fw_ok") is not None):
             failures.append("fw_ok never left null via /api/state")
         st = c.get("/api/state").get_json()
-        for key in ("fw_version", "fw_proto", "fw_expected", "fw_ok", "fw_label"):
+        for key in ("fw_version", "fw_proto", "fw_expected", "fw_ok", "fw_label",
+                    "fw_board", "board", "board_label", "board_source", "modes"):
             if key not in st:
                 failures.append(f"/api/state lacks {key}")
         if st.get("fw_version") != "fake" or st.get("fw_ok") is not True:
             failures.append(f"unexpected firmware identity in /api/state: "
                             f"{st.get('fw_version')} ok={st.get('fw_ok')}")
+        # no HAT EEPROM in the test environment: Rev 2 fallback, rev2 fake
+        if (st.get("board"), st.get("board_source"), st.get("fw_board"),
+                st.get("board_label"), st.get("modes")) != (
+                "rev2", "default", "rev2", "LaserHAT Rev 2", ["laser", "estim"]):
+            failures.append(f"unexpected board identity in /api/state: {st}")
+        page = c.get("/").get_data(as_text=True)
+        if 'id="board-name"' not in page or 'id="btn7"' not in page:
+            failures.append("page lacks the board name / 6th button elements")
 
         r = c.post("/api/set/i", json={"value": 150}).get_json()
         if not r.get("ok"):

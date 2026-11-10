@@ -1,5 +1,6 @@
 /*
- * The trigger line: Pi GPIO 26 -> MSPM0 PA27 (Rev 2 HAT; LaserHAT/CLAUDE.md).
+ * The trigger line: Pi GPIO 26 -> MSPM0 PA27 on the Rev 2 HAT, GPIO 18 -> PA4
+ * on the StimHAT / LaserDriverHAT (main.c picks the pin from the board).
  *
  * GPIO_GPIOMEM drives the BCM2711 (Raspberry Pi 4) GPIO block directly
  * through /dev/gpiomem: raising the line is one store to GPSET0, no

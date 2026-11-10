@@ -1,5 +1,13 @@
 #!/usr/bin/env python3
-"""Power-cycle the LaserHAT's MSPM0 via Pi GPIO 18 (MCU_POWER_EN, Rev 2 HAT).
+"""Power-cycle the HAT's MSPM0 via its MCU_POWER_EN GPIO.
+
+Board-aware (hat_id.py): the HAT ID EEPROM says which board this is, and
+the pins follow from it -- Rev 2: POWER_EN 18, NRST 23, TRIGGER 26;
+StimHAT / LaserDriverHAT: POWER_EN 10, NRST 9, TRIGGER 18 (SWCLK 24 /
+SWDIO 25 on all three).  --board picks one when the EEPROM is blank
+(contradicting the EEPROM needs --force); LASERHAT_POWER_PIN /
+LASERHAT_NRST_PIN / LASERHAT_TRIGGER_PIN / LASERHAT_SWCLK_PIN /
+LASERHAT_SWDIO_PIN override single pins; Rev 2 is the fallback.
 
 Uses Raspberry Pi OS's stock `pinctrl` tool — pre-installed on every
 recent Pi OS image, works the same on Pi 4 / Pi 5, doesn't care about
@@ -12,14 +20,14 @@ signal back to VDD and phantom-power the chip just enough to keep it
 half-running.  The biggest culprit in practice is Pi GPIO 14 (UART
 TX), which the kernel UART driver normally idles HIGH.
 
-Pins parked during the cycle:
-    GPIO 14 (UART TX -> PA11 RX)  set to INPUT  (high-Z)
+Pins parked during the cycle (Rev 2 numbers; the board's own otherwise):
+    GPIO 14 (UART TX -> MCU RX)   set to INPUT  (high-Z)
     GPIO 23 (NRST)                drive LOW    (asserted)
     GPIO 24 (SWCLK -> PA20)       set to INPUT
     GPIO 25 (SWDIO -> PA19)       set to INPUT
     GPIO 26 (PI_TRIGGER -> PA27)  set to INPUT
 
-After the rail is restored, GPIO 23 (NRST) is released back to HIGH so
+After the rail is restored, NRST is released back to HIGH so
 the MCU comes out of reset, and the UART/SWD pins are left as inputs
 — the kernel UART driver will reclaim GPIO 14/15 the next time
 something opens /dev/ttyS0, and OpenOCD reclaims 18/24/25 itself at
@@ -30,6 +38,7 @@ Used by `make flash` as a prerequisite.
 Manual use:
     python3 Pi/power_cycle.py           # default 500 ms off
     python3 Pi/power_cycle.py --ms 1000 # custom off-duration
+    python3 Pi/power_cycle.py --board stim   # blank EEPROM: say which board
 """
 
 from __future__ import annotations
@@ -42,13 +51,13 @@ import sys
 import time
 
 
-# Rev 2 HAT wiring by default (power 18, NRST 23).  Rev 1 had them swapped;
-# `make flash HAT_REV=1` sets these environment variables for it.
-POWER_PIN = int(os.environ.get("LASERHAT_POWER_PIN", 18))   # MCU_POWER_EN -> U5 load-switch enable
-NRST_PIN  = int(os.environ.get("LASERHAT_NRST_PIN", 23))    # MSPM0 NRST
-# Pins to park (mode + drive state) so they can't phantom-power the MSP
-# through its IO ESD diodes during the brief power-off window.
-QUIET_PINS = [14, 24, 25, 26]   # UART TX, SWCLK, SWDIO, PI_TRIGGER
+# Pins come from hat_id.resolve() (HAT EEPROM, then the LASERHAT_*_PIN
+# overrides -- Rev 1 boards get theirs from `make flash HAT_REV=1` -- then
+# Rev 2 as the fallback).
+sys.path.insert(0, os.path.dirname(os.path.realpath(__file__)))
+import hat_id  # noqa: E402
+
+UART_TX_PIN = 14
 
 # If we capture GPIO 14 in plain-input mode, that probably means a
 # previous power_cycle left it parked instead of restoring the kernel
@@ -80,7 +89,19 @@ def _get_pin_mode(pin: int) -> str:
     return parts[1] if len(parts) > 1 else "ip"
 
 
-def power_cycle(off_ms: int = DEFAULT_OFF_MS) -> None:
+def quiet_pins(pins: dict) -> list:
+    """Pins to park (mode + drive state) so they can't phantom-power the MSP
+    through its IO ESD diodes during the brief power-off window: UART TX,
+    SWCLK, SWDIO, PI_TRIGGER."""
+    return [UART_TX_PIN, pins["swclk"], pins["swdio"], pins["trigger"]]
+
+
+def power_cycle(off_ms: int = DEFAULT_OFF_MS, pins: dict = None) -> None:
+    """pins: hat_id pin map (default: hat_id.resolve() -- EEPROM, env, Rev 2)."""
+    if pins is None:
+        pins = hat_id.resolve().pins
+    POWER_PIN, NRST_PIN = pins["power"], pins["nrst"]
+    QUIET_PINS = quiet_pins(pins)
     if shutil.which("pinctrl") is None:
         print("error: pinctrl not found in PATH.  Install with:\n"
               "    sudo apt install raspi-utils", file=sys.stderr)
@@ -94,10 +115,10 @@ def power_cycle(off_ms: int = DEFAULT_OFF_MS) -> None:
     # If 14 is already parked (a previous run failed to restore it),
     # use the known UART alt as the restore target instead of carrying
     # the broken state forward.
-    if saved_modes.get(14) == "ip":
+    if saved_modes.get(UART_TX_PIN) == "ip":
         print(f"GPIO 14 was already parked as input; will restore to "
               f"{UART_TX_FALLBACK_ALT} instead of 'ip'.", file=sys.stderr)
-        saved_modes[14] = UART_TX_FALLBACK_ALT
+        saved_modes[UART_TX_PIN] = UART_TX_FALLBACK_ALT
 
     # 1. Park signal pins as plain inputs (high-Z).
     for pin in QUIET_PINS:
@@ -133,9 +154,24 @@ def _main() -> int:
     p = argparse.ArgumentParser(description=__doc__)
     p.add_argument("--ms", type=int, default=DEFAULT_OFF_MS,
                    help="off-duration in milliseconds (default 500)")
+    p.add_argument("--board", choices=list(hat_id.BOARDS),
+                   help="board when the HAT EEPROM does not say (contradicting "
+                        "it needs --force)")
+    p.add_argument("--force", action="store_true",
+                   help="let --board win over a contradicting HAT EEPROM")
     args = p.parse_args()
-    print(f"power-cycling MCU: parking signal pins, GPIO {POWER_PIN} LOW for {args.ms} ms …")
-    power_cycle(args.ms)
+    r = hat_id.resolve(args.board, force=args.force)
+    for n in r.notes:
+        print(f"power_cycle: note: {n}", file=sys.stderr)
+    if r.conflict and not args.force:
+        print(f"power_cycle: refusing: the HAT EEPROM says {r.eeprom_board}, "
+              f"--board says {args.board} (add --force to drive {args.board}'s pins)",
+              file=sys.stderr)
+        return 1
+    print(f"power_cycle: {r.describe()}")
+    print(f"power-cycling MCU: parking signal pins, GPIO {r.pins['power']} LOW "
+          f"for {args.ms} ms …")
+    power_cycle(args.ms, r.pins)
     print("done")
     return 0
 

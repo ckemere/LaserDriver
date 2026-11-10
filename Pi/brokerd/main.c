@@ -86,7 +86,14 @@ static void usage(const char *argv0)
         "  --control-tcp H:P    also serve the JSON protocol on TCP (off by default)\n"
         "  --gpio BACKEND       gpiomem (default on Linux) | sim | none\n"
         "  --no-gpio            same as --gpio none\n"
-        "  --gpio-pin N         BCM pin wired to MCU PA27 (default 26; Rev 1 HAT: 24)\n"
+        "  --gpio-pin N         BCM pin wired to the MCU's PI_TRIGGER (default: the\n"
+        "                       board's -- Rev 2 26, StimHAT / LaserDriverHAT 18 --\n"
+        "                       or $LASERHAT_TRIGGER_PIN; Rev 1 HAT: 24)\n"
+        "  --board B            rev2 | stim | laser: the HAT when its ID EEPROM does\n"
+        "                       not say (else $LASERHAT_BOARD, else rev2); ignored\n"
+        "                       when the EEPROM names a board\n"
+        "  --hat-dir PATH       HAT EEPROM node (default $LASERHAT_HAT_DIR or\n"
+        "                       " DEFAULT_HAT_DIR ")\n"
         "  --pulse-us N         trigger line high time, us (default 20)\n"
         "  --udp H:P            enable the UDP trigger listener (e.g. 192.168.17.10:%u)\n"
         "  --udp-allow IP       only accept triggers from this IPv4 source\n"
@@ -104,7 +111,10 @@ int main(int argc, char **argv)
     const char *device = getenv("LASERHAT_DEVICE");
     const char *sock_path = getenv("LASERHAT_SOCK");
     const char *control_tcp = NULL;
-    int baud = 115200, pin = 26, pulse_us = 20;   /* Rev 2: GPIO 26 -> PA27 */
+    int baud = 115200, pin = -1, pulse_us = 20;   /* pin -1: the board's */
+    const char *board_arg = NULL;
+    const char *hat_dir = getenv("LASERHAT_HAT_DIR");
+    if (!hat_dir) hat_dir = DEFAULT_HAT_DIR;
 #ifdef __linux__
     GpioBackend backend = GPIO_GPIOMEM;
 #else
@@ -117,7 +127,8 @@ int main(int argc, char **argv)
 
     const char *fw_version_file = DEFAULT_FW_VERSION_FILE;
     enum { O_DEVICE = 1, O_BAUD, O_SOCKET, O_CTCP, O_GPIO, O_NOGPIO, O_PIN,
-           O_PULSE, O_UDP, O_ALLOW, O_PRIO, O_CPU, O_SPIN, O_FWFILE, O_HELP };
+           O_PULSE, O_UDP, O_ALLOW, O_PRIO, O_CPU, O_SPIN, O_FWFILE, O_BOARD,
+           O_HATDIR, O_HELP };
     static const struct option opts[] = {
         { "device", 1, 0, O_DEVICE }, { "baud", 1, 0, O_BAUD },
         { "socket", 1, 0, O_SOCKET }, { "control-tcp", 1, 0, O_CTCP },
@@ -126,6 +137,7 @@ int main(int argc, char **argv)
         { "udp", 1, 0, O_UDP },       { "udp-allow", 1, 0, O_ALLOW },
         { "rt-prio", 1, 0, O_PRIO },  { "cpu", 1, 0, O_CPU },
         { "spin", 0, 0, O_SPIN },     { "fw-version-file", 1, 0, O_FWFILE },
+        { "board", 1, 0, O_BOARD },   { "hat-dir", 1, 0, O_HATDIR },
         { "help", 0, 0, O_HELP },
         { 0, 0, 0, 0 },
     };
@@ -151,6 +163,14 @@ int main(int argc, char **argv)
             case O_CPU:    tc.cpu = atoi(optarg); break;
             case O_SPIN:   tc.spin = true; break;
             case O_FWFILE: fw_version_file = optarg; break;
+            case O_BOARD:
+                if (!board_by_name(optarg)) {
+                    fprintf(stderr, "brokerd: --board must be rev2, stim or laser\n");
+                    return 2;
+                }
+                board_arg = optarg;
+                break;
+            case O_HATDIR: hat_dir = optarg; break;
             default:       usage(argv[0]); return o == O_HELP ? 0 : 2;
         }
     }
@@ -160,6 +180,24 @@ int main(int argc, char **argv)
     }
     tc.pulse_ns = (uint32_t)pulse_us * 1000u;
     g_pulse_ns = tc.pulse_ns;
+
+    /* Which HAT (EEPROM first) and so which trigger GPIO. */
+    const char *board_source;
+    const BoardDef *board = board_resolve(hat_dir, board_arg, &board_source);
+    const char *pin_from = "--gpio-pin";
+    if (pin < 0) {
+        const char *env_pin = getenv("LASERHAT_TRIGGER_PIN");
+        if (env_pin && *env_pin) {
+            pin = atoi(env_pin);
+            pin_from = "$LASERHAT_TRIGGER_PIN";
+        } else {
+            pin = board->trigger_pin;
+            pin_from = "board";
+        }
+    }
+    fprintf(stderr, "brokerd: board %s (%s, from %s); trigger GPIO %d (%s)\n",
+            board->name, board->product, board_source, pin, pin_from);
+    mcu_set_board(board, board_source);
 
     /* Threads inherit this mask; main collects the signals with sigwait. */
     sigset_t sigs;

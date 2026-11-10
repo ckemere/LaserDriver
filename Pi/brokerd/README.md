@@ -35,7 +35,9 @@ Options (`--help`):
 | `--device PATH` | `/dev/ttyS0` | MCU UART |
 | `--socket PATH` | `/run/laserhat/broker.sock` | JSON socket for the GUIs |
 | `--gpio gpiomem\|sim\|none` | `gpiomem` | `sim` = pretend (tests); `none` = no trigger line |
-| `--gpio-pin N` | 26 | BCM pin wired to PA27 (Rev 2 HAT; a Rev 1 board needs 24) |
+| `--gpio-pin N` | the board's | BCM pin wired to the MCU's PI_TRIGGER: 26 on the Rev 2 HAT, 18 on the StimHAT / LaserDriverHAT (`$LASERHAT_TRIGGER_PIN` overrides the board's; a Rev 1 board needs 24) |
+| `--board B` | from the EEPROM | `rev2` / `stim` / `laser`, used only when the HAT ID EEPROM does not name a board (then `$LASERHAT_BOARD`, then `rev2`); a contradicting `--board` is logged and ignored |
+| `--hat-dir PATH` | `/proc/device-tree/hat` | where the Pi firmware publishes the HAT EEPROM (`$LASERHAT_HAT_DIR`; tests point it at a fake) |
 | `--pulse-us N` | 20 | trigger line high time. The MCU latches the edge, so this is not a timing parameter |
 | `--udp IPV4:PORT` | off | enable the UDP trigger listener. Binds even if the address isn't up yet (`IP_FREEBIND`) |
 | `--udp-allow IP` | any | accept triggers only from this IPv4 source |
@@ -89,6 +91,13 @@ addition: `{"cmd": "stats"}` returns the trigger counters (`udp_rx`,
 clears a latched module fault.  State lines carry `laser_dac`, `estim_dac`,
 `module` (flag bits, see `Pi/protocol.py`), `adc_pd`, `adc_comp`; a fault
 arrives as `{"type": "event", "event": "fault", "module": .., "tick": ..}`.
+Board identity (`hatid.c`, mirror of `Pi/hat_id.py`): `board` (`rev2` /
+`stim` / `laser`, resolved once at startup), `board_source` (`eeprom` /
+`argument` / `env` / `default`), `fw_board` (the MCU's `RSP_VERSION.board`
+as a name, `unknown` for pre-split firmware, `null` until probed); `fw_ok`
+is false when `fw_board` does not suit `board` (as well as on a version /
+protocol mismatch).  The startup log says what it resolved: `brokerd: board
+stim (StimHAT, from eeprom); trigger GPIO 18 (board)`.
 
 ## Latency tuning checklist (Pi 4)
 

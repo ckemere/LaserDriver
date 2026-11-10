@@ -12,10 +12,14 @@
 #   /usr/bin/laserhat-brokerd                        compiled broker (UART, GPIO,
 #                                                    UDP triggers)
 #   /usr/bin/laserhat-flash                          flash the MCU (manual; sudo)
+#   /usr/bin/laserhat-eeprom                         read / program the HAT ID
+#                                                    EEPROM (board identity)
 #   /usr/lib/laserhat/                               Python app (GUIs; broker.py
-#                                                    kept as a fallback)
-#   /usr/lib/laserhat/firmware/                      MCU firmware built from the
-#                                                    same commit + OpenOCD config
+#                                                    kept as a fallback; hat_id.py)
+#   /usr/lib/laserhat/firmware/                      MCU firmware for each board
+#                                                    (laserhat-mcu-{rev2,stim,laser}
+#                                                    .elf/.hex), built from the
+#                                                    same commit, + OpenOCD config
 #   /usr/lib/systemd/system/laserhat-*.service, oled-gui.service,
 #                                                    laserhat-power.path (safe shutdown)
 #   /etc/NetworkManager/system-connections/laserhat-eth0.nmconnection
@@ -62,20 +66,29 @@ mkdir -p "$PKG/usr/bin"
     -I"$PI_DIR/../Firmware" -o "$PKG/usr/bin/laserhat-brokerd" \
     "$PI_DIR"/brokerd/*.c -lm
 
-# --- MCU firmware + flashing tool --------------------------------------------
+# --- MCU firmware (one image per board) + flashing tools ----------------------
 # Built from the same commit as the broker, so both sides share protocol.h.
-# Flashing is manual (sudo laserhat-flash); nothing flashes at boot.
+# Flashing is manual (sudo laserhat-flash, which picks the image for the
+# board the HAT ID EEPROM names); nothing flashes at boot.
 # FW_VERSION = the package version, so the string the MCU reports
 # (RSP_VERSION) equals the VERSION file byte for byte and the broker can
-# tell an un-reflashed board from a current one.
-make -C "$PI_DIR/../Firmware" -f Makefile.gcc BUILD_DIR="$FW_BUILD" \
-    FW_VERSION="$VERSION" all
-mkdir -p "$PKG/usr/lib/laserhat/firmware"
-install -m 644 "$FW_BUILD/main.elf" "$PKG/usr/lib/laserhat/firmware/laserhat-mcu.elf"
-install -m 644 "$FW_BUILD/main.hex" "$PKG/usr/lib/laserhat/firmware/laserhat-mcu.hex"
-install -m 644 "$PI_DIR/../Firmware/openocd/pi-swd.cfg" "$PKG/usr/lib/laserhat/firmware/"
-echo "$VERSION" > "$PKG/usr/lib/laserhat/firmware/VERSION"
+# tell an un-reflashed board from a current one; the board byte in the same
+# reply tells it whether the image suits the HAT.
+FW_OUT="$PKG/usr/lib/laserhat/firmware"
+mkdir -p "$FW_OUT"
+for board in rev2 stim laser; do
+    make -C "$PI_DIR/../Firmware" -f Makefile.gcc BOARD="$board" \
+        BUILD_DIR="$FW_BUILD/$board" FW_VERSION="$VERSION" all
+    install -m 644 "$FW_BUILD/$board/main.elf" "$FW_OUT/laserhat-mcu-$board.elf"
+    install -m 644 "$FW_BUILD/$board/main.hex" "$FW_OUT/laserhat-mcu-$board.hex"
+done
+# Pre-split name, for anything that still references it: the Rev 2 image.
+ln -s laserhat-mcu-rev2.elf "$FW_OUT/laserhat-mcu.elf"
+ln -s laserhat-mcu-rev2.hex "$FW_OUT/laserhat-mcu.hex"
+install -m 644 "$PI_DIR/../Firmware/openocd/pi-swd.cfg" "$FW_OUT/"
+echo "$VERSION" > "$FW_OUT/VERSION"
 install -m 755 "$PI_DIR/laserhat-flash" "$PKG/usr/bin/laserhat-flash"
+install -m 755 "$PI_DIR/laserhat-eeprom" "$PKG/usr/bin/laserhat-eeprom"
 
 # --- safe shutdown from the GUIs (root side; see Pi/power.py) ---------------
 install -m 755 "$PI_DIR/laserhat-power" "$PKG/usr/lib/laserhat/laserhat-power"
@@ -118,8 +131,10 @@ Description: LaserHAT laser-diode driver control stack
  trigger GPIO; low-latency UDP trigger listener), an OLED
  status/param GUI on the Adafruit SSD1305 bonnet driven by a compiled
  panel daemon, and a Flask web GUI.  Configures the wired interface
- with a static address (192.168.17.10/24, no gateway).  Includes the
- matching MCU firmware; program a board with 'sudo laserhat-flash'.
+ with a static address (192.168.17.10/24, no gateway).  Supports the
+ LaserHAT Rev 2, StimHAT and LaserDriverHAT (identified by the HAT ID
+ EEPROM; 'laserhat-eeprom').  Includes the matching MCU firmware for each;
+ program a board with 'sudo laserhat-flash'.
 EOF
 
 cat > "$PKG/DEBIAN/conffiles" <<EOF

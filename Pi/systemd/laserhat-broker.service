@@ -3,7 +3,15 @@
 # Runs laserhat-brokerd (Pi/brokerd/, C): speaks the binary protocol to the
 # MCU, serves the OLED GUI and web GUI over a Unix-domain socket at
 # /run/laserhat/broker.sock, and turns UDP trigger datagrams from the
-# experiment machine into GPIO 26 -> MCU PA27 edges (Pi/brokerd/README.md).
+# experiment machine into edges on the board's trigger line (GPIO 26 -> PA27
+# on the Rev 2 HAT, GPIO 18 -> PA4 on the StimHAT / LaserDriverHAT;
+# Pi/brokerd/README.md).
+#
+# The board comes from the HAT ID EEPROM (/proc/device-tree/hat, see
+# Pi/hat_id.py and `laserhat-eeprom read`).  For a board whose EEPROM is not
+# programmed, set LASERHAT_BOARD=rev2|stim|laser (and, rarely,
+# LASERHAT_TRIGGER_PIN=N) in /etc/default/laserhat; laserhat-flash reads the
+# same file.
 #
 # Installed by the laserhat package to /usr/bin; the 'laserhat' system user
 # is created in the package postinst.
@@ -36,6 +44,8 @@ RuntimeDirectory=laserhat
 RuntimeDirectoryMode=0755
 Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
 Environment=LASERHAT_UDP=192.168.17.10:17017
+# Optional: LASERHAT_BOARD / LASERHAT_TRIGGER_PIN for an unprogrammed EEPROM.
+EnvironmentFile=-/etc/default/laserhat
 # Let the unprivileged trigger thread go SCHED_FIFO and lock its memory.
 LimitRTPRIO=80
 LimitMEMLOCK=infinity
