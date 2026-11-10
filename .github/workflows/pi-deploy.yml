@@ -35,7 +35,7 @@ jobs:
   # Compile the real oledd drawing code natively and diff its output
   # against the golden framebuffer dump — catches font/layout regressions.
   render-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
     steps:
       - uses: actions/checkout@v5
       - name: Build oledd (native, warnings fatal)
@@ -46,7 +46,7 @@ jobs:
         run: /tmp/render-test | diff - Pi/tests/render-expected.txt
 
   python-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
     steps:
       - uses: actions/checkout@v5
       - name: Build laserhat-brokerd (native, warnings fatal)
@@ -61,7 +61,7 @@ jobs:
 
   build-deb:
     needs: [render-test, python-test]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
     strategy:
       matrix:
         include:
@@ -103,7 +103,7 @@ jobs:
   release:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release_tag != ''
     needs: build-deb
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
     permissions:
       contents: write
     steps:
@@ -132,7 +132,7 @@ jobs:
   golden-image:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release_tag != ''
     needs: [build-deb, release]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
     permissions:
       contents: write
     strategy:
@@ -255,7 +255,7 @@ jobs:
   imager-repo:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release_tag != ''
     needs: golden-image
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
     permissions:
       contents: write
     steps:
