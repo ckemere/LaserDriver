@@ -84,7 +84,7 @@ the MSPM0G1507 datasheet table 6-2 (SLASEW9E).  Pi-header nets unchanged.
 | 11 | PA7 | BUTTON4 (up) | GPIO |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | UART1 ↔ Pi |
 | 14, 15 | PA10, PA11 | MCU_UART_TX / RX | UART0 ↔ CH340N (BSL) |
-| 16, 17, 18 | PA12, PA13, PA14 | BUTTON6 (right), BUTTON2 (centre), BUTTON3 (down) | GPIO (as on the StimHAT) |
+| 16, 17, 18 | PA12, PA13, PA14 | BUTTON6 (right), BUTTON2 (centre), BUTTON3 (down) | GPIO (the StimHAT's joystick pads, shifted one pin because PA15 is the DAC here) |
 | **19** | **PA15** | **DB_DAC** | **DAC0_OUT** (the only DAC0 pin): laser current set-point, ≈ 102 mA / V |
 | 20 | PA16 | BUTTON5 (FIRE) | GPIO |
 | 21 | PA17 | MCU_STIM_OUT | GPIO → U8B → J7 SYNC OUT |
@@ -103,22 +103,15 @@ the top two pins (PA26 / PA27, one timebase) with ADC0 ch 2 / 3 right below (PA2
 the RHB package.)  TIMG7 is otherwise unused (the firmware's ticks are TIMG0 / TIMG6; trigger and stim lines are GPIOs here;
 TIMG8 and TIMA1 stay free for them).
 
-### Draft firmware note (not applied to `Firmware/`)
+### Firmware
 
-`Firmware/board.h` / `mcu.h` hold the StimHAT draft (uncommitted).  A LaserDriverHAT build needs:
-
-* PWM on **TIMG7** instead of TIMA0: `BOARD_PWM_A_PIN (1u << 26)`, `IOMUX_PINCM59`, `IOMUX_PINCM59_PF_TIMG7_CCP0` (PF 7, laser
-  switch); `BOARD_PWM_B_PIN (1u << 27)`, `IOMUX_PINCM60`, `IOMUX_PINCM60_PF_TIMG7_CCP1` (PF 7, dummy switch).  `pwm_timer.c`
-  moves its CC1 / CC3 setup to TIMG7's CC0 / CC1 (same GPTIMER register layout; TIMG7 is 16-bit, no fault input, which
-  this board does not need); `output_mux.c` comments still name PA7 / PA12.
-* `BOARD_DAC_PIN (1u << 15)` / `IOMUX_PINCM37` stays the DAC0 output (analog, PINCM left at reset default).
-* ADC: `adc.c` must read **ADC0** channel 2 (PA25, photodiode) and channel 3 (PA24, LASER_V) instead of ADC1 ch 2 / 8.
-* Buttons as on the StimHAT: BUTTON1 PA6 (`IOMUX_PINCM11`), BUTTON6 PA12, BUTTON2 PA13, BUTTON3 PA14; drop PA6 from
-  `BOARD_SPARE_PINS`, which becomes PA3 | PA22 | PA23.
-* FAULT_n: no fault source on this board.  Keep the GPIO-IRQ code with `BOARD_FAULT_N_PIN` on a spare pin with its
-  internal pull-up (e.g. PA22, `IOMUX_PINCM47`), which then never fires — or compile the fault path out for this board.
-* E-stim mode does not exist on this board (no module): `CMD_SET_MODE ESTIM` should be refused.
-* Pi side as for the StimHAT: `LASERHAT_NRST_PIN=9 LASERHAT_POWER_PIN=10 LASERHAT_TRIGGER_PIN=18`, brokerd `--gpio-pin 18`.
+Applied in `Firmware/` since v0.3.0-rc7 (2026-11-10): `make -f Makefile.gcc BOARD=laser` builds `board_laser.h` with
+exactly this map (PWM on TIMG7 C0 / C1 at PA26 / PA27, PF 7; DAC0 on PA15; ADC0 ch 2 / 3 on PA25 / PA24; buttons
+BUTTON1 PA6, BUTTON4 PA7, BUTTON6 PA12, BUTTON2 PA13, BUTTON3 PA14, BUTTON5 PA16; PA3 / PA22 / PA23 spare, driven low;
+no fault pin, the fault path is compiled out; `CMD_SET_MODE ESTIM` refused).  The firmware reports board type 3
+(LASER) in RSP_VERSION; the Pi picks `laserhat-mcu-laser.elf` from the HAT EEPROM (product id 0x0004).  v0.3.0-rc6
+and earlier laser images drove PA22 / PA23 (the pre-production map) and give no light on this board.  Pi pins:
+NRST GPIO9, MCU_PWR_EN GPIO10, trigger GPIO18 (`Pi/hat_id.py`).
 
 ## Board
 
