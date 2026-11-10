@@ -35,7 +35,7 @@ jobs:
   # Compile the real oledd drawing code natively and diff its output
   # against the golden framebuffer dump — catches font/layout regressions.
   render-test:
-    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Build oledd (native, warnings fatal)
@@ -46,7 +46,7 @@ jobs:
         run: /tmp/render-test | diff - Pi/tests/render-expected.txt
 
   python-test:
-    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Build laserhat-brokerd (native, warnings fatal)
@@ -61,7 +61,7 @@ jobs:
 
   build-deb:
     needs: [render-test, python-test]
-    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         include:
@@ -103,7 +103,7 @@ jobs:
   release:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release_tag != ''
     needs: build-deb
-    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
@@ -132,7 +132,7 @@ jobs:
   golden-image:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release_tag != ''
     needs: [build-deb, release]
-    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     strategy:
@@ -148,19 +148,19 @@ jobs:
       - uses: actions/download-artifact@v7
         with:
           name: laserhat-deb-${{ matrix.arch }}
-      # The runner preinstalls dynamic qemu-user binfmt handlers
-      # (…-binfmt-P) that cannot work inside a chroot.  Purge them and
-      # register qemu-user-static's fix-binary (F flag) handlers instead:
-      # the kernel pre-opens the static interpreter, so it keeps working
-      # after the chroot switches the filesystem root.
+      # The chroot below runs ARM binaries through binfmt_misc.  The runner's
+      # own qemu handlers are dynamic (…-binfmt-P) and cannot work once the
+      # root changes, and the apt package names differ between Ubuntu images
+      # (24.04: qemu-user-static; 26.04: qemu-user + qemu-user-binfmt).  So
+      # register fix-binary (F flag) handlers from the pinned static-qemu
+      # container instead: the kernel pre-opens the interpreter at
+      # registration, so it keeps working inside the chroot on any image.
       - name: Register static QEMU binfmt handlers for the ARM chroot
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y qemu-user-static binfmt-support
-          sudo apt-get purge -y qemu-user-binfmt || true
-          sudo dpkg-reconfigure qemu-user-static
-          grep -H . /proc/sys/fs/binfmt_misc/qemu-aarch64 \
-                    /proc/sys/fs/binfmt_misc/qemu-arm || true
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64,arm
+      - name: Show the registered handlers
+        run: grep -H . /proc/sys/fs/binfmt_misc/qemu-aarch64 /proc/sys/fs/binfmt_misc/qemu-arm || true
       - name: Download official Raspberry Pi OS Lite image
         run: |
           curl -fsSL -o raspios.img.xz '${{ matrix.image_url }}'
@@ -255,7 +255,7 @@ jobs:
   imager-repo:
     if: startsWith(github.ref, 'refs/tags/v') || github.event.inputs.release_tag != ''
     needs: golden-image
-    runs-on: ubuntu-24.04   # pinned: the -latest image moved (gcc 15, QEMU binfmt step broke) on 2026-11-10
+    runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
