@@ -537,7 +537,11 @@ int main(void)
 
         int want_flush = 0;
         if (cfd >= 0 && (pfds[1].revents & (POLLIN | POLLHUP))) {
-            ssize_t n = read(cfd, inbuf + inlen, sizeof(inbuf) - inlen - 1);
+            if (inlen >= sizeof(inbuf) - 1) {
+                inlen = 0;   /* a line longer than the buffer: drop it; also keeps the
+                              * fortified read() bound provably in range (gcc 13+ -Werror) */
+            }
+            ssize_t n = read(cfd, inbuf + inlen, sizeof(inbuf) - 1 - inlen);
             if (n <= 0) {
                 close(cfd);
                 cfd = -1;
