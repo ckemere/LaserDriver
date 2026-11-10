@@ -1,12 +1,17 @@
 # ============================================================
-# Laser Driver - MSPM0G3507 — arm-none-eabi-gcc build (Pi-native)
+# Laser Driver - MSPM0G3507 / G1507 — arm-none-eabi-gcc build (Pi-native)
 # ============================================================
 # All required SDK files are vendored in-tree (see Makefile header).
 # Only external dependency is the arm-none-eabi-gcc cross toolchain.
 #
 # Pi install:
 #   sudo apt install gcc-arm-none-eabi
-#   make -f Makefile.gcc
+#   make -f Makefile.gcc                      # BOARD=rev2 (default)
+#   make -f Makefile.gcc BOARD=stim           # StimHAT
+#   make -f Makefile.gcc BOARD=laser          # LaserDriverHAT
+#   make -f Makefile.gcc boards               # all three
+#
+# Outputs per board: build_gcc/<board>/main.{elf,bin,hex}
 
 # Tools
 CROSS           ?= arm-none-eabi
@@ -14,9 +19,23 @@ CC              := $(CROSS)-gcc
 OBJCOPY         := $(CROSS)-objcopy
 SIZE            := $(CROSS)-size
 
+# Board (board.h): rev2 = LaserHAT Rev 2 (MSPM0G3507, plug-in modules),
+# stim = StimHAT (MSPM0G1507, e-stim only), laser = LaserDriverHAT
+# (MSPM0G1507, laser only).
+BOARDS          := rev2 stim laser
+BOARD           ?= rev2
+ifeq ($(filter $(BOARD),$(BOARDS)),)
+$(error BOARD must be one of: $(BOARDS) (got '$(BOARD)'))
+endif
+BOARD_DEF_rev2  := -DBOARD_REV2
+BOARD_DEF_stim  := -DBOARD_STIM
+BOARD_DEF_laser := -DBOARD_LASER
+BOARD_DEF       := $(BOARD_DEF_$(BOARD))
+
 # Paths
 PROJ_DIR        := .
-BUILD_DIR       := $(PROJ_DIR)/build_gcc
+BUILD_ROOT      := $(PROJ_DIR)/build_gcc
+BUILD_DIR       := $(BUILD_ROOT)/$(BOARD)
 
 # Source files
 STARTUP_SRC     := $(PROJ_DIR)/startup/startup_mspm0g350x_gcc.c
@@ -54,7 +73,7 @@ WARN_FLAGS      := -Wall -Wextra -Wno-unused-parameter
 DEAD_CODE       := -ffunction-sections -fdata-sections
 INCLUDES        := -I$(PROJ_DIR)
 CFLAGS          := $(CPU_FLAGS) $(OPT_FLAGS) $(WARN_FLAGS) $(DEAD_CODE) \
-                   $(INCLUDES) -std=c11
+                   $(INCLUDES) -std=c11 $(BOARD_DEF)
 
 # Linker
 LFLAGS          := $(CPU_FLAGS) -T$(LINKER_SCRIPT) \
@@ -74,21 +93,32 @@ OPENOCD_INTERFACE  ?= openocd/pi-swd.cfg
 OPENOCD_TARGET     ?= target/ti_mspm0.cfg
 # Override on Pi 5: make flash OPENOCD_GPIOCHIP=4
 OPENOCD_GPIOCHIP   ?= 0
-# Pi GPIOs for SWD, reset and MCU power enable differ between HAT revisions:
-#   Rev 2: SWCLK 24, SWDIO 25, NRST 23, POWER_EN 18 (default; this firmware)
-#   Rev 1: SWCLK 25, SWDIO 24, NRST 18, POWER_EN 23  ->  make flash HAT_REV=1
-#          (the Rev 1 firmware itself is git tag `firmware-rev1`)
+# Pi GPIOs for SWD, reset and MCU power enable differ between HATs:
+#   BOARD=rev2:        SWCLK 24, SWDIO 25, NRST 23, POWER_EN 18, TRIGGER 26
+#   BOARD=stim/laser:  SWCLK 24, SWDIO 25, NRST  9, POWER_EN 10, TRIGGER 18
+#   Rev 1 HAT:         SWCLK 25, SWDIO 24, NRST 18, POWER_EN 23
+#                      -> make flash HAT_REV=1 (the Rev 1 firmware itself is
+#                      git tag `firmware-rev1`)
+# Each can be overridden on the command line (OPENOCD_SRST=..., ...).
 HAT_REV            ?= 2
 ifeq ($(HAT_REV),1)
 OPENOCD_SWCLK      ?= 25
 OPENOCD_SWDIO      ?= 24
 OPENOCD_SRST       ?= 18
 PI_POWER_PIN       ?= 23
-else
+PI_TRIGGER_PIN     ?= 26
+else ifeq ($(BOARD),rev2)
 OPENOCD_SWCLK      ?= 24
 OPENOCD_SWDIO      ?= 25
 OPENOCD_SRST       ?= 23
 PI_POWER_PIN       ?= 18
+PI_TRIGGER_PIN     ?= 26
+else
+OPENOCD_SWCLK      ?= 24
+OPENOCD_SWDIO      ?= 25
+OPENOCD_SRST       ?= 9
+PI_POWER_PIN       ?= 10
+PI_TRIGGER_PIN     ?= 18
 endif
 OPENOCD_GPIO_ARGS  := \
     -c "adapter gpio swclk -chip $(OPENOCD_GPIOCHIP) $(OPENOCD_SWCLK)" \
@@ -97,9 +127,16 @@ OPENOCD_GPIO_ARGS  := \
 
 # ============================================================
 
-.PHONY: all clean size flash load burn reset
+.PHONY: all boards all-boards clean clean-all size flash load burn reset
 
 all: $(TARGET_ELF) $(TARGET_BIN) $(TARGET_HEX) size
+
+# Build every board (each into its own build_gcc/<board>/).
+boards all-boards:
+	@set -e; for b in $(BOARDS); do \
+	    echo "=== BOARD=$$b ==="; \
+	    $(MAKE) --no-print-directory -f Makefile.gcc BOARD=$$b all; \
+	done
 
 size: $(TARGET_ELF)
 	@$(SIZE) $<
@@ -115,6 +152,17 @@ $(TARGET_HEX): $(TARGET_ELF)
 
 $(BUILD_DIR)/%.o: $(PROJ_DIR)/%.c | $(BUILD_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
+
+# Every object depends on the headers (the board selection lives in them):
+# a plain rebuild is cheap, so no generated dependency files.
+HEADERS         := $(wildcard $(PROJ_DIR)/*.h)
+# A stamp per board, so a BUILD_DIR override shared between boards (e.g.
+# `make BOARD=stim BUILD_DIR=x` after BOARD=rev2) still rebuilds everything.
+BOARD_STAMP     := $(BUILD_DIR)/.board_$(BOARD)
+$(BOARD_STAMP): | $(BUILD_DIR)
+	rm -f $(BUILD_DIR)/.board_*
+	touch $@
+$(OBJS): $(HEADERS) $(BOARD_STAMP)
 
 # Always recompiled, so the string tracks the checkout (new commit, new tag,
 # dirty tree) without a `make clean`.
@@ -132,6 +180,9 @@ $(BUILD_DIR):
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+clean-all:
+	rm -rf $(BUILD_ROOT)
 
 # Flash the freshly-built ELF to the MCU over SWD via OpenOCD.
 # `load` and `burn` are aliases.
@@ -162,7 +213,9 @@ flash load burn: $(TARGET_ELF) power_cycle
 # the Pi-side venv with gpiozero (see Pi/README.md).
 .PHONY: power_cycle
 power_cycle:
-	@export LASERHAT_POWER_PIN=$(PI_POWER_PIN) LASERHAT_NRST_PIN=$(OPENOCD_SRST); \
+	@export LASERHAT_BOARD=$(BOARD) LASERHAT_POWER_PIN=$(PI_POWER_PIN) \
+	    LASERHAT_NRST_PIN=$(OPENOCD_SRST) LASERHAT_TRIGGER_PIN=$(PI_TRIGGER_PIN) \
+	    LASERHAT_SWCLK_PIN=$(OPENOCD_SWCLK) LASERHAT_SWDIO_PIN=$(OPENOCD_SWDIO); \
 	if [ -x $(HOME)/.venvs/laserhat/bin/python ]; then \
 	    $(HOME)/.venvs/laserhat/bin/python ../Pi/power_cycle.py ; \
 	else \

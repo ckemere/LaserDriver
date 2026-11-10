@@ -3,10 +3,12 @@
 
 #include <stdint.h>
 #include "mcu.h"
+#include "board.h"
 
 /*
- * DAC0 register-level driver — the laser module's current setpoint on
- * J9.3 (PA15, DAC0_OUT).
+ * DAC0 register-level driver — the laser current setpoint on DAC0_OUT
+ * (PA15, the only DAC0 pin: Rev 2 J9.3, LaserDriverHAT DB_DAC).
+ * BOARD_HAS_LASER boards only; not built for the StimHAT.
  *
  * Reference = VDDA (the MCU's 3.3 V rail), 12-bit binary, output buffer
  * on, FIFO and sample timer off: V_OUT = code / 4096 x 3.3 V.  The laser
@@ -16,10 +18,11 @@
  * is reachable (2.5 V would stop at ~255 mA).
  *
  * laser_dac_init() once at boot; laser_dac_enable() / _disable() when the
- * mode changes (PA15 is the e-stim RELEASE GPIO in the other mode, see
- * module.c); laser_dac_write12() any time.
+ * mode changes (on Rev 2 PA15 is the e-stim RELEASE GPIO in the other
+ * mode, see module.c); laser_dac_write12() any time.
  */
 
+#if BOARD_HAS_LASER
 void laser_dac_init(void);
 void laser_dac_enable(void);
 void laser_dac_disable(void);
@@ -29,5 +32,6 @@ static inline void laser_dac_write12(uint16_t code)
     /* DATA0 takes a 12-bit value masked at the peripheral. */
     DAC0->DATA0 = (uint32_t) code & DAC12_DATA0_DATA_VALUE_MASK;
 }
+#endif /* BOARD_HAS_LASER */
 
 #endif /* DAC_H */

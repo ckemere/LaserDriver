@@ -34,6 +34,7 @@ CASES = [
     (p.CMD_CLEAR_FAULT, b""),
     (p.CMD_GET_VERSION, b""),
     (p.RSP_VERSION, p.pack_version_payload(p.PROTO_VERSION, "0.2.0+rc6+3+g1a2b3c4")),
+    (p.RSP_VERSION, p.pack_version_payload(p.PROTO_VERSION, "0.3.0", p.BOARD_TYPE_STIM)),
     (p.RSP_STATUS, p._STATUS.pack(200, 8000, 10000, 0b1010,
                                   p.PHASE_TRIGGERED, 123456,
                                   p.MODE_ESTIM, 500, 2000,
@@ -91,16 +92,31 @@ def main():
         ("version " + c("version", str(p.PROTO_VERSION), "0.2.0+rc6"),
          p.pack_version_payload(p.PROTO_VERSION, "0.2.0+rc6").hex()),
     ]
+    # RSP_VERSION.board (was `reserved`): one case per board type.
+    for name in ("BOARD_TYPE_UNKNOWN", "BOARD_TYPE_REV2",
+                 "BOARD_TYPE_STIM", "BOARD_TYPE_LASER"):
+        board = getattr(p, name)
+        struct_cases.append(
+            (f"version-{name} " + c("version", str(p.PROTO_VERSION), "0.3.0", str(board)),
+             p.pack_version_payload(p.PROTO_VERSION, "0.3.0", board).hex()))
     for label_got, want in struct_cases:
         label, got = label_got.split(" ", 1)
         if got != want:
             print(f"STRUCT MISMATCH {label}\n  py={want}\n  c ={got}")
             failures += 1
 
+    # Shared constants: protocol.h vs protocol.py.
+    for line in c("consts").splitlines():
+        name, val = line.split()
+        py = getattr(p, name, None)
+        if py != int(val):
+            print(f"CONSTANT MISMATCH {name}: c={val} py={py}")
+            failures += 1
+
     if failures:
         print(f"\n{failures} mismatch(es)")
         return 1
-    print(f"OK: {len(CASES)} frames + packed structs byte-identical C<->Python")
+    print(f"OK: {len(CASES)} frames + packed structs + shared constants identical C<->Python")
     return 0
 
 

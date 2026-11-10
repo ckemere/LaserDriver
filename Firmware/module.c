@@ -8,35 +8,52 @@
 
 #define PINCM_ANALOG      0u      /* reset default: no digital function */
 #define PINCM_GPIO_OUT    (IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_PF_GPIO)
+/* Open-drain GPIO: HIZ1 makes a DOUT of 1 Hi-Z; input enabled for the
+ * readback.  Internal pull-up only where the board asks for it (Rev 2;
+ * the StimHAT has 2.2k externals at the ISO1640). */
+#if BOARD_HAS_ESTIM && BOARD_ESTIM_I2C_PULLUP
 #define PINCM_GPIO_OD     (IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_PF_GPIO | \
                            IOMUX_PINCM_INENA_ENABLE | IOMUX_PINCM_HIZ1_ENABLE | \
                            IOMUX_PINCM_PIPU_ENABLE)
+#else
+#define PINCM_GPIO_OD     (IOMUX_PINCM_PC_CONNECTED | IOMUX_PINCM_PF_GPIO | \
+                           IOMUX_PINCM_INENA_ENABLE | IOMUX_PINCM_HIZ1_ENABLE)
+#endif
 
-#define J9_PINS  (BOARD_DAC_PIN | BOARD_ADC_A_PIN | BOARD_ADC_B_PIN)
+#if BOARD_HAS_LASER
+#define LASER_PINS  (BOARD_DAC_PIN | BOARD_ADC_A_PIN | BOARD_ADC_B_PIN)
 
 void module_laser_pins(void)
 {
     /* Drop the GPIO drivers first, then disconnect: a DOUT of 1 on the
-     * open-drain pins means "released", so nothing glitches low. */
-    BOARD_GPIO_PORT->DOECLR31_0 = J9_PINS;
+     * open-drain pins means "released", so nothing glitches low.  (Only
+     * Rev 2 ever drives these pins; on the LaserDriverHAT this just
+     * restates the reset default.) */
+    BOARD_GPIO_PORT->DOECLR31_0 = LASER_PINS;
     IOMUX->SECCFG.PINCM[BOARD_DAC_PINCM]   = PINCM_ANALOG;
     IOMUX->SECCFG.PINCM[BOARD_ADC_A_PINCM] = PINCM_ANALOG;
     IOMUX->SECCFG.PINCM[BOARD_ADC_B_PINCM] = PINCM_ANALOG;
 }
+#endif /* BOARD_HAS_LASER */
+
+#if BOARD_HAS_ESTIM
+#define ESTIM_PINS  (BOARD_ESTIM_RELEASE_PIN | BOARD_ESTIM_SDA_PIN | BOARD_ESTIM_SCL_PIN)
 
 void module_estim_pins(void)
 {
-    /* RELEASE low (electrode shorted), SDA/SCL released (DOUT 1 = Hi-Z). */
+    /* RELEASE low (electrode shorted), SDA/SCL released (DOUT 1 = Hi-Z).
+     * RELEASE has no pull (StimHAT: never an internal pull-up on PA25). */
     BOARD_GPIO_PORT->DOUTCLR31_0 = BOARD_ESTIM_RELEASE_PIN;
     BOARD_GPIO_PORT->DOUTSET31_0 = BOARD_ESTIM_SDA_PIN | BOARD_ESTIM_SCL_PIN;
-    IOMUX->SECCFG.PINCM[BOARD_DAC_PINCM]       = PINCM_GPIO_OUT;
-    IOMUX->SECCFG.PINCM[BOARD_ESTIM_SDA_PINCM] = PINCM_GPIO_OD;
-    IOMUX->SECCFG.PINCM[BOARD_ESTIM_SCL_PINCM] = PINCM_GPIO_OD;
-    BOARD_GPIO_PORT->DOESET31_0 = J9_PINS;
+    IOMUX->SECCFG.PINCM[BOARD_ESTIM_RELEASE_PINCM] = PINCM_GPIO_OUT;
+    IOMUX->SECCFG.PINCM[BOARD_ESTIM_SDA_PINCM]     = PINCM_GPIO_OD;
+    IOMUX->SECCFG.PINCM[BOARD_ESTIM_SCL_PINCM]     = PINCM_GPIO_OD;
+    BOARD_GPIO_PORT->DOESET31_0 = ESTIM_PINS;
 }
 
 /* ---------------------------------------------------------------------
- * Bit-banged I2C master (SDA = PA17, SCL = PA22, open-drain)
+ * Bit-banged I2C master (BOARD_ESTIM_SDA / _SCL, open-drain; Rev 2 PA17 /
+ * PA22, StimHAT PA26 / PA27 through the ISO1640)
  * --------------------------------------------------------------------- */
 
 /* Half a bit at ~200 kHz: ~2.5 µs = 80 cycles at 32 MHz.  The loop body is
@@ -161,3 +178,4 @@ bool module_estim_dac_write(uint16_t code12)
     const uint8_t frame[3] = { DAC60501_REG_DAC, (uint8_t)(v >> 8), (uint8_t)(v & 0xFFu) };
     return i2c_write(DAC60501_ADDR, frame, 3u);
 }
+#endif /* BOARD_HAS_ESTIM */

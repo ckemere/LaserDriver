@@ -8,6 +8,8 @@
  * Usage:
  *   proto_selftest encode TYPE HEX     -> prints wire frame hex
  *   proto_selftest decode HEX          -> prints "TYPE PAYLOADHEX" per command
+ *   proto_selftest version PROTO STR [BOARD] -> packed VersionPayload hex
+ *   proto_selftest consts              -> "NAME VALUE" per shared constant
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -104,10 +106,12 @@ int main(int argc, char **argv)
         print_hex((const uint8_t *)&f, sizeof f);
         return 0;
     }
-    if (argc == 4 && strcmp(argv[1], "version") == 0) {
+    if ((argc == 4 || argc == 5) && strcmp(argv[1], "version") == 0) {
         VersionPayload v;
         memset(&v, 0, sizeof v);
         v.proto = (uint8_t)strtoul(argv[2], NULL, 10);
+        v.board = (argc == 5) ? (uint8_t)strtoul(argv[4], NULL, 10)
+                              : (uint8_t)BOARD_TYPE_UNKNOWN;
         strncpy(v.version, argv[3], sizeof v.version);   /* NUL-padded, like the firmware */
         print_hex((const uint8_t *)&v, sizeof v);
         return 0;
@@ -119,6 +123,15 @@ int main(int argc, char **argv)
         print_hex((const uint8_t *)&e, sizeof e);
         return 0;
     }
-    fprintf(stderr, "usage: %s encode|decode|config|status|estim|dac|fault|version ...\n", argv[0]);
+    if (argc == 2 && strcmp(argv[1], "consts") == 0) {
+        printf("PROTO_VERSION %u\n", (unsigned)PROTO_VERSION);
+        printf("BOARD_TYPE_UNKNOWN %u\n", (unsigned)BOARD_TYPE_UNKNOWN);
+        printf("BOARD_TYPE_REV2 %u\n", (unsigned)BOARD_TYPE_REV2);
+        printf("BOARD_TYPE_STIM %u\n", (unsigned)BOARD_TYPE_STIM);
+        printf("BOARD_TYPE_LASER %u\n", (unsigned)BOARD_TYPE_LASER);
+        printf("FW_VERSION_CHARS %u\n", (unsigned)FW_VERSION_CHARS);
+        return 0;
+    }
+    fprintf(stderr, "usage: %s encode|decode|config|status|estim|dac|fault|version|consts ...\n", argv[0]);
     return 2;
 }

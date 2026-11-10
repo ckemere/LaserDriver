@@ -19,13 +19,37 @@ Both build the same source tree against the in-tree headers under
 `mcu.h`, `cmsis/`, `hw/`, `startup/`, and `linker/`. No SysConfig, no
 external SDK path.
 
+### Board selection: `BOARD=rev2|stim|laser`
+
+One source tree, three HATs (same MSPM0 core, different pin maps and
+functions; `board.h` picks `board_rev2.h` / `board_stim.h` /
+`board_laser.h`):
+
+| `BOARD=` | HAT | MCU | Firmware functions |
+| -------- | --- | --- | ------------------ |
+| `rev2` (default) | LaserHAT Rev 2 + plug-in modules | MSPM0G3507 | LASER + ESTIM modes |
+| `stim`  | StimHAT (stimulator on the HAT)        | MSPM0G1507 | ESTIM only |
+| `laser` | LaserDriverHAT (laser driver on the HAT) | MSPM0G1507 | LASER only |
+
+```bash
+make -f Makefile.gcc BOARD=stim        # -> build_gcc/stim/main.{elf,bin,hex}
+make -f Makefile.gcc boards            # all three: build_gcc/{rev2,stim,laser}/
+make -f Makefile.ticlang BOARD=laser   # -> build/laser/main.out
+```
+
+Each build reports its board in `RSP_VERSION.board` (`BOARD_TYPE_REV2` 1,
+`_STIM` 2, `_LASER` 3; firmware from before the split sends 0 =
+`BOARD_TYPE_UNKNOWN`).  `CMD_SET_MODE` to a mode the board lacks is refused.
+Flash the build that matches the HAT: the pin maps differ, so a mismatched
+image drives the wrong pins.
+
 ---
 
 ## Building on Linux
 
 ```bash
-make clean && make all
-# → build/main.out
+make clean && make all            # BOARD=rev2 by default; BOARD=stim / laser
+# → build/<board>/main.out
 ```
 
 The Makefile defaults to TI ARM CLANG at
@@ -94,25 +118,30 @@ not used by the current firmware build but you'll want them for
 ### Build
 
 ```bash
-make clean all
+make clean all BOARD=rev2
 # (the dispatcher Makefile auto-routes to Makefile.gcc on ARM Linux)
-# → build_gcc/main.elf
-#   build_gcc/main.bin   (raw image for BSL)
-#   build_gcc/main.hex   (Intel HEX for OpenOCD / probes)
+# → build_gcc/<board>/main.elf
+#   build_gcc/<board>/main.bin   (raw image for BSL)
+#   build_gcc/<board>/main.hex   (Intel HEX for OpenOCD / probes)
+make boards                       # rev2, stim and laser in one go
 ```
 
 ### Flashing the MCU over SWD from the Pi
 
 The Rev 2 HAT brings SWCLK/SWDIO/NRST out to Pi GPIO 24/25/23 and the
-MCU's power switch to GPIO 18 (see the wiring table at the bottom of this
-file; Rev 1 had SWD and power/reset swapped — `make flash HAT_REV=1`). OpenOCD on the Pi can drive
+MCU's power switch to GPIO 18; the StimHAT and LaserDriverHAT use
+SWCLK/SWDIO 24/25 with NRST on GPIO 9 and the power switch on GPIO 10
+(see the wiring table at the bottom of this file; Rev 1 had SWD and
+power/reset swapped — `make flash HAT_REV=1`).  `make flash` picks the
+pins from `BOARD`. OpenOCD on the Pi can drive
 those pins directly via the kernel's libgpiod interface — no external
 debug probe required.
 
 ```bash
-sudo systemctl stop laserhat-broker.service   # frees the UART and GPIO 26
+sudo systemctl stop laserhat-broker.service   # frees the UART and the trigger GPIO
 sudo apt install openocd
-make flash             # builds if needed, then programs and resets
+make flash             # Rev 2: builds if needed, then programs and resets
+make flash BOARD=stim  # StimHAT (BOARD=laser: LaserDriverHAT)
 # `make load` and `make burn` are aliases for the same thing.
 make reset             # just reset the MCU, leave flash contents alone
 sudo systemctl start laserhat-broker.service
@@ -252,7 +281,7 @@ Host -> MCU                              MCU -> Host
   CMD_SET_MODE      mode u8 (0 laser/1 estim) EVT_PULSE_END  tick
   CMD_ESTIM_CONFIG  dur u32, ipi u32 (ticks) EVT_BUTTON     mask, edges
   CMD_LASER_CURRENT dac u16 (0..3650)        EVT_FAULT      module flags, tick
-  CMD_ESTIM_CURRENT dac u16 (0..4095)        RSP_VERSION    proto u8, reserved u8,
+  CMD_ESTIM_CURRENT dac u16 (0..4095)        RSP_VERSION    proto u8, board u8,
   CMD_CLEAR_FAULT                                            version char[30] (32 bytes)
   CMD_GET_VERSION   -> RSP_VERSION (not RSP_STATUS)
 ```
@@ -260,7 +289,10 @@ Host -> MCU                              MCU -> Host
 `CMD_GET_VERSION` is the one command not answered with `RSP_STATUS`: it
 returns the firmware's wire-protocol number (`PROTO_VERSION`, 2 for this
 header; builds before v0.2.0-rc6 ignore the command, which is how the broker
-recognises them) and its build version string — the `git describe` of the
+recognises them), the board it was built for (`board`: 1 Rev 2, 2 StimHAT,
+3 LaserDriverHAT; 0 from firmware older than the three-board split, whose
+byte was reserved — same layout, so `PROTO_VERSION` stayed 2) and its build
+version string — the `git describe` of the
 build with the leading `v` dropped and `-` turned into `+`, e.g. `0.2.0+rc6`
 or `0.2.0+rc6+3+g1a2b3c4+dirty`.  The Makefiles bake it in through
 `-DFW_VERSION=...` (`version.c`, rebuilt on every make; override with
@@ -271,7 +303,8 @@ byte.  The broker probes it once per MCU boot and reports `fw_version` /
 banner and the OLED chip reads `FW!` while they disagree, and
 `sudo laserhat-flash` verifies the match after writing.
 
-Defaults at boot: `i=320 r=8000 h=10000`, laser mode, `laser_dac=1216`
+Defaults at boot: `i=320 r=8000 h=10000`, laser mode (the StimHAT boots
+in its only mode, e-stim), `laser_dac=1216`
 (≈100 mA), `estim_dac=0`.  DAC0 (J9.3) carries `laser_dac` only while a
 pulse runs and reads 0 V between pulses (no dummy current between pulses;
 the module's Q1 is not rated for it continuously).  **Every command is answered with `RSP_STATUS`**
@@ -293,8 +326,10 @@ guarantees a `CMD_CONFIG` payload never contains the `SYNC` bytes (it nudges
 the ~150 ramp/hold values whose low 16 bits would equal `DE AD`), so the
 MCU's resync on the next `SYNC` is exact.
 
-**PA27** (Pi GPIO 26) is the Pi-GPIO trigger input from boot — there is
-no arm command.  The BNC TRIG IN (J6 → U8 → PA26) fires the same way.
+The Pi-GPIO trigger input (Rev 2: Pi GPIO 26 → PA27; StimHAT /
+LaserDriverHAT: Pi GPIO 18 → PA4) is live from boot — there is no arm
+command.  The BNC TRIG IN (J6 → U8 → PA26 on Rev 2, PA21 on the new HATs)
+fires the same way.
 
 Because the protocol is binary you can't drive it from a terminal like
 `picocom`. Use the round-trip smoke tool — it reuses the Pi-side codec
@@ -333,5 +368,20 @@ Rev 2 HAT:
 | 22        | GPIO 25       | `SWDIO`        | PA19      |
 | 37        | GPIO 26       | `PI_TRIGGER`   | PA27      |
 
-Full design map: `LaserHAT/CLAUDE.md` (Rev 2 MCU pin map) and
-`LaserHAT/REV2_NOTES.md`.
+StimHAT and LaserDriverHAT (same Pi header use on both):
+
+| Pi pin    | Pi GPIO       | HAT signal     | MSPM0 pin |
+| --------- | ------------- | -------------- | --------- |
+| 3 / 5     | GPIO 2 / 3    | `I2C_SDA/SCL`  | PA0 / PA1 (OLED bonnet bus; MCU idle) |
+| 8         | GPIO 14 (TX)  | `PI_TXD`       | PA9 (UART1 RX) |
+| 10        | GPIO 15 (RX)  | `PI_RXD`       | PA8 (UART1 TX) |
+| 12        | GPIO 18       | `PI_TRIGGER`   | PA4       |
+| 18        | GPIO 24       | `SWCLK`        | PA20      |
+| 19        | GPIO 10       | `MCU_PWR_EN`   | — (load switch) |
+| 21        | GPIO 9        | `NRST`         | NRST      |
+| 22        | GPIO 25       | `SWDIO`        | PA19      |
+
+Full design maps: `LaserHAT/CLAUDE.md` (Rev 2 MCU pin map),
+`LaserHAT/REV2_NOTES.md`, `LaserHAT/StimHAT/README.md` and
+`LaserHAT/LaserDriverHAT/README.md` ("MCU pin map"); `Firmware/CLAUDE.md`
+has all three side by side.
