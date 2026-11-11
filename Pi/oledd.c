@@ -585,20 +585,32 @@ int main(void)
         return 1;
     }
     if (panel_auto) {
+        /* The unit starts ~1 s into boot, before udev has made /dev/gpiochip*
+         * group-readable, so the GPIO4 open fails at first: keep trying for
+         * ~10 s (also covers a slow module).  -1 = nothing answered yet,
+         * -2 = GPIO4 not usable (permissions, or another owner). */
         int det = -1;
-        for (int tries = 0; running && tries < 25; tries++) {   /* ~5 s for a slow module */
+        for (int tries = 0; running && tries < 50; tries++) {
             det = detect_panel(i2c);
-            if (det != -1)
+            if (det >= 0)
                 break;
             sleep_ms(200);
         }
-        if (det == 1)
+        if (det == 1) {
             panel_ssd1306 = 1;
-        else if (det == -1)
+        } else if (det == -1) {
             fprintf(stderr, "oledd: no panel answers at 0x%02x; assuming the bonnet\n", I2C_ADDR);
-        else if (det == -2)
-            fprintf(stderr, "oledd: GPIO4 unavailable, cannot detect the panel; assuming the bonnet "
-                            "(set LASERHAT_OLED_PANEL)\n");
+        } else if (det == -2) {
+            /* No reset line to probe with: fall back to the status byte's
+             * reserved low bits, which differ in practice (0x41 SSD1305
+             * bonnet, 0x42 SSD1306 module). */
+            int st = oled_status(i2c);
+            if (st >= 0 && (st & 0x0F) == 0x02)
+                panel_ssd1306 = 1;
+            fprintf(stderr, "oledd: GPIO4 unavailable for the reset probe; status byte 0x%02x -> %s "
+                            "(set LASERHAT_OLED_PANEL to override)\n",
+                    st < 0 ? 0 : st, panel_ssd1306 ? "SSD1306 module" : "SSD1305 bonnet");
+        }
     }
     col_offset = panel_ssd1306 ? 0 : 4;
     fprintf(stderr, "oledd: panel %s%s\n", panel_ssd1306 ? "ssd1306 128x32 (J10 module)" : "ssd1305 (Adafruit bonnet)",
