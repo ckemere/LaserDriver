@@ -1,1 +1,3 @@
+# Python packages for the hardware scripts (kiutils: hardware/tools/path_check.py, */tools/sexpr_patch.py); install into the venv
+# that also sees KiCad's pcbnew bindings.  The Pi software has no requirements file (see pi/README.md).
 kiutils==1.4.8

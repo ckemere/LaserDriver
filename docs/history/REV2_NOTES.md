@@ -1,5 +1,10 @@
 # LaserHAT Rev 2 — design notes
 
+> **Archived board (2026-11-13).** The Rev 2 HAT (`LaserDriver.kicad_*`), `LaserDaughter/` and `EStimDaughter/` were
+> removed from the Glance out HAT repository; they are at tag `archive/pre-glance-cleanup` under `LaserHAT/`.  Paths
+> below (`tools/`, `LaserDaughter/`, ...) are relative to that old `LaserHAT/` directory.  Their successors are
+> `hardware/StimHAT` and `hardware/LaserDriverHAT`.
+
 Rev 2 does two things:
 
 1. It fixes the Rev 1 problems collected in GitHub issue #3. The display stays an external Adafruit 128×32 OLED bonnet.
@@ -262,3 +267,49 @@ On the module, steps 3 and 5–7 are replaced by `grid_router`.
 - [ ] BNCs: check two plugs side by side (15.3 mm centres). Check one 031-5431/5540 and one 031-5539 against a 1:1 print of the footprint.
 - [ ] Confirm the module stack height (8.5 mm socket plus header) against the OLED bonnet and the BNC bodies.
 - [ ] The U7 and logo footprints come from the `ELEC327-Kicad` library, which isn't in this machine's library table. The footprints are embedded in the board, so this only matters for library updates.
+
+---
+
+## Appendix: Rev 2 MCU pin map (U7 MSPM0G3507 RHB, rot −90)
+
+Moved here from `LaserHAT/CLAUDE.md` on 2026-11-13 when the Rev 2 HAT was archived; it is the source of truth for
+`firmware/board_rev2.h` (`make BOARD=rev2`).  It supersedes the pin map section near the top of this file where they
+differ.
+
+| Pin | Port | Net | Function |
+|---|---|---|---|
+| 1, 2 | PA0, PA1 | I2C_SDA, I2C_SCL | I2C0 → Pi GPIO2/3 (OLED bonnet). Only fail-safe OD pins: keep here |
+| 3 | NRST | GPIO23 net | reset ← Pi GPIO23 (J1.16), R3 47k / C3 10n, JP4 RTS_NRST |
+| 6 / 32 | PA2 / VCORE | ROSC / VCORE | R4 100k 0.1 % / C4 |
+| 7, 8, 9 | PA3–PA5 | — | spare |
+| 10 | PA6 | DB_GPIO | J8.3 FAULT_n → **TIMA0_FAULT0**-capable pin; the firmware uses it as a falling-edge GPIO IRQ that kills EN/CATH/RELEASE (the e-stim lines are GPIO-driven, so the timer's own kill would not reach them); J8 pins 3/5 swapped 2026-09-29 |
+| 11 | PA7 | DB_PWM_A | J8.5 EN, **TIMA0_CCP1** |
+| 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | **UART1** TX/RX ↔ Pi GPIO15/14 |
+| 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 ↔ CH340N (BSL) — fixed |
+| 16 | PA12 | DB_PWM_B | J8.4 CATH, **TIMA0_CCP3** (independent channel, not a complement) |
+| 17 / 18 / 20 | PA13 / PA14 / PA16 | BUTTON4 / 2 / 3 | SW7 wheel roll / push / roll |
+| 19 | PA15 | DB_DAC | J9.3 DAC0 (e-stim RELEASE) — fixed |
+| 21 | PA17 | DB_ADC_A | J9.4 ADC1.2 (e-stim bit-banged I²C SDA; PA17 only muxes I2C1_SCL, so hardware I2C1 needs a pin move — see REV2_NOTES) |
+| 22 | PA18 | BSL_INVOKE | SW6 (active **high**) — fixed |
+| 23, 24 | PA19, PA20 | SWDIO, SWCLK | ← Pi GPIO25 / GPIO24 (swapped vs Rev 1) — fixed MCU side |
+| 25 | PA21 | BUTTON1 | SW8 BACK |
+| 26 | PA22 | DB_ADC_B | J9.5 ADC1.8 (e-stim bit-banged I²C SCL; no I2C function on PA22) |
+| 27 | PA23 | BUTTON5 | SW9 FIRE |
+| 28 | PA24 | LED_MCU | D7 |
+| 29 / 30 / 31 | PA25 / PA26 / PA27 | MCU_STIM_OUT / MCU_STIM_IN / PI_TRIGGER | U8 → J7 (TIMG12) / J6 → U8 (TIMG8 capture) / ← Pi GPIO26 (TIMG7) |
+
+- Buttons SW7/SW8/SW9 are **active low** (commons on GND, internal pull-ups); SW6 stays active high.
+- PWM_A/B and FAULT must stay on one TIMA timer (shared timebase + hardware fault kill).
+- Pi header vs Rev 1: SWD swapped (GPIO24 = SWCLK, GPIO25 = SWDIO); NRST ↔ MCU_POWER_EN swapped
+  (GPIO23 = NRST, GPIO18 = MCU_POWER_EN); trigger is GPIO26 → PA27.  Flash Rev 2 with
+  `make flash` (Rev 2 is the default since 2026-10-14; `HAT_REV=1` for the old board; `pi/power_cycle.py` reads LASERHAT_*_PIN).
+- **Firmware is Rev 2 since 2026-10-14** (`firmware/board.h`; HAT bring-up build = tag `v0.2.0-rc1`).  The same day
+  the module firmware followed: LASER mode = TIMA0 PWM + DAC0 setpoint on J9.3 (`CMD_LASER_CURRENT`, VDDA ref, default
+  ≈100 mA; DAC0 is zero between pulses, per the Q1 cascode rule) + ADC1 readback of J9.4/J9.5; ESTIM mode = spec §7 sequencing on EN/CATH/RELEASE as GPIOs, DAC60501 over
+  bit-banged I²C (`CMD_ESTIM_CURRENT`), FAULT_n GPIO-IRQ kill + latch (`EVT_FAULT`, `CMD_CLEAR_FAULT`).  Boot blink is
+  ~2 s (was 4 s; it only mattered on Rev 1, where SWDIO became the trigger after it).  Rev 1 firmware = tag `firmware-rev1`.
+  **v0.2.0-rc6 adds `CMD_GET_VERSION` → `RSP_VERSION`** (`PROTO_VERSION` 2 + the build's `git describe` string, = the deb's
+  VERSION file): the broker probes it once per MCU boot and reports `fw_version`/`fw_ok`; web banner + OLED `FW!` chip +
+  `laserhat-flash` verification flag an un-reflashed board (the 2026-10-20 "no laser current" case: MCU still on rc1).
+- OLED bonnet (Adafruit 4567) runs only on 3.3 V and ties header pins 1/17 together itself.
+- J8/J9 pad positions and pinout are frozen (module contract, spec §7).

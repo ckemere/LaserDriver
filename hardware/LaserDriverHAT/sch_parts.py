@@ -11,7 +11,7 @@ Core: the StimHAT's (refs as on the Rev 2 HAT, see ../StimHAT/README.md), unchan
     from PA15 to PA6 (pin 10); PA3, PA24 and PA25 are spare (the laser driver has no fault output: J8.3 was unconnected
     on the module)
   * J7 is "SYNC OUT" (PA17 mirrors the laser pulse envelope through U8B, as before)
-Laser driver: every part of ../LaserDaughter (rev 2.0, 2026-10-01) with its values, footprints and LCSC codes
+Laser driver: every part of ../LaserDaughter (rev 2.0, 2026-10-01; archived, tag archive/pre-glance-cleanup) with its values, footprints and LCSC codes
 (../tools/lcsc_parts.py LASER) and the module's own connections; refs kept where the HAT core leaves them free
 (D1-D4, J2, J4, L1, Q1, Q2, Rs1, SW5), +200 otherwise (R1-R6 / R11 / R12 -> R201-R206 / R211 / R212, C8 / C9 / C11 / C12
 -> C208 / C209 / C211 / C212, U2 / U3 -> U202 / U203, J5 -> J205).  The module's header sockets J1 (HAT_J8) and J3

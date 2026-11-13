@@ -1,6 +1,6 @@
 # SimpleBatteryPack — ±V battery board for the e-stim module, without the charger
 
-Rev A, 2026-10-31.  The BatteryPack (`../BatteryPack`, rev E) with the charging infrastructure cut out.  One 100 × 100 mm
+Rev A, 2026-10-31.  The BatteryPack (`../BatteryPack`, rev E; archived, tag `archive/pre-glance-cleanup`) with the charging infrastructure cut out.  One 100 × 100 mm
 board carries two off-the-shelf 4S hobby packs (LiPo or Li-ion with an XT60 discharge plug, 850–1550 mAh class, about
 70–76 × 35 × 30–37 mm) held under it by the case, permanently in series, and gives the e-stim module +V / 0 V / −V
 (12.0–16.8 V per rail) on a 4-pin JST-PH.  One toggle does ON / OFF.  **The packs are charged off the board**: unplug the
