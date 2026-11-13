@@ -74,26 +74,27 @@
 /* ----- Buttons: active LOW (commons on GND), internal pull-ups -----
  * SW7 = 5-way joystick (mounted at 135 deg), SW9 = FIRE.
  * Bit order in the button mask (EVT_BUTTON / RSP_STATUS, see protocol.h):
- *   bit 0  BUTTON1  PA12  joystick left   = BACK
- *   bit 1  BUTTON2  PA14  joystick centre = SELECT
- *   bit 2  BUTTON3  PA15  joystick down   (Rev 2's wheel roll D slot)
+ *   bit 0  BUTTON1  PA6   joystick left   = BACK   (production board 2026-11-01: PA6 / PA12 / PA13 / PA14,
+ *                                                   the same joystick pins as the LaserDriverHAT; PA15 unconnected)
+ *   bit 1  BUTTON2  PA13  joystick centre = SELECT
+ *   bit 2  BUTTON3  PA14  joystick down   (Rev 2's wheel roll D slot)
  *   bit 3  BUTTON4  PA7   joystick up     (Rev 2's wheel roll B slot)
  *   bit 4  BUTTON5  PA16  SW9 FIRE
  *   bit 5  BSL      PA18  SW6, active HIGH (read-only here)
- *   bit 6  BUTTON6  PA13  joystick right  (new on this board)
+ *   bit 6  BUTTON6  PA12  joystick right  (new on this board)
  */
-#define BOARD_BUTTON1_PIN           (1u << 12)
-#define BOARD_BUTTON1_PINCM         IOMUX_PINCM34
-#define BOARD_BUTTON2_PIN           (1u << 14)
-#define BOARD_BUTTON2_PINCM         IOMUX_PINCM36
-#define BOARD_BUTTON3_PIN           (1u << 15)
-#define BOARD_BUTTON3_PINCM         IOMUX_PINCM37
+#define BOARD_BUTTON1_PIN           (1u << 6)
+#define BOARD_BUTTON1_PINCM         IOMUX_PINCM11
+#define BOARD_BUTTON2_PIN           (1u << 13)
+#define BOARD_BUTTON2_PINCM         IOMUX_PINCM35
+#define BOARD_BUTTON3_PIN           (1u << 14)
+#define BOARD_BUTTON3_PINCM         IOMUX_PINCM36
 #define BOARD_BUTTON4_PIN           (1u << 7)
 #define BOARD_BUTTON4_PINCM         IOMUX_PINCM14
 #define BOARD_BUTTON5_PIN           (1u << 16)
 #define BOARD_BUTTON5_PINCM         IOMUX_PINCM38
-#define BOARD_BUTTON6_PIN           (1u << 13)
-#define BOARD_BUTTON6_PINCM         IOMUX_PINCM35
+#define BOARD_BUTTON6_PIN           (1u << 12)
+#define BOARD_BUTTON6_PINCM         IOMUX_PINCM34
 #define BOARD_BUTTON_MASK           (BOARD_BUTTON1_PIN | BOARD_BUTTON2_PIN | \
                                      BOARD_BUTTON3_PIN | BOARD_BUTTON4_PIN | \
                                      BOARD_BUTTON5_PIN | BOARD_BUTTON6_PIN)
@@ -132,7 +133,7 @@
 #define BOARD_USB_UART_RX_FUNC      IOMUX_PINCM22_PF_UART0_RX
 
 /* ----- Spare pins (no copper): driven low.  Mask and PINCM list must agree. ----- */
-#define BOARD_SPARE_PINS            ((1u << 3) | (1u << 6))
-#define BOARD_SPARE_PINCMS          IOMUX_PINCM8, IOMUX_PINCM11   /* PA3, PA6 */
+#define BOARD_SPARE_PINS            ((1u << 3) | (1u << 15))
+#define BOARD_SPARE_PINCMS          IOMUX_PINCM8, IOMUX_PINCM37   /* PA3, PA15 (unconnected on the production board) */
 
 #endif /* BOARD_STIM_H */

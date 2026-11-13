@@ -5,7 +5,7 @@ USB-UART, USB-C power path, HAT ID EEPROM, joystick / FIRE / BSL buttons, LEDs, 
 owl — kept footprint for footprint and track for track, the isolated e-stim stimulator removed, and the laser-diode driver
 of the plug-in module `../LaserDaughter/` (archived, tag `archive/pre-glance-cleanup`; rev 2.0, ordered 2026-10-01) brought in as its hand-made layout block.  The
 Adafruit 4567 OLED bonnet stacks on the Pi header as on the StimHAT.  **Status: placed, the laser block's own copper
-intact; the seven connections between the block and the HAT core are left for hand routing (below).  Not ordered.**
+intact; the seven connections between the block and the HAT core were hand-routed by the user.  Ordered 2026-11-01 (rev 3), verified 2026-11-11 (laser output, buttons, displays).**
 
 ## Files
 
@@ -66,7 +66,7 @@ Net names: the module's internal nets keep their names (`/SW`, `/IREF`, `/DUMMY_
 `/LaserDrive`, `/IDrive`, `+12V`, `LASER_V`); its auto-named nets are `/LD_CATHODE` (Net-(J2-LD_Cathode)), `/PD_ANODE`,
 `/PD_CATHODE`, `/Q2_GATE` (Net-(Q2-G)) and `/BOOST_FB` (Net-(U2-FB)); the header lines keep the CLAUDE.md names
 `DB_PWM_A`, `DB_PWM_B`, `DB_DAC`, `DB_ADC_A`, `DB_ADC_B`.  There is no DB_GPIO / FAULT line: the laser module never had a
-fault output (its J8.3 was unconnected).  Parts: 83 symbols, 67 machine placements, 44 JLC BOM lines.
+fault output (its J8.3 was unconnected).  Parts: 84 symbols (incl. the owl G1), 67 machine placements, 44 JLC BOM lines.
 
 ## MCU pin map (U7 MSPM0G1507, VQFN-32 RHB)
 
@@ -156,7 +156,7 @@ isolators were left behind (their nets and the MSPM0_3V3 supply branches to U101
 `gen_schematic.py` → netcheck **CONNECTIVITY OK** → ERC **0 violations** → netlist → `pcb_sync.py --keep-tracks` (no part
 re-parked: the imported footprints already carried the new refs and the module's footprint ids) → `fresh_uuids.py` →
 `stamp_fields.py` (LCSC fields: 0 mismatches vs `sch_parts`) → `../tools/fill_zones.py` → `../tools/path_check.py`
-**83 symbols, 0 path mismatches** → `../tools/sync_check.py` **83 parts, 0 differences** → DRC **0 errors**, 7 unconnected
+**84 symbols, 0 path mismatches** → `../tools/sync_check.py` **84 parts, 0 differences** → DRC **0 errors**, 0 unconnected (production board; 7 unconnected before the user's hand routing)
 (the list above), warnings: 6 track_dangling (the block stubs above), 3 silk_over_copper (the owl's silk on J1's mask
 openings, as on the StimHAT).  The LaserDaughter's own DRC has one error, `starved_thermal` on R2 pad 2 (one spoke to its
 GND pour); the same pad is R202.2 here, so `LaserDriverHAT.kicad_dru` allows one spoke on R202 (`laser_r202_one_spoke`;

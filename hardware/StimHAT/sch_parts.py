@@ -127,8 +127,8 @@ PARTS = [
          # the west / south sides, STIM_IN on the TIMG8 capture pin; PI_TRIGGER on PA4 (pin 8) from Pi GPIO18 (J1.12); RELEASE_H
          # on PA25 (pin 29) in U101's pin order; PA3 (pin 7) and PA6 (pin 10) spare (2026-10-30)
          nets={"1": "I2C_SDA", "2": "I2C_SCL", "3": "NRST", "4": "MSPM0_3V3", "5": "GND", "6": "ROSC",
-               "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": None, "11": "BUTTON4", "12": "PI_RXD", "13": "PI_TXD",
-               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON1", "17": "BUTTON6", "18": "BUTTON2", "19": "BUTTON3",
+               "7": None, "8": "PI_TRIGGER", "9": "LED_MCU", "10": "BUTTON1", "11": "BUTTON4", "12": "PI_RXD", "13": "PI_TXD",
+               "14": "MCU_UART_TX", "15": "MCU_UART_RX", "16": "BUTTON6", "17": "BUTTON2", "18": "BUTTON3", "19": None,
                "20": "BUTTON5", "21": "MCU_STIM_OUT", "22": "BSL_INVOKE", "23": "SWDIO", "24": "SWCLK", "25": "MCU_STIM_IN",
                "26": "FAULT_H", "27": "CATH_H", "28": "EN_H", "29": "RELEASE_H", "30": "SDA_H", "31": "SCL_H", "32": "VCORE",
                "33": "GND"}),

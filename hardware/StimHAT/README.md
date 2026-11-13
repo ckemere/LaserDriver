@@ -405,11 +405,11 @@ positions: PWM, fault and ADC functions sit on the isolator-facing pins.
 | 7 | PA3 | spare | I2C1, TIMG8 |
 | 8 | PA4 | PI_TRIGGER | GPIO IRQ, ← Pi GPIO18 (header pin 12, directly above U7; was GPIO26 / pin 37 and PA27 until 2026-10-29) |
 | 9 | PA5 | LED_MCU | GPIO, to D7 on the back (user's choice after routing) |
-| 10 | PA6 | spare | |
+| 10 | PA6 | BUTTON1 (left / BACK) | GPIO (production board 2026-11-01: the joystick moved off PA15 onto the LaserDriverHAT's pins, so one firmware button map serves both HATs) |
 | 11 | PA7 | BUTTON4 (up) | GPIO, runs on the back from a via beside pin 11 (swapped with BUTTON1 on the user's routing, 2026-10-29) |
 | 12, 13 | PA8, PA9 | PI_RXD, PI_TXD | UART1 (only PA8/9 or PA17/18), fixed |
 | 14, 15 | PA10, PA11 | MCU_UART_TX/RX | UART0 (BSL), fixed |
-| 16, 17, 18, 19 | PA12, PA13, PA14, PA15 | BUTTON1 (left / BACK), BUTTON6 (right), BUTTON2 (centre), BUTTON3 (down) | GPIO; with pin 11 a five-track 45° fan from U7's south-west corner to SW7 (pads 4, 6 on the north-west column, 3, 2, 1 on the south-east one).  PA15 is DAC0_OUT: a laser variant that needs the DAC gives up one joystick direction |
+| 16, 17, 18 / 19 | PA12, PA13, PA14 / PA15 | BUTTON6 (right), BUTTON2 (centre), BUTTON3 (down) / unconnected | GPIO; with pin 11 a five-track 45° fan from U7's south-west corner to SW7 (pads 4, 6 on the north-west column, 3, 2, 1 on the south-east one).  PA15 is DAC0_OUT: a laser variant that needs the DAC gives up one joystick direction |
 | 20 | PA16 | BUTTON5 (FIRE) | GPIO, faces SW9 |
 | 21 | PA17 | MCU_STIM_OUT | GPIO (TIMA1_C0 / TIMG7_C0 available) |
 | 22 / 23 / 24 | PA18 / PA19 / PA20 | BSL_INVOKE / SWDIO / SWCLK | fixed |
