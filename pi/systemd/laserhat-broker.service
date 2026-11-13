@@ -1,0 +1,60 @@
+# LaserHAT broker — the single owner of /dev/ttyS0 and the trigger GPIO.
+#
+# Runs laserhat-brokerd (pi/brokerd/, C): speaks the binary protocol to the
+# MCU, serves the OLED GUI and web GUI over a Unix-domain socket at
+# /run/laserhat/broker.sock, and turns UDP trigger datagrams from the
+# experiment machine into edges on the board's trigger line (GPIO 26 -> PA27
+# on the Rev 2 HAT, GPIO 18 -> PA4 on the StimHAT / LaserDriverHAT;
+# pi/brokerd/README.md).
+#
+# The board comes from the HAT ID EEPROM (/proc/device-tree/hat, see
+# pi/hat_id.py and `laserhat-eeprom read`).  For a board whose EEPROM is not
+# programmed, set LASERHAT_BOARD=rev2|stim|laser (and, rarely,
+# LASERHAT_TRIGGER_PIN=N) in /etc/default/laserhat; laserhat-flash reads the
+# same file.
+#
+# Installed by the laserhat package to /usr/bin; the 'laserhat' system user
+# is created in the package postinst.
+#
+# The UDP listener binds only the static wired address (192.168.17.10, see
+# network/laserhat-eth0.nmconnection), so ordinary wifi clients can't reach
+# it.  (Linux accepts a packet for that address on any interface, so a host
+# that deliberately routes 192.168.17.10 via the Pi's wifi address could;
+# add --udp-allow <rig IP> to accept triggers from the recording rig only.)
+# It binds even while the cable is unplugged (IP_FREEBIND).  The trigger
+# thread runs SCHED_FIFO 80 pinned to CPU 3.
+#
+# Fallback to the Python broker (no UDP triggers): swap the ExecStart=
+# lines.
+
+[Unit]
+Description=LaserHAT broker (owns /dev/ttyS0 + trigger GPIO, serves GUIs, UDP triggers)
+After=dev-ttyS0.device
+Wants=dev-ttyS0.device
+
+[Service]
+Type=simple
+User=laserhat
+Group=laserhat
+# Serial port access; /dev/gpiomem needs the gpio group.
+SupplementaryGroups=dialout gpio
+WorkingDirectory=/usr/lib/laserhat
+# systemd creates /run/laserhat (0755, owned by User) and exports it.
+RuntimeDirectory=laserhat
+RuntimeDirectoryMode=0755
+Environment=LASERHAT_SOCK=/run/laserhat/broker.sock
+Environment=LASERHAT_UDP=192.168.17.10:17017
+# Optional: LASERHAT_BOARD / LASERHAT_TRIGGER_PIN for an unprogrammed EEPROM.
+EnvironmentFile=-/etc/default/laserhat
+# Let the unprivileged trigger thread go SCHED_FIFO and lock its memory.
+LimitRTPRIO=80
+LimitMEMLOCK=infinity
+ExecStart=/usr/bin/laserhat-brokerd --udp ${LASERHAT_UDP} --rt-prio 80 --cpu 3
+#ExecStart=/usr/bin/python3 broker.py
+Restart=on-failure
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

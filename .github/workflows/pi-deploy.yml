@@ -14,9 +14,9 @@ on:
   push:
     branches: [main]
     tags: ['v*']
-    paths-ignore: ['PCB/**', 'Datasheets/**', 'LaserHAT/**']
+    paths-ignore: ['hardware/**', 'docs/**']
   pull_request:
-    paths-ignore: ['PCB/**', 'Datasheets/**', 'LaserHAT/**']
+    paths-ignore: ['hardware/**', 'docs/**']
   # Manual run from any branch.  If release_tag is set (e.g. v0.1.0-rc1),
   # the release/golden-image jobs run too: the release job creates that
   # tag at the built commit server-side, so no local tag push is needed.
@@ -39,25 +39,25 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Build oledd (native, warnings fatal)
-        run: gcc -O2 -Wall -Wextra -Werror -o /tmp/oledd Pi/oledd.c
+        run: gcc -O2 -Wall -Wextra -Werror -o /tmp/oledd pi/oledd.c
       - name: Build render test
-        run: gcc -O2 -Wall -Wextra -Werror -o /tmp/render-test Pi/tests/render-test.c
+        run: gcc -O2 -Wall -Wextra -Werror -o /tmp/render-test pi/tests/render-test.c
       - name: Compare against golden output
-        run: /tmp/render-test | diff - Pi/tests/render-expected.txt
+        run: /tmp/render-test | diff - pi/tests/render-expected.txt
 
   python-test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
       - name: Build laserhat-brokerd (native, warnings fatal)
-        run: make -C Pi/brokerd
+        run: make -C pi/brokerd
       - name: Install test dependencies
         run: pip install pyserial flask pytest
       - name: Run Pi test suite (codec, HAT EEPROM + board/pin resolution, both brokers' integration + boards + web, UDP triggers)
         working-directory: Pi
         run: python -m pytest tests/ -q
       - name: C <-> Python protocol cross-check
-        run: python Firmware/host_tools/proto_crosscheck.py
+        run: python firmware/host_tools/proto_crosscheck.py
 
   build-deb:
     needs: [render-test, python-test]
@@ -81,7 +81,7 @@ jobs:
       # (make -f Makefile.gcc BOARD=rev2|stim|laser) with the same toolchain.
       - name: Build package
         run: |
-          Pi/packaging/build-deb.sh ${{ matrix.arch }} ${{ matrix.cc }}
+          pi/packaging/build-deb.sh ${{ matrix.arch }} ${{ matrix.cc }}
           dpkg-deb -I laserhat_*_${{ matrix.arch }}.deb
       - name: Check the package carries every board's firmware + the tools
         run: |
@@ -117,10 +117,10 @@ jobs:
         run: |
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             gh release upload "$RELEASE_TAG" --clobber \
-              laserhat_*.deb Pi/packaging/inject-laserhat.sh
+              laserhat_*.deb pi/packaging/inject-laserhat.sh
           else
             gh release create "$RELEASE_TAG" \
-              laserhat_*.deb Pi/packaging/inject-laserhat.sh \
+              laserhat_*.deb pi/packaging/inject-laserhat.sh \
               --target "$GITHUB_SHA" \
               --title "$RELEASE_TAG" --generate-notes
           fi
@@ -174,7 +174,7 @@ jobs:
           sudo resize2fs "${LOOP}p2"
           sudo losetup -d "$LOOP"
       - name: Inject laserhat (files, user, services, I2C, static IP)
-        run: sudo bash Pi/packaging/inject-laserhat.sh raspios.img laserhat_*_${{ matrix.arch }}.deb
+        run: sudo bash pi/packaging/inject-laserhat.sh raspios.img laserhat_*_${{ matrix.arch }}.deb
       - name: Install apt dependencies into the image (ARM chroot)
         run: |
           LOOP=$(sudo losetup -fP --show raspios.img)

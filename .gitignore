@@ -17,22 +17,15 @@
 **/sim/results/
 
 # unzipped Gerbers (the zip next to them is the deliverable)
-LaserHAT/fab/*/gerbers/
+hardware/fab/*/gerbers/
 
 # KiCad lock and autosave files
 **/~*.lck
 **/_autosave-*
 **/#auto_saved_files#
 
-# e-stim autorouter intermediates (placed boards, .dsn/.ses, DRC reports)
-LaserHAT/EStimDaughter/route/
-
-# battery pack autorouter intermediates (dsn/ses, logs, DRC json)
-LaserHAT/BatteryPack/route/
-LaserHAT/BatteryPack/parts/ds/
-
 # simple battery pack autorouter intermediates and board snapshots
-LaserHAT/SimpleBatteryPack/route/
+hardware/SimpleBatteryPack/route/
 
 # Fabrication Toolkit's automatic backups of earlier outputs
-LaserHAT/**/production/backups/
+hardware/**/production/backups/

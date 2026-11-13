@@ -1,0 +1,142 @@
+"""Smoke test for the migrated web app against fake_mcu + broker.
+
+Drives web_app.create_app(HatClient) via Flask's test client and checks
+the API routes round-trip through the broker to the fake MCU.
+
+Run:  python3 pi/tests/test_web.py
+"""
+
+import os
+import subprocess
+import sys
+import tempfile
+import time
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+PI = os.path.join(HERE, "..")
+sys.path.insert(0, PI)
+
+sys.path.insert(0, HERE)
+
+import hat_client  # noqa: E402
+import web_app     # noqa: E402
+from test_integration import build_brokerd, c_broker, python_broker  # noqa: E402
+
+
+def _wait(pred, timeout=5.0):
+    end = time.monotonic() + timeout
+    while time.monotonic() < end:
+        if pred():
+            return True
+        time.sleep(0.02)
+    return False
+
+
+def run(broker_cmd=python_broker) -> int:
+    py = sys.executable
+    sock = f"/tmp/lh_web_{os.getpid()}.sock"
+    fake = subprocess.Popen([py, os.path.join(PI, "fake_mcu.py")],
+                            stdout=subprocess.PIPE, text=True)
+    slave = fake.stdout.readline().strip()
+    broker = subprocess.Popen(broker_cmd(slave, sock))
+    failures = []
+    try:
+        assert _wait(lambda: os.path.exists(sock)), "no broker socket"
+        client = hat_client.HatClient(sock)
+        assert _wait(lambda: client.get_state() is not None), "MCU not alive"
+
+        app = web_app.create_app(client)
+        c = app.test_client()
+
+        st = c.get("/api/state").get_json()
+        if not st.get("ok"):
+            failures.append(f"/api/state not ok: {st}")
+        # firmware identity reaches the page (probe completes shortly after alive)
+        if not _wait(lambda: c.get("/api/state").get_json().get("fw_ok") is not None):
+            failures.append("fw_ok never left null via /api/state")
+        st = c.get("/api/state").get_json()
+        for key in ("fw_version", "fw_proto", "fw_expected", "fw_ok", "fw_label",
+                    "fw_board", "board", "board_label", "board_source", "modes"):
+            if key not in st:
+                failures.append(f"/api/state lacks {key}")
+        if st.get("fw_version") != "fake" or st.get("fw_ok") is not True:
+            failures.append(f"unexpected firmware identity in /api/state: "
+                            f"{st.get('fw_version')} ok={st.get('fw_ok')}")
+        # no HAT EEPROM in the test environment: Rev 2 fallback, rev2 fake
+        if (st.get("board"), st.get("board_source"), st.get("fw_board"),
+                st.get("board_label"), st.get("modes")) != (
+                "rev2", "default", "rev2", "LaserHAT Rev 2", ["laser", "estim"]):
+            failures.append(f"unexpected board identity in /api/state: {st}")
+        page = c.get("/").get_data(as_text=True)
+        if 'id="board-name"' not in page or 'id="btn7"' not in page:
+            failures.append("page lacks the board name / 6th button elements")
+
+        r = c.post("/api/set/i", json={"value": 150}).get_json()
+        if not r.get("ok"):
+            failures.append(f"set i failed: {r}")
+        if not _wait(lambda: c.get("/api/state").get_json().get("intensity") == 150):
+            failures.append("intensity not reflected via /api/state")
+
+        r = c.post("/api/set/i", json={"value": 99999}).get_json()
+        if r.get("ok"):
+            failures.append("out-of-range set wrongly ok")
+
+        r = c.post("/api/trigger").get_json()
+        if not r.get("ok"):
+            failures.append(f"trigger failed: {r}")
+
+        # No real pin off-hardware (broker.py: --no-gpio -> ok False;
+        # brokerd: --gpio sim -> ok True) — just confirm the route doesn't 500.
+        resp = c.post("/api/trigger_gpio")
+        if resp.status_code != 200:
+            failures.append(f"trigger_gpio status {resp.status_code}")
+
+        # Safe shutdown: the route drops a request file for the root-side
+        # path unit (never actually halts anything here).
+        with tempfile.TemporaryDirectory() as run_dir:
+            os.environ["LASERHAT_RUN_DIR"] = run_dir
+            try:
+                resp = c.post("/api/power", json={"action": "poweroff"})
+                if resp.status_code != 202 or not resp.get_json().get("ok"):
+                    failures.append(f"power poweroff: {resp.status_code} {resp.get_json()}")
+                if not os.path.exists(os.path.join(run_dir, "poweroff.request")):
+                    failures.append("poweroff.request not created")
+                resp = c.post("/api/power", json={"action": "halt-and-catch-fire"})
+                if resp.status_code != 400:
+                    failures.append(f"bad power action accepted: {resp.status_code}")
+            finally:
+                del os.environ["LASERHAT_RUN_DIR"]
+
+        client.close()
+    finally:
+        broker.terminate(); fake.terminate()
+        broker.wait(timeout=5); fake.wait(timeout=5)
+        try:
+            os.unlink(sock)
+        except OSError:
+            pass
+
+    if failures:
+        for f in failures:
+            print("FAIL:", f)
+        return 1
+    print("web OK: state, set+mirror, range-reject, trigger, trigger_gpio route, power")
+    return 0
+
+
+def test_web():
+    assert run() == 0
+
+
+def test_web_brokerd():
+    import pytest
+    if not build_brokerd():
+        pytest.skip("can't build laserhat-brokerd here")
+    assert run(c_broker) == 0
+
+
+if __name__ == "__main__":
+    rc = run()
+    if build_brokerd():
+        rc |= run(c_broker)
+    raise SystemExit(rc)

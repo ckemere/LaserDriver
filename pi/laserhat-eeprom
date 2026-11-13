@@ -1,0 +1,324 @@
+#!/usr/bin/env python3
+"""laserhat-eeprom -- read, build and program the HAT ID EEPROM that tells the
+Pi which LaserHAT-family board it sits on.
+
+    laserhat-eeprom read                 what the Pi firmware saw at boot
+                                         (/proc/device-tree/hat) and the board,
+                                         pins and firmware image that follow
+    sudo laserhat-eeprom read --chip     decode the EEPROM itself over I2C
+    laserhat-eeprom make stim [-o F]     write the EEPROM image file for a board
+    sudo laserhat-eeprom write stim --yes
+                                         program U1 (once per new board)
+
+Boards: rev2 (LaserHAT Rev 2), stim (StimHAT), laser (LaserDriverHAT).
+Every image gets a fresh random UUID unless --uuid is given.
+
+Programming (`write`), once per board:
+
+  * JP1 is the EEPROM's write protect: closed ties WP to 3.3 V (protected),
+    open lets WP float low (writable).  Open JP1, program, close JP1.
+  * The ID EEPROM sits on ID_SD / ID_SC = GPIO 0 / 1, which Linux does not
+    normally expose (the firmware reads them at boot, then leaves them
+    alone).  By default this tool loads the bit-banged `i2c-gpio` overlay on
+    GPIO 0/1 as bus 9 for the duration of the write
+    (`dtoverlay i2c-gpio i2c_gpio_sda=0 i2c_gpio_scl=1 bus=9`, the same as the
+    Raspberry Pi hats repo's eepflash.sh) and removes it afterwards; this
+    works on a Pi 4 and a Pi 5 without a reboot.
+    Alternatively enable the hardware controller on those pins and pass
+    --bus 0: `dtparam=i2c_vc=on` in /boot/firmware/config.txt and reboot
+    (Pi 4: BSC0 muxed to GPIO 0/1 appears as /dev/i2c-0 -- the camera/display
+    side of the mux is /dev/i2c-10, not the one you want; Pi 5: RP1 I2C0 on
+    GPIO 0/1, also /dev/i2c-0).  Leave i2c_vc off in normal use.
+  * The Pi only reads the EEPROM at boot: reboot afterwards before
+    `laserhat-eeprom read`, the broker or laserhat-flash see the new board.
+
+Exit status: 0 ok, 1 usage / refused, 2 I/O or verify error.
+"""
+
+from __future__ import annotations
+
+import argparse
+import errno
+import os
+import shutil
+import subprocess
+import sys
+import time
+import uuid as uuidlib
+
+HERE = os.path.dirname(os.path.realpath(__file__))
+for _p in (HERE, "/usr/lib/laserhat"):
+    if os.path.exists(os.path.join(_p, "hat_id.py")):
+        sys.path.insert(0, _p)
+        break
+
+import hat_id  # noqa: E402
+
+I2C_SLAVE = 0x0703
+I2C_SLAVE_FORCE = 0x0706
+EEPROM_ADDR = 0x50
+DEFAULT_BUS = 9                     # the i2c-gpio overlay's bus number
+FW_DIR = "/usr/lib/laserhat/firmware"
+
+
+def die(msg: str, code: int = 1) -> "NoReturn":  # type: ignore[name-defined]
+    print(f"laserhat-eeprom: {msg}", file=sys.stderr)
+    raise SystemExit(code)
+
+
+# ------------------------------------------------------------------ I2C I/O
+class Eeprom:
+    """M24C32 on /dev/i2c-<bus>: 16-bit addresses, 32-byte pages, ~5 ms
+    write cycle (polled by ACK)."""
+
+    def __init__(self, bus: int, addr: int = EEPROM_ADDR):
+        import fcntl
+        self.path = f"/dev/i2c-{bus}"
+        try:
+            self.fd = os.open(self.path, os.O_RDWR)
+        except OSError as e:
+            die(f"open {self.path}: {e.strerror}", 2)
+        try:
+            fcntl.ioctl(self.fd, I2C_SLAVE, addr)
+        except OSError as e:
+            if e.errno != errno.EBUSY:
+                raise
+            fcntl.ioctl(self.fd, I2C_SLAVE_FORCE, addr)   # at24 bound: bypass it
+
+    def close(self) -> None:
+        os.close(self.fd)
+
+    def _wait_ready(self, timeout: float = 0.05) -> None:
+        end = time.monotonic() + timeout
+        while True:
+            try:
+                os.write(self.fd, b"\x00\x00")      # NACKed while writing
+                return
+            except OSError:
+                if time.monotonic() > end:
+                    raise
+                time.sleep(0.001)
+
+    def read(self, offset: int, length: int) -> bytes:
+        out = bytearray()
+        while length > 0:
+            n = min(length, 128)
+            os.write(self.fd, bytes([offset >> 8, offset & 0xFF]))
+            chunk = os.read(self.fd, n)
+            if len(chunk) != n:
+                raise OSError(errno.EIO, "short read")
+            out += chunk
+            offset += n
+            length -= n
+        return bytes(out)
+
+    def write(self, offset: int, data: bytes) -> None:
+        pos = 0
+        while pos < len(data):
+            addr = offset + pos
+            n = min(hat_id.EEPROM_PAGE - addr % hat_id.EEPROM_PAGE, len(data) - pos)
+            os.write(self.fd, bytes([addr >> 8, addr & 0xFF]) + data[pos:pos + n])
+            self._wait_ready()
+            pos += n
+
+
+def _overlay_loaded() -> bool:
+    try:
+        out = subprocess.run(["dtoverlay", "-l"], capture_output=True, text=True).stdout
+    except FileNotFoundError:
+        return False
+    return "i2c-gpio" in out
+
+
+def open_bus(bus: int, use_overlay: bool) -> bool:
+    """Make /dev/i2c-<bus> exist; True if we loaded the overlay (to remove)."""
+    if os.path.exists(f"/dev/i2c-{bus}"):
+        return False
+    if not use_overlay:
+        die(f"/dev/i2c-{bus} does not exist (dtparam=i2c_vc=on + reboot for bus 0, "
+            "or leave --bus at its default to use the i2c-gpio overlay)", 2)
+    if shutil.which("dtoverlay") is None:
+        die("dtoverlay not found (not Raspberry Pi OS?); use --bus with an "
+            "existing bus on GPIO 0/1", 2)
+    subprocess.run(["modprobe", "i2c-dev"], check=False)
+    r = subprocess.run(["dtoverlay", "i2c-gpio", "i2c_gpio_sda=0", "i2c_gpio_scl=1",
+                        f"bus={bus}"])
+    if r.returncode != 0:
+        die("loading the i2c-gpio overlay on GPIO 0/1 failed", 2)
+    for _ in range(50):
+        if os.path.exists(f"/dev/i2c-{bus}"):
+            return True
+        time.sleep(0.05)
+    die(f"/dev/i2c-{bus} did not appear after loading i2c-gpio", 2)
+
+
+def close_bus(loaded: bool) -> None:
+    if loaded and _overlay_loaded():
+        subprocess.run(["dtoverlay", "-r", "i2c-gpio"], check=False)
+
+
+# ----------------------------------------------------------------- commands
+def describe_image(img: "hat_id.EepromImage") -> str:
+    info = img.hat_info()
+    lines = [f"  format    v{img.version}, {img.numatoms} atoms, {img.eeplen} bytes",
+             f"  vendor    {img.vendor}",
+             f"  product   {img.product} (id {img.product_id:#06x}, ver {img.product_ver:#06x})"
+             if img.product_id is not None else "  product   (no vendor atom)",
+             f"  uuid      {img.uuid}",
+             f"  board     {info.board} ({hat_id.label(info.board)})"]
+    for a in img.atoms:
+        lines.append(f"  atom {a['count']}    type {a['type']:#06x}, dlen {a['dlen']}, "
+                     f"crc {a['crc']:#06x} ok")
+    if img.gpio_map is not None:
+        used = [g for g in range(28) if img.gpio_map[2 + g] & 0x80]
+        lines.append(f"  gpio map  bank_drive {img.gpio_map[0]:#04x}, power {img.gpio_map[1]:#04x}, "
+                     f"pins used: {used or 'none'}")
+    return "\n".join(lines)
+
+
+def cmd_read(a) -> int:
+    if a.chip:
+        if os.geteuid() != 0:
+            die("--chip needs root (sudo)")
+        loaded = open_bus(a.bus, a.bus == DEFAULT_BUS)
+        try:
+            dev = Eeprom(a.bus)
+            try:
+                raw = dev.read(0, 512)
+            finally:
+                dev.close()
+        except OSError as e:
+            die(f"reading the EEPROM on /dev/i2c-{a.bus}: {e} (fitted? powered?)", 2)
+        finally:
+            close_bus(loaded)
+        try:
+            img = hat_id.parse_eeprom(raw)
+        except ValueError as e:
+            print(f"EEPROM on /dev/i2c-{a.bus} @0x50: not a valid HAT image ({e})")
+            print("  first bytes:", raw[:16].hex(" "))
+            return 2
+        print(f"EEPROM on /dev/i2c-{a.bus} @0x50:")
+        print(describe_image(img))
+        return 0
+
+    hat = hat_id.read_hat()
+    d = hat_id.hat_dir()
+    if hat is None:
+        print(f"HAT EEPROM: none seen at boot ({d} missing): blank / unprogrammed "
+              "EEPROM, no HAT, or the board was fitted after boot")
+    else:
+        print(f"HAT EEPROM (as the Pi firmware read it at boot, {d}):")
+        print(f"  vendor    {hat.vendor}")
+        print(f"  product   {hat.product}")
+        pid = f"{hat.product_id:#06x}" if hat.product_id is not None else "?"
+        pver = f"{hat.product_ver:#06x}" if hat.product_ver is not None else "?"
+        print(f"  id / ver  {pid} / {pver}")
+        print(f"  uuid      {hat.uuid}")
+    r = hat_id.resolve()
+    print(r.describe())
+    for n in r.notes:
+        print("note:", n)
+    elf = os.path.join(FW_DIR, f"laserhat-mcu-{r.board}.elf")
+    print(f"firmware image: {elf}" + ("" if os.path.exists(elf) else " (not installed here)"))
+    return 0
+
+
+def _uuid(a) -> uuidlib.UUID:
+    if a.uuid:
+        try:
+            return uuidlib.UUID(a.uuid)
+        except ValueError:
+            die(f"bad --uuid {a.uuid!r}")
+    return uuidlib.uuid4()
+
+
+def cmd_make(a) -> int:
+    image = hat_id.build_eeprom(a.board, _uuid(a))
+    out = a.output or f"laserhat-{a.board}.eep"
+    with open(out, "wb") as f:
+        f.write(image)
+    print(f"wrote {out} ({len(image)} bytes)")
+    print(describe_image(hat_id.parse_eeprom(image)))
+    return 0
+
+
+def cmd_write(a) -> int:
+    if a.image:
+        with open(a.image, "rb") as f:
+            image = f.read()
+        try:
+            img = hat_id.parse_eeprom(image)
+        except ValueError as e:
+            die(f"{a.image} is not a valid HAT EEPROM image: {e}")
+        if img.hat_info().board != a.board:
+            die(f"{a.image} describes {img.hat_info().board!r}, not {a.board!r}")
+        image = image[:img.eeplen]
+    else:
+        image = hat_id.build_eeprom(a.board, _uuid(a))
+        img = hat_id.parse_eeprom(image)
+
+    print(f"About to program the HAT ID EEPROM (U1, 0x50 on ID_SD/ID_SC) as:")
+    print(describe_image(img))
+    seen = hat_id.read_hat()
+    if seen is not None:
+        print(f"It currently reads (since boot): {seen.vendor} / {seen.product}, "
+              f"uuid {seen.uuid}")
+    if not a.yes:
+        print("\nNot written: re-run with --yes.  Open JP1 (write protect) first, "
+              "run as root, and reboot afterwards.")
+        return 1
+    if os.geteuid() != 0:
+        die("run with sudo (loads a device-tree overlay, opens /dev/i2c-*)")
+
+    loaded = open_bus(a.bus, a.bus == DEFAULT_BUS)
+    try:
+        dev = Eeprom(a.bus)
+        try:
+            dev.write(0, image)
+            back = dev.read(0, len(image))
+        finally:
+            dev.close()
+    except OSError as e:
+        close_bus(loaded)
+        die(f"I2C error on /dev/i2c-{a.bus}: {e}.  Is the board seated, and is "
+            "the Pi's 3.3 V reaching U1?", 2)
+    close_bus(loaded)
+    if back != image:
+        bad = next(i for i in range(len(image)) if back[i] != image[i])
+        die(f"verify failed at byte {bad} (wrote {image[bad]:#04x}, read "
+            f"{back[bad]:#04x}): JP1 closed = write-protected.  Open JP1 and retry.", 2)
+    print(f"programmed and verified {len(image)} bytes on /dev/i2c-{a.bus}.")
+    print("Now: close JP1 (write-protect), then reboot -- the Pi reads the "
+          "EEPROM only at boot; `laserhat-eeprom read` shows it afterwards.")
+    return 0
+
+
+def main(argv=None) -> int:
+    p = argparse.ArgumentParser(
+        prog="laserhat-eeprom", description=__doc__.split("\n\n")[0],
+        epilog="See the module docstring (head -40 $(which laserhat-eeprom)) "
+               "and pi/PROVISIONING.md for the I2C bus details.",
+        formatter_class=argparse.RawDescriptionHelpFormatter)
+    sub = p.add_subparsers(dest="cmd", required=True)
+    r = sub.add_parser("read", help="show the board the Pi sees")
+    r.add_argument("--chip", action="store_true",
+                   help="read and decode the EEPROM itself over I2C (root)")
+    r.add_argument("--bus", type=int, default=DEFAULT_BUS)
+    m = sub.add_parser("make", help="write an EEPROM image file")
+    m.add_argument("board", choices=list(hat_id.BOARDS))
+    m.add_argument("-o", "--output")
+    m.add_argument("--uuid", help="use this UUID instead of a random one")
+    w = sub.add_parser("write", help="program U1 (root, JP1 open, --yes)")
+    w.add_argument("board", choices=list(hat_id.BOARDS))
+    w.add_argument("--yes", action="store_true", help="really write")
+    w.add_argument("--bus", type=int, default=DEFAULT_BUS,
+                   help=f"I2C bus on GPIO 0/1 (default {DEFAULT_BUS}: load the "
+                        "i2c-gpio overlay for the write; 0 = i2c_vc)")
+    w.add_argument("--uuid", help="use this UUID instead of a random one")
+    w.add_argument("--image", help="write this image file (from `make`) instead")
+    a = p.parse_args(argv)
+    return {"read": cmd_read, "make": cmd_make, "write": cmd_write}[a.cmd](a)
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
