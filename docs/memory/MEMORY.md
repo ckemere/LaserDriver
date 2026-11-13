@@ -10,3 +10,4 @@
 - [No local testing](no-local-testing.md) — Pi software: build/test via GitHub CI only; never locally or with Docker
 - [KiCad Python footprint loader quirk](kicad-python-footprint-loader.md) — load footprints before LoadBoard on 9.0.8 macOS; F8 link details
 - [Fab / BOM scheme](fab-bom-scheme.md) — Rev 2 era: LCSC codes only in tools/lcsc_parts.py (kept boards: sch_parts.py), stamped into 'LCSC Part #'; DNP = not populated, HAND_FIT = no number + exclude-from-pos
+- [Release workflow](release-workflow.md) — push a v* tag → CI builds debs + golden Pi OS images (three firmware images); laserhat-flash picks by EEPROM; runner-image and pin-map lessons
