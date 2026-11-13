@@ -1,4 +1,4 @@
-# Glance out HAT hardware — working rules
+# Glance out hardware — working rules
 
 Four KiCad 9 projects.  Each schematic is generated from Python (`gen_schematic.py` + `sch_parts.py` +
 `sch_symbols.py` + `sch_engine.py`, deterministic UUIDs); the boards were placed by script and then **finished by hand

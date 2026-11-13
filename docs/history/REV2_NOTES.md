@@ -1,7 +1,7 @@
 # LaserHAT Rev 2 — design notes
 
 > **Archived board (2026-11-13).** The Rev 2 HAT (`LaserDriver.kicad_*`), `LaserDaughter/` and `EStimDaughter/` were
-> removed from the Glance out HAT repository; they are at tag `archive/pre-glance-cleanup` under `LaserHAT/`.  Paths
+> removed from the Glance out repository; they are at tag `archive/pre-glance-cleanup` under `LaserHAT/`.  Paths
 > below (`tools/`, `LaserDaughter/`, ...) are relative to that old `LaserHAT/` directory.  Their successors are
 > `hardware/StimHAT` and `hardware/LaserDriverHAT`.
 

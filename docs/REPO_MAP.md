@@ -1,4 +1,4 @@
-# Repository map (glance-out-hat)
+# Repository map (glance-out)
 
 | Path | What | Entry points |
 |---|---|---|

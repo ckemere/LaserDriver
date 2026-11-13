@@ -1,4 +1,4 @@
-# Glance out HAT — hardware
+# Glance out — hardware
 
 Raspberry Pi HATs for optogenetic laser and electrical stimulation in neuroscience experiments, plus their supplies.
 KiCad 9 projects; schematics generated from Python, boards finished by hand.  Working rules and tool list:

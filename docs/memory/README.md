@@ -1,8 +1,8 @@
-# Claude Code memory (LaserHAT Rev 2 → Glance out HAT)
+# Claude Code memory (LaserHAT Rev 2 → Glance out)
 
 Portable copies of the Claude Code auto-memory from the Rev 2 sessions (2026-09-25 onwards): `MEMORY.md` is the
 index, one fact per file. Refreshed 2026-09-29; moved from `LaserHAT/claude_memory/` to `docs/memory/` on 2026-11-13
-(glance-out-hat restructure: `LaserHAT/` is now `hardware/`, `Firmware/` `firmware/`, `Pi/` `pi/`; the Rev 2 HAT,
+(glance-out restructure: `LaserHAT/` is now `hardware/`, `Firmware/` `firmware/`, `Pi/` `pi/`; the Rev 2 HAT,
 LaserDaughter, EStimDaughter and relay BatteryPack are archived at tag `archive/pre-glance-cleanup`).  Notes about
 those boards are history; their paths are as they were.
 

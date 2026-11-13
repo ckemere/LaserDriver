@@ -1,4 +1,4 @@
-"""Reference data since the glance-out-hat restructure (2026-11-13): HAT = the archived Rev 2 HAT, LASER = the archived
+"""Reference data since the glance-out restructure (2026-11-13): HAT = the archived Rev 2 HAT, LASER = the archived
 LaserDaughter module (whose codes LaserDriverHAT/sch_parts.py carries); the scripts named below (stamp_lcsc.py, jlc_fab.py,
 lcsc_verify.py, EStimDaughter/) are archived with those boards (tag archive/pre-glance-cleanup).  The kept boards keep their
 codes in their own sch_parts.py.

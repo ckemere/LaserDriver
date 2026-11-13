@@ -1,6 +1,6 @@
 # LaserHAT Rev 2 — output-module interface spec (for the isolated e-stim module)
 
-> **Glance out HAT note (2026-11-13).** This is the stimulator contract the StimHAT and the firmware implement (§7). It
+> **Glance out note (2026-11-13).** This is the stimulator contract the StimHAT and the firmware implement (§7). It
 > was written for the Rev 2 HAT + plug-in modules; the Rev 2 HAT (`LaserDriver.kicad_pcb`), `LaserDaughter/` and
 > `EStimDaughter/` are archived (tag `archive/pre-glance-cleanup`), so relative links to them below no longer resolve.
 
