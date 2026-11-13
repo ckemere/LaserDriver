@@ -13,7 +13,7 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 LIB = os.path.join(ROOT, "stimhat.pretty")
-HAT = os.path.join(ROOT, "..", "LaserDriver.kicad_pcb")
+HAT = os.path.join(ROOT, "..", "ref", "LaserHAT_Rev2_ref.kicad_pcb")   # outline + footprints of the archived Rev 2 HAT board
 mm = pcbnew.FromMM
 io = pcbnew.PCB_IO_KICAD_SEXPR()
 os.makedirs(LIB, exist_ok=True)
@@ -86,7 +86,7 @@ subprocess.run(["python3", os.path.join(os.path.dirname(os.path.abspath(__file__
 # module's footprint (y -> -y for the graphics; the pads stay on y 0, pin order unchanged), body 0.9 / 5.1 mm from the
 # pin row per the Mornsun drawing, 1.6 mm pads; no 3D model.
 import re as _re
-src = open(os.path.join(ROOT, "..", "EStimDaughter", "estim.pretty", "DCDC_SIP6_A0515S.kicad_mod")).read()
+src = open(os.path.join(ROOT, "tools", "ref", "DCDC_SIP6_A0515S.kicad_mod")).read()   # copy of the archived e-stim module's estim.pretty footprint
 out = []
 for line in src.splitlines():
     if line.strip().startswith("(model "):

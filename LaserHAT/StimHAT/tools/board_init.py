@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Create StimHAT.kicad_pcb (once): design rules, netclasses, then pull every footprint in from the netlist.
     $KICAD_PY tools/board_init.py      (refuses to overwrite an existing board)
-Footprints that live only on the Rev 2 HAT board (its project library) are copied from ../LaserDriver.kicad_pcb."""
+Footprints that live only on the Rev 2 HAT board (its project library) are copied from ../ref/LaserHAT_Rev2_ref.kicad_pcb
+(the archived Rev 2 board's footprints and outline, tracks and zones stripped)."""
 import os
 import sys
 
@@ -14,7 +15,7 @@ from sch_parts import ISOLATED_NETS  # noqa: E402
 
 BOARD = os.path.join(ROOT, "StimHAT.kicad_pcb")
 NET = os.path.join(ROOT, "tools", "ref", "StimHAT.net")
-HAT = os.path.join(ROOT, "..", "LaserDriver.kicad_pcb")
+HAT = os.path.join(ROOT, "..", "ref", "LaserHAT_Rev2_ref.kicad_pcb")   # outline + footprints of the archived Rev 2 HAT board
 POWER = ["+5V", "+3V3", "+3V3_PI", "MSPM0_3V3", "VBUS", "VBUS_SW", "GND",
          "+V_RAW", "-V_RAW", "+V_F", "-V_F", "+V_STIM", "-V_STIM", "+5V_ISO", "GND_ISO"]
 FINE = ["USB_DP", "USB_DM", "CC1", "CC2"]

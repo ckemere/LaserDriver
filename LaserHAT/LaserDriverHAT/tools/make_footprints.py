@@ -15,7 +15,7 @@ import pcbnew
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 LIB = os.path.join(ROOT, "laserdriverhat.pretty")
-HAT = os.path.join(ROOT, "..", "LaserDriver.kicad_pcb")
+HAT = os.path.join(ROOT, "..", "ref", "LaserHAT_Rev2_ref.kicad_pcb")   # outline + footprints of the archived Rev 2 HAT board
 mm = pcbnew.FromMM
 io = pcbnew.PCB_IO_KICAD_SEXPR()
 os.makedirs(LIB, exist_ok=True)

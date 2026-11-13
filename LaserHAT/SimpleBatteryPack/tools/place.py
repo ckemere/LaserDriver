@@ -244,7 +244,7 @@ def silk(txt, x, y, size=1.2, rot=0, layer=pcbnew.F_SilkS):
 
 # board-level silk (row labels, OUT, pack names and envelopes, title) belongs to the user since 2026-11-01: drawn and
 # edited in pcbnew, never touched here (this script used to redraw it and so reverted / deleted hand edits)
-# User.Comments: the LaserHAT's outline (its Edge.Cuts, read live from ../LaserDriver.kicad_pcb) with its hole MH1 on H5 and
+# User.Comments: the LaserHAT's outline (its Edge.Cuts, read from ../ref/LaserHAT_Rev2_ref.kicad_pcb) with its hole MH1 on H5 and
 # the Pi's rotation, i.e. where the HAT sits when the Pi is on H5-H8; User.Drawings: the Raspberry Pi itself (85 x 56, r 3,
 # holes 3.5 in from the SD-card end and the long edges, ports end 23.5 beyond the far holes).  Drawings only (not in the gerbers).
 def xf(pt):
@@ -264,7 +264,7 @@ def shape(kind, pts, layer):
     board.Add(d)
 
 
-HAT = os.path.join(ROOT, "..", "LaserDriver.kicad_pcb")
+HAT = os.path.join(ROOT, "..", "ref", "LaserHAT_Rev2_ref.kicad_pcb")   # outline + footprints of the archived Rev 2 HAT board
 hat = pcbnew.LoadBoard(HAT)
 mh1 = hat.FindFootprintByReference("MH1").GetPosition()
 hat_off = pcbnew.VECTOR2I(mm(3.5) - mh1.x, mm(3.5) - mh1.y)       # HAT board coords -> Pi-local (MH1 = Pi hole (3.5, 3.5))

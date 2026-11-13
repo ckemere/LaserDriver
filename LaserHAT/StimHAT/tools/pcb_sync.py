@@ -30,8 +30,6 @@ PROJECT_FP_LIBS = {   # fp-lib-table nicknames of the project libraries
                              "stimhat.pretty"),      # StimHAT copy of ../tools/pcb_sync.py (2026-10-26)
     "Footprints": os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                                "Footprints.pretty"),          # the Rev 2 HAT's project library
-    "estim": os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
-                          "EStimDaughter", "estim.pretty"),   # the e-stim module's (DC-DC SIP)
 }
 
 
