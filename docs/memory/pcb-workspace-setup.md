@@ -18,6 +18,8 @@ was started in, on branch `pcb-rev2`, and commit/push only when the user asks (t
 - The e-stim tools take `FREEROUTING`, `KICAD_CLI`, `KICAD_FOOTPRINTS` from the environment; the HAT tools still have
   the macOS paths hard-coded.
 
+**Repository moved (2026-11-13):** the project now lives at github.com/glanceneuro/glance-out (public; branch main = the restructured tree: hardware/, firmware/, pi/, docs/; archived boards at tag archive/pre-glance-cleanup).  Push with the SSH alias `github-glance-out-repo` (deploy key ~/.ssh/glance_out, write access); remote name `glance` in the stim-hat worktree, whose `origin` is still the old ckemere/LaserDriver.  CI run state via api.github.com/repos/glanceneuro/glance-out/actions/runs (tmp helpers ci_status.py / watch_ci.sh take REPO=...).
+
 **Why:** said explicitly at the start of the Rev 2 session and again when moving machines.
 **How to apply:** never touch sibling checkouts; don't commit on main; don't create a new venv.
 
