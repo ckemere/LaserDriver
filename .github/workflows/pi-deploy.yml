@@ -54,8 +54,16 @@ jobs:
       - name: Install test dependencies
         run: pip install pyserial flask pytest
       - name: Run Pi test suite (codec, HAT EEPROM + board/pin resolution, both brokers' integration + boards + web, UDP triggers)
-        working-directory: Pi
-        run: python -m pytest tests/ -q
+        working-directory: pi
+        # Failures are also emitted as ::error annotations, which the public
+        # check-runs API serves without a token (job logs need one).
+        run: |
+          set -o pipefail
+          python -m pytest tests/ -q -rfE 2>&1 | tee /tmp/pytest.txt && exit 0
+          status=$?
+          grep -E '^(FAILED|ERROR) ' /tmp/pytest.txt | head -20 | sed 's/^/::error::/'
+          grep -E '^E  ' /tmp/pytest.txt | head -20 | sed 's/^/::error::/'
+          exit $status
       - name: C <-> Python protocol cross-check
         run: python firmware/host_tools/proto_crosscheck.py
 
